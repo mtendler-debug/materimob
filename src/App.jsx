@@ -1,4 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import AppHome from "./pages/AppHome";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function Placeholder({ label }) {
   return (
@@ -17,8 +20,15 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Placeholder label="Página inicial" />} />
-      <Route path="/entrar" element={<Placeholder label="Login" />} />
-      <Route path="/app/*" element={<Placeholder label="Área do corretor" />} />
+      <Route path="/entrar" element={<Login />} />
+      <Route
+        path="/app/*"
+        element={
+          <ProtectedRoute>
+            <AppHome />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/c/:token" element={<Placeholder label="Formulário de avaliação" />} />
       <Route path="/r/:token" element={<Placeholder label="Painel do cliente" />} />
     </Routes>
