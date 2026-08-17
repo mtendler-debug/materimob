@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.local
+.netlify/
+.DS_Store
+
+# Documentos de planejamento com informações sensíveis (senha do admin atual) —
+# ficam só no computador, nunca no GitHub.
+ARQUITETURA-SAAS.md
+LEIA-ME.md
+ARQUITETURA-SAAS.md.docx
+LEIA-ME.md.docx
