@@ -4,7 +4,12 @@
     {
       "name": "avaliador-dev",
       "runtimeExecutable": "/Users/caco/.local/node/bin/node",
-      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "5173"],
+      "runtimeArgs": [
+        "/Users/caco/Developer/materimob/node_modules/vite/bin/vite.js",
+        "/Users/caco/Developer/materimob",
+        "--port",
+        "5173"
+      ],
       "port": 5173
     }
   ]
