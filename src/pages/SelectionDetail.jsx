@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
+import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -24,6 +25,16 @@ function linesToArray(text) {
 }
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
+}
+function n1(v) {
+  return v == null ? "—" : (Math.round(v * 10) / 10).toFixed(1).replace(".", ",");
+}
+function shade(hex, v) {
+  const a = Math.max(0, Math.min(1, (v - 1) / 4)) * 0.85 + 0.08;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a.toFixed(2)})`;
 }
 
 export default function SelectionDetail() {
@@ -76,6 +87,11 @@ export default function SelectionDetail() {
   const formLink = `${window.location.origin}/c/${selection.token_form}`;
   const panelLink = `${window.location.origin}/r/${selection.token_panel}`;
 
+  const dash = aggregateSelection({ properties, evaluations, criteria: selection.criteria });
+  const propKpis = aggregateProposals(proposals);
+  const lider = dash.ranking[0];
+  const mediaGeral = avg(dash.ranking.map((r) => r.notaMedia));
+
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
@@ -101,6 +117,143 @@ export default function SelectionDetail() {
           <LinkBox label="Link do painel (resultados)" url={panelLink} />
         </div>
 
+        <SectionTitle>Dashboard</SectionTitle>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Kpi label="Avaliações" value={dash.totalAvaliacoes} foot={`${dash.totalAvaliadores} pessoa(s)`} />
+          <Kpi label="Líder do ranking" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
+          <Kpi label="Nota média geral" value={n1(mediaGeral)} foot="escala de 1 a 10" />
+          <Kpi label="Imóveis no funil" value={properties.length} foot={`${dash.unrated.length} sem avaliação`} />
+        </div>
+
+        {properties.length > 0 && (
+          <div className="mt-3 space-y-2">
+            {properties.map((p) => {
+              const r = dash.ranking.find((x) => x.property_id === p.id);
+              return (
+                <div key={p.id} className="rounded-[14px] border border-rule bg-white p-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <b className="text-charcoal">{p.name}</b>
+                    <span className="text-graytext">
+                      {n1(r?.notaMedia)}/10 · {r?.avaliacoes ?? 0} aval.
+                    </span>
+                  </div>
+                  <div className="mt-2 h-[7px] overflow-hidden rounded-full bg-light">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${((r?.notaMedia ?? 0) / 10) * 100}%`, background: p.color || "#A68A5B" }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {selection.criteria?.length > 0 && (
+          <div className="mt-3 overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <table className="w-full min-w-[460px] border-collapse text-[13px]">
+              <thead>
+                <tr>
+                  <th className="bg-charcoal p-[9px] text-left text-[11px] font-bold text-white">Critério</th>
+                  {dash.comparativo.map((c) => (
+                    <th key={c.property_id} className="bg-charcoal p-[9px] text-center text-[11px] font-bold text-white">
+                      {c.name.split(" ")[0]}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {selection.criteria.map((crit) => (
+                  <tr key={crit}>
+                    <td className="border-b border-rule p-[9px] font-semibold text-charcoal">{crit}</td>
+                    {dash.comparativo.map((c) => {
+                      const m = (c.medias ?? []).find((x) => x.criterio === crit);
+                      const v = m ? m.media : null;
+                      return (
+                        <td
+                          key={c.property_id}
+                          className="border-b border-rule p-[9px] text-center text-graytext"
+                          style={v == null ? {} : { background: shade(c.color || "#A68A5B", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
+                        >
+                          {n1(v)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {dash.comentarios.length > 0 && (
+          <div className="mt-3 space-y-2">
+            {dash.comentarios.map((c) => (
+              <div key={c.property_id} className="rounded-[14px] border border-rule bg-white p-4">
+                <b style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                {c.comentarios.map((cm, i) => (
+                  <div key={i} className="my-2 border-l-[3px] border-rule pl-3 text-[13px]">
+                    <div className="text-xs font-bold text-charcoal">
+                      {cm.evaluator_name}{" "}
+                      <span className="font-normal text-muted">
+                        {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}· nota {cm.overall_score}/10
+                      </span>
+                    </div>
+                    {cm.strengths && <p className="my-1 text-graytext"><b>+</b> {cm.strengths}</p>}
+                    {cm.concerns && <p className="my-1 text-graytext"><b>−</b> {cm.concerns}</p>}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <SectionTitle>Ranking</SectionTitle>
+        {dash.ranking.length === 0 ? (
+          <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">
+            O ranking aparece assim que a primeira avaliação for enviada.
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {dash.ranking.map((r) => (
+              <div
+                key={r.property_id}
+                className="flex items-center gap-3 rounded-[13px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+                style={{ borderLeft: `6px solid ${r.color || "#A68A5B"}` }}
+              >
+                <div
+                  className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
+                  style={{ background: r.color || "#A68A5B" }}
+                >
+                  {r.posicao}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15.5px] font-bold leading-tight text-charcoal">{r.name}</div>
+                  <div className="mt-[1px] text-xs text-graytext">
+                    nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
+                  </div>
+                </div>
+                <div className="pl-2 text-right">
+                  <b className="block text-[21px] leading-[1.1]">{n1(r.score)}</b>
+                  <span className="text-[10.5px] text-muted">score</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {dash.unrated.length > 0 && (
+          <div className="mt-2 rounded-[14px] border border-rule bg-white p-4">
+            <b className="text-charcoal">Ainda sem avaliação:</b>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {dash.unrated.map((u) => (
+                <span key={u.property_id} className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+                  {u.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <SectionTitle>Questionário</SectionTitle>
         <Questionnaire selection={selection} onSaved={load} />
 
@@ -120,9 +273,25 @@ export default function SelectionDetail() {
         <Gantt milestones={selection.milestones} properties={properties} />
 
         <SectionTitle>Respostas ({evaluations.length})</SectionTitle>
+        {evaluations.length > 0 && (
+          <button
+            onClick={() => downloadCsv(selection, evaluations, properties)}
+            className="mb-3 rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+          >
+            Baixar CSV
+          </button>
+        )}
         <EvaluationsTable evaluations={evaluations} properties={properties} onChange={load} />
 
         <SectionTitle>Propostas ({proposals.length})</SectionTitle>
+        {proposals.length > 0 && (
+          <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Kpi label="Propostas recebidas" value={propKpis.total} foot="" />
+            <Kpi label="Confirmaram interesse" value={propKpis.comInteresse} foot="topo do funil de fechamento" />
+            <Kpi label="Maior proposta" value={brl(propKpis.maiorValor)} foot="" />
+            <Kpi label="Deságio médio" value={propKpis.mediaDesagio == null ? "—" : `${n1(propKpis.mediaDesagio)}%`} foot="sobre o valor de tabela" />
+          </div>
+        )}
         <ProposalsTable proposals={proposals} properties={properties} />
       </div>
     </div>
@@ -131,6 +300,16 @@ export default function SelectionDetail() {
 
 function SectionTitle({ children }) {
   return <h2 className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+}
+
+function Kpi({ label, value, foot }) {
+  return (
+    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
+      <div className="mt-[5px] truncate text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+    </div>
+  );
 }
 
 function LinkBox({ label, url }) {
@@ -672,6 +851,33 @@ function NewPropertyForm({ selectionId, existingCount, onCreated }) {
       </button>
     </form>
   );
+}
+
+function downloadCsv(selection, evaluations, properties) {
+  const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
+  const crits = selection.criteria ?? [];
+  const head = ["Data", "Nome", "Papel", "Imóvel", "Nota geral"]
+    .concat(crits)
+    .concat(["Pontos fortes", "Ressalvas"]);
+  const rows = evaluations.map((e) => {
+    const scores = e.scores || {};
+    return [
+      new Date(e.created_at).toLocaleString("pt-BR"),
+      e.evaluator_name,
+      e.evaluator_role || "",
+      propertyById[e.property_id]?.name || "",
+      e.overall_score ?? "",
+    ]
+      .concat(crits.map((c) => scores[c] ?? ""))
+      .concat([e.strengths || "", e.concerns || ""]);
+  });
+  const csv = [head, ...rows]
+    .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(";"))
+    .join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "avaliacoes.csv";
+  a.click();
 }
 
 function EvaluationsTable({ evaluations, properties, onChange }) {
