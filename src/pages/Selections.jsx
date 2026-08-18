@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
-import { useOrganization } from "../lib/useOrganization";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 
 export default function Selections() {
   const { user, signOut } = useAuth();
-  const { org, loading: loadingOrg } = useOrganization();
-  const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
   const [selections, setSelections] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -74,9 +71,6 @@ export default function Selections() {
     loadSelections();
   }
 
-  const showOnboarding =
-    !loadingOrg && !org && !user.user_metadata?.onboarded && !dismissedOnboarding;
-
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
@@ -107,8 +101,6 @@ export default function Selections() {
             </div>
           </div>
         </div>
-
-        {showOnboarding && <Onboarding onDismiss={() => setDismissedOnboarding(true)} />}
 
         <button
           onClick={() => setShowForm((v) => !v)}
@@ -172,49 +164,6 @@ export default function Selections() {
             </Link>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Onboarding({ onDismiss }) {
-  async function markOnboarded() {
-    await supabase.auth.updateUser({ data: { onboarded: true } });
-    onDismiss();
-  }
-
-  return (
-    <div className="mt-6 rounded-md border border-rule bg-white p-4">
-      <p className="text-sm font-medium text-charcoal">Como você atua no mercado imobiliário?</p>
-      <div className="mt-3 space-y-2">
-        <button
-          onClick={markOnboarded}
-          className="block w-full rounded-md border border-rule p-3 text-left text-sm hover:border-gold"
-        >
-          <span className="font-medium text-charcoal">Corretor autônomo</span>
-          <span className="block text-graytext">
-            Vou usar o Avaliador direto com meus clientes, sem organização.
-          </span>
-        </button>
-        <button
-          onClick={markOnboarded}
-          className="block w-full rounded-md border border-rule p-3 text-left text-sm hover:border-gold"
-        >
-          <span className="font-medium text-charcoal">Corretor de uma imobiliária ou construtora</span>
-          <span className="block text-graytext">
-            Peça pra quem te convidou o link de convite — assim que você abrir esse link, entra
-            automaticamente na organização. Enquanto isso, pode usar o Avaliador normalmente.
-          </span>
-        </button>
-        <Link
-          to="/app/organizacao"
-          className="block w-full rounded-md border border-rule p-3 text-left text-sm hover:border-gold"
-        >
-          <span className="font-medium text-charcoal">Sou gestor de uma imobiliária ou incorporadora</span>
-          <span className="block text-graytext">
-            Crie a organização e convide o resto do time.
-          </span>
-        </Link>
       </div>
     </div>
   );

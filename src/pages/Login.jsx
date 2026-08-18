@@ -13,7 +13,7 @@ export default function Login() {
   const [confirmEmailSent, setConfirmEmailSent] = useState(false);
 
   if (!loading && user) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/" replace />;
   }
 
   async function handleSubmit(e) {
