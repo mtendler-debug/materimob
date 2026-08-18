@@ -114,3 +114,18 @@ alter table av_proposals enable row level security;
 
 create policy "Users manage own proposals" on av_proposals
   for all using (auth.uid() = user_id);
+
+
+-- Modelos de critérios que o corretor monta e reaproveita entre seleções.
+create table av_criteria_presets (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users not null default auth.uid(),
+  name        text not null,
+  criteria    text[] not null default '{}',
+  created_at  timestamptz default now()
+);
+
+alter table av_criteria_presets enable row level security;
+
+create policy "Users manage own criteria presets" on av_criteria_presets
+  for all using (auth.uid() = user_id);

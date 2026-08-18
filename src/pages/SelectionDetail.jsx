@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { Gantt } from "../components/Gantt";
+import { CriteriaPresets } from "../components/CriteriaPresets";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -210,6 +211,7 @@ function Questionnaire({ selection, onSaved }) {
         rows={5}
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
+      <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
       <div className="mt-3 flex items-center gap-3">
         <button
           onClick={save}
