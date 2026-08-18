@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
+import { parseCsv, downloadCsv } from "../lib/csv";
 
 function linesToArray(text) {
   return text
@@ -22,6 +23,7 @@ export default function Portfolio() {
     const { data } = await supabase
       .from("av_portfolio_properties")
       .select("*, av_portfolio_units(*)")
+      .eq("organization_id", org.id)
       .order("name");
     setProperties((data ?? []).map((p) => ({ ...p, units: p.av_portfolio_units })));
   }
@@ -78,6 +80,7 @@ export default function Portfolio() {
         </div>
 
         {manage && <NewPortfolioProperty organizationId={org.id} onCreated={load} />}
+        {manage && <ImportSpreadsheet organizationId={org.id} onImported={load} />}
       </div>
     </div>
   );
@@ -273,6 +276,137 @@ function PortfolioPropertyEditor({ property, onChange }) {
           remover do portfólio
         </button>
       </div>
+    </div>
+  );
+}
+
+const TEMPLATE_HEADER = [
+  "Nome do imóvel",
+  "Endereço",
+  "Resumo",
+  "Critérios extras (separe com |)",
+  "Nome da unidade",
+  "Valor de tabela",
+];
+const TEMPLATE_EXAMPLE = [
+  ["Residencial Jardins", "Rua das Flores, 100", "Construtora Alfa · 3 quartos · 2 vagas", "Vista para o parque|Piscina aquecida", "101 · 80 m²", "650000"],
+  ["Residencial Jardins", "Rua das Flores, 100", "Construtora Alfa · 3 quartos · 2 vagas", "Vista para o parque|Piscina aquecida", "102 · 95 m²", "720000"],
+  ["Cobertura Vista Mar", "Av. Beira Mar, 500", "", "", "", ""],
+];
+
+function ImportSpreadsheet({ organizationId, onImported }) {
+  const [show, setShow] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const fileRef = useRef(null);
+
+  function baixarModelo() {
+    downloadCsv("modelo-portfolio.csv", [TEMPLATE_HEADER, ...TEMPLATE_EXAMPLE]);
+  }
+
+  function parseValor(raw) {
+    const digits = String(raw ?? "").replace(/\D/g, "");
+    return digits ? Number(digits) : null;
+  }
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const dataRows = rows.slice(1).filter((r) => (r[0] ?? "").trim());
+
+      const groups = new Map();
+      for (const r of dataRows) {
+        const nome = (r[0] ?? "").trim();
+        if (!groups.has(nome)) groups.set(nome, []);
+        groups.get(nome).push(r);
+      }
+      if (groups.size === 0) {
+        setMsg({ type: "err", text: "Nenhuma linha válida encontrada — confira se preencheu a coluna \"Nome do imóvel\"." });
+        return;
+      }
+
+      let propCount = 0;
+      let unitCount = 0;
+      for (const [nome, linhas] of groups) {
+        const first = linhas.find((r) => (r[1] ?? "").trim() || (r[2] ?? "").trim() || (r[3] ?? "").trim()) ?? linhas[0];
+        const endereco = (first[1] ?? "").trim() || null;
+        const resumo = (first[2] ?? "").trim() || null;
+        const criterios = (first[3] ?? "")
+          .split("|")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const { data: inserted, error } = await supabase
+          .from("av_portfolio_properties")
+          .insert({ organization_id: organizationId, name: nome, address: endereco, summary: resumo, extra_criteria: criterios })
+          .select("id")
+          .single();
+        if (error) throw error;
+        propCount++;
+
+        const unidades = linhas
+          .filter((r) => (r[4] ?? "").trim())
+          .map((r) => ({ portfolio_property_id: inserted.id, name: r[4].trim(), table_value: parseValor(r[5]) }));
+        if (unidades.length) {
+          const { error: unitError } = await supabase.from("av_portfolio_units").insert(unidades);
+          if (unitError) throw unitError;
+          unitCount += unidades.length;
+        }
+      }
+
+      setMsg({ type: "ok", text: `Importado: ${propCount} imóvel(is), ${unitCount} unidade(s).` });
+      onImported();
+    } catch (err) {
+      setMsg({ type: "err", text: "Erro ao importar: " + err.message });
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+      >
+        {show ? "Fechar" : "Importar planilha"}
+      </button>
+      {show && (
+        <div className="mt-2 rounded-[14px] border border-rule bg-white p-4">
+          <p className="text-sm text-graytext">
+            Baixe o modelo, preencha uma linha por unidade (repita o nome do imóvel para agrupar várias
+            unidades no mesmo imóvel), e envie o arquivo de volta.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={baixarModelo}
+              className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+            >
+              Baixar modelo
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,text/csv"
+              disabled={busy}
+              onChange={handleFile}
+              className="text-sm text-graytext"
+            />
+          </div>
+          {busy && <p className="mt-2 text-sm text-muted">Importando…</p>}
+          {msg && (
+            <p className={`mt-2 text-sm ${msg.type === "ok" ? "text-[#2E7D32]" : "text-red-600"}`}>{msg.text}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

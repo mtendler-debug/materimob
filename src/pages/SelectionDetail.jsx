@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
+import { downloadCsv } from "../lib/csv";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -275,7 +276,7 @@ export default function SelectionDetail() {
         <SectionTitle>Respostas ({evaluations.length})</SectionTitle>
         {evaluations.length > 0 && (
           <button
-            onClick={() => downloadCsv(selection, evaluations, properties)}
+            onClick={() => downloadEvaluationsCsv(selection, evaluations, properties)}
             className="mb-3 rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
           >
             Baixar CSV
@@ -853,7 +854,7 @@ function NewPropertyForm({ selectionId, existingCount, onCreated }) {
   );
 }
 
-function downloadCsv(selection, evaluations, properties) {
+function downloadEvaluationsCsv(selection, evaluations, properties) {
   const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
   const crits = selection.criteria ?? [];
   const head = ["Data", "Nome", "Papel", "Imóvel", "Nota geral"]
@@ -871,13 +872,7 @@ function downloadCsv(selection, evaluations, properties) {
       .concat(crits.map((c) => scores[c] ?? ""))
       .concat([e.strengths || "", e.concerns || ""]);
   });
-  const csv = [head, ...rows]
-    .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(";"))
-    .join("\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
-  a.download = "avaliacoes.csv";
-  a.click();
+  downloadCsv("avaliacoes.csv", [head, ...rows]);
 }
 
 function EvaluationsTable({ evaluations, properties, onChange }) {
