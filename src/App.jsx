@@ -6,6 +6,7 @@ import PublicForm from "./pages/PublicForm";
 import PublicPanel from "./pages/PublicPanel";
 import Organization from "./pages/Organization";
 import Portfolio from "./pages/Portfolio";
+import Launches from "./pages/Launches";
 import AcceptInvite from "./pages/AcceptInvite";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useAuth } from "./lib/AuthContext";
@@ -63,6 +64,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Portfolio />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/lancamentos"
+        element={
+          <ProtectedRoute>
+            <Launches />
           </ProtectedRoute>
         }
       />

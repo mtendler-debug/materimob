@@ -399,7 +399,16 @@ function ProposalForm({ token, properties, onCreated }) {
           buy_intent: buyIntent,
         },
       });
-      setMsg({ type: "ok", text: `Proposta registrada.${res.desagio != null ? ` Deságio: ${n1(res.desagio)}%` : ""}` });
+      const reservation = res.launch_reservation;
+      const reservationText = reservation
+        ? reservation.ok
+          ? " Unidade reservada com sucesso."
+          : ` Atenção: ${reservation.message}`
+        : "";
+      setMsg({
+        type: reservation && !reservation.ok ? "err" : "ok",
+        text: `Proposta registrada.${res.desagio != null ? ` Deságio: ${n1(res.desagio)}%` : ""}${reservationText}`,
+      });
       setProposerName("");
       setRawValue("");
       setNote("");

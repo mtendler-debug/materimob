@@ -92,6 +92,9 @@ export default function Selections() {
               <Link to="/app/portfolio" className="text-sm text-graytext underline">
                 Portfólio
               </Link>
+              <Link to="/app/lancamentos" className="text-sm text-graytext underline">
+                Lançamentos
+              </Link>
               <button onClick={signOut} className="text-sm text-graytext underline">
                 Sair
               </button>

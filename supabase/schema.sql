@@ -309,3 +309,116 @@ as $$
   where m.organization_id = org
     and my_org_role(org) is not null;
 $$;
+-- Lançamentos: diferente do portfólio (privado da organização, cópia ao
+-- usar), um lançamento é visível a qualquer corretor autenticado da
+-- plataforma — é o ecossistema descrito pelo usuário: a incorporadora
+-- publica, qualquer corretor acessa. Só a gestão (gerente/diretor da
+-- incorporadora dona) cria, edita e confirma vendas.
+create table av_launches (
+  id               uuid primary key default gen_random_uuid(),
+  organization_id  uuid references organizations(id) on delete cascade not null,
+  created_by       uuid references auth.users not null default auth.uid(),
+  name             text not null,
+  color            text default '#5C5C5C',
+  address          text,
+  summary          text,
+  criteria         text[] not null default '{}',
+  extra_criteria   text[] not null default '{}',
+  questions        text[] not null default '{}',
+  milestones       jsonb not null default '[]',
+  status           text not null default 'ativo' check (status in ('ativo','encerrado')),
+  created_at       timestamptz default now()
+);
+
+-- Estoque vivo e compartilhado. status muda na hora para todo mundo que
+-- estiver olhando o mesmo lançamento — é o que evita vender a mesma
+-- unidade duas vezes num plantão com vários corretores.
+create table av_launch_units (
+  id            uuid primary key default gen_random_uuid(),
+  launch_id     uuid references av_launches(id) on delete cascade not null,
+  name          text not null,
+  table_value   numeric(15,2),
+  status        text not null default 'disponivel'
+                  check (status in ('disponivel','reservada','vendida')),
+  reserved_by   uuid references auth.users,
+  reserved_for  text,
+  position      int default 0,
+  updated_at    timestamptz default now(),
+  created_at    timestamptz default now()
+);
+
+alter table av_launches enable row level security;
+alter table av_launch_units enable row level security;
+
+create policy "Authenticated users view launches" on av_launches
+  for select to authenticated using (true);
+
+create policy "Gerente+ creates launches" on av_launches
+  for insert to authenticated with check (org_role_rank(my_org_role(organization_id)) >= 3);
+
+create policy "Gerente+ updates launches" on av_launches
+  for update to authenticated using (org_role_rank(my_org_role(organization_id)) >= 3);
+
+create policy "Gerente+ deletes launches" on av_launches
+  for delete to authenticated using (org_role_rank(my_org_role(organization_id)) >= 3);
+
+create policy "Authenticated users view launch units" on av_launch_units
+  for select to authenticated using (true);
+
+create policy "Gerente+ creates launch units" on av_launch_units
+  for insert to authenticated with check (
+    org_role_rank(my_org_role((select organization_id from av_launches where id = launch_id))) >= 3
+  );
+
+-- Update direto só para gestão (confirmar venda, desfazer reserva, editar
+-- nome/valor). Reservar é feito pela função reserve_launch_unit(), não por
+-- update direto — assim fica atômico e qualquer corretor pode reservar
+-- sem precisar de uma política mais frouxa que abriria brecha para alterar
+-- outros campos (ex.: valor de tabela) junto com a reserva.
+create policy "Gerente+ updates launch units" on av_launch_units
+  for update to authenticated using (
+    org_role_rank(my_org_role((select organization_id from av_launches where id = launch_id))) >= 3
+  );
+
+create policy "Gerente+ deletes launch units" on av_launch_units
+  for delete to authenticated using (
+    org_role_rank(my_org_role((select organization_id from av_launches where id = launch_id))) >= 3
+  );
+
+-- Reserva atômica: qualquer corretor autenticado pode chamar, mas só some
+-- se a unidade ainda estiver disponível no exato momento da chamada.
+-- corretor_id vem explícito (não de auth.uid()) porque quem chama de
+-- verdade é a Edge Function aval-proposal pelo cliente admin
+-- (service_role) — ali nunca há sessão de usuário, então auth.uid()
+-- sempre voltaria nulo. O default auth.uid() só serve para uma eventual
+-- chamada autenticada direta. Importante: nunca ter duas versões desta
+-- função com listas de parâmetros diferentes — como client_name e
+-- corretor_id têm default, uma chamada só com unit_id/client_name fica
+-- ambígua entre as duas e o Postgres recusa a chamada.
+create or replace function reserve_launch_unit(unit_id uuid, client_name text default null, corretor_id uuid default auth.uid())
+returns av_launch_units
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  result av_launch_units;
+begin
+  update av_launch_units
+  set status = 'reservada', reserved_by = corretor_id, reserved_for = client_name, updated_at = now()
+  where id = unit_id and status = 'disponivel'
+  returning * into result;
+
+  if result.id is null then
+    raise exception 'unidade indisponível';
+  end if;
+
+  return result;
+end;
+$$;
+
+
+-- Liga uma seleção/imóvel a um lançamento, para reaproveitar toda a
+-- máquina existente (avaliação, ranking, proposta, cronograma) na
+-- experiência de plantão de vendas.
+alter table av_selections add column launch_id uuid references av_launches(id) on delete set null;
+alter table av_units add column launch_unit_id uuid references av_launch_units(id) on delete set null;

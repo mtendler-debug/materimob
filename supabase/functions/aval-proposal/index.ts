@@ -89,16 +89,33 @@ Deno.serve(async (req) => {
   }
 
   let tableValue: number | null = null;
+  let launchReservation: { ok: boolean; message: string } | null = null;
   if (unit_id) {
     const { data: unit } = await admin
       .from("av_units")
-      .select("id, property_id, table_value")
+      .select("id, property_id, table_value, launch_unit_id")
       .eq("id", unit_id)
       .maybeSingle();
     if (!unit || unit.property_id !== property_id) {
       return json({ error: "unidade não pertence a este imóvel" }, 400);
     }
     tableValue = unit.table_value;
+
+    // Unidade de um lançamento: interesse confirmado tenta reservar no
+    // estoque compartilhado. A função é atômica — se outro corretor
+    // reservou um segundo antes, essa chamada falha e avisamos aqui,
+    // em vez de deixar a proposta parecer válida sobre uma unidade que
+    // já não está mais disponível.
+    if (buy_intent && unit.launch_unit_id) {
+      const { error: reserveError } = await admin.rpc("reserve_launch_unit", {
+        unit_id: unit.launch_unit_id,
+        client_name: proposer_name,
+        corretor_id: selection.user_id,
+      });
+      launchReservation = reserveError
+        ? { ok: false, message: "Essa unidade acabou de ser reservada por outro atendimento." }
+        : { ok: true, message: "Unidade reservada no lançamento." };
+    }
   }
 
   const { data: inserted, error } = await admin
@@ -120,5 +137,5 @@ Deno.serve(async (req) => {
   if (error) return json({ error: "erro ao gravar proposta" }, 500);
 
   const desagio = inserted.table_value ? (1 - value / inserted.table_value) * 100 : null;
-  return json({ id: inserted.id, desagio }, 201);
+  return json({ id: inserted.id, desagio, launch_reservation: launchReservation }, 201);
 });
