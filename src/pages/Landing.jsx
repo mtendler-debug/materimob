@@ -29,12 +29,12 @@ const FEATURES = [
 
 const PRINCIPLES = [
   {
-    label: "Simplicidade assimétrica",
+    label: "Simplicidade absoluta",
     body: "O corretor usa algo simples e direto, pensado para quem não vive de tecnologia. E o cliente final usa algo ainda mais simples que isso.",
   },
   {
-    label: "O corretor é o centro",
-    body: "Não a empresa por trás dele. A carteira e o histórico acompanham o corretor de imobiliária em imobiliária, ou quando ele decide seguir por conta própria.",
+    label: "O corretor e o cliente no centro da experiência",
+    body: "A ponte entre o mercado e o cliente é feita pelo corretor de forma clara, objetiva e alinhada com as expectativas.",
   },
   {
     label: "Integrar, não substituir",
@@ -60,11 +60,12 @@ export default function Landing() {
           Da visita à decisão
         </p>
         <h1 className="font-serif mt-4 text-[2.5rem] leading-[1.1] tracking-tight text-balance sm:text-[3.25rem]">
-          A ferramenta do corretor para fechar negócio — não mais um portal de anúncios.
+          A ferramenta do corretor para fechar negócio
         </h1>
         <p className="text-graytext mx-auto mt-6 max-w-xl text-[16px] leading-relaxed">
-          O corretor monta o roteiro, o cliente avalia pelo celular, e os dois seguem juntos
-          até a assinatura — em vez de PDF solto e conversa perdida no WhatsApp.
+          O corretor monta o roteiro de visitas, o cliente avalia pelo celular, e os dois
+          seguem juntos até a assinatura — em vez de PDF solto e conversa perdida no
+          WhatsApp.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
