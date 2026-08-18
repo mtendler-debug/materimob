@@ -252,6 +252,7 @@ export default function PublicPanel() {
                         <span className="font-bold text-charcoal">{u.name}</span>
                         {u.table_value ? ` · ${brl(u.table_value)}` : ""} · {u.evaluations_count} avaliação(ões)
                       </div>
+                      <UnitStatusBadge status={u.status} />
                       <div className="font-bold" style={{ color: p.color || "#A68A5B" }}>{n1(u.overall_avg)}/10</div>
                     </div>
                   ))}
@@ -463,14 +464,24 @@ function ProposalForm({ token, properties, onCreated }) {
             className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
           >
             <option value="">—</option>
-            {property.units.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name}
-                {u.table_value ? ` — ${brl(u.table_value)}` : ""}
-              </option>
-            ))}
+            {property.units.map((u) => {
+              const sold = u.launch_unit?.status === "vendida";
+              return (
+                <option key={u.id} value={u.id} disabled={sold}>
+                  {u.name}
+                  {u.table_value ? ` — ${brl(u.table_value)}` : ""}
+                  {sold ? " (vendida)" : ""}
+                </option>
+              );
+            })}
           </select>
         </>
+      )}
+
+      {unit?.launch_unit?.status === "vendida" && (
+        <div className="mt-[10px] rounded-[11px] p-3 text-[13px]" style={{ background: "#F1E4E0", color: "#B34A2E" }}>
+          Essa unidade já foi vendida — escolha outra, ou fale com a consultoria.
+        </div>
       )}
 
       {unit?.table_value != null && (
@@ -578,6 +589,24 @@ function Kpi({ label, value, foot }) {
 
 function Empty({ children }) {
   return <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">{children}</div>;
+}
+
+const UNIT_STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
+const UNIT_STATUS_COLORS = {
+  reservada: { bg: "#FFF3E0", color: "#B26A00" },
+  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+};
+
+function UnitStatusBadge({ status }) {
+  if (!status || status === "disponivel") return null;
+  return (
+    <span
+      className="rounded-full px-[10px] py-1 text-[10.5px] font-bold"
+      style={{ background: UNIT_STATUS_COLORS[status].bg, color: UNIT_STATUS_COLORS[status].color }}
+    >
+      {UNIT_STATUS_LABELS[status]}
+    </span>
+  );
 }
 
 function Label({ children }) {

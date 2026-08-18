@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     admin
       .from("av_properties")
       .select(
-        "id, name, color, stage, address, summary, extra_criteria, questions, phases, position, units:av_units(id, name, table_value, position)",
+        "id, name, color, stage, address, summary, extra_criteria, questions, phases, position, units:av_units(id, name, table_value, position, launch_unit:av_launch_units(status, reserved_for))",
       )
       .eq("selection_id", selection.id)
       .order("position")
@@ -90,8 +90,10 @@ Deno.serve(async (req) => {
       if (!grupos.has(k)) grupos.set(k, []);
       grupos.get(k)!.push(e);
     }
-    const unitById: Record<string, { id: string; name: string; table_value: number | null }> =
-      Object.fromEntries((p.units ?? []).map((u) => [u.id, u]));
+    const unitById: Record<
+      string,
+      { id: string; name: string; table_value: number | null; launch_unit: { status: string; reserved_for: string | null } | null }
+    > = Object.fromEntries((p.units ?? []).map((u) => [u.id, u]));
     const porUnidade = [...grupos.entries()]
       .map(([uid, lista]) => {
         const un = unitById[uid];
@@ -99,6 +101,7 @@ Deno.serve(async (req) => {
           unit_id: uid || null,
           name: un ? un.name : "Empreendimento em geral",
           table_value: un ? (un.table_value ?? null) : null,
+          status: un?.launch_unit?.status ?? null,
           evaluations_count: lista.length,
           overall_avg: avg(lista.map((e) => e.overall_score)),
         };
