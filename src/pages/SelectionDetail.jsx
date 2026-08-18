@@ -104,7 +104,7 @@ export default function SelectionDetail() {
         <SectionTitle>Questionário</SectionTitle>
         <Questionnaire selection={selection} onSaved={load} />
 
-        <SectionTitle>Marcos do processo (faixa de cima do cronograma)</SectionTitle>
+        <SectionTitle>Etapas do processo (faixa de cima do cronograma)</SectionTitle>
         <MilestonesEditor selection={selection} onSaved={load} />
 
         <SectionTitle>Imóveis</SectionTitle>
@@ -238,7 +238,7 @@ function MilestonesEditor({ selection, onSaved }) {
     setRows((r) => r.filter((_, idx) => idx !== i));
   }
   function add() {
-    setRows((r) => [...r, { nome: "Novo marco", inicio: hoje(), fim: hoje() }]);
+    setRows((r) => [...r, { nome: "Nova etapa", inicio: hoje(), fim: hoje() }]);
   }
 
   async function save() {
@@ -258,7 +258,7 @@ function MilestonesEditor({ selection, onSaved }) {
       {rows.map((m, i) => (
         <div key={i} className="mb-[10px] flex flex-wrap items-end gap-[10px]">
           <div className="min-w-[130px] flex-[2]">
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Marco</label>
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Etapa</label>
             <input
               value={m.nome}
               onChange={(e) => update(i, "nome", e.target.value)}
@@ -293,14 +293,14 @@ function MilestonesEditor({ selection, onSaved }) {
       ))}
       <div className="flex flex-wrap items-center gap-3">
         <button onClick={add} className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal">
-          + Adicionar marco
+          + Adicionar etapa
         </button>
         <button
           onClick={save}
           disabled={saving}
           className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
         >
-          {saving ? "Salvando…" : "Salvar marcos"}
+          {saving ? "Salvando…" : "Salvar etapas"}
         </button>
         {msg && <span className="text-sm text-graytext">{msg}</span>}
       </div>
