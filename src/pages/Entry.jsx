@@ -2,6 +2,7 @@ import { Navigate, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useOrganization, canManage } from "../lib/useOrganization";
+import Landing from "./Landing";
 
 function Placeholder({ label }) {
   return (
@@ -23,7 +24,7 @@ export default function Entry() {
   const { org, role, loading: loadingOrg } = useOrganization();
 
   if (loadingAuth) return <Placeholder label="Carregando…" />;
-  if (!user) return <Navigate to="/entrar" replace />;
+  if (!user) return <Landing />;
   if (loadingOrg) return <Placeholder label="Carregando…" />;
 
   if (!org && !user.user_metadata?.onboarded) {

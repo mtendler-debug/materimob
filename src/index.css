@@ -11,6 +11,7 @@
 
   --font-sans: -apple-system, "system-ui", "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
+  --font-serif: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
 }
 
 body {
