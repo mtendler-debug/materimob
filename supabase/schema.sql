@@ -136,6 +136,11 @@ create policy "Users manage own criteria presets" on av_criteria_presets
 create table organizations (
   id          uuid primary key default gen_random_uuid(),
   name        text not null,
+  -- imobiliária representa corretores e vende imóveis prontos/usados
+  -- (portfólio); incorporadora é dona de empreendimentos e publica
+  -- lançamentos (estoque de unidades pra reserva). Só incorporadora
+  -- publica lançamento — ver política de av_launches mais abaixo.
+  tipo        text not null check (tipo in ('imobiliaria', 'incorporadora')),
   created_by  uuid references auth.users not null default auth.uid(),
   created_at  timestamptz default now()
 );
@@ -208,8 +213,14 @@ alter table organizations enable row level security;
 alter table organization_members enable row level security;
 alter table organization_invites enable row level security;
 
-create policy "Members view their organizations" on organizations
-  for select using (my_org_role(id) is not null);
+-- Nome e tipo da organização não são sensíveis (mesma lógica de
+-- lançamentos e portfólio já serem visíveis pra plataforma inteira) — e
+-- sem isso, o embed organizations(name) usado no portfólio/lançamentos
+-- volta nulo pra quem não é membro, porque o PostgREST aplica a RLS da
+-- tabela embutida também. Roster (organization_members, com e-mail de
+-- quem é membro) continua restrito — é outra tabela, com RLS própria.
+create policy "Authenticated users view organizations" on organizations
+  for select to authenticated using (true);
 
 create policy "Any authenticated user creates an organization" on organizations
   for insert with check (auth.uid() = created_by);
@@ -262,8 +273,14 @@ create table av_portfolio_units (
 alter table av_portfolio_properties enable row level security;
 alter table av_portfolio_units enable row level security;
 
-create policy "Members view portfolio" on av_portfolio_properties
-  for select using (my_org_role(organization_id) is not null);
+-- Plataforma inteira vê o portfólio (não só quem já é membro da
+-- organização dona) — assim um corretor autônomo, ou de outra
+-- organização, consegue importar um imóvel do portfólio de uma
+-- imobiliária no roteiro de visita de um cliente, do mesmo jeito que já
+-- acontece com lançamentos. Escrita continua exclusiva do gerente+ da
+-- organização dona.
+create policy "Authenticated users view portfolio" on av_portfolio_properties
+  for select to authenticated using (true);
 
 create policy "Gerente+ manages portfolio" on av_portfolio_properties
   for insert with check (org_role_rank(my_org_role(organization_id)) >= 3);
@@ -274,10 +291,8 @@ create policy "Gerente+ updates portfolio" on av_portfolio_properties
 create policy "Gerente+ deletes portfolio" on av_portfolio_properties
   for delete using (org_role_rank(my_org_role(organization_id)) >= 3);
 
-create policy "Members view portfolio units" on av_portfolio_units
-  for select using (
-    my_org_role((select organization_id from av_portfolio_properties where id = portfolio_property_id)) is not null
-  );
+create policy "Authenticated users view portfolio units" on av_portfolio_units
+  for select to authenticated using (true);
 
 create policy "Gerente+ manages portfolio units" on av_portfolio_units
   for insert with check (
@@ -353,8 +368,14 @@ alter table av_launch_units enable row level security;
 create policy "Authenticated users view launches" on av_launches
   for select to authenticated using (true);
 
-create policy "Gerente+ creates launches" on av_launches
-  for insert to authenticated with check (org_role_rank(my_org_role(organization_id)) >= 3);
+-- Só incorporadora publica lançamento — imobiliária representa
+-- corretores e vende imóveis prontos/usados via portfólio, não é dona de
+-- empreendimento.
+create policy "Gerente+ de incorporadora cria lançamentos" on av_launches
+  for insert to authenticated with check (
+    org_role_rank(my_org_role(organization_id)) >= 3
+    and (select tipo from organizations where id = organization_id) = 'incorporadora'
+  );
 
 create policy "Gerente+ updates launches" on av_launches
   for update to authenticated using (org_role_rank(my_org_role(organization_id)) >= 3);

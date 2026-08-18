@@ -29,6 +29,7 @@ export default function Organization() {
 
 function CreateOrganization({ onCreated }) {
   const [name, setName] = useState("");
+  const [tipo, setTipo] = useState("imobiliaria");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,7 +38,7 @@ function CreateOrganization({ onCreated }) {
     if (!name.trim()) return;
     setSaving(true);
     setError("");
-    const { error: insertError } = await supabase.from("organizations").insert({ name: name.trim() });
+    const { error: insertError } = await supabase.from("organizations").insert({ name: name.trim(), tipo });
     setSaving(false);
     if (insertError) {
       setError(insertError.message);
@@ -49,26 +50,56 @@ function CreateOrganization({ onCreated }) {
   return (
     <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
       <p className="text-sm text-graytext">
-        Você ainda não faz parte de uma organização. Crie uma se for licenciar o sistema para o time
-        (imobiliária ou incorporadora) — você vira o diretor e pode convidar o resto da equipe.
+        Você ainda não faz parte de uma organização. Crie uma se for licenciar o sistema para o time —
+        você vira o diretor e pode convidar o resto da equipe.
       </p>
-      <form onSubmit={handleSubmit} className="mt-3 flex gap-2">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Nome da imobiliária/incorporadora"
-          className="flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-        >
-          {saving ? "Criando…" : "Criar organização"}
-        </button>
+      <form onSubmit={handleSubmit} className="mt-3 space-y-3">
+        <div>
+          <label className="block text-[11.5px] font-bold text-graytext uppercase">Tipo</label>
+          <div className="mt-1 flex gap-2">
+            <TipoOption value="imobiliaria" current={tipo} onSelect={setTipo}>
+              Imobiliária
+              <span className="block font-normal text-graytext">gerencia equipe e portfólio de imóveis prontos/usados</span>
+            </TipoOption>
+            <TipoOption value="incorporadora" current={tipo} onSelect={setTipo}>
+              Incorporadora
+              <span className="block font-normal text-graytext">além disso, publica lançamentos</span>
+            </TipoOption>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nome da imobiliária/incorporadora"
+            className="flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          />
+          <button
+            type="submit"
+            disabled={saving}
+            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {saving ? "Criando…" : "Criar organização"}
+          </button>
+        </div>
       </form>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
+  );
+}
+
+function TipoOption({ value, current, onSelect, children }) {
+  const selected = value === current;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      className={`flex-1 rounded-[9px] border-[1.5px] p-2 text-left text-sm ${
+        selected ? "border-gold bg-light" : "border-rule"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -90,7 +121,9 @@ function OrganizationDetail({ org, role, onChange }) {
     <div className="mt-4 space-y-6">
       <div className="rounded-[14px] border border-rule bg-white p-4">
         <p className="text-lg font-bold text-charcoal">{org.name}</p>
-        <p className="text-sm text-graytext">Você é {ROLE_LABELS[role]}.</p>
+        <p className="text-sm text-graytext">
+          {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
+        </p>
       </div>
 
       <div>

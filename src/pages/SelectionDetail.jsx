@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
-import { useOrganization } from "../lib/useOrganization";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -560,7 +559,6 @@ function PropertyCard({ property, onChange }) {
 }
 
 function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
-  const { org } = useOrganization();
   const [items, setItems] = useState(null);
   const [show, setShow] = useState(false);
   const [importingId, setImportingId] = useState(null);
@@ -569,13 +567,11 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
     if (show && items === null) {
       supabase
         .from("av_portfolio_properties")
-        .select("*, av_portfolio_units(*)")
+        .select("*, av_portfolio_units(*), organizations(name)")
         .order("name")
         .then(({ data }) => setItems((data ?? []).map((p) => ({ ...p, units: p.av_portfolio_units }))));
     }
   }, [show, items]);
-
-  if (!org) return null;
 
   async function importItem(item) {
     setImportingId(item.id);
@@ -615,10 +611,15 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
       {show && (
         <div className="mt-2 rounded-[14px] border border-rule bg-white p-3">
           {items === null && <p className="text-sm text-muted">Carregando…</p>}
-          {items?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
+          {items?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio da plataforma ainda.</p>}
           {items?.map((item) => (
             <div key={item.id} className="flex items-center justify-between border-b border-rule py-2 last:border-0">
-              <span className="text-sm text-charcoal">{item.name}</span>
+              <span className="text-sm text-charcoal">
+                {item.name}
+                {item.organizations?.name && (
+                  <span className="text-graytext"> · {item.organizations.name}</span>
+                )}
+              </span>
               <button
                 disabled={importingId === item.id}
                 onClick={() => importItem(item)}

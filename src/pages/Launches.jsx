@@ -57,7 +57,9 @@ export default function Launches() {
           ))}
         </div>
 
-        {org && canManage(role) && <NewLaunch organizationId={org.id} onCreated={load} />}
+        {org && org.tipo === "incorporadora" && canManage(role) && (
+          <NewLaunch organizationId={org.id} onCreated={load} />
+        )}
       </div>
     </div>
   );

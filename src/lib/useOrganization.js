@@ -20,7 +20,7 @@ export function useOrganization() {
     // senão .limit(1) pode devolver o papel de outra pessoa.
     const { data } = await supabase
       .from("organization_members")
-      .select("role, organizations(id, name)")
+      .select("role, organizations(id, name, tipo)")
       .eq("user_id", user.id)
       .limit(1)
       .maybeSingle();
