@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Selections from "./pages/Selections";
 import SelectionDetail from "./pages/SelectionDetail";
+import PublicForm from "./pages/PublicForm";
+import PublicPanel from "./pages/PublicPanel";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useAuth } from "./lib/AuthContext";
 
@@ -45,8 +47,8 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/c/:token" element={<Placeholder label="Formulário de avaliação" />} />
-      <Route path="/r/:token" element={<Placeholder label="Painel do cliente" />} />
+      <Route path="/c/:token" element={<PublicForm />} />
+      <Route path="/r/:token" element={<PublicPanel />} />
     </Routes>
   );
 }
