@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
+import { useOrganization } from "../lib/useOrganization";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -114,6 +115,7 @@ export default function SelectionDetail() {
           ))}
         </div>
         <NewPropertyForm selectionId={id} existingCount={properties.length} onCreated={load} />
+        <ImportFromPortfolio selectionId={id} existingCount={properties.length} onImported={load} />
 
         <SectionTitle>Cronograma</SectionTitle>
         <Gantt milestones={selection.milestones} properties={properties} />
@@ -553,6 +555,81 @@ function PropertyCard({ property, onChange }) {
           remover imóvel
         </button>
       </div>
+    </div>
+  );
+}
+
+function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
+  const { org } = useOrganization();
+  const [items, setItems] = useState(null);
+  const [show, setShow] = useState(false);
+  const [importingId, setImportingId] = useState(null);
+
+  useEffect(() => {
+    if (show && items === null) {
+      supabase
+        .from("av_portfolio_properties")
+        .select("*, av_portfolio_units(*)")
+        .order("name")
+        .then(({ data }) => setItems((data ?? []).map((p) => ({ ...p, units: p.av_portfolio_units }))));
+    }
+  }, [show, items]);
+
+  if (!org) return null;
+
+  async function importItem(item) {
+    setImportingId(item.id);
+    const { data: inserted, error } = await supabase
+      .from("av_properties")
+      .insert({
+        selection_id: selectionId,
+        name: item.name,
+        color: item.color,
+        address: item.address,
+        summary: item.summary,
+        extra_criteria: item.extra_criteria,
+        questions: item.questions,
+        position: existingCount,
+      })
+      .select("id")
+      .single();
+    if (!error && inserted && item.units?.length) {
+      await supabase
+        .from("av_units")
+        .insert(item.units.map((u) => ({ property_id: inserted.id, name: u.name, table_value: u.table_value })));
+    }
+    setImportingId(null);
+    setShow(false);
+    onImported();
+  }
+
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+      >
+        {show ? "Fechar" : "Importar do portfólio"}
+      </button>
+      {show && (
+        <div className="mt-2 rounded-[14px] border border-rule bg-white p-3">
+          {items === null && <p className="text-sm text-muted">Carregando…</p>}
+          {items?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
+          {items?.map((item) => (
+            <div key={item.id} className="flex items-center justify-between border-b border-rule py-2 last:border-0">
+              <span className="text-sm text-charcoal">{item.name}</span>
+              <button
+                disabled={importingId === item.id}
+                onClick={() => importItem(item)}
+                className="rounded-[9px] bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
+              >
+                {importingId === item.id ? "Importando…" : "Importar"}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

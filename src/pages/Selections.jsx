@@ -85,9 +85,17 @@ export default function Selections() {
           </div>
           <div className="text-right">
             <p className="text-xs text-muted">{user.email}</p>
-            <button onClick={signOut} className="text-sm text-graytext underline">
-              Sair
-            </button>
+            <div className="mt-1 flex items-center gap-3">
+              <Link to="/app/organizacao" className="text-sm text-graytext underline">
+                Organização
+              </Link>
+              <Link to="/app/portfolio" className="text-sm text-graytext underline">
+                Portfólio
+              </Link>
+              <button onClick={signOut} className="text-sm text-graytext underline">
+                Sair
+              </button>
+            </div>
           </div>
         </div>
 
