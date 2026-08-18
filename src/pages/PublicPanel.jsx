@@ -2,25 +2,30 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 
+function n1(v) {
+  return v == null ? "—" : (Math.round(v * 10) / 10).toFixed(1).replace(".", ",");
+}
+function brl(n) {
+  return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
+}
+function shade(hex, v) {
+  const a = Math.max(0, Math.min(1, (v - 1) / 4)) * 0.85 + 0.08;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+}
+function d2n(s) {
+  const [y, m, d] = String(s).split("-").map(Number);
+  return Date.UTC(y, m - 1, d);
+}
+
 function Centered({ children }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 p-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg p-6 text-center">
       {children}
     </div>
   );
-}
-
-function currency(v) {
-  return Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function averageFor(evaluations, propertyId, criterion) {
-  const values = evaluations
-    .filter((e) => e.property_id === propertyId)
-    .map((e) => e.scores?.[criterion])
-    .filter((v) => typeof v === "number");
-  if (!values.length) return null;
-  return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
 export default function PublicPanel() {
@@ -44,142 +49,466 @@ export default function PublicPanel() {
 
   useEffect(load, [token]);
 
-  if (loading) return <Centered>Carregando…</Centered>;
+  if (loading) return <Centered>Buscando os resultados…</Centered>;
   if (error) {
     return (
       <Centered>
-        <h1 className="text-lg font-medium text-neutral-800">Link inválido</h1>
+        <h1 className="text-lg font-bold text-charcoal">Painel indisponível</h1>
+        <p className="mt-2 max-w-xs text-sm text-graytext">
+          {error.status === 404
+            ? "Este link não é válido ou foi substituído. Peça um link novo à consultoria."
+            : "Não consegui carregar os resultados agora. Tente recarregar a página."}
+        </p>
       </Centered>
     );
   }
 
-  const { title, subtitle, criteria, archived, properties, evaluations, proposals, ranking, unrated } = data;
-  const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
+  const { title, subtitle, archived, properties, ranking, unrated, comparativo, porUnidade, comentarios, proposals, criteria } = data;
+
+  const notasValidas = ranking.map((r) => r.notaMedia).filter((v) => v != null);
+  const mediaGeral = notasValidas.length ? notasValidas.reduce((a, b) => a + b, 0) / notasValidas.length : null;
+  const lider = ranking[0];
+  const temExtras = properties.some((p) => (p.extra_criteria ?? []).length > 0);
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-6">
-      <div className="mx-auto max-w-3xl">
-        <p className="text-sm uppercase tracking-wide text-neutral-400">{title}</p>
-        {subtitle && <p className="mt-1 text-sm text-neutral-500">{subtitle}</p>}
-        {archived && (
-          <span className="mt-2 inline-block rounded bg-neutral-200 px-2 py-0.5 text-xs text-neutral-600">
-            atendimento encerrado
-          </span>
-        )}
-
-        <h2 className="mt-8 text-lg font-medium text-neutral-800">Ranking</h2>
-        {ranking.length === 0 ? (
-          <p className="mt-2 text-sm text-neutral-400">Nenhuma avaliação ainda.</p>
-        ) : (
-          <div className="mt-3 space-y-2">
-            {ranking.map((r, i) => (
-              <div
-                key={r.property_id}
-                className="flex items-center justify-between rounded-md border border-neutral-200 bg-white p-3"
-              >
-                <span className="text-sm text-neutral-700">
-                  {i + 1}. {r.name}
-                </span>
-                <span className="font-medium text-neutral-800">{r.score.toFixed(1)}</span>
-              </div>
-            ))}
+    <div className="min-h-screen bg-bg">
+      <header className="bg-charcoal px-[18px] pt-[26px] pb-6 text-white">
+        <div className="mx-auto max-w-[900px]">
+          <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
+            Avaliador Materimob
           </div>
+          <h1 className="mt-[9px] mb-1 text-[25px] leading-tight font-bold">{title}</h1>
+          {subtitle && <p className="m-0 text-[13.5px] text-[#C9C9C9]">{subtitle}</p>}
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[900px] px-[18px] pb-10">
+        {archived && (
+          <Card className="mt-4" style={{ background: "#F4EFE6", borderLeft: "5px solid #A68A5B" }}>
+            <b>Atendimento encerrado.</b> Este painel segue disponível para consulta, mas o formulário
+            de avaliação não recebe mais respostas.
+          </Card>
         )}
 
+        <SectionTitle>Panorama</SectionTitle>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <Kpi label="Imóveis no funil" value={properties.length} foot={`${unrated.length} sem avaliação`} />
+          <Kpi label="Avaliações" value={data.totalAvaliacoes} foot={`${data.totalAvaliadores} pessoa(s)`} />
+          <Kpi label="Preferido" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
+          <Kpi label="Nota média" value={n1(mediaGeral)} foot="escala de 1 a 10" />
+        </div>
+
+        <SectionTitle>Ranking dos imóveis</SectionTitle>
+        {ranking.length === 0 ? (
+          <Empty>O ranking aparece assim que a primeira avaliação for enviada.</Empty>
+        ) : (
+          ranking.map((r) => (
+            <div
+              key={r.property_id}
+              className="mb-[10px] flex items-center gap-[13px] rounded-[13px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+              style={{ borderLeft: `6px solid ${r.color || "#A68A5B"}` }}
+            >
+              <div
+                className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
+                style={{ background: r.color || "#A68A5B" }}
+              >
+                {r.posicao}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[15.5px] font-bold leading-tight text-charcoal">{r.name}</div>
+                <div className="mt-[1px] text-xs text-graytext">
+                  nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
+                </div>
+                <div className="mt-[7px] h-[6px] max-w-[300px] overflow-hidden rounded-full bg-light">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${r.score * 10}%`, background: r.color || "#A68A5B" }}
+                  />
+                </div>
+              </div>
+              <div className="pl-2 text-right">
+                <b className="block text-[21px] leading-[1.1]">{n1(r.score)}</b>
+                <span className="text-[10.5px] text-muted">score</span>
+              </div>
+            </div>
+          ))
+        )}
         {unrated.length > 0 && (
-          <p className="mt-2 text-xs text-neutral-400">
-            Sem avaliação ainda: {unrated.map((u) => u.name).join(", ")}
-          </p>
+          <Card>
+            <b className="text-charcoal">Ainda sem avaliação:</b>
+            <br />
+            {unrated.map((u) => (
+              <span key={u.property_id} className="mr-[6px] mb-[6px] inline-block rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+                {u.name}
+              </span>
+            ))}
+          </Card>
         )}
 
-        {criteria.length > 0 && ranking.length > 0 && (
+        {criteria.length > 0 && (
           <>
-            <h2 className="mt-8 text-lg font-medium text-neutral-800">Comparativo</h2>
-            <div className="mt-3 overflow-x-auto rounded-md border border-neutral-200 bg-white">
-              <table className="w-full text-sm">
+            <SectionTitle>Comparativo por critério</SectionTitle>
+            <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <table className="w-full min-w-[460px] border-collapse text-[13px]">
                 <thead>
-                  <tr className="border-b border-neutral-200">
-                    <th className="p-2 text-left text-xs font-medium text-neutral-500">Critério</th>
-                    {ranking.map((r) => (
-                      <th key={r.property_id} className="p-2 text-left text-xs font-medium text-neutral-500">
-                        {r.name}
+                  <tr>
+                    <th className="bg-charcoal p-[9px] text-left text-[11px] font-bold text-white">Critério</th>
+                    {comparativo.map((c) => (
+                      <th key={c.property_id} className="bg-charcoal p-[9px] text-center text-[11px] font-bold text-white">
+                        {c.name.split(" ")[0]}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {criteria.map((c) => (
-                    <tr key={c} className="border-b border-neutral-100 last:border-0">
-                      <td className="p-2 text-neutral-700">{c}</td>
-                      {ranking.map((r) => {
-                        const avg = averageFor(evaluations, r.property_id, c);
+                  {criteria.map((crit) => (
+                    <tr key={crit}>
+                      <td className="border-b border-rule p-[9px] font-semibold text-charcoal">{crit}</td>
+                      {comparativo.map((c) => {
+                        const m = (c.medias ?? []).find((x) => x.criterio === crit);
+                        const v = m ? m.media : null;
                         return (
-                          <td key={r.property_id} className="p-2 text-neutral-600">
-                            {avg == null ? "—" : avg.toFixed(1)}
+                          <td
+                            key={c.property_id}
+                            className="border-b border-rule p-[9px] text-center text-graytext"
+                            style={v == null ? {} : { background: shade(c.color || "#A68A5B", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
+                          >
+                            {n1(v)}
                           </td>
                         );
                       })}
                     </tr>
                   ))}
+                  <tr>
+                    <td className="p-[9px] font-semibold text-charcoal">Média geral</td>
+                    {comparativo.map((c) => (
+                      <td key={c.property_id} className="p-[9px] text-center">
+                        <b>{n1(c.mediaCriterios)}</b>
+                      </td>
+                    ))}
+                  </tr>
                 </tbody>
               </table>
             </div>
+            {temExtras && (
+              <p className="mt-[-4px] text-[12.5px] text-graytext">
+                A tabela acima traz os critérios avaliados em todos os imóveis. Alguns imóveis têm
+                critérios próprios, listados na seção seguinte — eles também entram na média geral.
+              </p>
+            )}
           </>
         )}
 
-        <h2 className="mt-8 text-lg font-medium text-neutral-800">Propostas</h2>
-        <div className="mt-3 space-y-2">
-          {proposals.length === 0 && <p className="text-sm text-neutral-400">Nenhuma proposta ainda.</p>}
-          {proposals.map((p) => {
-            const desagio = p.table_value ? (1 - p.value / p.table_value) * 100 : null;
-            return (
-              <div key={p.id} className="rounded-md border border-neutral-200 bg-white p-3 text-sm">
-                <p className="font-medium text-neutral-800">
-                  {propertyById[p.property_id]?.name} — {currency(p.value)}
-                </p>
-                {desagio != null && (
-                  <p className="text-neutral-500">Deságio: {desagio.toFixed(1)}%</p>
-                )}
-                <p className="text-neutral-500">
-                  {p.proposer_name}
-                  {p.buy_intent ? " · interesse em comprar" : ""}
-                </p>
-                {p.note && <p className="mt-1 text-neutral-500">{p.note}</p>}
-              </div>
-            );
-          })}
-        </div>
-
-        {!archived && (
-          <ProposalForm token={token} properties={properties} onCreated={load} />
+        {temExtras && (
+          <>
+            <SectionTitle>Critérios específicos de cada imóvel</SectionTitle>
+            {comparativo
+              .filter((c) => properties.find((p) => p.id === c.property_id)?.extra_criteria?.length)
+              .map((c) => {
+                const property = properties.find((p) => p.id === c.property_id);
+                const rankEntry = ranking.find((r) => r.property_id === c.property_id);
+                return (
+                  <Card key={c.property_id}>
+                    <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
+                      <b className="text-[15.5px]" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                      <span className="text-[11.5px] text-muted">
+                        {property.extra_criteria.length} critério(s) exclusivo(s) · {rankEntry?.avaliacoes ?? 0} avaliação(ões)
+                      </span>
+                    </div>
+                    {property.extra_criteria.map((crit) => {
+                      const m = (c.medias ?? []).find((x) => x.criterio === crit);
+                      const v = m ? m.media : null;
+                      return (
+                        <div key={crit} className="flex items-center gap-3 border-b border-rule py-[11px] last:border-0">
+                          <div className="min-w-0 flex-1 text-[13.5px] text-graytext">{crit}</div>
+                          <div className="h-[7px] w-[110px] flex-none overflow-hidden rounded-full bg-light">
+                            <div className="h-full rounded-full" style={{ width: `${v ? (v / 5) * 100 : 0}%`, background: c.color || "#A68A5B" }} />
+                          </div>
+                          <div className="w-14 flex-none text-right text-sm font-bold" style={{ color: v ? c.color || "#A68A5B" : "#9A9A9A" }}>
+                            {v == null ? "—" : `${n1(v)}/5`}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </Card>
+                );
+              })}
+          </>
         )}
+
+        <SectionTitle>Cronograma até a compra</SectionTitle>
+        <Gantt milestones={data.milestones} properties={properties} />
+
+        {porUnidade.length > 0 && (
+          <>
+            <SectionTitle>Notas por unidade</SectionTitle>
+            {porUnidade.map((p) => (
+              <Card key={p.property_id}>
+                <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
+                  <b className="text-[15.5px]" style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
+                  <span className="text-[11.5px] text-muted">{p.units.length} unidades avaliadas</span>
+                </div>
+                {p.units
+                  .filter((u) => u.evaluations_count > 0)
+                  .map((u) => (
+                    <div key={u.unit_id ?? "geral"} className="flex items-center gap-[10px] border-b border-rule py-[9px] text-[13px] last:border-0">
+                      <div className="min-w-0 flex-1 text-graytext">
+                        <span className="font-bold text-charcoal">{u.name}</span>
+                        {u.table_value ? ` · ${brl(u.table_value)}` : ""} · {u.evaluations_count} avaliação(ões)
+                      </div>
+                      <div className="font-bold" style={{ color: p.color || "#A68A5B" }}>{n1(u.overall_avg)}/10</div>
+                    </div>
+                  ))}
+              </Card>
+            ))}
+          </>
+        )}
+
+        <SectionTitle>Propostas</SectionTitle>
+        <Proposals token={token} proposals={proposals} properties={properties} archived={archived} onChange={load} />
+
+        {!archived && <ProposalForm token={token} properties={properties} onCreated={load} />}
+
+        <SectionTitle>O que cada um achou</SectionTitle>
+        {comentarios.length === 0 ? (
+          <Empty>Ainda não há comentários escritos.</Empty>
+        ) : (
+          comentarios.map((c) => (
+            <Card key={c.property_id}>
+              <b style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+              {c.comentarios.map((cm, i) => (
+                <div key={i} className="my-[14px] border-l-[3px] py-[2px] pl-3 text-[13.5px]" style={{ borderColor: c.color || "#E2DED6" }}>
+                  <div className="text-[12.5px] font-bold">
+                    {cm.evaluator_name}{" "}
+                    <span className="font-normal text-muted">
+                      {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}
+                      · nota {cm.overall_score}/10{cm.unit_name ? ` · ${cm.unit_name}` : ""}
+                    </span>
+                  </div>
+                  {cm.strengths && <p className="my-1 text-graytext"><b>+</b> {cm.strengths}</p>}
+                  {cm.concerns && <p className="my-1 text-graytext"><b>−</b> {cm.concerns}</p>}
+                </div>
+              ))}
+            </Card>
+          ))
+        )}
+
+        <p className="py-[30px] text-center text-[11.5px] leading-relaxed text-muted">
+          Painel gerado automaticamente a partir das avaliações enviadas.
+        </p>
       </div>
     </div>
   );
 }
 
+function Gantt({ milestones, properties }) {
+  const marcos = (milestones ?? []).filter((m) => m.inicio && m.fim);
+  const all = [];
+  marcos.forEach((m) => all.push(d2n(m.inicio), d2n(m.fim)));
+  properties.forEach((p) => (p.phases ?? []).forEach((f) => f.inicio && f.fim && all.push(d2n(f.inicio), d2n(f.fim))));
+
+  if (!all.length) {
+    return (
+      <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+        <Empty>Cronograma ainda não definido.</Empty>
+      </div>
+    );
+  }
+
+  let min = Math.min(...all);
+  let max = Math.max(...all);
+  const pad = (max - min) * 0.06 + 172800000;
+  min -= pad;
+  max += pad;
+  const span = max - min;
+  const pct = (t) => ((t - min) / span) * 100;
+
+  const months = [];
+  const cursor = new Date(min);
+  cursor.setUTCDate(1);
+  while (cursor.getTime() <= max) {
+    if (cursor.getTime() >= min) {
+      months.push({ left: pct(cursor.getTime()), label: cursor.toLocaleDateString("pt-BR", { month: "short", timeZone: "UTC" }) });
+    }
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+
+  const hoje = Date.now();
+  const todayPct = hoje > min && hoje < max ? pct(hoje) : null;
+
+  function Bar({ inicio, fim, cor, label }) {
+    const a = pct(d2n(inicio));
+    const b = pct(d2n(fim) + 86400000);
+    return (
+      <div
+        className="absolute top-[2px] h-4 overflow-hidden rounded-[5px] px-[6px] text-[10px] leading-4 font-semibold whitespace-nowrap text-white"
+        style={{ left: `${a}%`, width: `${Math.max(b - a, 1.2)}%`, background: cor }}
+        title={label}
+      >
+        {label}
+      </div>
+    );
+  }
+
+  function Lane({ label, children }) {
+    return (
+      <div className="flex min-h-8 items-center">
+        <div className="w-[190px] flex-none pr-3 text-xs font-semibold">{label}</div>
+        <div className="relative h-5 flex-1">
+          {todayPct != null && (
+            <div className="absolute -top-[6px] -bottom-[6px] z-[3] w-[2px] bg-[#B34A2E]" style={{ left: `${todayPct}%` }} />
+          )}
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="min-w-[660px] overflow-x-auto">
+        <div className="flex items-center">
+          <div className="w-[190px] flex-none" />
+          <div className="relative h-4 flex-1 text-[10px] text-muted">
+            {months.map((m, i) => (
+              <span key={i} className="absolute border-l border-rule pl-1" style={{ left: `${m.left}%` }}>
+                {m.label}
+              </span>
+            ))}
+          </div>
+        </div>
+        {marcos.length > 0 && (
+          <>
+            <div className="mt-4 mb-2 text-[10px] font-bold uppercase tracking-[.12em] text-muted">Etapas do processo</div>
+            {marcos.map((m) => (
+              <Lane key={m.nome} label={m.nome}>
+                <Bar inicio={m.inicio} fim={m.fim} cor="#A68A5B" label="" />
+              </Lane>
+            ))}
+          </>
+        )}
+        <div className="mt-4 mb-2 text-[10px] font-bold uppercase tracking-[.12em] text-muted">Imóveis</div>
+        {properties.map((p) => (
+          <Lane key={p.id} label={p.name}>
+            {(p.phases ?? [])
+              .filter((f) => f.inicio && f.fim)
+              .map((f, i) => (
+                <Bar key={i} inicio={f.inicio} fim={f.fim} cor={p.color || "#5C5C5C"} label={f.nome} />
+              ))}
+          </Lane>
+        ))}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-[14px] text-[11.5px] text-graytext">
+        {marcos.length > 0 && (
+          <span>
+            <i className="mr-[5px] inline-block h-[10px] w-[10px] rounded-[3px] align-[-1px]" style={{ background: "#A68A5B" }} />
+            etapas do processo
+          </span>
+        )}
+        {properties.map((p) => (
+          <span key={p.id}>
+            <i className="mr-[5px] inline-block h-[10px] w-[10px] rounded-[3px] align-[-1px]" style={{ background: p.color || "#5C5C5C" }} />
+            {p.name}
+          </span>
+        ))}
+        <span>
+          <i className="mr-[5px] inline-block h-[10px] w-[3px] align-[-1px]" style={{ background: "#B34A2E" }} />
+          hoje
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function Proposals({ token, proposals, properties, archived, onChange }) {
+  if (proposals.length === 0) {
+    return (
+      <Empty>
+        Nenhuma proposta registrada ainda. Use o formulário abaixo quando quiser fazer uma oferta por
+        algum dos imóveis.
+      </Empty>
+    );
+  }
+
+  async function remove(id) {
+    if (!window.confirm("Remover esta proposta?")) return;
+    await callFunction("aval-proposal", { method: "DELETE", params: { token, id } });
+    onChange();
+  }
+
+  return (
+    <>
+      {proposals.map((x) => {
+        const property = properties.find((p) => p.id === x.property_id);
+        const unit = property?.units?.find((u) => u.id === x.unit_id);
+        const desagio = x.table_value ? (1 - x.value / x.table_value) * 100 : null;
+        return (
+          <Card key={x.id} style={{ borderLeft: `5px solid ${property?.color || "#A68A5B"}` }}>
+            <div className="flex flex-wrap items-baseline gap-[10px]">
+              <b className="text-[15px]">{brl(x.value)}</b>
+              {desagio != null && (
+                <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+                  {n1(desagio)}% abaixo da tabela
+                </span>
+              )}
+              {x.buy_intent && (
+                <span className="rounded-full px-[10px] py-1 text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
+                  interesse confirmado
+                </span>
+              )}
+              <span className="ml-auto text-[11.5px] text-muted">
+                {new Date(x.created_at).toLocaleDateString("pt-BR")}
+              </span>
+            </div>
+            <div className="mt-1 text-[13px] text-graytext">
+              <span className="font-bold" style={{ color: property?.color || "#A68A5B" }}>
+                {property?.name}
+              </span>
+              {unit ? ` · ${unit.name}` : ""}
+              {x.table_value ? ` · tabela ${brl(x.table_value)}` : ""} · por {x.proposer_name}
+            </div>
+            {x.note && (
+              <div className="mt-2 border-l-[3px] border-rule pl-[10px] text-[13px] text-graytext">{x.note}</div>
+            )}
+            {!archived && (
+              <div className="mt-[10px]">
+                <button
+                  onClick={() => remove(x.id)}
+                  className="rounded-lg border-[1.5px] border-rule px-[11px] py-[6px] text-xs font-bold text-graytext"
+                >
+                  remover
+                </button>
+              </div>
+            )}
+          </Card>
+        );
+      })}
+    </>
+  );
+}
+
 function ProposalForm({ token, properties, onCreated }) {
-  const [show, setShow] = useState(false);
-  const [propertyId, setPropertyId] = useState("");
+  const [propertyId, setPropertyId] = useState(properties[0]?.id ?? "");
   const [unitId, setUnitId] = useState("");
+  const [rawValue, setRawValue] = useState("");
   const [proposerName, setProposerName] = useState("");
-  const [value, setValue] = useState("");
   const [note, setNote] = useState("");
   const [buyIntent, setBuyIntent] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const [result, setResult] = useState(null);
+  const [msg, setMsg] = useState(null);
 
   const property = properties.find((p) => p.id === propertyId);
+  const unit = property?.units?.find((u) => u.id === unitId);
+  const value = rawValue ? Number(rawValue) : null;
+  const desagio = value && unit?.table_value ? (1 - value / unit.table_value) * 100 : null;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
-    if (!propertyId || !proposerName.trim() || !value) {
-      setError("Preencha imóvel, nome e valor.");
-      return;
-    }
+  if (!properties.length) return null;
+
+  async function handleSubmit() {
+    if (!proposerName.trim()) return setMsg({ type: "err", text: "Escreva seu nome." });
+    if (!value) return setMsg({ type: "err", text: "Informe o valor da proposta." });
     setBusy(true);
+    setMsg(null);
     try {
       const res = await callFunction("aval-proposal", {
         method: "POST",
@@ -188,131 +517,187 @@ function ProposalForm({ token, properties, onCreated }) {
           property_id: propertyId,
           unit_id: unitId || null,
           proposer_name: proposerName.trim(),
-          value: Number(value),
+          value,
           note: note.trim() || null,
           buy_intent: buyIntent,
         },
       });
-      setResult(res);
+      setMsg({ type: "ok", text: `Proposta registrada.${res.desagio != null ? ` Deságio: ${n1(res.desagio)}%` : ""}` });
       setProposerName("");
-      setValue("");
+      setRawValue("");
       setNote("");
       setBuyIntent(false);
       onCreated();
     } catch (err) {
-      setError(err.message);
+      setMsg({ type: "err", text: "Não consegui registrar: " + err.message });
     } finally {
       setBusy(false);
     }
   }
 
-  if (!show) {
-    return (
-      <button
-        onClick={() => setShow(true)}
-        className="mt-4 rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-      >
-        + Registrar proposta
-      </button>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-3 rounded-md border border-neutral-200 bg-white p-4">
-      <div>
-        <label className="block text-xs font-medium text-neutral-500">Imóvel</label>
-        <select
-          value={propertyId}
-          onChange={(e) => {
-            setPropertyId(e.target.value);
-            setUnitId("");
-          }}
-          className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+    <Card>
+      <b className="text-[15.5px]">Registrar uma proposta</b>
+      <p className="mt-[6px] text-[13px] text-graytext">
+        Indique quanto você pagaria por um dos imóveis. A consultoria recebe e conduz a negociação a
+        partir daí.
+      </p>
+
+      {msg && (
+        <div
+          className="my-3 rounded-[10px] px-[14px] py-[11px] text-[13.5px]"
+          style={msg.type === "ok" ? { background: "#E3F0E4", color: "#2E7D32" } : { background: "#F7E4E0", color: "#B34A2E" }}
         >
-          <option value="">Selecione…</option>
-          {properties.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-      </div>
+          {msg.text}
+        </div>
+      )}
+
+      <Label>Imóvel</Label>
+      <select
+        value={propertyId}
+        onChange={(e) => {
+          setPropertyId(e.target.value);
+          setUnitId("");
+        }}
+        className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
+      >
+        {properties.map((p) => (
+          <option key={p.id} value={p.id}>
+            {p.name}
+          </option>
+        ))}
+      </select>
 
       {property?.units?.length > 0 && (
-        <div>
-          <label className="block text-xs font-medium text-neutral-500">Unidade</label>
+        <>
+          <Label>Unidade</Label>
           <select
             value={unitId}
             onChange={(e) => setUnitId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
           >
             <option value="">—</option>
             {property.units.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
+                {u.table_value ? ` — ${brl(u.table_value)}` : ""}
               </option>
             ))}
           </select>
+        </>
+      )}
+
+      {unit?.table_value != null && (
+        <div className="mt-[10px] rounded-[11px] bg-light p-3 text-[13px] text-graytext">
+          Valor de tabela: <b className="text-charcoal">{brl(unit.table_value)}</b>
         </div>
       )}
 
-      <div>
-        <label className="block text-xs font-medium text-neutral-500">Seu nome</label>
-        <input
-          value={proposerName}
-          onChange={(e) => setProposerName(e.target.value)}
-          className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-medium text-neutral-500">Valor da proposta</label>
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-medium text-neutral-500">Observação</label>
-        <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          rows={2}
-          className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-        />
-      </div>
-
-      <label className="flex items-start gap-2 text-sm text-neutral-700">
-        <input type="checkbox" checked={buyIntent} onChange={(e) => setBuyIntent(e.target.checked)} className="mt-0.5" />
-        <span>
-          Tenho interesse em comprar — isso registra sua intenção para a consultoria negociar,
-          não é uma proposta formal nem compromisso de compra.
+      <Label>Sua proposta</Label>
+      <div className="relative">
+        <span className="pointer-events-none absolute top-1/2 left-[13px] -translate-y-1/2 text-[15px] font-semibold text-muted">
+          R$
         </span>
-      </label>
-
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {result && (
-        <p className="text-sm text-neutral-600">
-          Proposta registrada.{" "}
-          {result.desagio != null && `Deságio: ${result.desagio.toFixed(1)}%`}
-        </p>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={rawValue ? Number(rawValue).toLocaleString("pt-BR") : ""}
+          onChange={(e) => setRawValue(e.target.value.replace(/\D/g, ""))}
+          placeholder="0"
+          className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 pl-[38px] text-base font-semibold text-charcoal"
+        />
+      </div>
+      {desagio != null && (
+        <div className="mt-[7px] flex justify-between text-[11.5px] text-muted">
+          <span />
+          <span>
+            {desagio > 0
+              ? `${n1(desagio)}% abaixo da tabela`
+              : desagio < 0
+                ? `${n1(Math.abs(desagio))}% acima da tabela`
+                : "igual à tabela"}
+          </span>
+        </div>
       )}
 
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
-        >
-          {busy ? "Enviando…" : "Registrar proposta"}
-        </button>
-        <button type="button" onClick={() => setShow(false)} className="text-sm text-neutral-500 underline">
-          Fechar
-        </button>
+      <Label>Quem está propondo</Label>
+      <input
+        type="text"
+        value={proposerName}
+        onChange={(e) => setProposerName(e.target.value)}
+        placeholder="Seu nome"
+        className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
+      />
+
+      <Label>Observações (opcional)</Label>
+      <textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Condições de pagamento, prazo, o que for relevante"
+        className="min-h-[70px] w-full resize-y rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
+      />
+
+      <div
+        className="mt-[14px] rounded-xl border-[1.5px] p-[14px]"
+        style={buyIntent ? { borderColor: "#2E7D32", background: "#F2F8F2" } : { borderColor: "#E2DED6" }}
+      >
+        <label className="flex cursor-pointer items-start gap-[11px] text-sm">
+          <input
+            type="checkbox"
+            checked={buyIntent}
+            onChange={(e) => setBuyIntent(e.target.checked)}
+            className="mt-[1px] h-[22px] w-[22px] flex-none accent-[#2E7D32]"
+          />
+          <span>Se esta proposta for aceita, tenho interesse em seguir com a compra.</span>
+        </label>
+        <div className="mt-2 ml-[33px] text-[11.5px] leading-relaxed text-muted">
+          Registra sua intenção para a consultoria conduzir a negociação. Não é uma proposta formal
+          nem um compromisso de compra — nada é assinado por aqui.
+        </div>
       </div>
-    </form>
+
+      <div className="h-[14px]" />
+      <button
+        onClick={handleSubmit}
+        disabled={busy}
+        className="w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white disabled:opacity-45"
+      >
+        {busy ? "Enviando…" : "Enviar proposta"}
+      </button>
+    </Card>
+  );
+}
+
+function SectionTitle({ children }) {
+  return <h2 className="mt-[34px] mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+}
+
+function Card({ children, className = "", style }) {
+  return (
+    <div className={`mb-3 rounded-[14px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.06)] ${className}`} style={style}>
+      {children}
+    </div>
+  );
+}
+
+function Kpi({ label, value, foot }) {
+  return (
+    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
+      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+    </div>
+  );
+}
+
+function Empty({ children }) {
+  return <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">{children}</div>;
+}
+
+function Label({ children }) {
+  return (
+    <label className="mt-[14px] mb-[6px] block text-xs font-bold tracking-[.04em] text-graytext uppercase">
+      {children}
+    </label>
   );
 }

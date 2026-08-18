@@ -71,20 +71,20 @@ export default function Selections() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-6">
+    <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm uppercase tracking-wide text-neutral-400">
+            <p className="text-sm uppercase tracking-wide text-muted">
               Avaliador MaterImob
             </p>
-            <h1 className="mt-1 text-xl font-medium text-neutral-800">
+            <h1 className="mt-1 text-xl font-medium text-charcoal">
               Minhas seleções
             </h1>
           </div>
           <div className="text-right">
-            <p className="text-xs text-neutral-400">{user.email}</p>
-            <button onClick={signOut} className="text-sm text-neutral-500 underline">
+            <p className="text-xs text-muted">{user.email}</p>
+            <button onClick={signOut} className="text-sm text-graytext underline">
               Sair
             </button>
           </div>
@@ -92,7 +92,7 @@ export default function Selections() {
 
         <button
           onClick={() => setShowForm((v) => !v)}
-          className="mt-6 rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+          className="mt-6 rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90"
         >
           {showForm ? "Cancelar" : "+ Nova seleção"}
         </button>
@@ -100,7 +100,7 @@ export default function Selections() {
         {showForm && (
           <form
             onSubmit={handleCreate}
-            className="mt-4 space-y-3 rounded-md border border-neutral-200 bg-white p-4"
+            className="mt-4 space-y-3 rounded-md border border-rule bg-white p-4"
           >
             <Field label="Título" value={title} onChange={setTitle} required />
             <Field label="Subtítulo" value={subtitle} onChange={setSubtitle} />
@@ -108,7 +108,7 @@ export default function Selections() {
             <Field label="Telefone do cliente" value={clientPhone} onChange={setClientPhone} />
             <Field label="E-mail do cliente" value={clientEmail} onChange={setClientEmail} />
             <div>
-              <label className="block text-xs font-medium text-neutral-500">
+              <label className="block text-xs font-medium text-graytext">
                 Critérios (um por linha)
               </label>
               <textarea
@@ -116,14 +116,14 @@ export default function Selections() {
                 onChange={(e) => setCriteria(e.target.value)}
                 rows={4}
                 placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
-                className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+                className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
               />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button
               type="submit"
               disabled={saving}
-              className="rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+              className="rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
             >
               {saving ? "Salvando…" : "Criar seleção"}
             </button>
@@ -131,20 +131,20 @@ export default function Selections() {
         )}
 
         <div className="mt-6 space-y-2">
-          {selections === null && <p className="text-sm text-neutral-400">Carregando…</p>}
+          {selections === null && <p className="text-sm text-muted">Carregando…</p>}
           {selections?.length === 0 && (
-            <p className="text-sm text-neutral-400">Nenhuma seleção ainda.</p>
+            <p className="text-sm text-muted">Nenhuma seleção ainda.</p>
           )}
           {selections?.map((s) => (
             <Link
               key={s.id}
               to={`/app/selections/${s.id}`}
-              className="block rounded-md border border-neutral-200 bg-white p-4 hover:border-neutral-400"
+              className="block rounded-md border border-rule bg-white p-4 hover:border-gold"
             >
-              <p className="font-medium text-neutral-800">{s.title}</p>
-              <p className="text-sm text-neutral-500">{s.client_name}</p>
+              <p className="font-medium text-charcoal">{s.title}</p>
+              <p className="text-sm text-graytext">{s.client_name}</p>
               {s.archived && (
-                <span className="mt-1 inline-block rounded bg-neutral-200 px-2 py-0.5 text-xs text-neutral-600">
+                <span className="mt-1 inline-block rounded bg-light px-2 py-0.5 text-xs text-graytext">
                   arquivada
                 </span>
               )}
@@ -159,13 +159,13 @@ export default function Selections() {
 function Field({ label, value, onChange, required }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-neutral-500">{label}</label>
+      <label className="block text-xs font-medium text-graytext">{label}</label>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+        className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
       />
     </div>
   );

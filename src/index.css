@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #f7f5f2;
+  --color-charcoal: #1c1c1c;
+  --color-gold: #a68a5b;
+  --color-graytext: #5c5c5c;
+  --color-light: #edeae4;
+  --color-rule: #e2ded6;
+  --color-muted: #9a9a9a;
+
+  --font-sans: -apple-system, "system-ui", "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-charcoal);
+}

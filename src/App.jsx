@@ -9,12 +9,12 @@ import { useAuth } from "./lib/AuthContext";
 
 function Placeholder({ label }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-bg p-6 text-center">
       <div>
-        <p className="text-sm uppercase tracking-wide text-neutral-400">
+        <p className="text-sm uppercase tracking-wide text-muted">
           Avaliador MaterImob
         </p>
-        <h1 className="mt-2 text-xl font-medium text-neutral-800">{label}</h1>
+        <h1 className="mt-2 text-xl font-bold text-charcoal">{label}</h1>
       </div>
     </div>
   );

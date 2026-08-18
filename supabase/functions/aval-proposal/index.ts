@@ -6,7 +6,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "POST, DELETE, OPTIONS",
 };
 
 function json(body: unknown, status = 200) {
@@ -18,6 +18,37 @@ function json(body: unknown, status = 200) {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  if (req.method === "DELETE") {
+    const url = new URL(req.url);
+    const token = url.searchParams.get("token");
+    const id = url.searchParams.get("id");
+    if (!token || !id) return json({ error: "parâmetros obrigatórios: token, id" }, 400);
+
+    const admin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    const { data: selection } = await admin
+      .from("av_selections")
+      .select("id, archived")
+      .eq("token_panel", token)
+      .maybeSingle();
+
+    if (!selection) return json({ error: "link inválido" }, 404);
+    if (selection.archived) return json({ error: "atendimento encerrado" }, 403);
+
+    const { error } = await admin
+      .from("av_proposals")
+      .delete()
+      .eq("id", id)
+      .eq("selection_id", selection.id);
+
+    if (error) return json({ error: "erro ao remover proposta" }, 500);
+    return json({ ok: true });
+  }
+
   if (req.method !== "POST") return json({ error: "método não permitido" }, 405);
 
   let body: Record<string, unknown>;

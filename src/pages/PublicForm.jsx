@@ -1,13 +1,34 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
+import { loadDraft, saveDraft, evalKey } from "../lib/draftStore";
 
-function Centered({ children }) {
+const STAGES = [
+  { key: "a-visitar", label: "A visitar", chipBg: "#FFF3E0", chipColor: "#B26A00" },
+  { key: "visitado", label: "Visitado", chipBg: "#E3F0E4", chipColor: "#2E7D32" },
+  { key: "negociacao", label: "Em negociação", chipBg: "#E3EDF8", chipColor: "#1565C0" },
+  { key: "descartado", label: "Descartado", chipBg: "#F1E4E0", chipColor: "#B34A2E" },
+];
+
+function Chip({ children, bg, color }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 p-6 text-center">
+    <span
+      className="rounded-full px-[11px] py-[5px] text-[11px] font-bold"
+      style={{ background: bg ?? "#EDEAE4", color: color ?? "#5C5C5C" }}
+    >
       {children}
-    </div>
+    </span>
   );
+}
+
+function share(token) {
+  const url = `${window.location.origin}${token ? "/c/" + token : "/"}`;
+  const text = "Avaliação dos imóveis que estamos vendo. Dá uma olhada e deixa sua nota: ";
+  if (navigator.share) {
+    navigator.share({ title: "Avaliação de imóveis", text, url }).catch(() => {});
+  } else {
+    window.open("https://wa.me/?text=" + encodeURIComponent(text + url), "_blank");
+  }
 }
 
 export default function PublicForm() {
@@ -15,8 +36,10 @@ export default function PublicForm() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [propertyId, setPropertyId] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [view, setView] = useState("funnel"); // funnel | form | done
+  const [current, setCurrent] = useState(null); // { property, unitId }
+  const [doneMsg, setDoneMsg] = useState("");
+  const [draft, setDraft] = useState(() => loadDraft(token));
 
   useEffect(() => {
     setLoading(true);
@@ -26,113 +49,254 @@ export default function PublicForm() {
         setLoading(false);
       })
       .catch((err) => {
+        const cached = loadDraft(token).cfgCache;
+        if (cached) {
+          setData(cached);
+          setLoading(false);
+          return;
+        }
         setError(err);
         setLoading(false);
       });
   }, [token]);
 
+  useEffect(() => {
+    if (data) {
+      const d = { ...draft, cfgCache: data };
+      setDraft(d);
+      saveDraft(token, d);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  function persist(next) {
+    setDraft(next);
+    saveDraft(token, next);
+  }
+
   if (loading) return <Centered>Carregando…</Centered>;
 
   if (error) {
-    if (error.status === 403) {
-      return (
-        <Centered>
-          <h1 className="text-lg font-medium text-neutral-800">Atendimento encerrado</h1>
-        </Centered>
-      );
-    }
+    const msg =
+      error.status === 403
+        ? "Esta avaliação foi encerrada. O formulário não está mais recebendo respostas."
+        : "Este link não é válido ou foi substituído. Peça um link novo à consultoria.";
     return (
-      <Centered>
-        <h1 className="text-lg font-medium text-neutral-800">Link inválido</h1>
-      </Centered>
+      <Shell title="Avaliador Materimob" subtitle="">
+        <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">{msg}</div>
+      </Shell>
     );
   }
 
-  if (submitted) {
+  if (view === "done") {
     return (
-      <Centered>
-        <h1 className="text-lg font-medium text-neutral-800">Obrigado!</h1>
-        <p className="mt-2 text-sm text-neutral-500">Sua avaliação foi registrada.</p>
-        <button
-          onClick={() => {
-            setSubmitted(false);
-            setPropertyId(null);
+      <Shell title={data.title} subtitle={data.subtitle}>
+        <div className="mt-6 text-center">
+          <div className="my-6 text-[46px] leading-none">✓</div>
+          <h2 className="text-[21px] font-bold text-charcoal">Avaliação enviada</h2>
+          <p className="mx-auto mt-2 mb-6 max-w-xs text-[14.5px] text-graytext">{doneMsg}</p>
+          <button
+            onClick={() => setView("funnel")}
+            className="w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white"
+          >
+            Avaliar outro imóvel
+          </button>
+          <div className="h-[10px]" />
+          <button
+            onClick={() => share(token)}
+            className="w-full rounded-[11px] border-[1.5px] border-rule bg-white px-[18px] py-[13px] text-[15px] font-bold text-charcoal"
+          >
+            Compartilhar com outra pessoa
+          </button>
+          <p className="mt-6 text-[11px] text-muted">
+            Obrigado! Suas impressões ajudam a afinar a busca.
+          </p>
+        </div>
+      </Shell>
+    );
+  }
+
+  if (view === "form" && current) {
+    return (
+      <Shell title={data.title} subtitle={data.subtitle}>
+        <EvaluationForm
+          token={token}
+          property={current.property}
+          unitId={current.unitId}
+          criteria={data.criteria}
+          draft={draft}
+          onPersist={persist}
+          onBack={() => setView("funnel")}
+          onChangeUnit={(unitId) => setCurrent({ property: current.property, unitId })}
+          onDone={(msg) => {
+            setDoneMsg(msg);
+            setView("done");
           }}
-          className="mt-4 text-sm text-neutral-500 underline"
-        >
-          Avaliar outro imóvel
-        </button>
-      </Centered>
+        />
+      </Shell>
     );
   }
-
-  const property = data.properties.find((p) => p.id === propertyId);
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-6">
-      <div className="mx-auto max-w-lg">
-        <p className="text-sm uppercase tracking-wide text-neutral-400">{data.title}</p>
-        {data.subtitle && <p className="mt-1 text-sm text-neutral-500">{data.subtitle}</p>}
-
-        {!property ? (
-          <div className="mt-6 space-y-2">
-            <p className="text-sm font-medium text-neutral-600">
-              Qual imóvel você quer avaliar?
-            </p>
-            {data.properties.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setPropertyId(p.id)}
-                className="block w-full rounded-md border border-neutral-200 bg-white p-4 text-left hover:border-neutral-400"
-              >
-                <span className="font-medium text-neutral-800">{p.name}</span>
-                {p.address && <span className="block text-sm text-neutral-500">{p.address}</span>}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <EvaluationForm
-            token={token}
-            property={property}
-            criteria={data.criteria}
-            onBack={() => setPropertyId(null)}
-            onDone={() => setSubmitted(true)}
-          />
-        )}
+    <Shell title={data.title} subtitle={data.subtitle}>
+      <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
+        <b className="text-charcoal">Como funciona.</b> Dê sua nota para cada imóvel que conhecer.
+        Leva cerca de 3 minutos por empreendimento e você pode preencher durante a própria visita —
+        o que escrever fica salvo neste celular, mesmo sem internet.
       </div>
-    </div>
+
+      <Funnel
+        properties={data.properties}
+        draft={draft}
+        onOpen={(property, unitId) => {
+          setCurrent({ property, unitId: unitId || "" });
+          setView("form");
+        }}
+      />
+
+      <button
+        onClick={() => share(token)}
+        className="mt-3 w-full rounded-[11px] border-[1.5px] border-rule bg-white px-[18px] py-[13px] text-[15px] font-bold text-charcoal"
+      >
+        Compartilhar este link
+      </button>
+      <p className="py-[22px] text-center text-[11px] text-muted">
+        Suas respostas vão direto para a consultoria. Nada é publicado.
+      </p>
+    </Shell>
   );
 }
 
-function EvaluationForm({ token, property, criteria, onBack, onDone }) {
-  const [unitId, setUnitId] = useState("");
-  const [evaluatorName, setEvaluatorName] = useState("");
-  const [evaluatorRole, setEvaluatorRole] = useState("");
-  const [overallScore, setOverallScore] = useState("");
-  const [scores, setScores] = useState({});
-  const [strengths, setStrengths] = useState("");
-  const [concerns, setConcerns] = useState("");
-  const [flagged, setFlagged] = useState([]);
+function Funnel({ properties, draft, onOpen }) {
+  const groups = STAGES.map((st) => ({
+    ...st,
+    items: properties.filter((p) => (p.stage || "a-visitar") === st.key),
+  })).filter((g) => g.items.length);
+
+  if (!groups.length) {
+    return (
+      <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
+        Nenhum imóvel cadastrado ainda.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {groups.map((g) => (
+        <div key={g.key}>
+          <h2 className="mt-[26px] mb-[10px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+            {g.label} · {g.items.length}
+          </h2>
+          {g.items.map((p) => {
+            const feitas = [];
+            const geral = draft.ans?.[evalKey(p.id, "")];
+            if (geral?.sent) feitas.push({ nome: "empreendimento", nota: geral.nota });
+            (p.units ?? []).forEach((u) => {
+              const a = draft.ans?.[evalKey(p.id, u.id)];
+              if (a?.sent) feitas.push({ nome: u.name, nota: a.nota });
+            });
+
+            return (
+              <div
+                key={p.id}
+                className="mb-3 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+                style={{ borderLeft: `5px solid ${p.color || "#A68A5B"}` }}
+              >
+                <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{p.name}</h3>
+                {p.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{p.address}</p>}
+                {p.summary && <p className="m-0 mb-3 text-xs text-graytext">{p.summary}</p>}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Chip bg={g.chipBg} color={g.chipColor}>
+                    {g.label}
+                  </Chip>
+                  {p.units?.length > 0 && <Chip>{p.units.length} unidade(s)</Chip>}
+                  <button
+                    onClick={() => onOpen(p, "")}
+                    className="flex-1 rounded-[11px] border-[1.5px] border-rule bg-white px-[14px] py-[9px] text-[13.5px] font-bold text-charcoal"
+                  >
+                    {feitas.length ? "Avaliar outra unidade" : "Avaliar"}
+                  </button>
+                </div>
+                {feitas.length > 0 && (
+                  <span className="mt-[10px] block text-xs font-bold text-[#2E7D32]">
+                    ✓ {feitas.map((f) => `${f.nome} · ${f.nota}/10`).join("  ·  ")}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </>
+  );
+}
+
+function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, onBack, onChangeUnit, onDone }) {
+  const key = evalKey(property.id, unitId);
+  const existing = draft.ans?.[key] ?? {};
+  const allCriteria = useMemo(() => [...criteria, ...(property.extra_criteria ?? [])], [criteria, property]);
+
+  const [nome, setNome] = useState(existing.nome ?? draft.nome ?? "");
+  const [relacao, setRelacao] = useState(existing.relacao ?? draft.relacao ?? "");
+  const [notas, setNotas] = useState(existing.criterios ?? {});
+  const [nota, setNota] = useState(existing.nota ?? null);
+  const [bom, setBom] = useState(existing.bom ?? "");
+  const [ruim, setRuim] = useState(existing.ruim ?? "");
+  const [perguntasMarcadas, setPerguntasMarcadas] = useState(existing.perguntas ?? []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const allCriteria = [...criteria, ...(property.extra_criteria ?? [])];
+  const unit = (property.units ?? []).find((u) => u.id === unitId) || null;
+  const accent = property.color || "#1C1C1C";
 
-  function setScore(criterion, value) {
-    setScores((s) => ({ ...s, [criterion]: value }));
+  useEffect(() => {
+    const d = {
+      projeto: property.name,
+      projetoId: property.id,
+      nome,
+      relacao,
+      criterios: notas,
+      nota,
+      bom,
+      ruim,
+      perguntas: perguntasMarcadas,
+      unidadeId: unit ? unit.id : "",
+      unidadeNome: unit ? unit.name : "",
+      valorTabela: unit ? (unit.table_value ?? null) : null,
+      sent: existing.sent || false,
+    };
+    const next = {
+      ...draft,
+      ans: { ...(draft.ans ?? {}), [key]: d },
+      nome: nome || draft.nome,
+      relacao: relacao || draft.relacao,
+    };
+    onPersist(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nome, relacao, notas, nota, bom, ruim, perguntasMarcadas]);
+
+  function toggleQuestion(q) {
+    setPerguntasMarcadas((qs) => (qs.includes(q) ? qs.filter((x) => x !== q) : [...qs, q]));
   }
 
-  function toggleFlagged(question) {
-    setFlagged((f) => (f.includes(question) ? f.filter((q) => q !== question) : [...f, question]));
-  }
+  const base = criteria.length;
+  const progressTotal = allCriteria.length + 2;
+  const progressDone = Object.keys(notas).length + (nome ? 1 : 0) + (nota ? 1 : 0);
+  const progressPct = Math.round((progressDone / progressTotal) * 100);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit() {
     setError("");
-    if (!evaluatorName.trim()) {
-      setError("Informe seu nome.");
-      return;
+    if (!nome.trim()) return setError("Escreva seu nome para identificarmos a avaliação.");
+    if (!nota) return setError("Falta a nota geral.");
+
+    if (existing.sent) {
+      const ok = window.confirm(
+        `Você já enviou uma avaliação para ${unit ? unit.name : "este empreendimento"}. Enviar de novo cria uma segunda avaliação. Continuar?`,
+      );
+      if (!ok) return;
     }
+
     setBusy(true);
     try {
       await callFunction("aval-submit", {
@@ -140,156 +304,247 @@ function EvaluationForm({ token, property, criteria, onBack, onDone }) {
         body: {
           token,
           property_id: property.id,
-          unit_id: unitId || null,
-          evaluator_name: evaluatorName.trim(),
-          evaluator_role: evaluatorRole.trim() || null,
-          scores,
-          overall_score: overallScore ? Number(overallScore) : null,
-          strengths: strengths.trim() || null,
-          concerns: concerns.trim() || null,
-          flagged,
+          unit_id: unit ? unit.id : null,
+          evaluator_name: nome.trim(),
+          evaluator_role: relacao.trim() || null,
+          scores: notas,
+          overall_score: nota,
+          strengths: bom.trim() || null,
+          concerns: ruim.trim() || null,
+          flagged: perguntasMarcadas,
         },
       });
-      onDone();
-    } catch (err) {
-      setError(err.message);
+      onPersist({
+        ...draft,
+        ans: { ...(draft.ans ?? {}), [key]: { ...draft.ans[key], sent: true } },
+      });
+      onDone(
+        `${nome.trim().split(" ")[0]}, sua avaliação ${unit ? "da unidade " + unit.name : "do " + property.name} foi registrada.`,
+      );
+    } catch {
+      setError("Não consegui enviar agora. Suas respostas estão salvas — tente de novo com sinal melhor.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-      <button type="button" onClick={onBack} className="text-sm text-neutral-500 underline">
-        ← escolher outro imóvel
+    <div className="mt-5 pb-10">
+      <button onClick={onBack} className="p-0 py-[6px] text-sm text-graytext">
+        ← voltar
       </button>
 
-      <div className="rounded-md border border-neutral-200 bg-white p-4">
-        <p className="font-medium text-neutral-800">{property.name}</p>
-        {property.summary && <p className="mt-1 text-sm text-neutral-500">{property.summary}</p>}
+      <div
+        className="mt-[10px] rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+        style={{ borderLeft: `5px solid ${accent}` }}
+      >
+        <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{property.name}</h3>
+        {property.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{property.address}</p>}
+        {property.summary && <p className="m-0 text-xs text-graytext">{property.summary}</p>}
       </div>
 
       {property.units?.length > 0 && (
-        <div>
-          <label className="block text-xs font-medium text-neutral-500">Unidade (opcional)</label>
+        <div className="mt-5">
+          <SectionLabel>O que você está avaliando</SectionLabel>
           <select
             value={unitId}
-            onChange={(e) => setUnitId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+            onChange={(e) => onChangeUnit(e.target.value)}
+            className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
           >
-            <option value="">Avaliação geral do empreendimento</option>
-            {property.units.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name}
-              </option>
-            ))}
+            <option value="">O empreendimento em geral</option>
+            {property.units.map((u) => {
+              const feita = draft.ans?.[evalKey(property.id, u.id)];
+              return (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                  {u.table_value ? ` — R$ ${Math.round(u.table_value).toLocaleString("pt-BR")}` : ""}
+                  {feita?.sent ? "  ✓ avaliada" : ""}
+                </option>
+              );
+            })}
           </select>
+          {unit?.table_value != null && (
+            <div className="mt-[10px] rounded-[11px] bg-light p-3 text-[13px] text-graytext">
+              Valor de tabela desta unidade:{" "}
+              <b className="text-charcoal">R$ {Math.round(unit.table_value).toLocaleString("pt-BR")}</b>
+            </div>
+          )}
+          <div className="mt-[7px] flex justify-between text-[11px] text-muted">
+            <span>Pode avaliar mais de uma unidade — é só voltar e escolher outra.</span>
+          </div>
         </div>
       )}
 
-      <TextField label="Seu nome" value={evaluatorName} onChange={setEvaluatorName} required />
-      <TextField
-        label="Sua relação (ex.: comprador, esposa, arquiteta)"
-        value={evaluatorRole}
-        onChange={setEvaluatorRole}
+      <SectionLabel>Quem está avaliando</SectionLabel>
+      <Field label="Seu nome" value={nome} onChange={setNome} placeholder="Ex.: Pedro Machado" />
+      <Field
+        label="Relação com a decisão (opcional)"
+        value={relacao}
+        onChange={setRelacao}
+        placeholder="Ex.: esposa, filho, arquiteta, consultor"
       />
 
+      <SectionLabel>Dê sua nota de 1 a 5</SectionLabel>
       <div>
-        <label className="block text-xs font-medium text-neutral-500">Nota geral (0 a 10)</label>
-        <input
-          type="number"
-          min={0}
-          max={10}
-          value={overallScore}
-          onChange={(e) => setOverallScore(e.target.value)}
-          className="mt-1 w-24 rounded-md border border-neutral-300 px-3 py-2 text-sm"
-        />
+        {allCriteria.map((c, i) => (
+          <div key={c} className="border-b border-rule py-[13px] last:border-0">
+            {i === base && (
+              <span className="mb-[6px] inline-block text-[10.5px] font-bold uppercase tracking-[.08em] text-gold">
+                Específico deste imóvel
+              </span>
+            )}
+            <label className="mb-[9px] block text-sm text-charcoal">{c}</label>
+            <div className="flex gap-[6px]">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setNotas((s) => ({ ...s, [c]: n }))}
+                  className="h-[46px] flex-1 rounded-[10px] border-[1.5px] text-[15px] font-bold"
+                  style={
+                    notas[c] === n
+                      ? { background: accent, borderColor: accent, color: "#fff" }
+                      : { background: "#fff", borderColor: "#E2DED6", color: "#5C5C5C" }
+                  }
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            {i === 0 && (
+              <div className="mt-[7px] flex justify-between text-[11px] text-muted">
+                <span>1 · não atendeu</span>
+                <span>5 · superou</span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {allCriteria.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-neutral-500">Critérios (1 a 5)</p>
-          {allCriteria.map((c) => (
-            <div key={c} className="flex items-center justify-between">
-              <span className="text-sm text-neutral-700">{c}</span>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    type="button"
-                    key={n}
-                    onClick={() => setScore(c, n)}
-                    className={`h-7 w-7 rounded text-xs ${
-                      scores[c] === n
-                        ? "bg-neutral-800 text-white"
-                        : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <SectionLabel>O que mais me agradou</SectionLabel>
+      <TextArea value={bom} onChange={setBom} placeholder="O que te marcou positivamente?" />
+
+      <SectionLabel>Ressalvas e pontos de atenção</SectionLabel>
+      <TextArea value={ruim} onChange={setRuim} placeholder="O que te incomodou ou ficou em dúvida?" />
 
       {property.questions?.length > 0 && (
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-neutral-500">Marcar perguntas para o corretor</p>
+        <div>
+          <SectionLabel>Perguntas para o corretor</SectionLabel>
           {property.questions.map((q) => (
-            <label key={q} className="flex items-center gap-2 text-sm text-neutral-700">
+            <label
+              key={q}
+              className="flex items-start gap-[10px] border-b border-rule py-[10px] text-[13.5px] text-graytext last:border-0"
+            >
               <input
                 type="checkbox"
-                checked={flagged.includes(q)}
-                onChange={() => toggleFlagged(q)}
+                checked={perguntasMarcadas.includes(q)}
+                onChange={() => toggleQuestion(q)}
+                className="mt-[1px] h-5 w-5 flex-none accent-gold"
               />
-              {q}
+              <span>{q}</span>
             </label>
           ))}
         </div>
       )}
 
-      <TextArea label="Pontos fortes" value={strengths} onChange={setStrengths} />
-      <TextArea label="Ressalvas" value={concerns} onChange={setConcerns} />
+      <SectionLabel>Nota geral deste imóvel</SectionLabel>
+      <div className="flex flex-wrap gap-[6px]">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => setNota(n)}
+            className="h-10 flex-1 basis-[calc(20%-5px)] rounded-lg border-[1.5px] text-[13.5px] font-bold"
+            style={
+              nota === n
+                ? { background: accent, borderColor: accent, color: "#fff" }
+                : { background: "#fff", borderColor: "#E2DED6", color: "#5C5C5C" }
+            }
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+      <div className="mt-[7px] flex justify-between text-[11px] text-muted">
+        <span>1 · não me serve</span>
+        <span>10 · é este</span>
+      </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={busy}
-        className="w-full rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
-      >
-        {busy ? "Enviando…" : "Enviar avaliação"}
-      </button>
-    </form>
-  );
-}
-
-function TextField({ label, value, onChange, required }) {
-  return (
-    <div>
-      <label className="block text-xs font-medium text-neutral-500">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
-      />
+      <div className="sticky bottom-0 mt-2 bg-gradient-to-t from-bg from-[26%] to-transparent pt-4 pb-[calc(14px+env(safe-area-inset-bottom))]">
+        <div className="mb-[11px] h-[5px] overflow-hidden rounded-full bg-rule">
+          <div
+            className="h-full bg-gold transition-[width]"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={busy}
+          className="w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white disabled:opacity-45"
+        >
+          {busy ? "Enviando…" : "Enviar avaliação"}
+        </button>
+        {error && <p className="mt-2 text-[13px] text-[#B34A2E]">{error}</p>}
+      </div>
     </div>
   );
 }
 
-function TextArea({ label, value, onChange }) {
+function SectionLabel({ children }) {
   return (
-    <div>
-      <label className="block text-xs font-medium text-neutral-500">{label}</label>
-      <textarea
+    <h2 className="mt-[26px] mb-[10px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext first:mt-[6px]">
+      {children}
+    </h2>
+  );
+}
+
+function Field({ label, value, onChange, placeholder }) {
+  return (
+    <>
+      <label className="mt-[14px] mb-[6px] block text-[13px] font-semibold text-charcoal">{label}</label>
+      <input
+        type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        rows={2}
-        className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm"
+        placeholder={placeholder}
+        className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
       />
+    </>
+  );
+}
+
+function TextArea({ value, onChange, placeholder }) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="min-h-[86px] w-full resize-y rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
+    />
+  );
+}
+
+function Shell({ title, subtitle, children }) {
+  return (
+    <div className="min-h-screen bg-bg">
+      <header className="bg-charcoal px-4 pt-[22px] pb-5 text-white">
+        <div className="mx-auto max-w-[640px]">
+          <div className="text-[11px] font-bold uppercase tracking-[.18em] text-gold">
+            Avaliador Materimob
+          </div>
+          <h1 className="mt-2 mb-1 text-[23px] font-bold leading-tight">{title}</h1>
+          {subtitle && <p className="m-0 text-[13px] text-[#C9C9C9]">{subtitle}</p>}
+        </div>
+      </header>
+      <div className="mx-auto max-w-[640px] px-4 pb-10">{children}</div>
+    </div>
+  );
+}
+
+function Centered({ children }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg p-6 text-center">
+      {children}
     </div>
   );
 }

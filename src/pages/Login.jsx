@@ -41,45 +41,43 @@ export default function Login() {
 
   if (confirmEmailSent) {
     return (
-      <Centered>
-        <h1 className="text-xl font-medium text-neutral-800">Quase lá</h1>
-        <p className="mt-2 max-w-sm text-sm text-neutral-500">
+      <Card>
+        <h1 className="text-center text-xl font-bold text-charcoal">Quase lá</h1>
+        <p className="mt-2 text-center text-sm text-graytext">
           Enviamos um link de confirmação para <strong>{email}</strong>.
           Confirme por lá para poder entrar.
         </p>
-      </Centered>
+      </Card>
     );
   }
 
   return (
-    <Centered>
-      <h1 className="text-xl font-medium text-neutral-800">
-        Avaliador MaterImob
-      </h1>
-      <form onSubmit={handleSubmit} className="mt-6 w-72 space-y-3 text-left">
+    <Card>
+      <h1 className="text-center text-xl font-bold text-charcoal">Avaliador MaterImob</h1>
+      <p className="mt-1 text-center text-sm text-graytext">
+        {mode === "entrar" ? "Entrar na sua conta" : "Criar uma conta"}
+      </p>
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-3 text-left">
         <div>
-          <label className="block text-xs font-medium text-neutral-500">
-            E-mail
-          </label>
+          <label className="block text-xs font-medium text-graytext">E-mail</label>
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-neutral-500">
-            Senha
-          </label>
+          <label className="block text-xs font-medium text-graytext">Senha</label>
           <input
             type="password"
             required
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
           />
         </div>
 
@@ -88,7 +86,7 @@ export default function Login() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-md bg-neutral-800 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+          className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
         >
           {busy ? "Aguarde…" : mode === "entrar" ? "Entrar" : "Criar conta"}
         </button>
@@ -99,20 +97,20 @@ export default function Login() {
           setMode(mode === "entrar" ? "cadastrar" : "entrar");
           setError("");
         }}
-        className="mt-4 text-sm text-neutral-500 underline"
+        className="mt-4 w-full text-center text-sm text-graytext underline"
       >
         {mode === "entrar"
           ? "Ainda não tem conta? Criar uma"
           : "Já tem conta? Entrar"}
       </button>
-    </Centered>
+    </Card>
   );
 }
 
-function Centered({ children }) {
+function Card({ children }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 p-6 text-center">
-      {children}
+    <div className="flex min-h-screen items-center justify-center bg-bg p-6">
+      <div className="w-full max-w-sm rounded-[20px] bg-white p-8 shadow-sm">{children}</div>
     </div>
   );
 }
