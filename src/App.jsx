@@ -1,7 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
-import AppHome from "./pages/AppHome";
+import Selections from "./pages/Selections";
+import SelectionDetail from "./pages/SelectionDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { useAuth } from "./lib/AuthContext";
 
 function Placeholder({ label }) {
   return (
@@ -16,16 +18,30 @@ function Placeholder({ label }) {
   );
 }
 
+function Home() {
+  const { user, loading } = useAuth();
+  if (loading) return <Placeholder label="Carregando…" />;
+  return <Navigate to={user ? "/app" : "/entrar"} replace />;
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Placeholder label="Página inicial" />} />
+      <Route path="/" element={<Home />} />
       <Route path="/entrar" element={<Login />} />
       <Route
-        path="/app/*"
+        path="/app"
         element={
           <ProtectedRoute>
-            <AppHome />
+            <Selections />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/selections/:id"
+        element={
+          <ProtectedRoute>
+            <SelectionDetail />
           </ProtectedRoute>
         }
       />
