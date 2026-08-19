@@ -8,6 +8,7 @@ import PublicPanel from "./pages/PublicPanel";
 import Organization from "./pages/Organization";
 import Portfolio from "./pages/Portfolio";
 import Launches from "./pages/Launches";
+import LaunchDetail from "./pages/LaunchDetail";
 import AcceptInvite from "./pages/AcceptInvite";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -53,6 +54,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Launches />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/lancamentos/:id"
+        element={
+          <ProtectedRoute>
+            <LaunchDetail />
           </ProtectedRoute>
         }
       />

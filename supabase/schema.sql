@@ -443,3 +443,83 @@ $$;
 -- experiência de plantão de vendas.
 alter table av_selections add column launch_id uuid references av_launches(id) on delete set null;
 alter table av_units add column launch_unit_id uuid references av_launch_units(id) on delete set null;
+-- Painel 360º de um lançamento, só pra gerente+ da organização dona.
+-- Devolve números já agregados — nunca linha crua de avaliação, proposta
+-- ou seleção de outro corretor. Isso preserva a privacidade do
+-- relacionamento de cada corretor com o cliente dele, mesmo quando vários
+-- corretores de organizações concorrentes trabalham o mesmo lançamento.
+create or replace function launch_dashboard(p_launch_id uuid)
+returns jsonb
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  v_org_id uuid;
+  result jsonb;
+begin
+  select organization_id into v_org_id from av_launches where id = p_launch_id;
+  if v_org_id is null then
+    raise exception 'lançamento não encontrado';
+  end if;
+  if org_role_rank(my_org_role(v_org_id)) < 3 then
+    raise exception 'acesso restrito ao gerente ou diretor da organização dona do lançamento';
+  end if;
+
+  select jsonb_build_object(
+    'total_roteiros', (select count(*) from av_selections where launch_id = p_launch_id),
+    'total_corretores', (select count(distinct user_id) from av_selections where launch_id = p_launch_id),
+    'funil', (
+      select coalesce(jsonb_object_agg(stage, cnt), '{}'::jsonb)
+      from (
+        select p.stage, count(*) cnt
+        from av_properties p
+        join av_selections s on s.id = p.selection_id
+        where s.launch_id = p_launch_id
+        group by p.stage
+      ) f
+    ),
+    'total_avaliacoes', (
+      select count(*)
+      from av_evaluations e
+      join av_selections s on s.id = e.selection_id
+      where s.launch_id = p_launch_id
+    ),
+    'nota_media', (
+      select round(avg(e.overall_score)::numeric, 1)
+      from av_evaluations e
+      join av_selections s on s.id = e.selection_id
+      where s.launch_id = p_launch_id and e.overall_score is not null
+    ),
+    'por_unidade', (
+      select coalesce(jsonb_agg(u order by u.name), '[]'::jsonb)
+      from (
+        select
+          lu.id as launch_unit_id,
+          lu.name,
+          lu.status,
+          count(e.id) as avaliacoes,
+          round(avg(e.overall_score)::numeric, 1) as nota_media
+        from av_launch_units lu
+        left join av_units au on au.launch_unit_id = lu.id
+        left join av_evaluations e on e.unit_id = au.id
+        where lu.launch_id = p_launch_id
+        group by lu.id, lu.name, lu.status
+      ) u
+    ),
+    'total_propostas', (
+      select count(*)
+      from av_proposals pr
+      join av_selections s on s.id = pr.selection_id
+      where s.launch_id = p_launch_id
+    ),
+    'propostas_interesse', (
+      select count(*)
+      from av_proposals pr
+      join av_selections s on s.id = pr.selection_id
+      where s.launch_id = p_launch_id and pr.buy_intent
+    )
+  ) into result;
+
+  return result;
+end;
+$$;
