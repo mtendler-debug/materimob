@@ -596,3 +596,32 @@ begin
   return v_id;
 end;
 $$;
+-- Sinalização explícita: uma imobiliária marca que está trabalhando um
+-- lançamento (em vez de inferir isso implicitamente de roteiros criados
+-- por corretores individuais). Nome de organização não é dado sensível —
+-- já é visível em toda a plataforma via lançamentos/portfólio — então
+-- leitura é liberada geral; só quem é gerente+ da própria organização
+-- decide marcar/desmarcar ELA MESMA (nunca outra organização).
+create table av_launch_partners (
+  id               uuid primary key default gen_random_uuid(),
+  launch_id        uuid references av_launches(id) on delete cascade not null,
+  organization_id  uuid references organizations(id) on delete cascade not null,
+  created_by       uuid references auth.users not null default auth.uid(),
+  created_at       timestamptz default now(),
+  unique (launch_id, organization_id)
+);
+
+alter table av_launch_partners enable row level security;
+
+create policy "Authenticated users view launch partners" on av_launch_partners
+  for select to authenticated using (true);
+
+create policy "Gerente+ marca a própria organização como parceira" on av_launch_partners
+  for insert to authenticated with check (
+    org_role_rank(my_org_role(organization_id)) >= 3
+  );
+
+create policy "Gerente+ desmarca a própria organização" on av_launch_partners
+  for delete to authenticated using (
+    org_role_rank(my_org_role(organization_id)) >= 3
+  );

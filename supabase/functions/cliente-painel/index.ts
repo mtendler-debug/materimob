@@ -39,12 +39,39 @@ Deno.serve(async (req) => {
 
   const { data: selections } = await admin
     .from("av_selections")
-    .select("id, title, subtitle, token_form, token_panel, archived, created_at")
+    .select("id, title, subtitle, token_form, token_panel, archived, created_at, user_id")
     .eq("client_id", client.id)
     .order("created_at", { ascending: false });
 
+  const list = selections ?? [];
+  const userIds = [...new Set(list.map((s) => s.user_id))];
+
+  // Nome da organização de cada corretor (quando ele pertence a uma) —
+  // mais reconhecível pro cliente do que um e-mail solto. Isso é o próprio
+  // corretor que está atendendo esse cliente, então mostrar essa
+  // informação pra ele não tem nada a ver com a privacidade entre
+  // corretores concorrentes que vale no painel da incorporadora.
+  const { data: memberships } = userIds.length
+    ? await admin
+        .from("organization_members")
+        .select("user_id, organizations(name)")
+        .in("user_id", userIds)
+    : { data: [] };
+  const orgByUser = new Map((memberships ?? []).map((m) => [m.user_id, m.organizations?.name ?? null]));
+
+  const emailByUser = new Map();
+  for (const id of userIds) {
+    const { data } = await admin.auth.admin.getUserById(id);
+    emailByUser.set(id, data?.user?.email ?? null);
+  }
+
   return json({
     client: { name: client.name },
-    selections: selections ?? [],
+    selections: list.map((s) => ({
+      ...s,
+      user_id: undefined,
+      corretor_email: emailByUser.get(s.user_id) ?? null,
+      corretor_org: orgByUser.get(s.user_id) ?? null,
+    })),
   });
 });

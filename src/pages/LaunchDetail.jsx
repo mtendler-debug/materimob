@@ -24,9 +24,11 @@ export default function LaunchDetail() {
   const { org, role } = useOrganization();
   const [launch, setLaunch] = useState(null);
   const [dashboard, setDashboard] = useState(null);
+  const [partners, setPartners] = useState(null);
   const [error, setError] = useState("");
 
   const manage = org && launch && org.id === launch.organization_id && canManage(role);
+  const isOwnerOrg = org && launch && org.id === launch.organization_id;
 
   async function load() {
     const { data, error: loadError } = await supabase
@@ -46,8 +48,17 @@ export default function LaunchDetail() {
     if (!rpcError) setDashboard(data);
   }
 
+  async function loadPartners() {
+    const { data } = await supabase
+      .from("av_launch_partners")
+      .select("organization_id, organizations(name)")
+      .eq("launch_id", id);
+    setPartners(data ?? []);
+  }
+
   useEffect(() => {
     load();
+    loadPartners();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -72,6 +83,16 @@ export default function LaunchDetail() {
           {launch.summary && <p className="text-xs text-graytext">{launch.summary}</p>}
         </div>
 
+        {org && canManage(role) && !isOwnerOrg && (
+          <PartnerToggle launchId={launch.id} org={org} partners={partners} onChange={loadPartners} />
+        )}
+
+        {partners?.length > 0 && (
+          <p className="mt-2 text-xs text-graytext">
+            Imobiliárias trabalhando este lançamento: {partners.map((p) => p.organizations?.name).filter(Boolean).join(", ")}
+          </p>
+        )}
+
         {manage && (
           <>
             <SectionTitle>Painel do lançamento</SectionTitle>
@@ -91,6 +112,33 @@ export default function LaunchDetail() {
         <CreateRoteiro launch={launch} />
       </div>
     </div>
+  );
+}
+
+function PartnerToggle({ launchId, org, partners, onChange }) {
+  const [busy, setBusy] = useState(false);
+  const checked = (partners ?? []).some((p) => p.organization_id === org.id);
+
+  async function toggle() {
+    setBusy(true);
+    if (checked) {
+      await supabase
+        .from("av_launch_partners")
+        .delete()
+        .eq("launch_id", launchId)
+        .eq("organization_id", org.id);
+    } else {
+      await supabase.from("av_launch_partners").insert({ launch_id: launchId, organization_id: org.id });
+    }
+    setBusy(false);
+    onChange();
+  }
+
+  return (
+    <label className="mt-3 flex items-center gap-2 text-sm text-charcoal">
+      <input type="checkbox" checked={checked} disabled={busy} onChange={toggle} className="h-4 w-4" />
+      {org.name} está trabalhando este lançamento
+    </label>
   );
 }
 

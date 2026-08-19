@@ -74,6 +74,11 @@ export default function ClientHome() {
                 )}
               </div>
               {s.subtitle && <p className="mt-1 text-[13px] text-graytext">{s.subtitle}</p>}
+              {(s.corretor_org || s.corretor_email) && (
+                <p className="mt-1 text-[12px] text-muted">
+                  Atendimento por {s.corretor_org || s.corretor_email}
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap gap-2">
                 {!s.archived && (
                   <a

@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Entry from "./pages/Entry";
+import Dashboard from "./pages/Dashboard";
 import Selections from "./pages/Selections";
 import SelectionDetail from "./pages/SelectionDetail";
 import PublicForm from "./pages/PublicForm";
@@ -9,7 +10,6 @@ import Organization from "./pages/Organization";
 import Portfolio from "./pages/Portfolio";
 import Launches from "./pages/Launches";
 import LaunchDetail from "./pages/LaunchDetail";
-import Clients from "./pages/Clients";
 import AcceptInvite from "./pages/AcceptInvite";
 import ClientHome from "./pages/ClientHome";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -21,6 +21,14 @@ export default function App() {
       <Route path="/entrar" element={<Login />} />
       <Route
         path="/app"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/selecoes"
         element={
           <ProtectedRoute>
             <Selections />
@@ -64,14 +72,6 @@ export default function App() {
         element={
           <ProtectedRoute>
             <LaunchDetail />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/app/clientes"
-        element={
-          <ProtectedRoute>
-            <Clients />
           </ProtectedRoute>
         }
       />

@@ -1,25 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/AuthContext";
-import { generateToken } from "../lib/token";
-import { CriteriaPresets } from "../components/CriteriaPresets";
 
 export default function Selections() {
-  const { user, signOut } = useAuth();
   const [selections, setSelections] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [clientName, setClientName] = useState("");
-  const [clientPhone, setClientPhone] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
-  const [criteria, setCriteria] = useState("");
+  useEffect(() => {
+    load();
+  }, []);
 
-  async function loadSelections() {
+  async function load() {
     const { data, error: loadError } = await supabase
       .from("av_selections")
       .select("id, title, client_name, archived, created_at")
@@ -31,137 +22,27 @@ export default function Selections() {
     setSelections(data);
   }
 
-  useEffect(() => {
-    loadSelections();
-  }, []);
-
-  async function handleCreate(e) {
-    e.preventDefault();
-    setError("");
-    if (!title.trim() || !clientName.trim()) {
-      setError("Título e nome do cliente são obrigatórios.");
-      return;
-    }
-    setSaving(true);
-    const { data: clientId, error: clientError } = await supabase.rpc("find_or_create_client", {
-      p_name: clientName.trim(),
-      p_phone: clientPhone.trim() || null,
-      p_email: clientEmail.trim() || null,
-    });
-    if (clientError) {
-      setSaving(false);
-      setError("Erro ao vincular cliente: " + clientError.message);
-      return;
-    }
-    const { error: insertError } = await supabase.from("av_selections").insert({
-      title: title.trim(),
-      subtitle: subtitle.trim() || null,
-      client_name: clientName.trim(),
-      client_phone: clientPhone.trim() || null,
-      client_email: clientEmail.trim() || null,
-      client_id: clientId,
-      criteria: criteria
-        .split("\n")
-        .map((c) => c.trim())
-        .filter(Boolean),
-      token_form: generateToken(),
-      token_panel: generateToken(),
-    });
-    setSaving(false);
-    if (insertError) {
-      setError("Erro ao criar seleção: " + insertError.message);
-      return;
-    }
-    setTitle("");
-    setSubtitle("");
-    setClientName("");
-    setClientPhone("");
-    setClientEmail("");
-    setCriteria("");
-    setShowForm(false);
-    loadSelections();
-  }
-
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-wide text-muted">
-              Avaliador MaterImob
-            </p>
-            <h1 className="mt-1 text-xl font-medium text-charcoal">
-              Minhas seleções
-            </h1>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-muted">{user.email}</p>
-            <div className="mt-1 flex items-center gap-3">
-              <Link to="/app/clientes" className="text-sm text-graytext underline">
-                Clientes
-              </Link>
-              <Link to="/app/organizacao" className="text-sm text-graytext underline">
-                Organização
-              </Link>
-              <Link to="/app/portfolio" className="text-sm text-graytext underline">
-                Portfólio
-              </Link>
-              <Link to="/app/lancamentos" className="text-sm text-graytext underline">
-                Lançamentos
-              </Link>
-              <button onClick={signOut} className="text-sm text-graytext underline">
-                Sair
-              </button>
-            </div>
-          </div>
-        </div>
+        <Link to="/app" className="text-sm text-graytext underline">
+          ← Meus clientes
+        </Link>
+        <h1 className="mt-3 text-xl font-medium text-charcoal">Todas as seleções</h1>
+        <p className="text-sm text-graytext">
+          Visão solta de todos os roteiros, sem agrupar por cliente — pra criar um atendimento
+          novo, use{" "}
+          <Link to="/app" className="underline">
+            Meus clientes
+          </Link>
+          .
+        </p>
 
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="mt-6 rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90"
-        >
-          {showForm ? "Cancelar" : "+ Nova seleção"}
-        </button>
-
-        {showForm && (
-          <form
-            onSubmit={handleCreate}
-            className="mt-4 space-y-3 rounded-md border border-rule bg-white p-4"
-          >
-            <Field label="Título" value={title} onChange={setTitle} required />
-            <Field label="Subtítulo" value={subtitle} onChange={setSubtitle} />
-            <Field label="Nome do cliente" value={clientName} onChange={setClientName} required />
-            <Field label="Telefone do cliente" value={clientPhone} onChange={setClientPhone} />
-            <Field label="E-mail do cliente" value={clientEmail} onChange={setClientEmail} />
-            <div>
-              <label className="block text-xs font-medium text-graytext">
-                Critérios (um por linha)
-              </label>
-              <textarea
-                value={criteria}
-                onChange={(e) => setCriteria(e.target.value)}
-                rows={4}
-                placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
-                className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
-              />
-              <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
-            </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-            >
-              {saving ? "Salvando…" : "Criar seleção"}
-            </button>
-          </form>
-        )}
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
         <div className="mt-6 space-y-2">
           {selections === null && <p className="text-sm text-muted">Carregando…</p>}
-          {selections?.length === 0 && (
-            <p className="text-sm text-muted">Nenhuma seleção ainda.</p>
-          )}
+          {selections?.length === 0 && <p className="text-sm text-muted">Nenhuma seleção ainda.</p>}
           {selections?.map((s) => (
             <Link
               key={s.id}
@@ -179,21 +60,6 @@ export default function Selections() {
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Field({ label, value, onChange, required }) {
-  return (
-    <div>
-      <label className="block text-xs font-medium text-graytext">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
-      />
     </div>
   );
 }

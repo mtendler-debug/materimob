@@ -97,7 +97,7 @@ export default function SelectionDetail() {
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
         <Link to="/app" className="text-sm text-graytext underline">
-          ← Minhas seleções
+          ← Meus clientes
         </Link>
 
         <div className="mt-3 flex items-start justify-between">
