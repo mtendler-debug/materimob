@@ -48,3 +48,12 @@ export function useProfile() {
     reload: load,
   };
 }
+
+// account_type não é uma parede — só decide a casa (a tela em que a pessoa
+// entra). Pertencer a uma organização acrescenta áreas ao menu, nunca
+// substitui isso.
+export function homeForAccountType(accountType) {
+  return accountType === "imobiliaria" || accountType === "incorporadora"
+    ? "/app/organizacao"
+    : "/app";
+}

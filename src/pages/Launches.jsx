@@ -36,10 +36,7 @@ export default function Launches() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <Link to="/app" className="text-sm text-graytext underline">
-          ← Meus clientes
-        </Link>
-        <h1 className="mt-3 text-xl font-bold text-charcoal">Lançamentos</h1>
+        <h1 className="text-xl font-bold text-charcoal">Lançamentos</h1>
         <p className="text-sm text-graytext">
           Empreendimentos publicados por qualquer incorporadora na plataforma. Qualquer corretor pode
           montar um roteiro de visita para um cliente a partir daqui.

@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { useAuth } from "../lib/AuthContext";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
   const [clients, setClients] = useState(null);
   const [orphanSelections, setOrphanSelections] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -98,43 +96,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-wide text-muted">Avaliador MaterImob</p>
-            <h1 className="mt-1 text-xl font-medium text-charcoal">Meus clientes</h1>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-muted">{user.email}</p>
-            <div className="mt-1 flex items-center gap-3">
-              <Link to="/app/selecoes" className="text-sm text-graytext underline">
-                Todas as seleções
-              </Link>
-              <Link to="/app/organizacao" className="text-sm text-graytext underline">
-                Organização
-              </Link>
-              <Link to="/app/portfolio" className="text-sm text-graytext underline">
-                Portfólio
-              </Link>
-              <Link to="/app/lancamentos" className="text-sm text-graytext underline">
-                Lançamentos
-              </Link>
-              <button onClick={signOut} className="text-sm text-graytext underline">
-                Sair
-              </button>
-            </div>
-          </div>
-        </div>
+        <p className="text-sm uppercase tracking-wide text-muted">Avaliador MaterImob</p>
+        <h1 className="mt-1 text-xl font-medium text-charcoal">Meus clientes</h1>
         <p className="mt-2 text-sm text-graytext">
           Cada cliente ganha um link permanente que reúne todos os roteiros que você já criou pra
-          ele. Precisa de imóveis pra apresentar? Veja o{" "}
-          <Link to="/app/portfolio" className="underline">
-            portfólio
-          </Link>{" "}
-          e os{" "}
-          <Link to="/app/lancamentos" className="underline">
-            lançamentos
-          </Link>{" "}
-          disponíveis na plataforma.
+          ele. Precisa de imóveis pra apresentar? Veja{" "}
+          <Link to="/app/imoveis" className="underline">
+            Imóveis
+          </Link>
+          .
         </p>
 
         <button

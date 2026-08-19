@@ -38,10 +38,7 @@ export default function Portfolio() {
     return (
       <div className="min-h-screen bg-bg p-6">
         <div className="mx-auto max-w-2xl">
-          <Link to="/app" className="text-sm text-graytext underline">
-            ← Meus clientes
-          </Link>
-          <p className="mt-4 text-sm text-graytext">
+          <p className="text-sm text-graytext">
             O portfólio é um catálogo compartilhado dentro de uma organização. Você ainda não faz
             parte de uma —{" "}
             <Link to="/app/organizacao" className="underline">
@@ -57,10 +54,7 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <Link to="/app" className="text-sm text-graytext underline">
-          ← Meus clientes
-        </Link>
-        <h1 className="mt-3 text-xl font-bold text-charcoal">Portfólio · {org.name}</h1>
+        <h1 className="text-xl font-bold text-charcoal">Portfólio · {org.name}</h1>
         <p className="text-sm text-graytext">
           {manage
             ? "Imóveis cadastrados aqui ficam disponíveis para todo o time importar nas seleções dos clientes."

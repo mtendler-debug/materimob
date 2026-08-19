@@ -25,10 +25,7 @@ export default function Selections() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <Link to="/app" className="text-sm text-graytext underline">
-          ← Meus clientes
-        </Link>
-        <h1 className="mt-3 text-xl font-medium text-charcoal">Todas as seleções</h1>
+        <h1 className="text-xl font-medium text-charcoal">Meus roteiros</h1>
         <p className="text-sm text-graytext">
           Visão solta de todos os roteiros, sem agrupar por cliente — pra criar um atendimento
           novo, use{" "}
