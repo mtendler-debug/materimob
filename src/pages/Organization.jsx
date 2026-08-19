@@ -5,9 +5,16 @@ import { useOrganization, ROLE_LABELS, canManage } from "../lib/useOrganization"
 import { generateToken } from "../lib/token";
 
 export default function Organization() {
-  const { org, role, loading, reload } = useOrganization();
+  const { org, role, memberships, activeOrgId, setActiveOrgId, loading, reload } = useOrganization();
+  const [showNew, setShowNew] = useState(false);
 
   if (loading) return <div className="p-6 text-sm text-muted">Carregando…</div>;
+
+  function handleCreated(newOrgId) {
+    setShowNew(false);
+    reload();
+    if (newOrgId) setActiveOrgId(newOrgId);
+  }
 
   return (
     <div className="min-h-screen bg-bg p-6">
@@ -17,12 +24,49 @@ export default function Organization() {
         </Link>
         <h1 className="mt-3 text-xl font-bold text-charcoal">Organização</h1>
 
+        {memberships.length > 1 && (
+          <OrgSwitcher memberships={memberships} activeOrgId={activeOrgId} onSwitch={setActiveOrgId} />
+        )}
+
         {!org ? (
-          <CreateOrganization onCreated={reload} />
+          <CreateOrganization onCreated={handleCreated} />
         ) : (
-          <OrganizationDetail org={org} role={role} onChange={reload} />
+          <>
+            <OrganizationDetail org={org} role={role} onChange={reload} />
+            {showNew ? (
+              <div className="mt-6">
+                <CreateOrganization onCreated={handleCreated} />
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowNew(true)}
+                className="mt-6 text-sm text-graytext underline"
+              >
+                + Criar outra organização
+              </button>
+            )}
+          </>
         )}
       </div>
+    </div>
+  );
+}
+
+function OrgSwitcher({ memberships, activeOrgId, onSwitch }) {
+  return (
+    <div className="mt-3 flex items-center gap-2">
+      <label className="text-[11.5px] font-bold uppercase tracking-[.06em] text-graytext">Ver como</label>
+      <select
+        value={activeOrgId ?? ""}
+        onChange={(e) => onSwitch(e.target.value)}
+        className="rounded-[9px] border-[1.5px] border-rule bg-white px-3 py-1.5 text-sm"
+      >
+        {memberships.map((m) => (
+          <option key={m.organizations.id} value={m.organizations.id}>
+            {m.organizations.name} ({ROLE_LABELS[m.role]})
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -38,13 +82,17 @@ function CreateOrganization({ onCreated }) {
     if (!name.trim()) return;
     setSaving(true);
     setError("");
-    const { error: insertError } = await supabase.from("organizations").insert({ name: name.trim(), tipo });
+    const { data, error: insertError } = await supabase
+      .from("organizations")
+      .insert({ name: name.trim(), tipo })
+      .select("id")
+      .single();
     setSaving(false);
     if (insertError) {
       setError(insertError.message);
       return;
     }
-    onCreated();
+    onCreated(data.id);
   }
 
   return (

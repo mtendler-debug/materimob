@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
+import { useOrganization } from "../lib/useOrganization";
 
 export default function AcceptInvite() {
   const { token } = useParams();
   const { user, loading } = useAuth();
+  const { setActiveOrgId } = useOrganization();
   const [status, setStatus] = useState("idle"); // idle | working | done | error
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -28,6 +30,7 @@ export default function AcceptInvite() {
     }
     setResult(data);
     setStatus("done");
+    if (data.organization_id) setActiveOrgId(data.organization_id);
   }
 
   return (
