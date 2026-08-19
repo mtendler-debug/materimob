@@ -65,12 +65,19 @@ Deno.serve(async (req) => {
     emailByUser.set(id, data?.user?.email ?? null);
   }
 
+  // O cliente vê o nome do corretor, não o e-mail — só cai pro e-mail se a
+  // pessoa nunca preencheu o próprio perfil.
+  const { data: profiles } = userIds.length
+    ? await admin.from("profiles").select("id, full_name").in("id", userIds)
+    : { data: [] };
+  const nameByUser = new Map((profiles ?? []).map((p) => [p.id, p.full_name]));
+
   return json({
     client: { name: client.name },
     selections: list.map((s) => ({
       ...s,
       user_id: undefined,
-      corretor_email: emailByUser.get(s.user_id) ?? null,
+      corretor_nome: nameByUser.get(s.user_id) || emailByUser.get(s.user_id) || null,
       corretor_org: orgByUser.get(s.user_id) ?? null,
     })),
   });
