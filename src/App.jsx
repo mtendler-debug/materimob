@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Entry from "./pages/Entry";
 import Dashboard from "./pages/Dashboard";
+import Properties from "./pages/Properties";
 import Selections from "./pages/Selections";
 import SelectionDetail from "./pages/SelectionDetail";
 import PublicForm from "./pages/PublicForm";
@@ -48,7 +49,7 @@ export default function App() {
         }
       >
         <Route path="/app" element={<Dashboard />} />
-        <Route path="/app/imoveis" element={<EmConstrucao titulo="Imóveis" />} />
+        <Route path="/app/imoveis" element={<Properties />} />
         <Route path="/app/selecoes" element={<Selections />} />
         <Route path="/app/selections/:id" element={<SelectionDetail />} />
         <Route path="/app/perfil" element={<EmConstrucao titulo="Meu perfil" />} />

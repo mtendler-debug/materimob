@@ -5,6 +5,7 @@ import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
 import { downloadCsv } from "../lib/csv";
+import { importarPortfolio } from "../lib/importar";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -765,25 +766,7 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
 
   async function importItem(item) {
     setImportingId(item.id);
-    const { data: inserted, error } = await supabase
-      .from("av_properties")
-      .insert({
-        selection_id: selectionId,
-        name: item.name,
-        color: item.color,
-        address: item.address,
-        summary: item.summary,
-        extra_criteria: item.extra_criteria,
-        questions: item.questions,
-        position: existingCount,
-      })
-      .select("id")
-      .single();
-    if (!error && inserted && item.units?.length) {
-      await supabase
-        .from("av_units")
-        .insert(item.units.map((u) => ({ property_id: inserted.id, name: u.name, table_value: u.table_value })));
-    }
+    await importarPortfolio(selectionId, item, existingCount);
     setImportingId(null);
     setShow(false);
     onImported();

@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { generateToken } from "../lib/token";
 import { parseCsv, downloadCsv } from "../lib/csv";
+import { importarLancamento } from "../lib/importar";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -436,34 +437,11 @@ function CreateRoteiro({ launch }) {
       return;
     }
 
-    const { data: property, error: propError } = await supabase
-      .from("av_properties")
-      .insert({
-        selection_id: selection.id,
-        name: launch.name,
-        color: launch.color,
-        address: launch.address,
-        summary: launch.summary,
-        extra_criteria: launch.extra_criteria,
-        questions: launch.questions,
-      })
-      .select("id")
-      .single();
+    const { error: propError } = await importarLancamento(selection.id, launch, disponiveis, 0);
     if (propError) {
       setBusy(false);
       setError(propError.message);
       return;
-    }
-
-    if (disponiveis.length) {
-      await supabase.from("av_units").insert(
-        disponiveis.map((u) => ({
-          property_id: property.id,
-          name: u.name,
-          table_value: u.table_value,
-          launch_unit_id: u.id,
-        })),
-      );
     }
 
     setBusy(false);
