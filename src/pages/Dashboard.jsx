@@ -21,7 +21,9 @@ export default function Dashboard() {
   async function load() {
     const { data, error: loadError } = await supabase
       .from("av_selections")
-      .select("id, title, client_name, archived, created_at, client_id, av_clients(id, name, phone, email, token)")
+      .select(
+        "id, title, client_name, archived, created_at, client_id, token_form, token_panel, av_clients(id, name, phone, email, token)",
+      )
       .order("created_at", { ascending: false });
     if (loadError) {
       setError("Erro ao carregar clientes: " + loadError.message);
@@ -149,7 +151,7 @@ export default function Dashboard() {
             <p className="text-sm text-muted">Nenhum cliente ainda. Crie um atendimento pra começar.</p>
           )}
           {clients?.map((c) => (
-            <ClientCard key={c.id} client={c} />
+            <ClientCard key={c.id} client={c} onChange={load} />
           ))}
         </div>
 
@@ -177,7 +179,7 @@ export default function Dashboard() {
   );
 }
 
-function ClientCard({ client }) {
+function ClientCard({ client, onChange }) {
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
@@ -211,18 +213,107 @@ function ClientCard({ client }) {
       </button>
 
       {expanded && (
-        <div className="mt-2 space-y-1 border-t border-rule pt-2">
+        <div className="mt-2 space-y-2 border-t border-rule pt-2">
           {client.selections.map((s) => (
-            <Link
-              key={s.id}
-              to={`/app/selections/${s.id}`}
-              className="flex items-center justify-between rounded-[9px] px-2 py-1.5 text-sm hover:bg-light"
-            >
-              <span className="text-charcoal">{s.title}</span>
-              {s.archived && <span className="text-xs text-muted">arquivada</span>}
-            </Link>
+            <RoteiroRow key={s.id} selection={s} onChange={onChange} />
           ))}
         </div>
+      )}
+    </div>
+  );
+}
+
+function RoteiroRow({ selection, onChange }) {
+  const [show, setShow] = useState(false);
+  const [copiado, setCopiado] = useState(null); // "form" | "painel" | null
+  const formUrl = `${window.location.origin}/c/${selection.token_form}`;
+  const panelUrl = `${window.location.origin}/r/${selection.token_panel}`;
+
+  function copiar(url, tipo) {
+    navigator.clipboard.writeText(url);
+    setCopiado(tipo);
+    setTimeout(() => setCopiado(null), 1500);
+  }
+
+  async function renomear() {
+    const novo = window.prompt("Novo título do roteiro", selection.title);
+    if (novo == null || !novo.trim()) return;
+    await supabase.from("av_selections").update({ title: novo.trim() }).eq("id", selection.id);
+    onChange();
+  }
+
+  async function gerarNovosLinks() {
+    if (!window.confirm("Gerar links novos invalida os links já enviados para este roteiro. Continuar?")) return;
+    await supabase
+      .from("av_selections")
+      .update({ token_form: generateToken(), token_panel: generateToken() })
+      .eq("id", selection.id);
+    onChange();
+  }
+
+  async function alternarArquivado() {
+    const acao = selection.archived ? "reativar" : "desativar";
+    if (!window.confirm(`Confirma ${acao} este roteiro?`)) return;
+    await supabase.from("av_selections").update({ archived: !selection.archived }).eq("id", selection.id);
+    onChange();
+  }
+
+  return (
+    <div className="rounded-[9px] px-2 py-1.5 text-sm hover:bg-light">
+      <div className="flex items-center justify-between gap-2">
+        <Link to={`/app/selections/${selection.id}`} className="flex-1 font-medium text-charcoal">
+          {selection.title}
+        </Link>
+        {selection.archived && <span className="text-xs text-muted">desativado</span>}
+        <button onClick={() => setShow((v) => !v)} className="shrink-0 text-xs font-bold text-graytext underline">
+          {show ? "fechar" : "links e ações"}
+        </button>
+      </div>
+
+      {show && (
+        <div className="mt-2 space-y-1.5 border-t border-rule pt-2">
+          <LinkLine label="Avaliação" url={formUrl} copied={copiado === "form"} onCopy={() => copiar(formUrl, "form")} />
+          <LinkLine
+            label="Painel"
+            url={panelUrl}
+            copied={copiado === "painel"}
+            onCopy={() => copiar(panelUrl, "painel")}
+            openable
+          />
+          <div className="flex flex-wrap gap-3 pt-1">
+            <button onClick={renomear} className="text-xs font-bold text-graytext underline">
+              renomear
+            </button>
+            <button onClick={gerarNovosLinks} className="text-xs font-bold text-[#B34A2E] underline">
+              gerar novos links
+            </button>
+            <button onClick={alternarArquivado} className="text-xs font-bold text-[#B34A2E] underline">
+              {selection.archived ? "reativar" : "desativar"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LinkLine({ label, url, copied, onCopy, openable }) {
+  return (
+    <div className="flex items-center gap-2 rounded-[9px] bg-light px-2 py-1.5">
+      <span className="w-16 shrink-0 text-[10px] font-bold uppercase text-graytext">{label}</span>
+      <span className="flex-1 truncate text-xs text-graytext">{url}</span>
+      <button onClick={onCopy} className="shrink-0 rounded-[7px] bg-charcoal px-2 py-1 text-[11px] font-bold text-white">
+        {copied ? "Copiado!" : "copiar"}
+      </button>
+      {openable && (
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 rounded-[7px] border border-rule px-2 py-1 text-[11px] font-bold text-charcoal"
+        >
+          abrir
+        </a>
       )}
     </div>
   );
