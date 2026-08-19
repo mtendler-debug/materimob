@@ -10,6 +10,7 @@ import Organization from "./pages/Organization";
 import Portfolio from "./pages/Portfolio";
 import Launches from "./pages/Launches";
 import LaunchDetail from "./pages/LaunchDetail";
+import Showcase from "./pages/Showcase";
 import AcceptInvite from "./pages/AcceptInvite";
 import ClientHome from "./pages/ClientHome";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -72,6 +73,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <LaunchDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/organizacoes/:id"
+        element={
+          <ProtectedRoute>
+            <Showcase />
           </ProtectedRoute>
         }
       />

@@ -153,15 +153,45 @@ function TipoOption({ value, current, onSelect, children }) {
 
 function OrganizationDetail({ org, role, onChange }) {
   const [roster, setRoster] = useState(null);
+  const [properties, setProperties] = useState(null);
+  const [launches, setLaunches] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
   const manage = canManage(role);
+  const incorporadora = org.tipo === "incorporadora";
 
   async function loadRoster() {
     const { data } = await supabase.rpc("organization_roster", { org: org.id });
     setRoster(data ?? []);
   }
 
+  async function loadPortfolio() {
+    const { data } = await supabase
+      .from("av_portfolio_properties")
+      .select("id, name, av_portfolio_units(id)")
+      .eq("organization_id", org.id)
+      .order("name");
+    setProperties(data ?? []);
+  }
+
+  async function loadLaunches() {
+    const { data } = await supabase
+      .from("av_launches")
+      .select("id, name, av_launch_units(id, status)")
+      .eq("organization_id", org.id)
+      .order("created_at", { ascending: false });
+    setLaunches(data ?? []);
+  }
+
+  async function loadDashboard() {
+    const { data, error } = await supabase.rpc("organization_launches_dashboard", { p_org_id: org.id });
+    if (!error) setDashboard(data);
+  }
+
   useEffect(() => {
     loadRoster();
+    loadPortfolio();
+    if (incorporadora) loadLaunches();
+    if (incorporadora && manage) loadDashboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [org.id]);
 
@@ -172,6 +202,81 @@ function OrganizationDetail({ org, role, onChange }) {
         <p className="text-sm text-graytext">
           {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
         </p>
+        <Link to={`/app/organizacoes/${org.id}`} className="mt-2 inline-block text-xs text-graytext underline">
+          Ver como aparece para o ecossistema →
+        </Link>
+      </div>
+
+      {incorporadora && manage && dashboard && (
+        <div>
+          <SectionTitle>Painel agregado — todos os lançamentos</SectionTitle>
+          <p className="text-xs text-graytext">
+            Números somados de todos os lançamentos desta organização — sem nome de cliente nem
+            identidade de corretor.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Kpi label="Lançamentos" value={dashboard.total_lancamentos} foot={`${dashboard.total_unidades} unidade(s)`} />
+            <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
+            <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot={dashboard.nota_media != null ? `nota média ${String(dashboard.nota_media).replace(".", ",")}` : "recebidas"} />
+            <Kpi label="Propostas" value={dashboard.total_propostas} foot={`${dashboard.propostas_interesse} com interesse`} />
+          </div>
+          {dashboard.unidades_por_status && Object.keys(dashboard.unidades_por_status).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {Object.entries(dashboard.unidades_por_status).map(([status, n]) => (
+                <span key={status} className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+                  {n} {(STATUS_LABELS[status] || status).toLowerCase()}
+                </span>
+              ))}
+            </div>
+          )}
+          {dashboard.imobiliarias_parceiras?.length > 0 && (
+            <p className="mt-3 text-xs text-graytext">
+              Imobiliárias parceiras: {dashboard.imobiliarias_parceiras.join(", ")}
+            </p>
+          )}
+        </div>
+      )}
+
+      {incorporadora && (
+        <div>
+          <SectionTitle>Lançamentos</SectionTitle>
+          <div className="space-y-2">
+            {launches?.length === 0 && <p className="text-sm text-muted">Nenhum lançamento publicado ainda.</p>}
+            {launches?.map((l) => {
+              const total = l.av_launch_units?.length ?? 0;
+              const disponiveis = (l.av_launch_units ?? []).filter((u) => u.status === "disponivel").length;
+              return (
+                <Link
+                  key={l.id}
+                  to={`/app/lancamentos/${l.id}`}
+                  className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
+                >
+                  <span className="text-charcoal">{l.name}</span>
+                  <span className="text-graytext">{disponiveis}/{total} disponível(is)</span>
+                </Link>
+              );
+            })}
+          </div>
+          <Link to="/app/lancamentos" className="mt-2 inline-block text-xs text-graytext underline">
+            Gerenciar lançamentos →
+          </Link>
+        </div>
+      )}
+
+      <div>
+        <SectionTitle>Portfólio</SectionTitle>
+        <div className="space-y-2">
+          {properties?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
+          {properties?.map((p) => (
+            <div key={p.id} className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm">
+              <span className="text-charcoal">{p.name}</span>
+              <span className="text-graytext">{p.av_portfolio_units?.length ?? 0} unidade(s)</span>
+            </div>
+          ))}
+        </div>
+        <Link to="/app/portfolio" className="mt-2 inline-block text-xs text-graytext underline">
+          Gerenciar portfólio →
+        </Link>
       </div>
 
       <div>
@@ -197,10 +302,18 @@ function OrganizationDetail({ org, role, onChange }) {
       </div>
 
       {manage && <Invites orgId={org.id} onChange={onChange} />}
+    </div>
+  );
+}
 
-      <Link to="/app/portfolio" className="inline-block text-sm text-graytext underline">
-        Ver portfólio da organização →
-      </Link>
+const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
+
+function Kpi({ label, value, foot }) {
+  return (
+    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
+      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
 }

@@ -807,7 +807,16 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
               <span className="text-sm text-charcoal">
                 {item.name}
                 {item.organizations?.name && (
-                  <span className="text-graytext"> · {item.organizations.name}</span>
+                  <>
+                    {" · "}
+                    <Link
+                      to={`/app/organizacoes/${item.organization_id}`}
+                      className="text-graytext underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {item.organizations.name}
+                    </Link>
+                  </>
                 )}
               </span>
               <button

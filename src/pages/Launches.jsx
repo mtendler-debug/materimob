@@ -24,7 +24,7 @@ export default function Launches() {
   async function load() {
     const { data } = await supabase
       .from("av_launches")
-      .select("*, av_launch_units(*)")
+      .select("*, av_launch_units(*), organizations(name)")
       .order("created_at", { ascending: false });
     setLaunches((data ?? []).map((l) => ({ ...l, units: l.av_launch_units })));
   }
@@ -74,6 +74,7 @@ function LaunchCard({ launch }) {
       style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}` }}
     >
       <p className="font-bold text-charcoal">{launch.name}</p>
+      {launch.organizations?.name && <p className="text-xs text-graytext">{launch.organizations.name}</p>}
       {launch.address && <p className="text-sm text-graytext">{launch.address}</p>}
       {launch.summary && <p className="text-xs text-graytext">{launch.summary}</p>}
 

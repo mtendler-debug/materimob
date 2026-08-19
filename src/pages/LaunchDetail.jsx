@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { generateToken } from "../lib/token";
+import { parseCsv, downloadCsv } from "../lib/csv";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -33,7 +34,7 @@ export default function LaunchDetail() {
   async function load() {
     const { data, error: loadError } = await supabase
       .from("av_launches")
-      .select("*, av_launch_units(*)")
+      .select("*, av_launch_units(*), organizations(name)")
       .eq("id", id)
       .single();
     if (loadError) {
@@ -79,6 +80,14 @@ export default function LaunchDetail() {
 
         <div className="mt-3" style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}`, paddingLeft: 14 }}>
           <h1 className="text-xl font-bold text-charcoal">{launch.name}</h1>
+          {launch.organizations?.name && (
+            <p className="text-xs text-graytext">
+              Publicado por{" "}
+              <Link to={`/app/organizacoes/${launch.organization_id}`} className="underline">
+                {launch.organizations.name}
+              </Link>
+            </p>
+          )}
           {launch.address && <p className="text-sm text-graytext">{launch.address}</p>}
           {launch.summary && <p className="text-xs text-graytext">{launch.summary}</p>}
         </div>
@@ -107,6 +116,7 @@ export default function LaunchDetail() {
           ))}
           {manage && <NewLaunchUnit launchId={launch.id} onCreated={load} />}
         </div>
+        {manage && <ImportLaunchUnitsSpreadsheet launchId={launch.id} onImported={load} />}
 
         <SectionTitle>Roteiro para cliente</SectionTitle>
         <CreateRoteiro launch={launch} />
@@ -281,6 +291,100 @@ function NewLaunchUnit({ launchId, onCreated }) {
         + unidade
       </button>
     </form>
+  );
+}
+
+const UNIT_TEMPLATE_HEADER = ["Nome da unidade", "Valor de tabela"];
+const UNIT_TEMPLATE_EXAMPLE = [
+  ["101 · 80 m²", "650000"],
+  ["102 · 95 m²", "720000"],
+];
+
+function ImportLaunchUnitsSpreadsheet({ launchId, onImported }) {
+  const [show, setShow] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const fileRef = useRef(null);
+
+  function baixarModelo() {
+    downloadCsv("modelo-unidades-lancamento.csv", [UNIT_TEMPLATE_HEADER, ...UNIT_TEMPLATE_EXAMPLE]);
+  }
+
+  function parseValor(raw) {
+    const digits = String(raw ?? "").replace(/\D/g, "");
+    return digits ? Number(digits) : null;
+  }
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const dataRows = rows.slice(1).filter((r) => (r[0] ?? "").trim());
+      if (dataRows.length === 0) {
+        setMsg({ type: "err", text: "Nenhuma linha válida encontrada — confira a coluna \"Nome da unidade\"." });
+        return;
+      }
+
+      const unidades = dataRows.map((r) => ({
+        launch_id: launchId,
+        name: r[0].trim(),
+        table_value: parseValor(r[1]),
+      }));
+      const { error } = await supabase.from("av_launch_units").insert(unidades);
+      if (error) throw error;
+
+      setMsg({ type: "ok", text: `Importado: ${unidades.length} unidade(s).` });
+      onImported();
+    } catch (err) {
+      setMsg({ type: "err", text: "Erro ao importar: " + err.message });
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setShow((v) => !v)}
+        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+      >
+        {show ? "Fechar" : "Importar unidades por planilha"}
+      </button>
+      {show && (
+        <div className="mt-2 rounded-[14px] border border-rule bg-white p-4">
+          <p className="text-sm text-graytext">
+            Baixe o modelo, preencha uma linha por unidade deste lançamento, e envie o arquivo de volta.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={baixarModelo}
+              className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+            >
+              Baixar modelo
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,text/csv"
+              disabled={busy}
+              onChange={handleFile}
+              className="text-sm text-graytext"
+            />
+          </div>
+          {busy && <p className="mt-2 text-sm text-muted">Importando…</p>}
+          {msg && (
+            <p className={`mt-2 text-sm ${msg.type === "ok" ? "text-[#2E7D32]" : "text-red-600"}`}>{msg.text}</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

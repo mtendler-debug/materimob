@@ -625,3 +625,82 @@ create policy "Gerente+ desmarca a própria organização" on av_launch_partners
   for delete to authenticated using (
     org_role_rank(my_org_role(organization_id)) >= 3
   );
+-- Mesmo espírito do launch_dashboard, mas somando TODOS os lançamentos de
+-- uma organização — pra incorporadora ver o panorama geral, não só
+-- lançamento por lançamento. Mesmo limite de privacidade: só números
+-- agregados, nunca identidade de corretor ou dado de cliente.
+create or replace function organization_launches_dashboard(p_org_id uuid)
+returns jsonb
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  result jsonb;
+begin
+  if org_role_rank(my_org_role(p_org_id)) < 3 then
+    raise exception 'acesso restrito ao gerente ou diretor da organização';
+  end if;
+
+  select jsonb_build_object(
+    'total_lancamentos', (select count(*) from av_launches where organization_id = p_org_id),
+    'total_unidades', (
+      select count(*) from av_launch_units lu
+      join av_launches l on l.id = lu.launch_id
+      where l.organization_id = p_org_id
+    ),
+    'unidades_por_status', (
+      select coalesce(jsonb_object_agg(status, cnt), '{}'::jsonb)
+      from (
+        select lu.status, count(*) cnt
+        from av_launch_units lu join av_launches l on l.id = lu.launch_id
+        where l.organization_id = p_org_id
+        group by lu.status
+      ) s
+    ),
+    'total_roteiros', (
+      select count(*) from av_selections s
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id
+    ),
+    'total_corretores', (
+      select count(distinct s.user_id) from av_selections s
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id
+    ),
+    'total_avaliacoes', (
+      select count(*) from av_evaluations e
+      join av_selections s on s.id = e.selection_id
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id
+    ),
+    'nota_media', (
+      select round(avg(e.overall_score)::numeric, 1)
+      from av_evaluations e
+      join av_selections s on s.id = e.selection_id
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id and e.overall_score is not null
+    ),
+    'total_propostas', (
+      select count(*) from av_proposals pr
+      join av_selections s on s.id = pr.selection_id
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id
+    ),
+    'propostas_interesse', (
+      select count(*) from av_proposals pr
+      join av_selections s on s.id = pr.selection_id
+      join av_launches l on l.id = s.launch_id
+      where l.organization_id = p_org_id and pr.buy_intent
+    ),
+    'imobiliarias_parceiras', (
+      select coalesce(jsonb_agg(distinct o.name), '[]'::jsonb)
+      from av_launch_partners lp
+      join av_launches l on l.id = lp.launch_id
+      join organizations o on o.id = lp.organization_id
+      where l.organization_id = p_org_id
+    )
+  ) into result;
+
+  return result;
+end;
+$$;
