@@ -239,6 +239,7 @@ function NewLaunchUnit({ launchId, onCreated }) {
 function CreateRoteiro({ launch }) {
   const navigate = useNavigate();
   const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -250,12 +251,25 @@ function CreateRoteiro({ launch }) {
     setBusy(true);
     setError("");
 
+    const { data: clientId, error: clientError } = await supabase.rpc("find_or_create_client", {
+      p_name: clientName.trim(),
+      p_phone: clientPhone.trim() || null,
+      p_email: null,
+    });
+    if (clientError) {
+      setBusy(false);
+      setError("Erro ao vincular cliente: " + clientError.message);
+      return;
+    }
+
     const { data: selection, error: selError } = await supabase
       .from("av_selections")
       .insert({
         title: launch.name,
         subtitle: launch.summary,
         client_name: clientName.trim(),
+        client_phone: clientPhone.trim() || null,
+        client_id: clientId,
         criteria: launch.criteria,
         milestones: launch.milestones,
         launch_id: launch.id,
@@ -311,6 +325,15 @@ function CreateRoteiro({ launch }) {
         <input
           value={clientName}
           onChange={(e) => setClientName(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+      </div>
+      <div className="min-w-[140px] flex-1">
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">Telefone (opcional)</label>
+        <input
+          value={clientPhone}
+          onChange={(e) => setClientPhone(e.target.value)}
+          placeholder="reúne outros roteiros dele"
           className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
         />
       </div>

@@ -523,3 +523,76 @@ begin
   return result;
 end;
 $$;
+-- Identidade permanente do cliente, pela primeira vez no sistema — até
+-- aqui o cliente era só um token por roteiro, sem nada que ligasse dois
+-- roteiros da mesma pessoa. Não é conta (sem senha, sem login de
+-- verdade): é uma chave de busca (telefone ou e-mail) com um token
+-- próprio e durável, que funciona como link permanente — mesmo padrão de
+-- segurança já usado em token_form/token_panel, só que no nível do
+-- cliente em vez do roteiro.
+create table av_clients (
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null,
+  phone       text,
+  email       text,
+  token       text unique not null,
+  created_at  timestamptz default now()
+);
+
+create unique index av_clients_phone_idx on av_clients (phone) where phone is not null and phone <> '';
+create unique index av_clients_email_idx on av_clients (email) where email is not null and email <> '';
+
+alter table av_selections add column client_id uuid references av_clients(id);
+create index on av_selections (client_id);
+
+alter table av_clients enable row level security;
+
+-- Sem select geral pra "authenticated": um corretor só vê o cliente se
+-- ele tiver pelo menos um roteiro daquele corretor — não dá pra listar
+-- telefone/e-mail de clientes de outros corretores só por estarem na
+-- mesma tabela. O find_or_create abaixo (security definer) é quem faz o
+-- casamento entre corretores por baixo dos panos, sem expor o contato de
+-- ninguém a quem não deveria ver.
+create policy "Corretor vê cliente ligado à própria seleção" on av_clients
+  for select to authenticated using (
+    exists (
+      select 1 from av_selections s
+      where s.client_id = av_clients.id and s.user_id = auth.uid()
+    )
+  );
+
+-- Acha o cliente por telefone, senão por e-mail, senão cria um novo.
+-- security definer: precisa enxergar clientes de OUTROS corretores pra
+-- casar corretamente (ex.: dois corretores diferentes atendendo a mesma
+-- pessoa), mas só devolve o id — nunca telefone, e-mail ou nome de
+-- volta pra quem chamou, então não vaza contato de ninguém.
+create or replace function find_or_create_client(p_name text, p_phone text, p_email text)
+returns uuid
+language plpgsql security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+  v_token text;
+  v_phone text := nullif(trim(p_phone), '');
+  v_email text := nullif(trim(p_email), '');
+begin
+  if v_phone is not null then
+    select id into v_id from av_clients where phone = v_phone;
+  end if;
+  if v_id is null and v_email is not null then
+    select id into v_id from av_clients where email = v_email;
+  end if;
+  if v_id is null then
+    v_token := array_to_string(
+      array(select substr('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', (random() * 61)::int + 1, 1)
+            from generate_series(1, 22)),
+      ''
+    );
+    insert into av_clients (name, phone, email, token)
+    values (nullif(trim(p_name), ''), v_phone, v_email, v_token)
+    returning id into v_id;
+  end if;
+  return v_id;
+end;
+$$;

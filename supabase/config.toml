@@ -385,7 +385,7 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
-# As 4 funções abaixo são públicas, acessadas por token (não por login).
+# As funções abaixo são públicas, acessadas por token (não por login).
 # verify_jwt = false é obrigatório: sem isso, o Supabase exige um JWT de
 # usuário autenticado antes mesmo do nosso código rodar, e o cliente final
 # (que não tem conta) nunca conseguiria chamá-las.
@@ -399,6 +399,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.aval-proposal]
+verify_jwt = false
+
+[functions.cliente-painel]
 verify_jwt = false
 
 [analytics]

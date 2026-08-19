@@ -9,7 +9,9 @@ import Organization from "./pages/Organization";
 import Portfolio from "./pages/Portfolio";
 import Launches from "./pages/Launches";
 import LaunchDetail from "./pages/LaunchDetail";
+import Clients from "./pages/Clients";
 import AcceptInvite from "./pages/AcceptInvite";
+import ClientHome from "./pages/ClientHome";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function App() {
@@ -65,9 +67,18 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/app/clientes"
+        element={
+          <ProtectedRoute>
+            <Clients />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/convite/:token" element={<AcceptInvite />} />
       <Route path="/c/:token" element={<PublicForm />} />
       <Route path="/r/:token" element={<PublicPanel />} />
+      <Route path="/cliente/:token" element={<ClientHome />} />
     </Routes>
   );
 }

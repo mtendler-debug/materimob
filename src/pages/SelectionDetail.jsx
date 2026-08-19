@@ -53,7 +53,7 @@ export default function SelectionDetail() {
       { data: evals },
       { data: props2 },
     ] = await Promise.all([
-      supabase.from("av_selections").select("*").eq("id", id).single(),
+      supabase.from("av_selections").select("*, av_clients(token, name)").eq("id", id).single(),
       supabase.from("av_properties").select("*, av_units(*)").eq("selection_id", id).order("position"),
       supabase.from("av_evaluations").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
       supabase.from("av_proposals").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
@@ -112,6 +112,16 @@ export default function SelectionDetail() {
             {selection.archived ? "Reativar" : "Arquivar"}
           </button>
         </div>
+
+        {selection.av_clients && (
+          <div className="mt-4">
+            <LinkBox
+              label={`Link permanente de ${selection.av_clients.name || "cliente"} (reúne todos os roteiros dele)`}
+              url={`${window.location.origin}/cliente/${selection.av_clients.token}`}
+              highlight
+            />
+          </div>
+        )}
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <LinkBox label="Link do formulário (cliente avalia)" url={formLink} />
@@ -313,10 +323,10 @@ function Kpi({ label, value, foot }) {
   );
 }
 
-function LinkBox({ label, url }) {
+function LinkBox({ label, url, highlight }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className="rounded-[11px] border border-rule bg-white p-3">
+    <div className={`rounded-[11px] border bg-white p-3 ${highlight ? "border-gold" : "border-rule"}`}>
       <p className="text-xs font-medium text-graytext">{label}</p>
       <div className="mt-1 flex items-center gap-2">
         <input

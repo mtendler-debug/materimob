@@ -43,12 +43,23 @@ export default function Selections() {
       return;
     }
     setSaving(true);
+    const { data: clientId, error: clientError } = await supabase.rpc("find_or_create_client", {
+      p_name: clientName.trim(),
+      p_phone: clientPhone.trim() || null,
+      p_email: clientEmail.trim() || null,
+    });
+    if (clientError) {
+      setSaving(false);
+      setError("Erro ao vincular cliente: " + clientError.message);
+      return;
+    }
     const { error: insertError } = await supabase.from("av_selections").insert({
       title: title.trim(),
       subtitle: subtitle.trim() || null,
       client_name: clientName.trim(),
       client_phone: clientPhone.trim() || null,
       client_email: clientEmail.trim() || null,
+      client_id: clientId,
       criteria: criteria
         .split("\n")
         .map((c) => c.trim())
@@ -86,6 +97,9 @@ export default function Selections() {
           <div className="text-right">
             <p className="text-xs text-muted">{user.email}</p>
             <div className="mt-1 flex items-center gap-3">
+              <Link to="/app/clientes" className="text-sm text-graytext underline">
+                Clientes
+              </Link>
               <Link to="/app/organizacao" className="text-sm text-graytext underline">
                 Organização
               </Link>
