@@ -1,116 +1,45 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization } from "../lib/useOrganization";
 import { importarPortfolio, importarLancamento } from "../lib/importar";
+import { loadCatalogItems } from "../lib/catalogo";
 import { generateToken } from "../lib/token";
+import { CatalogBrowser } from "../components/CatalogBrowser";
 
 // Uma busca só sobre tudo que existe na plataforma — o corretor não
 // precisa entender a diferença entre "catálogo" e "empreendimento", ele
 // quer achar o que mostrar pro cliente.
 export default function Properties() {
-  const { org, memberships, loading: loadingOrg } = useOrganization();
-  const [items, setItems] = useState(null);
-  const [teamPicks, setTeamPicks] = useState(null);
-  const [texto, setTexto] = useState("");
-  const [valorMax, setValorMax] = useState("");
-  const [orgFiltro, setOrgFiltro] = useState("");
-  const [somente, setSomente] = useState("todos"); // todos | lancamento | portfolio
-
-  async function load() {
-    const [{ data: portfolioData }, { data: launchData }] = await Promise.all([
-      supabase.from("av_portfolio_properties").select("*, av_portfolio_units(*), organizations(id,name,tipo)").order("name"),
-      supabase.from("av_launches").select("*, av_launch_units(*), organizations(id,name,tipo)").order("created_at", { ascending: false }),
-    ]);
-
-    const portfolioItems = (portfolioData ?? []).map((p) => ({
-      kind: "portfolio",
-      id: p.id,
-      name: p.name,
-      address: p.address,
-      summary: p.summary,
-      color: p.color,
-      orgId: p.organizations?.id,
-      orgName: p.organizations?.name,
-      units: (p.av_portfolio_units ?? []).map((u) => ({ id: u.id, name: u.name, table_value: u.table_value })),
-      raw: { ...p, units: p.av_portfolio_units },
-    }));
-    const launchItems = (launchData ?? []).map((l) => ({
-      kind: "lancamento",
-      id: l.id,
-      name: l.name,
-      address: l.address,
-      summary: l.summary,
-      color: l.color,
-      orgId: l.organizations?.id,
-      orgName: l.organizations?.name,
-      units: (l.av_launch_units ?? []).map((u) => ({ id: u.id, name: u.name, table_value: u.table_value, status: u.status })),
-      raw: { ...l, units: l.av_launch_units },
-    }));
-    setItems([...launchItems, ...portfolioItems]);
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
+  const { org, loading: loadingOrg } = useOrganization();
+  const [picksResolvidos, setPicksResolvidos] = useState([]);
 
   useEffect(() => {
     if (!org || org.tipo !== "imobiliaria") {
-      setTeamPicks(null);
+      setPicksResolvidos([]);
       return;
     }
-    supabase
-      .from("av_team_picks")
-      .select("id, portfolio_property_id, launch_id, note, position")
-      .eq("organization_id", org.id)
-      .order("position")
-      .then(({ data }) => setTeamPicks(data ?? []));
+    Promise.all([
+      supabase
+        .from("av_team_picks")
+        .select("id, portfolio_property_id, launch_id, note, position")
+        .eq("organization_id", org.id)
+        .order("position"),
+      loadCatalogItems(),
+    ]).then(([{ data: picks }, items]) => {
+      const resolvidos = (picks ?? [])
+        .map((p) => {
+          const item = items.find((it) =>
+            p.portfolio_property_id ? it.kind === "portfolio" && it.id === p.portfolio_property_id : it.kind === "lancamento" && it.id === p.launch_id,
+          );
+          return item ? { ...item, note: p.note } : null;
+        })
+        .filter(Boolean);
+      setPicksResolvidos(resolvidos);
+    });
   }, [org]);
 
-  const organizacoes = useMemo(() => {
-    if (!items) return [];
-    const map = new Map();
-    for (const it of items) if (it.orgId && !map.has(it.orgId)) map.set(it.orgId, it.orgName);
-    return [...map.entries()];
-  }, [items]);
-
-  function minValue(item) {
-    const valores = item.units.map((u) => u.table_value).filter((v) => v != null);
-    return valores.length ? Math.min(...valores) : null;
-  }
-
-  const filtrados = useMemo(() => {
-    if (!items) return null;
-    const q = texto.trim().toLowerCase();
-    const max = valorMax ? Number(valorMax) : null;
-    return items.filter((it) => {
-      if (somente !== "todos" && it.kind !== somente) return false;
-      if (orgFiltro && it.orgId !== orgFiltro) return false;
-      if (max != null) {
-        const v = minValue(it);
-        if (v == null || v > max) return false;
-      }
-      if (q) {
-        const alvo = `${it.name} ${it.address ?? ""} ${it.orgName ?? ""}`.toLowerCase();
-        if (!alvo.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [items, texto, valorMax, orgFiltro, somente]);
-
-  const picksResolvidos = useMemo(() => {
-    if (!teamPicks || !items) return [];
-    return teamPicks
-      .map((p) => {
-        const item = items.find((it) =>
-          p.portfolio_property_id ? it.kind === "portfolio" && it.id === p.portfolio_property_id : it.kind === "lancamento" && it.id === p.launch_id,
-        );
-        return item ? { ...item, note: p.note } : null;
-      })
-      .filter(Boolean);
-  }, [teamPicks, items]);
-
-  if (loadingOrg || items === null) return <div className="p-6 text-sm text-muted">Carregando…</div>;
+  if (loadingOrg) return <div className="p-6 text-sm text-muted">Carregando…</div>;
 
   return (
     <div className="min-h-screen bg-bg p-6">
@@ -126,116 +55,37 @@ export default function Properties() {
             <h2 className="mt-6 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
               Seleção da {org.name}
             </h2>
-            <div className="space-y-3">
+            <div className="mb-6 space-y-3">
               {picksResolvidos.map((it) => (
-                <PropertyCard key={`pick-${it.kind}-${it.id}`} item={it} note={it.note} />
+                <div key={`pick-${it.kind}-${it.id}`} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${it.color || "#A68A5B"}` }}>
+                  <p className="font-bold text-charcoal">{it.name}</p>
+                  {it.orgName && <p className="text-xs text-graytext">{it.orgName}</p>}
+                  {it.note && (
+                    <p className="mt-2 rounded-[9px] bg-light p-2 text-xs text-graytext">
+                      <b className="text-charcoal">Nota do time:</b> {it.note}
+                    </p>
+                  )}
+                  <RoteiroAction item={it} />
+                </div>
               ))}
             </div>
           </>
         )}
 
-        <h2 className="mt-6 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-          Buscar
-        </h2>
-        <div className="rounded-[14px] border border-rule bg-white p-3">
-          <input
-            value={texto}
-            onChange={(e) => setTexto(e.target.value)}
-            placeholder="Nome, endereço ou organização"
-            className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <select
-              value={orgFiltro}
-              onChange={(e) => setOrgFiltro(e.target.value)}
-              className="rounded-[9px] border-[1.5px] border-rule px-2 py-1.5 text-sm"
-            >
-              <option value="">Todas as organizações</option>
-              {organizacoes.map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              value={valorMax}
-              onChange={(e) => setValorMax(e.target.value)}
-              placeholder="Valor máximo"
-              className="w-36 rounded-[9px] border-[1.5px] border-rule px-2 py-1.5 text-sm"
-            />
-            <div className="flex overflow-hidden rounded-[9px] border-[1.5px] border-rule">
-              {[
-                ["todos", "Tudo"],
-                ["lancamento", "Só lançamentos"],
-                ["portfolio", "Só prontos"],
-              ].map(([value, label]) => (
-                <button
-                  key={value}
-                  onClick={() => setSomente(value)}
-                  className={`px-2 py-1.5 text-xs font-bold ${somente === value ? "bg-charcoal text-white" : "text-graytext"}`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 space-y-3">
-          {filtrados?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel encontrado com esses filtros.</p>}
-          {filtrados?.map((it) => (
-            <PropertyCard key={`${it.kind}-${it.id}`} item={it} />
-          ))}
-        </div>
+        <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Buscar</h2>
+        <CatalogBrowser renderAction={(item) => <RoteiroAction item={item} />} />
       </div>
     </div>
   );
 }
 
-function PropertyCard({ item, note }) {
+function RoteiroAction({ item }) {
   const [show, setShow] = useState(false);
-  const total = item.units.length;
-  const disponiveis = item.kind === "lancamento" ? item.units.filter((u) => u.status === "disponivel").length : total;
-
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#A68A5B"}` }}>
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="font-bold text-charcoal">{item.name}</p>
-          {item.orgName && (
-            <p className="text-xs text-graytext">
-              {item.orgId ? (
-                <Link to={`/app/organizacoes/${item.orgId}`} className="underline">
-                  {item.orgName}
-                </Link>
-              ) : (
-                item.orgName
-              )}
-              {item.kind === "lancamento" ? " · lançamento" : " · pronto"}
-            </p>
-          )}
-          {item.address && <p className="mt-1 text-sm text-graytext">{item.address}</p>}
-        </div>
-        {total > 0 && (
-          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-            {item.kind === "lancamento" ? `${disponiveis}/${total} disponível(is)` : `${total} unidade(s)`}
-          </span>
-        )}
-      </div>
-
-      {note && (
-        <p className="mt-2 rounded-[9px] bg-light p-2 text-xs text-graytext">
-          <b className="text-charcoal">Nota do time:</b> {note}
-        </p>
-      )}
-
-      <div className="mt-3 flex items-center gap-3">
-        <button onClick={() => setShow((v) => !v)} className="text-xs font-bold text-graytext underline">
-          {show ? "Fechar" : "Adicionar ao roteiro"}
-        </button>
-      </div>
-
+    <div>
+      <button onClick={() => setShow((v) => !v)} className="text-xs font-bold text-graytext underline">
+        {show ? "Fechar" : "Adicionar ao roteiro"}
+      </button>
       {show && <AddToRoteiro item={item} onDone={() => setShow(false)} />}
     </div>
   );

@@ -21,6 +21,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminOrganizations from "./pages/admin/AdminOrganizations";
 import AdminAccounts from "./pages/admin/AdminAccounts";
+import Estoque from "./pages/Estoque";
+import TeamPicks from "./pages/TeamPicks";
 
 // Espaço reservado para telas que ainda não foram construídas nos próximos
 // blocos do briefing — evita link morto no menu enquanto isso.
@@ -83,7 +85,7 @@ export default function App() {
           path="/app/estoque"
           element={
             <RoleRoute exige="organizacao">
-              <EmConstrucao titulo="Estoque" />
+              <Estoque />
             </RoleRoute>
           }
         />
@@ -91,7 +93,7 @@ export default function App() {
           path="/app/time"
           element={
             <RoleRoute exige="imobiliaria-gerente">
-              <EmConstrucao titulo="Seleção do time" />
+              <TeamPicks />
             </RoleRoute>
           }
         />
