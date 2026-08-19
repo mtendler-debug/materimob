@@ -1132,3 +1132,20 @@ $$;
 -- =====================================================================
 -- insert into platform_admins (user_id)
 -- select id from auth.users where email = 'mtendler@gmail.com';
+
+
+-- Roster mostra o nome do perfil quando existir, e-mail só como reserva —
+-- mesma diretriz do painel do cliente (nome, não e-mail cru).
+drop function if exists organization_roster(uuid);
+create function organization_roster(org uuid)
+returns table (user_id uuid, email text, full_name text, role text, created_at timestamptz)
+language sql security definer stable
+set search_path = public
+as $$
+  select m.user_id, u.email, p.full_name, m.role, m.created_at
+  from organization_members m
+  join auth.users u on u.id = m.user_id
+  left join profiles p on p.id = m.user_id
+  where m.organization_id = org
+    and my_org_role(org) is not null;
+$$;

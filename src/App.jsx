@@ -23,19 +23,7 @@ import AdminOrganizations from "./pages/admin/AdminOrganizations";
 import AdminAccounts from "./pages/admin/AdminAccounts";
 import Estoque from "./pages/Estoque";
 import TeamPicks from "./pages/TeamPicks";
-
-// Espaço reservado para telas que ainda não foram construídas nos próximos
-// blocos do briefing — evita link morto no menu enquanto isso.
-function EmConstrucao({ titulo }) {
-  return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="text-xl font-bold text-charcoal">{titulo}</h1>
-        <p className="mt-2 text-sm text-graytext">Essa área ainda está em construção.</p>
-      </div>
-    </div>
-  );
-}
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -54,7 +42,7 @@ export default function App() {
         <Route path="/app/imoveis" element={<Properties />} />
         <Route path="/app/selecoes" element={<Selections />} />
         <Route path="/app/selections/:id" element={<SelectionDetail />} />
-        <Route path="/app/perfil" element={<EmConstrucao titulo="Meu perfil" />} />
+        <Route path="/app/perfil" element={<Profile />} />
         <Route path="/app/organizacao" element={<Organization />} />
         <Route
           path="/app/portfolio"

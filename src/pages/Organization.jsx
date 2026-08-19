@@ -282,14 +282,14 @@ function OrganizationDetail({ org, role, onChange }) {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
-                <th className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">E-mail</th>
+                <th className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">Nome</th>
                 <th className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">Papel</th>
               </tr>
             </thead>
             <tbody>
               {roster?.map((m) => (
                 <tr key={m.user_id}>
-                  <td className="border-b border-rule p-[10px] text-charcoal">{m.email}</td>
+                  <td className="border-b border-rule p-[10px] text-charcoal">{m.full_name || m.email}</td>
                   <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[m.role]}</td>
                 </tr>
               ))}
