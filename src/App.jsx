@@ -16,6 +16,10 @@ import ClientHome from "./pages/ClientHome";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { RoleRoute } from "./components/RoleRoute";
 import AppLayout from "./components/AppLayout";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminOrganizations from "./pages/admin/AdminOrganizations";
+import AdminAccounts from "./pages/admin/AdminAccounts";
 
 // Espaço reservado para telas que ainda não foram construídas nos próximos
 // blocos do briefing — evita link morto no menu enquanto isso.
@@ -94,26 +98,14 @@ export default function App() {
           path="/admin"
           element={
             <RoleRoute exige="admin">
-              <EmConstrucao titulo="Administração" />
+              <AdminLayout />
             </RoleRoute>
           }
-        />
-        <Route
-          path="/admin/organizacoes"
-          element={
-            <RoleRoute exige="admin">
-              <EmConstrucao titulo="Organizações" />
-            </RoleRoute>
-          }
-        />
-        <Route
-          path="/admin/contas"
-          element={
-            <RoleRoute exige="admin">
-              <EmConstrucao titulo="Contas" />
-            </RoleRoute>
-          }
-        />
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="organizacoes" element={<AdminOrganizations />} />
+          <Route path="contas" element={<AdminAccounts />} />
+        </Route>
       </Route>
 
       <Route path="/convite/:token" element={<AcceptInvite />} />

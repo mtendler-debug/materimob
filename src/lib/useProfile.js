@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./supabase";
 
+async function loadOrCreateProfile(userId) {
+  const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
+  if (data) return data;
+  const { data: created } = await supabase
+    .from("profiles")
+    .insert({ id: userId, account_type: "corretor" })
+    .select("*")
+    .single();
+  return created;
+}
+
 // account_type é a CASA do usuário — a tela em que ele entra e o menu
 // principal. Contas criadas antes do gatilho handle_new_user existir não
 // têm linha em profiles; em vez de quebrar a tela, este hook cria a linha
@@ -19,18 +30,17 @@ export function useProfile() {
       return;
     }
 
-    let { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-    if (!data) {
-      const { data: created } = await supabase
-        .from("profiles")
-        .insert({ id: user.id, account_type: "corretor" })
-        .select("*")
-        .single();
-      data = created;
-    }
-    setProfile(data);
-
-    const { data: admin } = await supabase.rpc("is_platform_admin");
+    // As duas buscas rodam em paralelo e só então os dois estados são
+    // atualizados juntos — se `isPlatformAdmin` fosse setado depois de
+    // `profile` num await separado, `loading` (baseado só em `profile`)
+    // vira false por um instante com `isPlatformAdmin` ainda no valor
+    // antigo, e um RoleRoute que ler o estado nesse instante redireciona
+    // um admin de verdade pra fora do /admin.
+    const [profileRow, { data: admin }] = await Promise.all([
+      loadOrCreateProfile(user.id),
+      supabase.rpc("is_platform_admin"),
+    ]);
+    setProfile(profileRow);
     setIsPlatformAdmin(!!admin);
   }
 
