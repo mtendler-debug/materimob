@@ -56,31 +56,17 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="border-b border-rule bg-white">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-6 py-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="text-sm font-bold text-charcoal">Avaliador MaterImob</span>
-            <nav className="flex flex-wrap items-center gap-3">
-              {itens.map((i) => (
-                <NavLink
-                  key={i.to}
-                  to={i.to}
-                  end={i.end}
-                  className={({ isActive }) =>
-                    `text-sm underline ${isActive ? "font-bold text-charcoal" : "text-graytext"}`
-                  }
-                >
-                  {i.label}
-                </NavLink>
-              ))}
-            </nav>
+      <header className="bg-charcoal text-white">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-6 pt-5 pb-4">
+          <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
+            Avaliador MaterImob
           </div>
           <div className="flex items-center gap-3">
             {memberships.length > 1 && (
               <select
                 value={activeOrgId ?? ""}
                 onChange={(e) => setActiveOrgId(e.target.value)}
-                className="rounded-[9px] border-[1.5px] border-rule bg-white px-2 py-1 text-xs"
+                className="rounded-[9px] border border-[#444] bg-charcoal px-2 py-1 text-xs text-white"
               >
                 {memberships.map((m) => (
                   <option key={m.organizations.id} value={m.organizations.id}>
@@ -89,16 +75,34 @@ export default function AppLayout() {
                 ))}
               </select>
             )}
-            <span className="text-xs text-muted">{user?.email}</span>
-            <button onClick={signOut} className="text-sm text-graytext underline">
+            <span className="text-xs text-[#B9B9B9]">{user?.email}</span>
+            <button onClick={signOut} className="text-sm text-[#B9B9B9] underline hover:text-white">
               Sair
             </button>
           </div>
         </div>
+        <nav className="border-t border-[#333]">
+          <div className="mx-auto flex max-w-4xl gap-1 overflow-x-auto px-6">
+            {itens.map((i) => (
+              <NavLink
+                key={i.to}
+                to={i.to}
+                end={i.end}
+                className={({ isActive }) =>
+                  `whitespace-nowrap border-b-[2.5px] px-3 py-3 text-[13.5px] font-semibold ${
+                    isActive ? "border-gold text-white" : "border-transparent text-[#B9B9B9] hover:text-white"
+                  }`
+                }
+              >
+                {i.label}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
         {aviso && (
-          <div className="border-t border-rule bg-light px-6 py-2 text-center text-xs text-graytext">
+          <div className="border-t border-[#333] bg-[#2A2A2A] px-6 py-2 text-center text-xs text-[#C9C9C9]">
             {aviso}{" "}
-            <button onClick={() => setAviso(null)} className="ml-2 underline">
+            <button onClick={() => setAviso(null)} className="ml-2 underline hover:text-white">
               fechar
             </button>
           </div>

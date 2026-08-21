@@ -129,7 +129,79 @@ export default function Profile() {
             {msg && <span className="text-sm text-graytext">{msg}</span>}
           </div>
         </form>
+
+        <TrocarSenha />
       </div>
+    </div>
+  );
+}
+
+function TrocarSenha() {
+  const [nova, setNova] = useState("");
+  const [nova2, setNova2] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  async function trocar(e) {
+    e.preventDefault();
+    setMsg(null);
+    if (nova.length < 6) {
+      setMsg({ type: "err", text: "A nova senha precisa ter pelo menos 6 caracteres." });
+      return;
+    }
+    if (nova !== nova2) {
+      setMsg({ type: "err", text: "A nova senha e a repetição não conferem." });
+      return;
+    }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ password: nova });
+    setSaving(false);
+    if (error) {
+      setMsg({ type: "err", text: "Não foi possível trocar: " + error.message });
+      return;
+    }
+    setNova("");
+    setNova2("");
+    setMsg({ type: "ok", text: "Senha alterada. Ela já vale para o próximo acesso." });
+  }
+
+  return (
+    <div className="mt-6 rounded-[14px] border border-rule bg-white p-4">
+      <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Segurança</h2>
+      <form onSubmit={trocar} className="space-y-3">
+        <div className="flex flex-wrap gap-4">
+          <div className="min-w-[160px] flex-1">
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Nova senha</label>
+            <input
+              type="password"
+              value={nova}
+              onChange={(e) => setNova(e.target.value)}
+              autoComplete="new-password"
+              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="min-w-[160px] flex-1">
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Repita a nova senha</label>
+            <input
+              type="password"
+              value={nova2}
+              onChange={(e) => setNova2(e.target.value)}
+              autoComplete="new-password"
+              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
+        {msg && (
+          <p className={`text-sm ${msg.type === "ok" ? "text-[#2E7D32]" : "text-red-600"}`}>{msg.text}</p>
+        )}
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Alterando…" : "Alterar senha"}
+        </button>
+      </form>
     </div>
   );
 }
