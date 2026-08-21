@@ -3,31 +3,12 @@ import { Navigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 
-const TIPOS_CONTA = [
-  {
-    value: "corretor",
-    label: "Corretor",
-    desc: "Vou montar roteiros de visita e atender clientes.",
-  },
-  {
-    value: "imobiliaria",
-    label: "Imobiliária",
-    desc: "Gerencio uma equipe e um portfólio de imóveis.",
-  },
-  {
-    value: "incorporadora",
-    label: "Incorporadora",
-    desc: "Publico lançamentos para o ecossistema.",
-  },
-];
-
 export default function Login() {
   const { user, loading } = useAuth();
   const [mode, setMode] = useState("entrar"); // "entrar" | "cadastrar"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
-  const [tipo, setTipo] = useState("corretor");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [confirmEmailSent, setConfirmEmailSent] = useState(false);
@@ -41,13 +22,17 @@ export default function Login() {
     setError("");
     setBusy(true);
 
+    // account_type sempre 'corretor' no cadastro público — é a fase 1 do
+    // produto, simples e direto pro corretor. Organizações (imobiliária/
+    // incorporadora) continuam existindo pra quem já usa, geridas fora
+    // do cadastro (ver Profile.jsx).
     const action =
       mode === "entrar"
         ? supabase.auth.signInWithPassword({ email, password })
         : supabase.auth.signUp({
             email,
             password,
-            options: { data: { full_name: nome.trim(), account_type: tipo } },
+            options: { data: { full_name: nome.trim(), account_type: "corretor" } },
           });
 
     const { data, error: authError } = await action;
@@ -115,27 +100,6 @@ export default function Login() {
             className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
           />
         </div>
-
-        {mode === "cadastrar" && (
-          <div>
-            <label className="block text-xs font-medium text-graytext">Como você atua no mercado imobiliário?</label>
-            <div className="mt-1 space-y-2">
-              {TIPOS_CONTA.map((t) => (
-                <button
-                  key={t.value}
-                  type="button"
-                  onClick={() => setTipo(t.value)}
-                  className={`block w-full rounded-[9px] border-[1.5px] p-3 text-left text-sm ${
-                    tipo === t.value ? "border-gold bg-light" : "border-rule"
-                  }`}
-                >
-                  <span className="font-medium text-charcoal">{t.label}</span>
-                  <span className="block text-xs text-graytext">{t.desc}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

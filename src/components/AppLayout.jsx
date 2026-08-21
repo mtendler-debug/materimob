@@ -35,6 +35,7 @@ export default function AppLayout() {
   const itensBase = [
     { to: "/app", label: "Meus clientes", end: true },
     { to: "/app/imoveis", label: "Imóveis" },
+    { to: "/app/portfolio", label: "Meu estoque" },
     { to: "/app/selecoes", label: "Meus roteiros" },
     { to: "/app/perfil", label: "Meu perfil" },
   ];

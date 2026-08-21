@@ -44,14 +44,7 @@ export default function App() {
         <Route path="/app/selections/:id" element={<SelectionDetail />} />
         <Route path="/app/perfil" element={<Profile />} />
         <Route path="/app/organizacao" element={<Organization />} />
-        <Route
-          path="/app/portfolio"
-          element={
-            <RoleRoute exige="organizacao">
-              <Portfolio />
-            </RoleRoute>
-          }
-        />
+        <Route path="/app/portfolio" element={<Portfolio />} />
         <Route
           path="/app/lancamentos"
           element={

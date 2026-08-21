@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../lib/AuthContext";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { parseCsv, downloadCsv } from "../lib/csv";
 
@@ -15,87 +15,60 @@ function brl(n) {
 }
 
 export default function Portfolio() {
+  const { user } = useAuth();
   const { org, role, loading: loadingOrg } = useOrganization();
   const [properties, setProperties] = useState(null);
-  const manage = canManage(role);
+
+  // Quem é gerente+ de uma organização gerencia o estoque dela (uso via
+  // /app/estoque); todo mundo mais — inclusive corretor sozinho, sem
+  // organização nenhuma — gerencia o próprio estoque pessoal. Nunca os
+  // dois ao mesmo tempo, e sempre funciona: não existe mais tela de
+  // "você precisa de uma organização".
+  const dono =
+    org && canManage(role)
+      ? { coluna: "organization_id", id: org.id }
+      : { coluna: "user_id", id: user?.id };
 
   async function load() {
+    if (!dono.id) return;
     const { data } = await supabase
       .from("av_portfolio_properties")
       .select("*, av_portfolio_units(*)")
-      .eq("organization_id", org.id)
+      .eq(dono.coluna, dono.id)
       .order("name");
     setProperties((data ?? []).map((p) => ({ ...p, units: p.av_portfolio_units })));
   }
 
   useEffect(() => {
-    if (org) load();
-  }, [org]);
+    if (!loadingOrg) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingOrg, dono.coluna, dono.id]);
 
   if (loadingOrg) return <div className="p-6 text-sm text-muted">Carregando…</div>;
-
-  if (!org) {
-    return (
-      <div className="min-h-screen bg-bg p-6">
-        <div className="mx-auto max-w-2xl">
-          <p className="text-sm text-graytext">
-            O portfólio é um catálogo compartilhado dentro de uma organização. Você ainda não faz
-            parte de uma —{" "}
-            <Link to="/app/organizacao" className="underline">
-              crie ou entre em uma
-            </Link>{" "}
-            para usar isso.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-xl font-bold text-charcoal">Portfólio · {org.name}</h1>
+        <h1 className="text-xl font-bold text-charcoal">
+          {dono.coluna === "organization_id" ? `Portfólio · ${org.name}` : "Meu estoque"}
+        </h1>
         <p className="text-sm text-graytext">
-          {manage
+          {dono.coluna === "organization_id"
             ? "Imóveis cadastrados aqui ficam disponíveis para todo o time importar nas seleções dos clientes."
-            : "Imóveis que o time pode importar direto nas seleções dos clientes."}
+            : "Os imóveis que você mesmo representa — só você vê, e pode escolher quais mostrar em cada roteiro."}
         </p>
 
         <div className="mt-4 space-y-3">
           {properties === null && <p className="text-sm text-muted">Carregando…</p>}
-          {properties?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
-          {properties?.map((p) =>
-            manage ? (
-              <PortfolioPropertyEditor key={p.id} property={p} onChange={load} />
-            ) : (
-              <PortfolioPropertyView key={p.id} property={p} />
-            ),
-          )}
-        </div>
-
-        {manage && <NewPortfolioProperty organizationId={org.id} onCreated={load} />}
-        {manage && <ImportSpreadsheet organizationId={org.id} onImported={load} />}
-      </div>
-    </div>
-  );
-}
-
-function PortfolioPropertyView({ property }) {
-  return (
-    <div className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${property.color || "#A68A5B"}` }}>
-      <p className="font-bold text-charcoal">{property.name}</p>
-      {property.address && <p className="text-sm text-graytext">{property.address}</p>}
-      {property.summary && <p className="text-xs text-graytext">{property.summary}</p>}
-      {property.units?.length > 0 && (
-        <div className="mt-2 space-y-1">
-          {property.units.map((u) => (
-            <div key={u.id} className="flex justify-between text-sm text-graytext">
-              <span>{u.name}</span>
-              {u.table_value != null && <span>{brl(u.table_value)}</span>}
-            </div>
+          {properties?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel cadastrado ainda.</p>}
+          {properties?.map((p) => (
+            <PortfolioPropertyEditor key={p.id} property={p} onChange={load} />
           ))}
         </div>
-      )}
+
+        <NewPortfolioProperty dono={dono} onCreated={load} />
+        <ImportSpreadsheet dono={dono} onImported={load} />
+      </div>
     </div>
   );
 }
@@ -288,7 +261,7 @@ const TEMPLATE_EXAMPLE = [
   ["Cobertura Vista Mar", "Av. Beira Mar, 500", "", "", "", ""],
 ];
 
-function ImportSpreadsheet({ organizationId, onImported }) {
+function ImportSpreadsheet({ dono, onImported }) {
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -337,7 +310,7 @@ function ImportSpreadsheet({ organizationId, onImported }) {
 
         const { data: inserted, error } = await supabase
           .from("av_portfolio_properties")
-          .insert({ organization_id: organizationId, name: nome, address: endereco, summary: resumo, extra_criteria: criterios })
+          .insert({ [dono.coluna]: dono.id, name: nome, address: endereco, summary: resumo, extra_criteria: criterios })
           .select("id")
           .single();
         if (error) throw error;
@@ -405,7 +378,7 @@ function ImportSpreadsheet({ organizationId, onImported }) {
   );
 }
 
-function NewPortfolioProperty({ organizationId, onCreated }) {
+function NewPortfolioProperty({ dono, onCreated }) {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -413,7 +386,7 @@ function NewPortfolioProperty({ organizationId, onCreated }) {
     e.preventDefault();
     if (!name.trim()) return;
     setSaving(true);
-    await supabase.from("av_portfolio_properties").insert({ organization_id: organizationId, name: name.trim() });
+    await supabase.from("av_portfolio_properties").insert({ [dono.coluna]: dono.id, name: name.trim() });
     setSaving(false);
     setName("");
     onCreated();
@@ -432,7 +405,7 @@ function NewPortfolioProperty({ organizationId, onCreated }) {
         disabled={saving}
         className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
       >
-        + Novo imóvel no portfólio
+        + Novo imóvel
       </button>
     </form>
   );
