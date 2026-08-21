@@ -5,6 +5,7 @@ import { useOrganization, canManage } from "../lib/useOrganization";
 import { generateToken } from "../lib/token";
 import { parseCsv, downloadCsv } from "../lib/csv";
 import { importarLancamento } from "../lib/importar";
+import { ImageUploader } from "../components/ImageUploader";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -93,6 +94,8 @@ export default function LaunchDetail() {
           {launch.summary && <p className="text-xs text-graytext">{launch.summary}</p>}
         </div>
 
+        {manage && <EditLaunchMedia launch={launch} onChange={load} />}
+
         {org && canManage(role) && !isOwnerOrg && (
           <PartnerToggle launchId={launch.id} org={org} partners={partners} onChange={loadPartners} />
         )}
@@ -150,6 +153,60 @@ function PartnerToggle({ launchId, org, partners, onChange }) {
       <input type="checkbox" checked={checked} disabled={busy} onChange={toggle} className="h-4 w-4" />
       {org.name} está trabalhando este lançamento
     </label>
+  );
+}
+
+function EditLaunchMedia({ launch, onChange }) {
+  const [floorPlanUrl, setFloorPlanUrl] = useState(launch.floor_plan_url ?? null);
+  const [photoUrls, setPhotoUrls] = useState(launch.photo_urls ?? []);
+  const [paymentTerms, setPaymentTerms] = useState(launch.payment_terms ?? "");
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function save() {
+    setSaving(true);
+    setMsg("");
+    const { error } = await supabase
+      .from("av_launches")
+      .update({
+        floor_plan_url: floorPlanUrl,
+        photo_urls: photoUrls,
+        payment_terms: paymentTerms.trim() || null,
+      })
+      .eq("id", launch.id);
+    setSaving(false);
+    if (error) setMsg("Erro: " + error.message);
+    else {
+      setMsg("Salvo.");
+      onChange();
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
+      <div className="flex flex-wrap gap-4">
+        <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
+        <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
+      </div>
+      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
+      <textarea
+        value={paymentTerms}
+        onChange={(e) => setPaymentTerms(e.target.value)}
+        rows={2}
+        placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+      <div className="mt-3 flex items-center gap-3">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Salvando…" : "Salvar"}
+        </button>
+        {msg && <span className="text-sm text-graytext">{msg}</span>}
+      </div>
+    </div>
   );
 }
 
@@ -217,6 +274,35 @@ function LaunchDashboard({ dashboard }) {
 }
 
 function UnitRow({ unit, manage, onChange }) {
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(unit.name);
+  const [value, setValue] = useState(unit.table_value ?? "");
+  const [saving, setSaving] = useState(false);
+
+  async function salvar() {
+    if (!name.trim()) return;
+    setSaving(true);
+    await supabase
+      .from("av_launch_units")
+      .update({ name: name.trim(), table_value: value === "" ? null : Number(value) })
+      .eq("id", unit.id);
+    setSaving(false);
+    setEditing(false);
+    onChange();
+  }
+
+  function cancelar() {
+    setName(unit.name);
+    setValue(unit.table_value ?? "");
+    setEditing(false);
+  }
+
+  async function remover() {
+    if (!window.confirm(`Remover "${unit.name}"?`)) return;
+    await supabase.from("av_launch_units").delete().eq("id", unit.id);
+    onChange();
+  }
+
   async function markSold() {
     if (!window.confirm(`Marcar "${unit.name}" como vendida?`)) return;
     await supabase.from("av_launch_units").update({ status: "vendida" }).eq("id", unit.id);
@@ -231,6 +317,35 @@ function UnitRow({ unit, manage, onChange }) {
     onChange();
   }
 
+  if (editing) {
+    return (
+      <div className="flex flex-wrap items-end gap-2 border-b border-rule py-2 text-sm last:border-0">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
+        />
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Valor de tabela"
+          className="w-32 rounded border border-rule px-2 py-1 text-sm"
+        />
+        <button
+          onClick={salvar}
+          disabled={saving}
+          className="rounded bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
+        >
+          {saving ? "Salvando…" : "salvar"}
+        </button>
+        <button onClick={cancelar} className="text-xs font-bold text-graytext underline">
+          cancelar
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-rule py-2 text-sm last:border-0">
       <span className="flex-1 text-charcoal">{unit.name}</span>
@@ -242,6 +357,16 @@ function UnitRow({ unit, manage, onChange }) {
         {STATUS_LABELS[unit.status]}
         {unit.reserved_for ? ` · ${unit.reserved_for}` : ""}
       </span>
+      {manage && (
+        <>
+          <button onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
+            editar
+          </button>
+          <button onClick={remover} className="text-xs font-bold text-[#B34A2E]">
+            ×
+          </button>
+        </>
+      )}
       {manage && unit.status === "reservada" && (
         <>
           <button onClick={markSold} className="text-xs font-bold text-[#2E7D32]">

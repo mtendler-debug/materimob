@@ -14,6 +14,9 @@ export async function importarPortfolio(selectionId, item, position) {
       summary: item.summary,
       extra_criteria: item.extra_criteria,
       questions: item.questions,
+      floor_plan_url: item.floor_plan_url,
+      photo_urls: item.photo_urls,
+      payment_terms: item.payment_terms,
       position,
     })
     .select("id")
@@ -44,6 +47,9 @@ export async function importarLancamento(selectionId, launch, unidadesDisponivei
       summary: launch.summary,
       extra_criteria: launch.extra_criteria,
       questions: launch.questions,
+      floor_plan_url: launch.floor_plan_url,
+      photo_urls: launch.photo_urls,
+      payment_terms: launch.payment_terms,
       position,
     })
     .select("id")

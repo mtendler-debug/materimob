@@ -6,6 +6,8 @@ import { CriteriaPresets } from "../components/CriteriaPresets";
 import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
 import { downloadCsv } from "../lib/csv";
 import { importarPortfolio } from "../lib/importar";
+import { ImageUploader } from "../components/ImageUploader";
+import { UnitEditRow } from "../components/UnitEditRow";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -512,6 +514,9 @@ function PropertyCard({ property, onChange }) {
   const [extraCriteria, setExtraCriteria] = useState((property.extra_criteria ?? []).join("\n"));
   const [questions, setQuestions] = useState((property.questions ?? []).join("\n"));
   const [phases, setPhases] = useState(property.phases ?? []);
+  const [floorPlanUrl, setFloorPlanUrl] = useState(property.floor_plan_url ?? null);
+  const [photoUrls, setPhotoUrls] = useState(property.photo_urls ?? []);
+  const [paymentTerms, setPaymentTerms] = useState(property.payment_terms ?? "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -543,6 +548,9 @@ function PropertyCard({ property, onChange }) {
         extra_criteria: linesToArray(extraCriteria),
         questions: linesToArray(questions),
         phases,
+        floor_plan_url: floorPlanUrl,
+        photo_urls: photoUrls,
+        payment_terms: paymentTerms.trim() || null,
       })
       .eq("id", property.id);
     setSaving(false);
@@ -575,6 +583,11 @@ function PropertyCard({ property, onChange }) {
 
   async function removeUnit(unitId) {
     await supabase.from("av_units").delete().eq("id", unitId);
+    onChange();
+  }
+
+  async function saveUnit(unitId, dados) {
+    await supabase.from("av_units").update(dados).eq("id", unitId);
     onChange();
   }
 
@@ -627,6 +640,20 @@ function PropertyCard({ property, onChange }) {
       <input
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+
+      <div className="mt-3 flex flex-wrap gap-4">
+        <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
+        <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
+      </div>
+
+      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
+      <textarea
+        value={paymentTerms}
+        onChange={(e) => setPaymentTerms(e.target.value)}
+        rows={2}
+        placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
 
@@ -690,15 +717,7 @@ function PropertyCard({ property, onChange }) {
       </label>
       <div className="mt-1 space-y-1">
         {(property.units ?? []).map((u) => (
-          <div key={u.id} className="flex items-center justify-between text-sm text-graytext">
-            <span>{u.name}</span>
-            <span className="flex items-center gap-2">
-              {u.table_value != null && <span>{brl(u.table_value)}</span>}
-              <button onClick={() => removeUnit(u.id)} className="text-xs font-bold text-[#B34A2E]">
-                ×
-              </button>
-            </span>
-          </div>
+          <UnitEditRow key={u.id} unit={u} onSave={saveUnit} onRemove={removeUnit} />
         ))}
       </div>
 

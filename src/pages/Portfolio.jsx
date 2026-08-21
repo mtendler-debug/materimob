@@ -3,15 +3,14 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { parseCsv, downloadCsv } from "../lib/csv";
+import { ImageUploader } from "../components/ImageUploader";
+import { UnitEditRow } from "../components/UnitEditRow";
 
 function linesToArray(text) {
   return text
     .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
-}
-function brl(n) {
-  return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
 }
 
 export default function Portfolio() {
@@ -80,6 +79,9 @@ function PortfolioPropertyEditor({ property, onChange }) {
   const [summary, setSummary] = useState(property.summary ?? "");
   const [extraCriteria, setExtraCriteria] = useState((property.extra_criteria ?? []).join("\n"));
   const [questions, setQuestions] = useState((property.questions ?? []).join("\n"));
+  const [floorPlanUrl, setFloorPlanUrl] = useState(property.floor_plan_url ?? null);
+  const [photoUrls, setPhotoUrls] = useState(property.photo_urls ?? []);
+  const [paymentTerms, setPaymentTerms] = useState(property.payment_terms ?? "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [unitName, setUnitName] = useState("");
@@ -98,6 +100,9 @@ function PortfolioPropertyEditor({ property, onChange }) {
         summary: summary.trim() || null,
         extra_criteria: linesToArray(extraCriteria),
         questions: linesToArray(questions),
+        floor_plan_url: floorPlanUrl,
+        photo_urls: photoUrls,
+        payment_terms: paymentTerms.trim() || null,
       })
       .eq("id", property.id);
     setSaving(false);
@@ -130,6 +135,11 @@ function PortfolioPropertyEditor({ property, onChange }) {
 
   async function removeUnit(unitId) {
     await supabase.from("av_portfolio_units").delete().eq("id", unitId);
+    onChange();
+  }
+
+  async function saveUnit(unitId, dados) {
+    await supabase.from("av_portfolio_units").update(dados).eq("id", unitId);
     onChange();
   }
 
@@ -169,6 +179,20 @@ function PortfolioPropertyEditor({ property, onChange }) {
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
 
+      <div className="mt-3 flex flex-wrap gap-4">
+        <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
+        <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
+      </div>
+
+      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
+      <textarea
+        value={paymentTerms}
+        onChange={(e) => setPaymentTerms(e.target.value)}
+        rows={2}
+        placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
         Critérios extras (um por linha)
       </label>
@@ -192,15 +216,7 @@ function PortfolioPropertyEditor({ property, onChange }) {
       <label className="mt-4 block text-[11.5px] font-bold text-graytext uppercase">Unidades</label>
       <div className="mt-1 space-y-1">
         {(property.units ?? []).map((u) => (
-          <div key={u.id} className="flex items-center justify-between text-sm text-graytext">
-            <span>{u.name}</span>
-            <span className="flex items-center gap-2">
-              {u.table_value != null && <span>{brl(u.table_value)}</span>}
-              <button onClick={() => removeUnit(u.id)} className="text-xs font-bold text-[#B34A2E]">
-                ×
-              </button>
-            </span>
-          </div>
+          <UnitEditRow key={u.id} unit={u} onSave={saveUnit} onRemove={removeUnit} />
         ))}
       </div>
       {showUnitForm ? (

@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
   const { data: properties, error: propError } = await admin
     .from("av_properties")
     .select(
-      "id, name, color, stage, address, summary, extra_criteria, questions, position, units:av_units(id, name, table_value, position)",
+      "id, name, color, stage, address, summary, extra_criteria, questions, floor_plan_url, photo_urls, payment_terms, position, units:av_units(id, name, table_value, position)",
     )
     .eq("selection_id", selection.id)
     .order("position")

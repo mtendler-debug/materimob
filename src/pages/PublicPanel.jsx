@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 import { Gantt } from "../components/Gantt";
+import { PropertyMedia } from "../components/PropertyMedia";
 
 function n1(v) {
   return v == null ? "—" : (Math.round(v * 10) / 10).toFixed(1).replace(".", ",");
@@ -139,6 +140,18 @@ export default function PublicPanel() {
               </span>
             ))}
           </Card>
+        )}
+
+        {properties.some((p) => p.floor_plan_url || p.photo_urls?.length > 0 || p.payment_terms) && (
+          <>
+            <SectionTitle>Sobre os imóveis</SectionTitle>
+            {properties.map((p) => (
+              <Card key={p.id}>
+                <b style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
+                <PropertyMedia property={p} />
+              </Card>
+            ))}
+          </>
         )}
 
         {criteria.length > 0 && (

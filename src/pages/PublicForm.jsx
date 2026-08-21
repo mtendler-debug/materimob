@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 import { loadDraft, saveDraft, evalKey } from "../lib/draftStore";
+import { PropertyMedia } from "../components/PropertyMedia";
 
 const STAGES = [
   { key: "a-visitar", label: "A visitar", chipBg: "#FFF3E0", chipColor: "#B26A00" },
@@ -206,7 +207,8 @@ function Funnel({ properties, draft, onOpen }) {
                 <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{p.name}</h3>
                 {p.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{p.address}</p>}
                 {p.summary && <p className="m-0 mb-3 text-xs text-graytext">{p.summary}</p>}
-                <div className="flex flex-wrap items-center gap-2">
+                <PropertyMedia property={p} />
+                <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Chip bg={g.chipBg} color={g.chipColor}>
                     {g.label}
                   </Chip>
@@ -341,6 +343,7 @@ function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, o
         <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{property.name}</h3>
         {property.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{property.address}</p>}
         {property.summary && <p className="m-0 text-xs text-graytext">{property.summary}</p>}
+        <PropertyMedia property={property} />
       </div>
 
       {property.units?.length > 0 && (
