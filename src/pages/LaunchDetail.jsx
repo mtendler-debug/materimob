@@ -277,6 +277,8 @@ function UnitRow({ unit, manage, onChange }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(unit.name);
   const [value, setValue] = useState(unit.table_value ?? "");
+  const [photoUrls, setPhotoUrls] = useState(unit.photo_urls ?? []);
+  const [paymentTerms, setPaymentTerms] = useState(unit.payment_terms ?? "");
   const [saving, setSaving] = useState(false);
 
   async function salvar() {
@@ -284,7 +286,12 @@ function UnitRow({ unit, manage, onChange }) {
     setSaving(true);
     await supabase
       .from("av_launch_units")
-      .update({ name: name.trim(), table_value: value === "" ? null : Number(value) })
+      .update({
+        name: name.trim(),
+        table_value: value === "" ? null : Number(value),
+        photo_urls: photoUrls,
+        payment_terms: paymentTerms.trim() || null,
+      })
       .eq("id", unit.id);
     setSaving(false);
     setEditing(false);
@@ -294,6 +301,8 @@ function UnitRow({ unit, manage, onChange }) {
   function cancelar() {
     setName(unit.name);
     setValue(unit.table_value ?? "");
+    setPhotoUrls(unit.photo_urls ?? []);
+    setPaymentTerms(unit.payment_terms ?? "");
     setEditing(false);
   }
 
@@ -319,36 +328,60 @@ function UnitRow({ unit, manage, onChange }) {
 
   if (editing) {
     return (
-      <div className="flex flex-wrap items-end gap-2 border-b border-rule py-2 text-sm last:border-0">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
+      <div className="border-b border-rule py-2 text-sm last:border-0">
+        <div className="flex flex-wrap items-end gap-2">
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
+          />
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Valor de tabela"
+            className="w-32 rounded border border-rule px-2 py-1 text-sm"
+          />
+        </div>
+        <div className="mt-2">
+          <ImageUploader label="Fotos desta unidade" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
+        </div>
+        <label className="mt-2 block text-[11.5px] font-bold text-graytext uppercase">
+          Condições de pagamento desta unidade
+        </label>
+        <textarea
+          value={paymentTerms}
+          onChange={(e) => setPaymentTerms(e.target.value)}
+          rows={2}
+          placeholder="Deixe em branco pra usar a condição geral do lançamento"
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-2 py-1 text-sm"
         />
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder="Valor de tabela"
-          className="w-32 rounded border border-rule px-2 py-1 text-sm"
-        />
-        <button
-          onClick={salvar}
-          disabled={saving}
-          className="rounded bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
-        >
-          {saving ? "Salvando…" : "salvar"}
-        </button>
-        <button onClick={cancelar} className="text-xs font-bold text-graytext underline">
-          cancelar
-        </button>
+        <div className="mt-2 flex items-center gap-2">
+          <button
+            onClick={salvar}
+            disabled={saving}
+            className="rounded bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
+          >
+            {saving ? "Salvando…" : "salvar"}
+          </button>
+          <button onClick={cancelar} className="text-xs font-bold text-graytext underline">
+            cancelar
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-wrap items-center gap-2 border-b border-rule py-2 text-sm last:border-0">
-      <span className="flex-1 text-charcoal">{unit.name}</span>
+      <span className="flex-1 text-charcoal">
+        {unit.name}
+        {(unit.photo_urls?.length > 0 || unit.payment_terms) && (
+          <span className="ml-1 text-xs" title="Tem fotos ou condições de pagamento próprias">
+            •
+          </span>
+        )}
+      </span>
       <span className="text-graytext">{brl(unit.table_value)}</span>
       <span
         className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"

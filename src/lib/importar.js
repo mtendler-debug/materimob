@@ -26,7 +26,15 @@ export async function importarPortfolio(selectionId, item, position) {
   if (item.units?.length) {
     const { error: unitError } = await supabase
       .from("av_units")
-      .insert(item.units.map((u) => ({ property_id: inserted.id, name: u.name, table_value: u.table_value })));
+      .insert(
+        item.units.map((u) => ({
+          property_id: inserted.id,
+          name: u.name,
+          table_value: u.table_value,
+          photo_urls: u.photo_urls,
+          payment_terms: u.payment_terms,
+        })),
+      );
     if (unitError) return { error: unitError };
   }
   return { data: inserted };
@@ -62,6 +70,8 @@ export async function importarLancamento(selectionId, launch, unidadesDisponivei
         property_id: inserted.id,
         name: u.name,
         table_value: u.table_value,
+        photo_urls: u.photo_urls,
+        payment_terms: u.payment_terms,
         launch_unit_id: u.id,
       })),
     );

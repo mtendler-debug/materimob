@@ -372,6 +372,7 @@ function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, o
               <b className="text-charcoal">R$ {Math.round(unit.table_value).toLocaleString("pt-BR")}</b>
             </div>
           )}
+          {unit && <PropertyMedia property={unit} />}
           <div className="mt-[7px] flex justify-between text-[11px] text-muted">
             <span>Pode avaliar mais de uma unidade — é só voltar e escolher outra.</span>
           </div>

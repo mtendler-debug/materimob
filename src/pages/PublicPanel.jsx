@@ -142,15 +142,30 @@ export default function PublicPanel() {
           </Card>
         )}
 
-        {properties.some((p) => p.floor_plan_url || p.photo_urls?.length > 0 || p.payment_terms) && (
+        {properties.some(
+          (p) =>
+            p.floor_plan_url ||
+            p.photo_urls?.length > 0 ||
+            p.payment_terms ||
+            (p.units ?? []).some((u) => u.photo_urls?.length > 0 || u.payment_terms),
+        ) && (
           <>
             <SectionTitle>Sobre os imóveis</SectionTitle>
-            {properties.map((p) => (
-              <Card key={p.id}>
-                <b style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
-                <PropertyMedia property={p} />
-              </Card>
-            ))}
+            {properties.map((p) => {
+              const unidadesComMidia = (p.units ?? []).filter((u) => u.photo_urls?.length > 0 || u.payment_terms);
+              return (
+                <Card key={p.id}>
+                  <b style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
+                  <PropertyMedia property={p} />
+                  {unidadesComMidia.map((u) => (
+                    <div key={u.id} className="mt-3 border-t border-rule pt-3">
+                      <p className="text-[13px] font-bold text-charcoal">{u.name}</p>
+                      <PropertyMedia property={u} />
+                    </div>
+                  ))}
+                </Card>
+              );
+            })}
           </>
         )}
 

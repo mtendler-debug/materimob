@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     admin
       .from("av_properties")
       .select(
-        "id, name, color, stage, address, summary, extra_criteria, questions, phases, floor_plan_url, photo_urls, payment_terms, position, units:av_units(id, name, table_value, position, launch_unit:av_launch_units(status, reserved_for))",
+        "id, name, color, stage, address, summary, extra_criteria, questions, phases, floor_plan_url, photo_urls, payment_terms, position, units:av_units(id, name, table_value, photo_urls, payment_terms, position, launch_unit:av_launch_units(status, reserved_for))",
       )
       .eq("selection_id", selection.id)
       .order("position")
