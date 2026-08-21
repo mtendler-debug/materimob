@@ -1318,3 +1318,20 @@ alter table av_portfolio_units
 alter table av_launch_units
   add column photo_urls text[] not null default '{}',
   add column payment_terms text;
+
+-- ---------------------------------------------------------------------
+-- Valor do condomínio e do IPTU — só do imóvel/empreendimento, mesmo
+-- espírito de payment_terms.
+-- ---------------------------------------------------------------------
+
+alter table av_properties
+  add column condo_value numeric,
+  add column iptu_value numeric;
+
+alter table av_portfolio_properties
+  add column condo_value numeric,
+  add column iptu_value numeric;
+
+alter table av_launches
+  add column condo_value numeric,
+  add column iptu_value numeric;

@@ -180,7 +180,6 @@ export default function Dashboard() {
 }
 
 function ClientCard({ client, onChange }) {
-  const [copied, setCopied] = useState(false);
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
 
   return (
@@ -193,25 +192,10 @@ function ClientCard({ client, onChange }) {
         <p className="mt-1 text-sm text-graytext">{[client.phone, client.email].filter(Boolean).join(" · ")}</p>
       )}
 
-      <div className="mt-3 flex items-center gap-2 rounded-[9px] bg-light px-3 py-2">
-        <span className="w-16 shrink-0 text-[10px] font-bold uppercase text-graytext">Perfil</span>
-        <span className="flex-1 truncate text-xs text-graytext">{homeUrl}</span>
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(homeUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          }}
-          className="shrink-0 rounded-[7px] bg-charcoal px-2 py-1 text-[11px] font-bold text-white hover:opacity-90"
-        >
-          {copied ? "Copiado!" : "copiar"}
-        </button>
-      </div>
-
       <div className="mt-3 divide-y divide-rule border-t border-rule">
         {client.selections.map((s) => (
           <div key={s.id} className="py-3">
-            <RoteiroRow selection={s} onChange={onChange} />
+            <RoteiroRow selection={s} homeUrl={homeUrl} onChange={onChange} />
           </div>
         ))}
       </div>
@@ -219,8 +203,8 @@ function ClientCard({ client, onChange }) {
   );
 }
 
-function RoteiroRow({ selection, onChange }) {
-  const [copiado, setCopiado] = useState(null); // "form" | "painel" | null
+function RoteiroRow({ selection, homeUrl, onChange }) {
+  const [copiado, setCopiado] = useState(null); // "perfil" | "form" | "painel" | null
   const formUrl = `${window.location.origin}/c/${selection.token_form}`;
   const panelUrl = `${window.location.origin}/r/${selection.token_panel}`;
 
@@ -266,7 +250,13 @@ function RoteiroRow({ selection, onChange }) {
         )}
       </div>
 
-      <div className="mt-2 space-y-1.5">
+      <div className="mt-2 space-y-1.5 rounded-[9px] border border-rule p-2">
+        <LinkLine
+          label="Permanente"
+          url={homeUrl}
+          copied={copiado === "perfil"}
+          onCopy={() => copiar(homeUrl, "perfil")}
+        />
         <LinkLine label="Avaliação" url={formUrl} copied={copiado === "form"} onCopy={() => copiar(formUrl, "form")} />
         <LinkLine
           label="Painel"
@@ -298,7 +288,7 @@ function RoteiroRow({ selection, onChange }) {
 function LinkLine({ label, url, copied, onCopy, openable }) {
   return (
     <div className="flex items-center gap-2 rounded-[9px] bg-light px-2 py-1.5">
-      <span className="w-16 shrink-0 text-[10px] font-bold uppercase text-graytext">{label}</span>
+      <span className="w-20 shrink-0 text-[10px] font-bold uppercase text-graytext">{label}</span>
       <span className="flex-1 truncate text-xs text-graytext">{url}</span>
       <button onClick={onCopy} className="shrink-0 rounded-[7px] bg-charcoal px-2 py-1 text-[11px] font-bold text-white">
         {copied ? "Copiado!" : "copiar"}

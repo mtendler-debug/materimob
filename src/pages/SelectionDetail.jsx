@@ -116,19 +116,21 @@ export default function SelectionDetail() {
           </button>
         </div>
 
-        {selection.av_clients && (
-          <div className="mt-4">
+        <div className="mt-4 space-y-3 rounded-[14px] border border-rule bg-white p-4">
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-graytext">
+            Links para o cliente
+          </p>
+          {selection.av_clients && (
             <LinkBox
               label={`Link permanente de ${selection.av_clients.name || "cliente"} (reúne todos os roteiros dele)`}
               url={`${window.location.origin}/cliente/${selection.av_clients.token}`}
               highlight
             />
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <LinkBox label="Link do formulário (cliente avalia)" url={formLink} />
+            <LinkBox label="Link do painel (resultados)" url={panelLink} />
           </div>
-        )}
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <LinkBox label="Link do formulário (cliente avalia)" url={formLink} />
-          <LinkBox label="Link do painel (resultados)" url={panelLink} />
         </div>
 
         <SectionTitle>Dashboard</SectionTitle>
@@ -517,6 +519,8 @@ function PropertyCard({ property, onChange }) {
   const [floorPlanUrl, setFloorPlanUrl] = useState(property.floor_plan_url ?? null);
   const [photoUrls, setPhotoUrls] = useState(property.photo_urls ?? []);
   const [paymentTerms, setPaymentTerms] = useState(property.payment_terms ?? "");
+  const [condoValue, setCondoValue] = useState(property.condo_value ?? "");
+  const [iptuValue, setIptuValue] = useState(property.iptu_value ?? "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -551,6 +555,8 @@ function PropertyCard({ property, onChange }) {
         floor_plan_url: floorPlanUrl,
         photo_urls: photoUrls,
         payment_terms: paymentTerms.trim() || null,
+        condo_value: condoValue === "" ? null : Number(condoValue),
+        iptu_value: iptuValue === "" ? null : Number(iptuValue),
       })
       .eq("id", property.id);
     setSaving(false);
@@ -656,6 +662,29 @@ function PropertyCard({ property, onChange }) {
         placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
+
+      <div className="mt-3 flex flex-wrap gap-4">
+        <div>
+          <label className="block text-[11.5px] font-bold text-graytext uppercase">Condomínio</label>
+          <input
+            type="number"
+            value={condoValue}
+            onChange={(e) => setCondoValue(e.target.value)}
+            placeholder="Valor mensal"
+            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-[11.5px] font-bold text-graytext uppercase">IPTU</label>
+          <input
+            type="number"
+            value={iptuValue}
+            onChange={(e) => setIptuValue(e.target.value)}
+            placeholder="Valor mensal"
+            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          />
+        </div>
+      </div>
 
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
         Critérios extras só deste imóvel (um por linha)

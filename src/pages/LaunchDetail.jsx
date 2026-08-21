@@ -160,6 +160,8 @@ function EditLaunchMedia({ launch, onChange }) {
   const [floorPlanUrl, setFloorPlanUrl] = useState(launch.floor_plan_url ?? null);
   const [photoUrls, setPhotoUrls] = useState(launch.photo_urls ?? []);
   const [paymentTerms, setPaymentTerms] = useState(launch.payment_terms ?? "");
+  const [condoValue, setCondoValue] = useState(launch.condo_value ?? "");
+  const [iptuValue, setIptuValue] = useState(launch.iptu_value ?? "");
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -172,6 +174,8 @@ function EditLaunchMedia({ launch, onChange }) {
         floor_plan_url: floorPlanUrl,
         photo_urls: photoUrls,
         payment_terms: paymentTerms.trim() || null,
+        condo_value: condoValue === "" ? null : Number(condoValue),
+        iptu_value: iptuValue === "" ? null : Number(iptuValue),
       })
       .eq("id", launch.id);
     setSaving(false);
@@ -196,6 +200,28 @@ function EditLaunchMedia({ launch, onChange }) {
         placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
+      <div className="mt-3 flex flex-wrap gap-4">
+        <div>
+          <label className="block text-[11.5px] font-bold text-graytext uppercase">Condomínio</label>
+          <input
+            type="number"
+            value={condoValue}
+            onChange={(e) => setCondoValue(e.target.value)}
+            placeholder="Valor mensal"
+            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-[11.5px] font-bold text-graytext uppercase">IPTU</label>
+          <input
+            type="number"
+            value={iptuValue}
+            onChange={(e) => setIptuValue(e.target.value)}
+            placeholder="Valor mensal"
+            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          />
+        </div>
+      </div>
       <div className="mt-3 flex items-center gap-3">
         <button
           onClick={save}

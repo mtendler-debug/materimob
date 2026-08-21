@@ -17,6 +17,8 @@ export async function importarPortfolio(selectionId, item, position) {
       floor_plan_url: item.floor_plan_url,
       photo_urls: item.photo_urls,
       payment_terms: item.payment_terms,
+      condo_value: item.condo_value,
+      iptu_value: item.iptu_value,
       position,
     })
     .select("id")
@@ -58,6 +60,8 @@ export async function importarLancamento(selectionId, launch, unidadesDisponivei
       floor_plan_url: launch.floor_plan_url,
       photo_urls: launch.photo_urls,
       payment_terms: launch.payment_terms,
+      condo_value: launch.condo_value,
+      iptu_value: launch.iptu_value,
       position,
     })
     .select("id")
