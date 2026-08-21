@@ -151,21 +151,17 @@ export default function PublicPanel() {
         ) && (
           <>
             <SectionTitle>Sobre os imóveis</SectionTitle>
-            {properties.map((p) => {
-              const unidadesComMidia = (p.units ?? []).filter((u) => u.photo_urls?.length > 0 || u.payment_terms);
-              return (
-                <Card key={p.id}>
-                  <b style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
-                  <PropertyMedia property={p} />
-                  {unidadesComMidia.map((u) => (
-                    <div key={u.id} className="mt-3 border-t border-rule pt-3">
-                      <p className="text-[13px] font-bold text-charcoal">{u.name}</p>
-                      <PropertyMedia property={u} />
-                    </div>
-                  ))}
-                </Card>
-              );
-            })}
+            {properties
+              .filter(
+                (p) =>
+                  p.floor_plan_url ||
+                  p.photo_urls?.length > 0 ||
+                  p.payment_terms ||
+                  (p.units ?? []).some((u) => u.photo_urls?.length > 0 || u.payment_terms),
+              )
+              .map((p) => (
+                <PropertyAboutCard key={p.id} property={p} />
+              ))}
           </>
         )}
 
@@ -323,6 +319,39 @@ export default function PublicPanel() {
         </p>
       </div>
     </div>
+  );
+}
+
+// Card fechado por padrão — mostra só o nome do imóvel; o cliente abre pra
+// ver planta, fotos e condições de pagamento (do imóvel e de cada unidade
+// que tiver mídia própria). Evita empurrar o resto do painel pra baixo com
+// conteúdo que nem todo cliente quer ver.
+function PropertyAboutCard({ property }) {
+  const [open, setOpen] = useState(false);
+  const unidadesComMidia = (property.units ?? []).filter((u) => u.photo_urls?.length > 0 || u.payment_terms);
+
+  return (
+    <Card>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 text-left"
+      >
+        <b style={{ color: property.color || "#A68A5B" }}>{property.name}</b>
+        <span className="shrink-0 text-xs font-bold text-graytext">{open ? "fechar ▲" : "ver detalhes ▼"}</span>
+      </button>
+      {open && (
+        <>
+          <PropertyMedia property={property} />
+          {unidadesComMidia.map((u) => (
+            <div key={u.id} className="mt-3 border-t border-rule pt-3">
+              <p className="text-[13px] font-bold text-charcoal">{u.name}</p>
+              <PropertyMedia property={u} />
+            </div>
+          ))}
+        </>
+      )}
+    </Card>
   );
 }
 
