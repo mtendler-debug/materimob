@@ -2,6 +2,14 @@
   command = "npm run build"
   publish = "dist"
 
+# Home page pública (materimob.com.br/) continua a mesma página estática que
+# já estava no ar antes do sistema novo — só o que fica atrás do "Entrar" é
+# que troca. Tem que vir antes do catch-all abaixo, senão o SPA engole "/".
+[[redirects]]
+  from = "/"
+  to = "/landing.html"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
