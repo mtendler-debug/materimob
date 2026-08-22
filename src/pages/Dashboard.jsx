@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [criteria, setCriteria] = useState("");
+  const [unitCriteria, setUnitCriteria] = useState("");
 
   async function load() {
     const { data, error: loadError } = await supabase
@@ -77,6 +78,10 @@ export default function Dashboard() {
         .split("\n")
         .map((c) => c.trim())
         .filter(Boolean),
+      unit_criteria: unitCriteria
+        .split("\n")
+        .map((c) => c.trim())
+        .filter(Boolean),
       token_form: generateToken(),
       token_panel: generateToken(),
     });
@@ -91,6 +96,7 @@ export default function Dashboard() {
     setClientPhone("");
     setClientEmail("");
     setCriteria("");
+    setUnitCriteria("");
     setShowForm(false);
     load();
   }
@@ -133,6 +139,18 @@ export default function Dashboard() {
                 className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
               />
               <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-graytext">
+                Critérios das unidades (um por linha)
+              </label>
+              <textarea
+                value={unitCriteria}
+                onChange={(e) => setUnitCriteria(e.target.value)}
+                rows={4}
+                placeholder={"Planta e distribuição\nVista\nRuído"}
+                className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+              />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button

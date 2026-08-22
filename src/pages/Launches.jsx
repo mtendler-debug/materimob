@@ -97,6 +97,7 @@ function NewLaunch({ organizationId, onCreated }) {
   const [address, setAddress] = useState("");
   const [summary, setSummary] = useState("");
   const [criteria, setCriteria] = useState("");
+  const [unitCriteria, setUnitCriteria] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function submit(e) {
@@ -109,12 +110,14 @@ function NewLaunch({ organizationId, onCreated }) {
       address: address.trim() || null,
       summary: summary.trim() || null,
       criteria: linesToArray(criteria),
+      unit_criteria: linesToArray(unitCriteria),
     });
     setSaving(false);
     setName("");
     setAddress("");
     setSummary("");
     setCriteria("");
+    setUnitCriteria("");
     setShow(false);
     onCreated();
   }
@@ -163,6 +166,17 @@ function NewLaunch({ organizationId, onCreated }) {
         <textarea
           value={criteria}
           onChange={(e) => setCriteria(e.target.value)}
+          rows={4}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">
+          Critérios das unidades (um por linha)
+        </label>
+        <textarea
+          value={unitCriteria}
+          onChange={(e) => setUnitCriteria(e.target.value)}
           rows={4}
           className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
         />

@@ -13,13 +13,18 @@ export function avg(nums) {
 export function aggregateSelection({ properties, evaluations, criteria }) {
   const porProjeto = properties.map((p) => {
     const mine = evaluations.filter((e) => e.property_id === p.id);
+    // Nota do empreendimento vem só das avaliações gerais (unit_id null),
+    // com fallback pra "mine" inteiro quando não há avaliação geral —
+    // mesma regra do aval-panel, pra não divergir do painel do cliente.
+    const geralEvals = mine.filter((e) => !e.unit_id);
+    const base = geralEvals.length ? geralEvals : mine;
     const allCriteria = [...(criteria ?? []), ...(p.extra_criteria ?? [])];
     const medias = allCriteria.map((c) => ({
       criterio: c,
-      media: avg(mine.map((e) => (e.scores || {})[c])),
+      media: avg(base.map((e) => (e.scores || {})[c])),
     }));
     const mediaCriterios = avg(medias.map((m) => m.media));
-    const notaMedia = avg(mine.map((e) => e.overall_score));
+    const notaMedia = avg(base.map((e) => e.overall_score));
 
     const comentarios = mine
       .filter((e) => e.strengths || e.concerns)

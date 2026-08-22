@@ -608,6 +608,7 @@ function CreateRoteiro({ launch }) {
         client_phone: clientPhone.trim() || null,
         client_id: clientId,
         criteria: launch.criteria,
+        unit_criteria: launch.unit_criteria,
         milestones: launch.milestones,
         launch_id: launch.id,
         token_form: generateToken(),

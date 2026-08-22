@@ -37,7 +37,7 @@ export default function PublicForm() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [view, setView] = useState("funnel"); // funnel | form | done
+  const [view, setView] = useState("funnel"); // funnel | form | choose-unit | done
   const [current, setCurrent] = useState(null); // { property, unitId }
   const [doneMsg, setDoneMsg] = useState("");
   const [draft, setDraft] = useState(() => loadDraft(token));
@@ -117,6 +117,22 @@ export default function PublicForm() {
     );
   }
 
+  if (view === "choose-unit" && current) {
+    return (
+      <Shell title={data.title} subtitle={data.subtitle}>
+        <ChooseUnit
+          property={current.property}
+          draft={draft}
+          onBack={() => setView("funnel")}
+          onChoose={(unitId) => {
+            setCurrent({ property: current.property, unitId });
+            setView("form");
+          }}
+        />
+      </Shell>
+    );
+  }
+
   if (view === "form" && current) {
     return (
       <Shell title={data.title} subtitle={data.subtitle}>
@@ -125,10 +141,10 @@ export default function PublicForm() {
           property={current.property}
           unitId={current.unitId}
           criteria={data.criteria}
+          unitCriteria={data.unit_criteria}
           draft={draft}
           onPersist={persist}
-          onBack={() => setView("funnel")}
-          onChangeUnit={(unitId) => setCurrent({ property: current.property, unitId })}
+          onBack={() => setView(current.unitId ? "choose-unit" : "funnel")}
           onDone={(msg) => {
             setDoneMsg(msg);
             setView("done");
@@ -141,17 +157,27 @@ export default function PublicForm() {
   return (
     <Shell title={data.title} subtitle={data.subtitle}>
       <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
-        <b className="text-charcoal">Como funciona.</b> Dê sua nota para cada imóvel que conhecer.
-        Leva cerca de 3 minutos por empreendimento e você pode preencher durante a própria visita —
-        o que escrever fica salvo neste celular, mesmo sem internet.
+        <b className="text-charcoal">Como funciona.</b> Primeiro você avalia o empreendimento em
+        geral, depois cada unidade que visitou — são notas diferentes, porque gostar do prédio e
+        gostar de uma unidade específica não é a mesma coisa. Leva poucos minutos por imóvel e o
+        que escrever fica salvo neste celular, mesmo sem internet.
       </div>
 
       <Funnel
         properties={data.properties}
         draft={draft}
-        onOpen={(property, unitId) => {
-          setCurrent({ property, unitId: unitId || "" });
-          setView("form");
+        onOpen={(property) => {
+          const geralDone = draft.ans?.[evalKey(property.id, "")]?.sent;
+          if (!geralDone) {
+            setCurrent({ property, unitId: "" });
+            setView("form");
+          } else if (property.units?.length > 0) {
+            setCurrent({ property, unitId: null });
+            setView("choose-unit");
+          } else {
+            setCurrent({ property, unitId: "" });
+            setView("form");
+          }
         }}
       />
 
@@ -193,10 +219,23 @@ function Funnel({ properties, draft, onOpen }) {
             const feitas = [];
             const geral = draft.ans?.[evalKey(p.id, "")];
             if (geral?.sent) feitas.push({ nome: "empreendimento", nota: geral.nota });
+            let unidadesFeitas = 0;
             (p.units ?? []).forEach((u) => {
               const a = draft.ans?.[evalKey(p.id, u.id)];
-              if (a?.sent) feitas.push({ nome: u.name, nota: a.nota });
+              if (a?.sent) {
+                feitas.push({ nome: u.name, nota: a.nota });
+                unidadesFeitas++;
+              }
             });
+
+            let botaoLabel = "Avaliar o empreendimento";
+            if (geral?.sent) {
+              if (p.units?.length > 0) {
+                botaoLabel = unidadesFeitas > 0 ? "Avaliar outra unidade" : "Avaliar uma unidade";
+              } else {
+                botaoLabel = "Avaliar de novo";
+              }
+            }
 
             return (
               <div
@@ -214,10 +253,10 @@ function Funnel({ properties, draft, onOpen }) {
                   </Chip>
                   {p.units?.length > 0 && <Chip>{p.units.length} unidade(s)</Chip>}
                   <button
-                    onClick={() => onOpen(p, "")}
+                    onClick={() => onOpen(p)}
                     className="flex-1 rounded-[11px] border-[1.5px] border-rule bg-white px-[14px] py-[9px] text-[13.5px] font-bold text-charcoal"
                   >
-                    {feitas.length ? "Avaliar outra unidade" : "Avaliar"}
+                    {botaoLabel}
                   </button>
                 </div>
                 {feitas.length > 0 && (
@@ -234,10 +273,64 @@ function Funnel({ properties, draft, onOpen }) {
   );
 }
 
-function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, onBack, onChangeUnit, onDone }) {
+// Segunda etapa, só depois de avaliar o empreendimento: escolher qual
+// unidade avaliar. Gostar do prédio e gostar de uma unidade específica
+// são notas diferentes — por isso isso é uma tela própria, não uma opção
+// dentro do mesmo formulário.
+function ChooseUnit({ property, draft, onBack, onChoose }) {
+  return (
+    <div className="mt-5 pb-10">
+      <button onClick={onBack} className="p-0 py-[6px] text-sm text-graytext">
+        ← voltar
+      </button>
+
+      <div
+        className="mt-[10px] rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+        style={{ borderLeft: `5px solid ${property.color || "#1C1C1C"}` }}
+      >
+        <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{property.name}</h3>
+        <p className="m-0 text-[12.5px] text-graytext">
+          Você já avaliou o empreendimento. Agora escolha qual unidade quer avaliar.
+        </p>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {(property.units ?? []).map((u) => {
+          const done = draft.ans?.[evalKey(property.id, u.id)]?.sent;
+          return (
+            <button
+              key={u.id}
+              onClick={() => onChoose(u.id)}
+              className="flex w-full items-center justify-between rounded-[12px] border-[1.5px] border-rule bg-white p-3 text-left hover:border-gold"
+            >
+              <span>
+                <span className="block text-[14.5px] font-bold text-charcoal">{u.name}</span>
+                {u.table_value != null && (
+                  <span className="block text-[12.5px] text-graytext">
+                    R$ {Math.round(u.table_value).toLocaleString("pt-BR")}
+                  </span>
+                )}
+              </span>
+              {done && <span className="shrink-0 text-xs font-bold text-[#2E7D32]">✓ avaliada</span>}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft, onPersist, onBack, onDone }) {
   const key = evalKey(property.id, unitId);
   const existing = draft.ans?.[key] ?? {};
-  const allCriteria = useMemo(() => [...criteria, ...(property.extra_criteria ?? [])], [criteria, property]);
+  const isGeral = !unitId;
+  const allCriteria = useMemo(
+    () =>
+      isGeral
+        ? [...criteria, ...(property.extra_criteria ?? [])]
+        : [...(unitCriteria ?? []), ...(property.extra_unit_criteria ?? [])],
+    [isGeral, criteria, unitCriteria, property],
+  );
 
   const [nome, setNome] = useState(existing.nome ?? draft.nome ?? "");
   const [relacao, setRelacao] = useState(existing.relacao ?? draft.relacao ?? "");
@@ -282,7 +375,7 @@ function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, o
     setPerguntasMarcadas((qs) => (qs.includes(q) ? qs.filter((x) => x !== q) : [...qs, q]));
   }
 
-  const base = criteria.length;
+  const base = isGeral ? criteria.length : (unitCriteria ?? []).length;
   const progressTotal = allCriteria.length + 2;
   const progressDone = Object.keys(notas).length + (nome ? 1 : 0) + (nota ? 1 : 0);
   const progressPct = Math.round((progressDone / progressTotal) * 100);
@@ -346,26 +439,17 @@ function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, o
         <PropertyMedia property={property} />
       </div>
 
-      {property.units?.length > 0 && (
-        <div className="mt-5">
-          <SectionLabel>O que você está avaliando</SectionLabel>
-          <select
-            value={unitId}
-            onChange={(e) => onChangeUnit(e.target.value)}
-            className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
-          >
-            <option value="">O empreendimento em geral</option>
-            {property.units.map((u) => {
-              const feita = draft.ans?.[evalKey(property.id, u.id)];
-              return (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                  {u.table_value ? ` — R$ ${Math.round(u.table_value).toLocaleString("pt-BR")}` : ""}
-                  {feita?.sent ? "  ✓ avaliada" : ""}
-                </option>
-              );
-            })}
-          </select>
+      {isGeral ? (
+        <div className="mt-3 rounded-[11px] bg-light p-3 text-[13px] text-graytext">
+          Você está avaliando <b className="text-charcoal">o empreendimento em geral</b> — o
+          projeto, a localização, o lazer. As unidades específicas têm sua própria avaliação depois.
+        </div>
+      ) : (
+        <div className="mt-3 rounded-[14px] border-[1.5px] border-rule bg-white p-4">
+          <p className="m-0 text-[10.5px] font-bold tracking-[.14em] text-gold uppercase">
+            Avaliando a unidade
+          </p>
+          <h4 className="mt-1 mb-0 text-[15px] font-bold text-charcoal">{unit?.name}</h4>
           {unit?.table_value != null && (
             <div className="mt-[10px] rounded-[11px] bg-light p-3 text-[13px] text-graytext">
               Valor de tabela desta unidade:{" "}
@@ -373,9 +457,6 @@ function EvaluationForm({ token, property, unitId, criteria, draft, onPersist, o
             </div>
           )}
           {unit && <PropertyMedia property={unit} />}
-          <div className="mt-[7px] flex justify-between text-[11px] text-muted">
-            <span>Pode avaliar mais de uma unidade — é só voltar e escolher outra.</span>
-          </div>
         </div>
       )}
 

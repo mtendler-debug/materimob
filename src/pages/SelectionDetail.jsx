@@ -358,6 +358,7 @@ function Questionnaire({ selection, onSaved }) {
   const [title, setTitle] = useState(selection.title);
   const [subtitle, setSubtitle] = useState(selection.subtitle ?? "");
   const [criteria, setCriteria] = useState((selection.criteria ?? []).join("\n"));
+  const [unitCriteria, setUnitCriteria] = useState((selection.unit_criteria ?? []).join("\n"));
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -366,7 +367,12 @@ function Questionnaire({ selection, onSaved }) {
     setMsg("");
     const { error } = await supabase
       .from("av_selections")
-      .update({ title: title.trim(), subtitle: subtitle.trim() || null, criteria: linesToArray(criteria) })
+      .update({
+        title: title.trim(),
+        subtitle: subtitle.trim() || null,
+        criteria: linesToArray(criteria),
+        unit_criteria: linesToArray(unitCriteria),
+      })
       .eq("id", selection.id);
     setSaving(false);
     if (error) setMsg("Erro: " + error.message);
@@ -408,6 +414,18 @@ function Questionnaire({ selection, onSaved }) {
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />
       <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
+
+      <label className="mt-3 block text-xs font-bold tracking-[.04em] text-graytext uppercase">
+        Critérios das unidades (um por linha)
+      </label>
+      <textarea
+        value={unitCriteria}
+        onChange={(e) => setUnitCriteria(e.target.value)}
+        rows={5}
+        placeholder="Ex.: Planta e distribuição, vista, ruído daquela unidade"
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+
       <div className="mt-3 flex items-center gap-3">
         <button
           onClick={save}
@@ -514,6 +532,7 @@ function PropertyCard({ property, onChange }) {
   const [address, setAddress] = useState(property.address ?? "");
   const [summary, setSummary] = useState(property.summary ?? "");
   const [extraCriteria, setExtraCriteria] = useState((property.extra_criteria ?? []).join("\n"));
+  const [extraUnitCriteria, setExtraUnitCriteria] = useState((property.extra_unit_criteria ?? []).join("\n"));
   const [questions, setQuestions] = useState((property.questions ?? []).join("\n"));
   const [phases, setPhases] = useState(property.phases ?? []);
   const [floorPlanUrl, setFloorPlanUrl] = useState(property.floor_plan_url ?? null);
@@ -550,6 +569,7 @@ function PropertyCard({ property, onChange }) {
         address: address.trim() || null,
         summary: summary.trim() || null,
         extra_criteria: linesToArray(extraCriteria),
+        extra_unit_criteria: linesToArray(extraUnitCriteria),
         questions: linesToArray(questions),
         phases,
         floor_plan_url: floorPlanUrl,
@@ -692,6 +712,16 @@ function PropertyCard({ property, onChange }) {
       <textarea
         value={extraCriteria}
         onChange={(e) => setExtraCriteria(e.target.value)}
+        rows={2}
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+
+      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
+        Critérios extras das unidades, só deste imóvel (um por linha)
+      </label>
+      <textarea
+        value={extraUnitCriteria}
+        onChange={(e) => setExtraUnitCriteria(e.target.value)}
         rows={2}
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />

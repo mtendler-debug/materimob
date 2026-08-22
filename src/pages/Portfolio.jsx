@@ -78,6 +78,7 @@ function PortfolioPropertyEditor({ property, onChange }) {
   const [address, setAddress] = useState(property.address ?? "");
   const [summary, setSummary] = useState(property.summary ?? "");
   const [extraCriteria, setExtraCriteria] = useState((property.extra_criteria ?? []).join("\n"));
+  const [extraUnitCriteria, setExtraUnitCriteria] = useState((property.extra_unit_criteria ?? []).join("\n"));
   const [questions, setQuestions] = useState((property.questions ?? []).join("\n"));
   const [floorPlanUrl, setFloorPlanUrl] = useState(property.floor_plan_url ?? null);
   const [photoUrls, setPhotoUrls] = useState(property.photo_urls ?? []);
@@ -101,6 +102,7 @@ function PortfolioPropertyEditor({ property, onChange }) {
         address: address.trim() || null,
         summary: summary.trim() || null,
         extra_criteria: linesToArray(extraCriteria),
+        extra_unit_criteria: linesToArray(extraUnitCriteria),
         questions: linesToArray(questions),
         floor_plan_url: floorPlanUrl,
         photo_urls: photoUrls,
@@ -226,6 +228,16 @@ function PortfolioPropertyEditor({ property, onChange }) {
       <textarea
         value={extraCriteria}
         onChange={(e) => setExtraCriteria(e.target.value)}
+        rows={2}
+        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+      />
+
+      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
+        Critérios extras das unidades (um por linha)
+      </label>
+      <textarea
+        value={extraUnitCriteria}
+        onChange={(e) => setExtraUnitCriteria(e.target.value)}
         rows={2}
         className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
       />

@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
 
   const { data: selection, error: selError } = await admin
     .from("av_selections")
-    .select("id, title, subtitle, criteria, archived")
+    .select("id, title, subtitle, criteria, unit_criteria, archived")
     .eq("token_form", token)
     .maybeSingle();
 
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
   const { data: properties, error: propError } = await admin
     .from("av_properties")
     .select(
-      "id, name, color, stage, address, summary, extra_criteria, questions, floor_plan_url, photo_urls, payment_terms, condo_value, iptu_value, position, units:av_units(id, name, table_value, photo_urls, payment_terms, position)",
+      "id, name, color, stage, address, summary, extra_criteria, extra_unit_criteria, questions, floor_plan_url, photo_urls, payment_terms, condo_value, iptu_value, position, units:av_units(id, name, table_value, photo_urls, payment_terms, position)",
     )
     .eq("selection_id", selection.id)
     .order("position")
@@ -53,6 +53,7 @@ Deno.serve(async (req) => {
     title: selection.title,
     subtitle: selection.subtitle,
     criteria: selection.criteria,
+    unit_criteria: selection.unit_criteria,
     properties: properties ?? [],
   });
 });

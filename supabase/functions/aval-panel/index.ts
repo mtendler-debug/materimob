@@ -76,13 +76,20 @@ Deno.serve(async (req) => {
 
   const porProjeto = props.map((p) => {
     const mine = evals.filter((e) => e.property_id === p.id);
+    // Nota do empreendimento vem só das avaliações gerais (unit_id null)
+    // — avaliar o prédio e avaliar uma unidade são coisas diferentes.
+    // Fallback pra "mine" inteiro quando não há avaliação geral nenhuma,
+    // pra imóvel com só avaliação de unidade (dado legado, de antes desta
+    // separação) continuar pontuando no ranking em vez de sumir.
+    const geralEvals = mine.filter((e) => !e.unit_id);
+    const base = geralEvals.length ? geralEvals : mine;
     const allCriteria = [...criteria, ...(p.extra_criteria ?? [])];
     const medias = allCriteria.map((c) => ({
       criterio: c,
-      media: avg(mine.map((e) => (e.scores as Record<string, number> | null)?.[c])),
+      media: avg(base.map((e) => (e.scores as Record<string, number> | null)?.[c])),
     }));
     const mediaCriterios = avg(medias.map((m) => m.media));
-    const notaMedia = avg(mine.map((e) => e.overall_score));
+    const notaMedia = avg(base.map((e) => e.overall_score));
 
     const grupos = new Map<string, typeof mine>();
     for (const e of mine) {

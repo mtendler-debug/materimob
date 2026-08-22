@@ -1357,3 +1357,22 @@ create policy "Corretor edita só os próprios modelos" on av_criteria_presets
 
 create policy "Corretor exclui só os próprios modelos" on av_criteria_presets
   for delete using (auth.uid() = user_id);
+
+-- ---------------------------------------------------------------------
+-- Segundo conjunto de critérios, só pra avaliar a unidade — mesmo
+-- espírito de criteria/extra_criteria, separado do que avalia o
+-- empreendimento.
+-- ---------------------------------------------------------------------
+
+alter table av_selections
+  add column unit_criteria text[] not null default '{}';
+
+alter table av_properties
+  add column extra_unit_criteria text[] not null default '{}';
+
+alter table av_portfolio_properties
+  add column extra_unit_criteria text[] not null default '{}';
+
+alter table av_launches
+  add column unit_criteria text[] not null default '{}',
+  add column extra_unit_criteria text[] not null default '{}';
