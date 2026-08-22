@@ -14,7 +14,7 @@ export function CriteriaPresets({ criteriaText, onApply }) {
   async function load() {
     const { data } = await supabase
       .from("av_criteria_presets")
-      .select("id, name, criteria")
+      .select("id, name, criteria, user_id")
       .order("name");
     setPresets(data ?? []);
   }
@@ -76,11 +76,12 @@ export function CriteriaPresets({ criteriaText, onApply }) {
         {presets.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
+            {!p.user_id ? " (modelo do sistema)" : ""}
           </option>
         ))}
       </select>
 
-      {selected && (
+      {selected && presets.find((p) => p.id === selected)?.user_id && (
         <button type="button" onClick={remove} className="text-xs font-bold text-[#B34A2E]">
           excluir modelo
         </button>
