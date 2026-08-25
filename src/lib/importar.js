@@ -3,6 +3,8 @@ import { supabase } from "./supabase";
 // Copia um imóvel do portfólio compartilhado (de qualquer organização) pra
 // dentro de uma seleção já existente. Usado pela importação manual em
 // SelectionDetail e pela busca unificada de imóveis (/app/imoveis).
+// portfolio_unit_id liga a unidade do roteiro de volta ao estoque do
+// portfólio — mesmo princípio de launch_unit_id em importarLancamento.
 export async function importarPortfolio(selectionId, item, position) {
   const { data: inserted, error } = await supabase
     .from("av_properties")
@@ -33,6 +35,7 @@ export async function importarPortfolio(selectionId, item, position) {
       .insert(
         item.units.map((u) => ({
           property_id: inserted.id,
+          portfolio_unit_id: u.id,
           name: u.name,
           table_value: u.table_value,
           photo_urls: u.photo_urls,

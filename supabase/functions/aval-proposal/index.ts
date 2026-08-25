@@ -90,10 +90,11 @@ Deno.serve(async (req) => {
 
   let tableValue: number | null = null;
   let launchReservation: { ok: boolean; message: string } | null = null;
+  let portfolioReservation: { ok: boolean; message: string } | null = null;
   if (unit_id) {
     const { data: unit } = await admin
       .from("av_units")
-      .select("id, property_id, table_value, launch_unit_id")
+      .select("id, property_id, table_value, launch_unit_id, portfolio_unit_id")
       .eq("id", unit_id)
       .maybeSingle();
     if (!unit || unit.property_id !== property_id) {
@@ -116,6 +117,20 @@ Deno.serve(async (req) => {
         ? { ok: false, message: "Essa unidade acabou de ser reservada por outro atendimento." }
         : { ok: true, message: "Unidade reservada no lançamento." };
     }
+
+    // Mesma lógica pra unidade de portfólio (imóvel pronto, fora de
+    // lançamento) — reserve_portfolio_unit é o espelho atômico de
+    // reserve_launch_unit.
+    if (buy_intent && unit.portfolio_unit_id) {
+      const { error: reserveError } = await admin.rpc("reserve_portfolio_unit", {
+        unit_id: unit.portfolio_unit_id,
+        client_name: proposer_name,
+        corretor_id: selection.user_id,
+      });
+      portfolioReservation = reserveError
+        ? { ok: false, message: "Essa unidade acabou de ser reservada por outro atendimento." }
+        : { ok: true, message: "Unidade reservada no portfólio." };
+    }
   }
 
   const { data: inserted, error } = await admin
@@ -137,5 +152,8 @@ Deno.serve(async (req) => {
   if (error) return json({ error: "erro ao gravar proposta" }, 500);
 
   const desagio = inserted.table_value ? (1 - value / inserted.table_value) * 100 : null;
-  return json({ id: inserted.id, desagio, launch_reservation: launchReservation }, 201);
+  return json(
+    { id: inserted.id, desagio, launch_reservation: launchReservation, portfolio_reservation: portfolioReservation },
+    201,
+  );
 });

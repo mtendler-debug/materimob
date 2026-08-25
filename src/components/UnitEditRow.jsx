@@ -5,13 +5,23 @@ function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
 }
 
+const STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
+const STATUS_COLORS = {
+  reservada: { bg: "#FFF3E0", color: "#B26A00" },
+  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+};
+
 // Linha de unidade que abre pra edição — antes disso, nome e valor eram
 // fixos assim que cadastrados; a única forma de corrigir era apagar e
 // recriar. onSave/onRemove são as mesmas chamadas Supabase que cada tela
 // já tinha, só faltava o gatilho de edição. Fotos e condições de
 // pagamento são próprias da unidade — ficam em branco por padrão e usam
 // as do empreendimento quando não preenchidas (ver PropertyMedia).
-export function UnitEditRow({ unit, onSave, onRemove }) {
+// onMarkSold/onRelease são opcionais — só o portfólio (Portfolio.jsx)
+// passa, porque só lá a unidade tem status próprio (venda/reserva). No
+// roteiro do corretor (SelectionDetail.jsx) a unidade é só uma cópia,
+// sem esse controle.
+export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(unit.name);
   const [value, setValue] = useState(unit.table_value ?? "");
@@ -99,6 +109,15 @@ export function UnitEditRow({ unit, onSave, onRemove }) {
       </button>
       <span className="flex items-center gap-2">
         {unit.table_value != null && <span>{brl(unit.table_value)}</span>}
+        {onMarkSold && unit.status && unit.status !== "disponivel" && (
+          <span
+            className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+            style={{ background: STATUS_COLORS[unit.status].bg, color: STATUS_COLORS[unit.status].color }}
+          >
+            {STATUS_LABELS[unit.status]}
+            {unit.reserved_for ? ` · ${unit.reserved_for}` : ""}
+          </span>
+        )}
         <button type="button" onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
           editar
         </button>
@@ -106,6 +125,16 @@ export function UnitEditRow({ unit, onSave, onRemove }) {
           <button type="button" onClick={() => onRemove(unit.id)} className="text-xs font-bold text-[#B34A2E]">
             ×
           </button>
+        )}
+        {onMarkSold && unit.status === "reservada" && (
+          <>
+            <button type="button" onClick={() => onMarkSold(unit.id)} className="text-xs font-bold text-[#2E7D32]">
+              confirmar venda
+            </button>
+            <button type="button" onClick={() => onRelease(unit.id)} className="text-xs font-bold text-[#B34A2E]">
+              desfazer reserva
+            </button>
+          </>
         )}
       </span>
     </div>

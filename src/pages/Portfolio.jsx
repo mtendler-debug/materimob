@@ -149,6 +149,21 @@ function PortfolioPropertyEditor({ property, onChange }) {
     onChange();
   }
 
+  async function markSold(unitId) {
+    if (!window.confirm("Marcar esta unidade como vendida?")) return;
+    await supabase.from("av_portfolio_units").update({ status: "vendida" }).eq("id", unitId);
+    onChange();
+  }
+
+  async function releaseUnit(unitId) {
+    if (!window.confirm("Desfazer a reserva desta unidade?")) return;
+    await supabase
+      .from("av_portfolio_units")
+      .update({ status: "disponivel", reserved_by: null, reserved_for: null })
+      .eq("id", unitId);
+    onChange();
+  }
+
   return (
     <div className="rounded-[14px] border border-rule bg-white p-4">
       <div className="flex flex-wrap items-end gap-[10px]">
@@ -255,7 +270,7 @@ function PortfolioPropertyEditor({ property, onChange }) {
       <label className="mt-4 block text-[11.5px] font-bold text-graytext uppercase">Unidades</label>
       <div className="mt-1 space-y-1">
         {(property.units ?? []).map((u) => (
-          <UnitEditRow key={u.id} unit={u} onSave={saveUnit} onRemove={removeUnit} />
+          <UnitEditRow key={u.id} unit={u} onSave={saveUnit} onRemove={removeUnit} onMarkSold={markSold} onRelease={releaseUnit} />
         ))}
       </div>
       {showUnitForm ? (

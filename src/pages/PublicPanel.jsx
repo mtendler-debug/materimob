@@ -457,7 +457,7 @@ function ProposalForm({ token, properties, onCreated }) {
           buy_intent: buyIntent,
         },
       });
-      const reservation = res.launch_reservation;
+      const reservation = res.launch_reservation || res.portfolio_reservation;
       const reservationText = reservation
         ? reservation.ok
           ? " Unidade reservada com sucesso."
@@ -522,7 +522,7 @@ function ProposalForm({ token, properties, onCreated }) {
           >
             <option value="">—</option>
             {property.units.map((u) => {
-              const sold = u.launch_unit?.status === "vendida";
+              const sold = u.launch_unit?.status === "vendida" || u.portfolio_unit?.status === "vendida";
               return (
                 <option key={u.id} value={u.id} disabled={sold}>
                   {u.name}
@@ -535,7 +535,7 @@ function ProposalForm({ token, properties, onCreated }) {
         </>
       )}
 
-      {unit?.launch_unit?.status === "vendida" && (
+      {(unit?.launch_unit?.status === "vendida" || unit?.portfolio_unit?.status === "vendida") && (
         <div className="mt-[10px] rounded-[11px] p-3 text-[13px]" style={{ background: "#F1E4E0", color: "#B34A2E" }}>
           Essa unidade já foi vendida — escolha outra, ou fale com a consultoria.
         </div>
