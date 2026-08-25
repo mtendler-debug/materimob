@@ -294,6 +294,8 @@ function OrganizationDetail({ org, role, onChange }) {
             <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
             <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot={dashboard.nota_media != null ? `nota média ${String(dashboard.nota_media).replace(".", ",")}` : "recebidas"} />
             <Kpi label="Propostas" value={dashboard.total_propostas} foot={`${dashboard.propostas_interesse} com interesse`} />
+            <Kpi label="Ticket médio" value={dashboard.ticket_medio_vendas != null ? brl(dashboard.ticket_medio_vendas) : "—"} foot="unidades vendidas" />
+            <Kpi label="Previsão" value={brl(dashboard.previsao_vendas)} foot="em propostas com intenção de compra" />
           </div>
 
           {dashboard.unidades_por_status && Object.keys(dashboard.unidades_por_status).length > 0 && (
@@ -312,7 +314,7 @@ function OrganizationDetail({ org, role, onChange }) {
                 <table className="w-full min-w-[760px] border-collapse text-sm">
                   <thead>
                     <tr>
-                      {["Lançamento", "Status", "Unidades", "Roteiros", "Avaliações", "Nota média", "Propostas"].map((h) => (
+                      {["Lançamento", "Status", "Unidades", "Roteiros", "Avaliações", "Nota média", "Propostas", "Ticket médio"].map((h) => (
                         <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
                           {h}
                         </th>
@@ -349,6 +351,9 @@ function OrganizationDetail({ org, role, onChange }) {
                         <td className="border-b border-rule p-[10px] text-center text-graytext">
                           {l.total_propostas} ({l.propostas_interesse} c/ interesse)
                         </td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          {l.ticket_medio_vendas != null ? brl(l.ticket_medio_vendas) : "—"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -383,7 +388,7 @@ function OrganizationDetail({ org, role, onChange }) {
                   <table className="w-full min-w-[560px] border-collapse text-sm">
                     <thead>
                       <tr>
-                        {["Imobiliária parceira", "Corretores", "Roteiros", "Propostas", "Interesse"].map((h) => (
+                        {["Imobiliária parceira", "Corretores", "Roteiros", "Propostas", "Interesse", "Vendidas", "Ticket médio"].map((h) => (
                           <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
                             {h}
                           </th>
@@ -398,6 +403,10 @@ function OrganizationDetail({ org, role, onChange }) {
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_roteiros}</td>
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.propostas_interesse}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_vendidas}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">
+                            {p.ticket_medio_vendas != null ? brl(p.ticket_medio_vendas) : "—"}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -416,7 +425,9 @@ function OrganizationDetail({ org, role, onChange }) {
                         sublabel={c.org_name || "Independente"}
                         value={c.total_roteiros}
                         max={dashboard.top_corretores[0].total_roteiros}
-                        foot={`${c.total_propostas} proposta(s) · ${c.propostas_interesse} c/ interesse`}
+                        foot={`${c.total_propostas} proposta(s) · ${c.propostas_interesse} c/ interesse · ${c.total_vendidas} vendida(s)${
+                          c.ticket_medio_vendas != null ? ` (ticket médio ${brl(c.ticket_medio_vendas)})` : ""
+                        }`}
                       />
                     ))}
                   </div>
@@ -442,6 +453,8 @@ function OrganizationDetail({ org, role, onChange }) {
               foot={teamDashboard.nota_media != null ? `nota média ${String(teamDashboard.nota_media).replace(".", ",")}` : "recebidas"}
             />
             <Kpi label="Propostas" value={teamDashboard.total_propostas} foot={`${teamDashboard.propostas_interesse} com interesse`} />
+            <Kpi label="Vendas" value={teamDashboard.total_vendas} foot={teamDashboard.ticket_medio_vendas != null ? `ticket médio ${brl(teamDashboard.ticket_medio_vendas)}` : "confirmadas"} />
+            <Kpi label="Previsão" value={brl(teamDashboard.previsao_vendas)} foot="em propostas com intenção de compra" />
           </div>
           <p className="mt-3 text-xs text-graytext">
             {teamDashboard.ativos_30d} corretor(es) ativo(s) nos últimos 30 dias ·{" "}
@@ -455,7 +468,7 @@ function OrganizationDetail({ org, role, onChange }) {
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <thead>
                 <tr>
-                  {["Nome", "Papel", "Roteiros", "Avaliações", "Nota média", "Propostas", ""].map((h) => (
+                  {["Nome", "Papel", "Roteiros", "Avaliações", "Nota média", "Propostas", "Vendas", ""].map((h) => (
                     <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
                       {h}
                     </th>
@@ -483,6 +496,12 @@ function OrganizationDetail({ org, role, onChange }) {
                         {c.nota_media != null ? String(c.nota_media).replace(".", ",") : "—"}
                       </td>
                       <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_propostas}</td>
+                      <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        {c.total_vendas}
+                        {c.ticket_medio_vendas != null && (
+                          <span className="block text-[10px] text-muted">{brl(c.ticket_medio_vendas)}</span>
+                        )}
+                      </td>
                       <td className="border-b border-rule p-[10px] text-center">
                         {c.ativo_30d && (
                           <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
@@ -583,6 +602,39 @@ function OrganizationDetail({ org, role, onChange }) {
                     .map((im) => ({ lat: im.latitude, lng: im.longitude, label: im.name }))}
                   height={260}
                 />
+              </div>
+            </div>
+          )}
+
+          {teamDashboard.por_incorporadora?.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Vendas por incorporadora
+              </p>
+              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <table className="w-full min-w-[520px] border-collapse text-sm">
+                  <thead>
+                    <tr>
+                      {["Incorporadora", "Roteiros", "Vendas", "Ticket médio"].map((h) => (
+                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {teamDashboard.por_incorporadora.map((i) => (
+                      <tr key={i.organization_id}>
+                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{i.name}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_roteiros}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_vendas}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          {i.ticket_medio_vendas != null ? brl(i.ticket_medio_vendas) : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
@@ -752,6 +804,10 @@ function LeaderboardBar({ label, sublabel, value, max, foot }) {
       <div className="mt-1 text-[11px] text-graytext">{foot}</div>
     </div>
   );
+}
+
+function brl(n) {
+  return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
 }
 
 function Kpi({ label, value, foot }) {
