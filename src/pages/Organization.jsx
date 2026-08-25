@@ -153,6 +153,7 @@ function OrganizationDetail({ org, role, onChange }) {
   const [properties, setProperties] = useState(null);
   const [launches, setLaunches] = useState(null);
   const [dashboard, setDashboard] = useState(null);
+  const [teamDashboard, setTeamDashboard] = useState(null);
   const manage = canManage(role);
   const incorporadora = org.tipo === "incorporadora";
 
@@ -184,11 +185,17 @@ function OrganizationDetail({ org, role, onChange }) {
     if (!error) setDashboard(data);
   }
 
+  async function loadTeamDashboard() {
+    const { data, error } = await supabase.rpc("organization_team_dashboard", { p_org_id: org.id });
+    if (!error) setTeamDashboard(data);
+  }
+
   useEffect(() => {
     loadRoster();
     loadPortfolio();
     if (incorporadora) loadLaunches();
     if (incorporadora && manage) loadDashboard();
+    if (!incorporadora && manage) loadTeamDashboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [org.id]);
 
@@ -231,6 +238,67 @@ function OrganizationDetail({ org, role, onChange }) {
               Imobiliárias parceiras: {dashboard.imobiliarias_parceiras.join(", ")}
             </p>
           )}
+        </div>
+      )}
+
+      {!incorporadora && manage && teamDashboard && (
+        <div>
+          <SectionTitle>Painel da equipe</SectionTitle>
+          <p className="text-xs text-graytext">
+            Números somados de todos os corretores desta organização.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Kpi label="Roteiros" value={teamDashboard.total_roteiros} foot={`${teamDashboard.total_membros} corretor(es)`} />
+            <Kpi label="Clientes" value={teamDashboard.total_clientes} foot="atendidos" />
+            <Kpi
+              label="Avaliações"
+              value={teamDashboard.total_avaliacoes}
+              foot={teamDashboard.nota_media != null ? `nota média ${String(teamDashboard.nota_media).replace(".", ",")}` : "recebidas"}
+            />
+            <Kpi label="Propostas" value={teamDashboard.total_propostas} foot={`${teamDashboard.propostas_interesse} com interesse`} />
+          </div>
+          <p className="mt-3 text-xs text-graytext">
+            {teamDashboard.ativos_30d} corretor(es) ativo(s) nos últimos 30 dias ·{" "}
+            {teamDashboard.total_imoveis_portfolio} imóvel(is) no portfólio da organização
+          </p>
+
+          <p className="mt-5 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+            Ranking da equipe
+          </p>
+          <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <table className="w-full min-w-[560px] border-collapse text-sm">
+              <thead>
+                <tr>
+                  {["Nome", "Papel", "Roteiros", "Avaliações", "Nota média", "Propostas", ""].map((h) => (
+                    <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {teamDashboard.por_corretor?.map((c) => (
+                  <tr key={c.user_id}>
+                    <td className="border-b border-rule p-[10px] text-charcoal">{c.full_name || c.email}</td>
+                    <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[c.role]}</td>
+                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_roteiros}</td>
+                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_avaliacoes}</td>
+                    <td className="border-b border-rule p-[10px] text-center text-graytext">
+                      {c.nota_media != null ? String(c.nota_media).replace(".", ",") : "—"}
+                    </td>
+                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_propostas}</td>
+                    <td className="border-b border-rule p-[10px] text-center">
+                      {c.ativo_30d && (
+                        <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
+                          ativo
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
