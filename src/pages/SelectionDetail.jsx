@@ -9,6 +9,7 @@ import { importarPortfolio } from "../lib/importar";
 import { geocodeAddress } from "../lib/geocode";
 import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
+import { Map } from "../components/Map";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -141,6 +142,17 @@ export default function SelectionDetail() {
           <Kpi label="Nota média geral" value={n1(mediaGeral)} foot="escala de 1 a 10" />
           <Kpi label="Imóveis no funil" value={properties.length} foot={`${dash.unrated.length} sem avaliação`} />
         </div>
+
+        {properties.some((p) => p.latitude != null && p.longitude != null) && (
+          <div className="mt-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <Map
+              pins={properties
+                .filter((p) => p.latitude != null && p.longitude != null)
+                .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#A68A5B" }))}
+              height={220}
+            />
+          </div>
+        )}
 
         {properties.length > 0 && (
           <div className="mt-3 space-y-2">

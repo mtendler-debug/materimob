@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 import { Gantt } from "../components/Gantt";
 import { PropertyMedia } from "../components/PropertyMedia";
+import { Map } from "../components/Map";
 
 function n1(v) {
   return v == null ? "—" : (Math.round(v * 10) / 10).toFixed(1).replace(".", ",");
@@ -94,6 +95,20 @@ export default function PublicPanel() {
           <Kpi label="Preferido" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
           <Kpi label="Nota média" value={n1(mediaGeral)} foot="escala de 1 a 10" />
         </div>
+
+        {properties.some((p) => p.latitude != null && p.longitude != null) && (
+          <>
+            <SectionTitle>Mapa dos imóveis</SectionTitle>
+            <div className="mb-4 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <Map
+                pins={properties
+                  .filter((p) => p.latitude != null && p.longitude != null)
+                  .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#A68A5B" }))}
+                height={260}
+              />
+            </div>
+          </>
+        )}
 
         <SectionTitle>Ranking dos imóveis</SectionTitle>
         {ranking.length === 0 ? (
