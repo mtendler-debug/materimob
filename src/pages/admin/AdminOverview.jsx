@@ -37,13 +37,34 @@ function ActivityBars({ data }) {
 export default function AdminOverview() {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [backfilling, setBackfilling] = useState(false);
+  const [backfillMsg, setBackfillMsg] = useState("");
 
-  useEffect(() => {
+  function load() {
     supabase.rpc("platform_overview").then(({ data, error }) => {
       if (error) setError(error.message);
       else setData(data);
     });
+  }
+
+  useEffect(() => {
+    load();
   }, []);
+
+  async function recalcularCoordenadas() {
+    setBackfilling(true);
+    setBackfillMsg("Processando… pode levar até um minuto.");
+    const { data: resultado, error: fnError } = await supabase.functions.invoke("admin-backfill-geocode");
+    setBackfilling(false);
+    if (fnError || resultado?.error) {
+      setBackfillMsg("Erro: " + (resultado?.error || fnError.message));
+      return;
+    }
+    setBackfillMsg(
+      `${resultado.geocodificados} geocodificado(s), ${resultado.sem_resultado} sem resultado, de ${resultado.processados} verificado(s).`,
+    );
+    load();
+  }
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!data) return <p className="text-sm text-muted">Carregando…</p>;
@@ -51,6 +72,16 @@ export default function AdminOverview() {
   return (
     <div>
       <SectionTitle>Plataforma</SectionTitle>
+      <div className="mb-3 flex items-center gap-3">
+        <button
+          onClick={recalcularCoordenadas}
+          disabled={backfilling}
+          className="rounded-[10px] border-[1.5px] border-rule px-3 py-1.5 text-xs font-bold text-charcoal hover:border-gold disabled:opacity-50"
+        >
+          {backfilling ? "Processando…" : "Recalcular coordenadas"}
+        </button>
+        {backfillMsg && !backfilling && <span className="text-xs text-graytext">{backfillMsg}</span>}
+      </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Kpi label="Contas" value={data.contas} foot={`${data.contas_30d} nos últimos 30 dias`} />
         <Kpi label="Organizações" value={data.organizacoes} foot={`${data.organizacoes_ativas} ativas`} />
