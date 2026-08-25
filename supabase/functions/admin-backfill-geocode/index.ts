@@ -36,6 +36,21 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Mesmo fallback de geocode-address: CEP colado no final do endereço
+// ("... São Paulo - SP, 04606-004") sozinho já derruba a busca do
+// Nominatim, mesmo quando o resto do endereço é encontrável sem ele.
+async function geocodeComFallback(address: string): Promise<{ lat: number; lng: number } | null> {
+  const direto = await geocode(address);
+  if (direto) return direto;
+
+  const semCep = address.replace(/,?\s*\d{5}-?\d{3}\s*$/, "").trim();
+  if (semCep && semCep !== address) {
+    await sleep(1100);
+    return await geocode(semCep);
+  }
+  return null;
+}
+
 const TABELAS = ["av_launches", "av_portfolio_properties", "av_properties", "organizations", "profiles"];
 
 Deno.serve(async (req) => {
@@ -81,7 +96,7 @@ Deno.serve(async (req) => {
 
     for (const linha of linhas) {
       processados++;
-      const coords = await geocode(linha.address);
+      const coords = await geocodeComFallback(linha.address);
       if (coords) {
         await admin.from(tabela).update({ latitude: coords.lat, longitude: coords.lng }).eq("id", linha.id);
         geocodificados++;
