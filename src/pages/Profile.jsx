@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useProfile } from "../lib/useProfile";
+import { geocodeAddress } from "../lib/geocode";
 
 const TIPOS_CONTA = [
   { value: "corretor", label: "Corretor", desc: "Vou montar roteiros de visita e atender clientes." },
@@ -13,6 +14,7 @@ export default function Profile() {
   const [fullName, setFullName] = useState("");
   const [creci, setCreci] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [brandColor, setBrandColor] = useState("#1C1C1C");
   const [accountType, setAccountType] = useState("corretor");
   const [saving, setSaving] = useState(false);
@@ -23,6 +25,7 @@ export default function Profile() {
     setFullName(profile.full_name ?? "");
     setCreci(profile.creci ?? "");
     setPhone(profile.phone ?? "");
+    setAddress(profile.address ?? "");
     setBrandColor(profile.brand_color ?? "#1C1C1C");
     setAccountType(profile.account_type ?? "corretor");
   }, [profile]);
@@ -31,12 +34,20 @@ export default function Profile() {
     e.preventDefault();
     setSaving(true);
     setMsg("");
+    const trimmedAddress = address.trim();
+    let coords = { latitude: profile.latitude ?? null, longitude: profile.longitude ?? null };
+    if (trimmedAddress !== (profile.address ?? "")) {
+      const geo = trimmedAddress ? await geocodeAddress(trimmedAddress) : null;
+      coords = { latitude: geo?.lat ?? null, longitude: geo?.lng ?? null };
+    }
     const { error } = await supabase
       .from("profiles")
       .update({
         full_name: fullName.trim() || null,
         creci: creci.trim() || null,
         phone: phone.trim() || null,
+        address: trimmedAddress || null,
+        ...coords,
         brand_color: brandColor,
         account_type: accountType,
       })
@@ -84,6 +95,15 @@ export default function Profile() {
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              />
+            </div>
+            <div className="min-w-[220px] flex-[2]">
+              <label className="block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Usado só pra aparecer no mapa de corretores/imobiliárias"
                 className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
               />
             </div>

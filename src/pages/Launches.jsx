@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
+import { geocodeAddress } from "../lib/geocode";
 
 function linesToArray(text) {
   return text
@@ -104,10 +105,14 @@ function NewLaunch({ organizationId, onCreated }) {
     e.preventDefault();
     if (!name.trim()) return;
     setSaving(true);
+    const trimmedAddress = address.trim();
+    const geo = trimmedAddress ? await geocodeAddress(trimmedAddress) : null;
     await supabase.from("av_launches").insert({
       organization_id: organizationId,
       name: name.trim(),
-      address: address.trim() || null,
+      address: trimmedAddress || null,
+      latitude: geo?.lat ?? null,
+      longitude: geo?.lng ?? null,
       summary: summary.trim() || null,
       criteria: linesToArray(criteria),
       unit_criteria: linesToArray(unitCriteria),

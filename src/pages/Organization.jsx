@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization, ROLE_LABELS, canManage } from "../lib/useOrganization";
 import { generateToken } from "../lib/token";
+import { geocodeAddress } from "../lib/geocode";
+import { Map } from "../components/Map";
 
 export default function Organization() {
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading, reload } = useOrganization();
@@ -148,6 +150,83 @@ function TipoOption({ value, current, onSelect, children }) {
   );
 }
 
+function OrgHeaderCard({ org, role, manage, onChange }) {
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(org.name);
+  const [address, setAddress] = useState(org.address ?? "");
+  const [saving, setSaving] = useState(false);
+
+  async function salvar() {
+    if (!name.trim()) return;
+    setSaving(true);
+    const trimmedAddress = address.trim();
+    let coords = { latitude: org.latitude ?? null, longitude: org.longitude ?? null };
+    if (trimmedAddress !== (org.address ?? "")) {
+      const geo = trimmedAddress ? await geocodeAddress(trimmedAddress) : null;
+      coords = { latitude: geo?.lat ?? null, longitude: geo?.lng ?? null };
+    }
+    await supabase
+      .from("organizations")
+      .update({ name: name.trim(), address: trimmedAddress || null, ...coords })
+      .eq("id", org.id);
+    setSaving(false);
+    setEditing(false);
+    onChange();
+  }
+
+  if (editing) {
+    return (
+      <div className="rounded-[14px] border border-rule bg-white p-4">
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+        <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
+        <input
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="Usado só pra aparecer no mapa do ecossistema"
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+        <div className="mt-3 flex items-center gap-3">
+          <button
+            onClick={salvar}
+            disabled={saving}
+            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {saving ? "Salvando…" : "Salvar"}
+          </button>
+          <button onClick={() => setEditing(false)} className="text-sm text-graytext underline">
+            cancelar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-[14px] border border-rule bg-white p-4">
+      <p className="text-lg font-bold text-charcoal">{org.name}</p>
+      <p className="text-sm text-graytext">
+        {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
+        {org.address ? ` · ${org.address}` : ""}
+      </p>
+      <div className="mt-2 flex items-center gap-3">
+        <Link to={`/app/organizacoes/${org.id}`} className="text-xs text-graytext underline">
+          Ver como aparece para o ecossistema →
+        </Link>
+        {manage && (
+          <button onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
+            editar
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function OrganizationDetail({ org, role, onChange }) {
   const [roster, setRoster] = useState(null);
   const [properties, setProperties] = useState(null);
@@ -174,7 +253,7 @@ function OrganizationDetail({ org, role, onChange }) {
   async function loadLaunches() {
     const { data } = await supabase
       .from("av_launches")
-      .select("id, name, av_launch_units(id, status)")
+      .select("id, name, latitude, longitude, av_launch_units(id, status)")
       .eq("organization_id", org.id)
       .order("created_at", { ascending: false });
     setLaunches(data ?? []);
@@ -201,15 +280,7 @@ function OrganizationDetail({ org, role, onChange }) {
 
   return (
     <div className="mt-4 space-y-6">
-      <div className="rounded-[14px] border border-rule bg-white p-4">
-        <p className="text-lg font-bold text-charcoal">{org.name}</p>
-        <p className="text-sm text-graytext">
-          {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
-        </p>
-        <Link to={`/app/organizacoes/${org.id}`} className="mt-2 inline-block text-xs text-graytext underline">
-          Ver como aparece para o ecossistema →
-        </Link>
-      </div>
+      <OrgHeaderCard org={org} role={role} manage={manage} onChange={onChange} />
 
       {incorporadora && manage && dashboard && (
         <div>
@@ -462,6 +533,16 @@ function OrganizationDetail({ org, role, onChange }) {
       {incorporadora && (
         <div>
           <SectionTitle>Lançamentos</SectionTitle>
+          {launches?.some((l) => l.latitude != null && l.longitude != null) && (
+            <div className="mb-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <Map
+                pins={launches
+                  .filter((l) => l.latitude != null && l.longitude != null)
+                  .map((l) => ({ lat: l.latitude, lng: l.longitude, label: l.name }))}
+                height={260}
+              />
+            </div>
+          )}
           <div className="space-y-2">
             {launches?.length === 0 && <p className="text-sm text-muted">Nenhum lançamento publicado ainda.</p>}
             {launches?.map((l) => {

@@ -5,6 +5,7 @@ import { useOrganization, canManage } from "../lib/useOrganization";
 import { parseCsv, downloadCsv } from "../lib/csv";
 import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
+import { geocodeAddress } from "../lib/geocode";
 
 function linesToArray(text) {
   return text
@@ -94,12 +95,19 @@ function PortfolioPropertyEditor({ property, onChange }) {
   async function save() {
     setSaving(true);
     setMsg("");
+    const trimmedAddress = address.trim();
+    let coords = { latitude: property.latitude ?? null, longitude: property.longitude ?? null };
+    if (trimmedAddress !== (property.address ?? "")) {
+      const geo = trimmedAddress ? await geocodeAddress(trimmedAddress) : null;
+      coords = { latitude: geo?.lat ?? null, longitude: geo?.lng ?? null };
+    }
     const { error } = await supabase
       .from("av_portfolio_properties")
       .update({
         name: name.trim(),
         color,
-        address: address.trim() || null,
+        address: trimmedAddress || null,
+        ...coords,
         summary: summary.trim() || null,
         extra_criteria: linesToArray(extraCriteria),
         extra_unit_criteria: linesToArray(extraUnitCriteria),
