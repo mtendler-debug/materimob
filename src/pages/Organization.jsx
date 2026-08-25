@@ -361,6 +361,23 @@ function OrganizationDetail({ org, role, onChange }) {
             <div className="mt-6">
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Ecossistema</p>
 
+              {(dashboard.por_parceiro?.some((p) => p.latitude != null) ||
+                dashboard.top_corretores?.some((c) => c.latitude != null)) && (
+                <div className="mb-4 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                  <Map
+                    pins={[
+                      ...(dashboard.por_parceiro ?? [])
+                        .filter((p) => p.latitude != null && p.longitude != null)
+                        .map((p) => ({ lat: p.latitude, lng: p.longitude, label: `${p.name} (imobiliária)`, color: "#a68a5b" })),
+                      ...(dashboard.top_corretores ?? [])
+                        .filter((c) => c.latitude != null && c.longitude != null)
+                        .map((c) => ({ lat: c.latitude, lng: c.longitude, label: `${c.full_name || c.email} (corretor)`, color: "#4A6FA5" })),
+                    ]}
+                    height={260}
+                  />
+                </div>
+              )}
+
               {dashboard.por_parceiro?.length > 0 && (
                 <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
                   <table className="w-full min-w-[560px] border-collapse text-sm">
@@ -524,6 +541,48 @@ function OrganizationDetail({ org, role, onChange }) {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              {teamDashboard.portfolio_performance.some((p) => p.latitude != null) && (
+                <div className="mt-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                  <Map
+                    pins={teamDashboard.portfolio_performance
+                      .filter((p) => p.latitude != null && p.longitude != null)
+                      .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name }))}
+                    height={260}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {teamDashboard.launches_em_roteiro?.some((l) => l.latitude != null) && (
+            <div className="mt-6">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Mapa de projetos
+              </p>
+              <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <Map
+                  pins={teamDashboard.launches_em_roteiro
+                    .filter((l) => l.latitude != null && l.longitude != null)
+                    .map((l) => ({ lat: l.latitude, lng: l.longitude, label: l.name }))}
+                  height={260}
+                />
+              </div>
+            </div>
+          )}
+
+          {teamDashboard.imoveis_em_roteiro?.some((im) => im.latitude != null) && (
+            <div className="mt-6">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Mapa de imóveis em roteiro
+              </p>
+              <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <Map
+                  pins={teamDashboard.imoveis_em_roteiro
+                    .filter((im) => im.latitude != null && im.longitude != null)
+                    .map((im) => ({ lat: im.latitude, lng: im.longitude, label: im.name }))}
+                  height={260}
+                />
               </div>
             </div>
           )}

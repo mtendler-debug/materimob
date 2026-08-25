@@ -6,6 +6,7 @@ import { CriteriaPresets } from "../components/CriteriaPresets";
 import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
 import { downloadCsv } from "../lib/csv";
 import { importarPortfolio } from "../lib/importar";
+import { geocodeAddress } from "../lib/geocode";
 import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
 
@@ -561,12 +562,19 @@ function PropertyCard({ property, onChange }) {
   async function save() {
     setSaving(true);
     setMsg("");
+    const trimmedAddress = address.trim();
+    let coords = { latitude: property.latitude ?? null, longitude: property.longitude ?? null };
+    if (trimmedAddress !== (property.address ?? "")) {
+      const geo = trimmedAddress ? await geocodeAddress(trimmedAddress) : null;
+      coords = { latitude: geo?.lat ?? null, longitude: geo?.lng ?? null };
+    }
     const { error } = await supabase
       .from("av_properties")
       .update({
         name: name.trim(),
         color,
-        address: address.trim() || null,
+        address: trimmedAddress || null,
+        ...coords,
         summary: summary.trim() || null,
         extra_criteria: linesToArray(extraCriteria),
         extra_unit_criteria: linesToArray(extraUnitCriteria),
