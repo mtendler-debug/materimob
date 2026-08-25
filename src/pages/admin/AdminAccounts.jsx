@@ -39,6 +39,30 @@ export default function AdminAccounts() {
     load();
   }
 
+  async function deleteAccount(account) {
+    if (account.id === user?.id) {
+      alert("Você não pode excluir a própria conta por aqui.");
+      return;
+    }
+    const ok = window.confirm(
+      `Excluir "${account.full_name || account.email}" (${account.email})?\n\n` +
+        `Os roteiros, avaliações, propostas e estoque pessoal dessa conta somem junto. ` +
+        `Organizações que ela criou continuam existindo, só perdem a atribuição de quem criou.\n\n` +
+        `Essa ação não pode ser desfeita.`,
+    );
+    if (!ok) return;
+    setBusyId(account.id);
+    const { data, error: fnError } = await supabase.functions.invoke("admin-delete-user", {
+      body: { target_user_id: account.id },
+    });
+    setBusyId(null);
+    if (fnError || data?.error) {
+      alert("Erro: " + (data?.error || fnError.message));
+      return;
+    }
+    load();
+  }
+
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!accounts) return <p className="text-sm text-muted">Carregando…</p>;
 
@@ -76,6 +100,13 @@ export default function AdminAccounts() {
                   className="text-xs font-bold text-graytext underline disabled:opacity-50"
                 >
                   {a.e_admin ? "remover admin" : "tornar admin"}
+                </button>
+                <button
+                  disabled={busyId === a.id}
+                  onClick={() => deleteAccount(a)}
+                  className="ml-3 text-xs font-bold text-[#B34A2E] underline disabled:opacity-50"
+                >
+                  excluir
                 </button>
               </td>
             </tr>

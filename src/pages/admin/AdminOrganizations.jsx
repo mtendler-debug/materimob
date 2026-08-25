@@ -13,6 +13,7 @@ export default function AdminOrganizations() {
   const [orgs, setOrgs] = useState(null);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   async function load() {
     const { data, error } = await supabase.rpc("platform_organizations");
@@ -42,8 +43,20 @@ export default function AdminOrganizations() {
   if (!orgs) return <p className="text-sm text-muted">Carregando…</p>;
 
   return (
-    <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-      <table className="w-full min-w-[760px] border-collapse text-sm">
+    <div>
+      {showForm ? (
+        <NewOrgManagerForm onCancel={() => setShowForm(false)} onCreated={() => { setShowForm(false); load(); }} />
+      ) : (
+        <button
+          onClick={() => setShowForm(true)}
+          className="mb-4 rounded-[10px] border-[1.5px] border-rule px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+        >
+          + Nova organização
+        </button>
+      )}
+
+      <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+        <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>
             {["Organização", "Tipo", "Status", "Membros", "Lançamentos", "Unidades", "Imóveis", ""].map((h) => (
@@ -83,6 +96,99 @@ export default function AdminOrganizations() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
+  );
+}
+
+function NewOrgManagerForm({ onCancel, onCreated }) {
+  const [orgName, setOrgName] = useState("");
+  const [orgTipo, setOrgTipo] = useState("imobiliaria");
+  const [managerName, setManagerName] = useState("");
+  const [managerEmail, setManagerEmail] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function submit(e) {
+    e.preventDefault();
+    setError("");
+    if (!orgName.trim() || !managerName.trim() || !managerEmail.trim()) {
+      setError("Preencha nome da organização, nome e e-mail do gestor.");
+      return;
+    }
+    setSaving(true);
+    const { data, error: fnError } = await supabase.functions.invoke("admin-create-org-manager", {
+      body: {
+        org_name: orgName.trim(),
+        org_tipo: orgTipo,
+        manager_name: managerName.trim(),
+        manager_email: managerEmail.trim(),
+        origin: window.location.origin,
+      },
+    });
+    setSaving(false);
+    if (fnError || data?.error) {
+      setError(data?.error || fnError.message);
+      return;
+    }
+    onCreated();
+  }
+
+  return (
+    <form onSubmit={submit} className="mb-4 space-y-3 rounded-[14px] border border-rule bg-white p-4">
+      <div>
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome da organização</label>
+        <input
+          value={orgName}
+          onChange={(e) => setOrgName(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">Tipo</label>
+        <select
+          value={orgTipo}
+          onChange={(e) => setOrgTipo(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        >
+          <option value="imobiliaria">Imobiliária</option>
+          <option value="incorporadora">Incorporadora</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome do gestor</label>
+        <input
+          value={managerName}
+          onChange={(e) => setManagerName(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="block text-[11.5px] font-bold text-graytext uppercase">E-mail do gestor</label>
+        <input
+          type="email"
+          value={managerEmail}
+          onChange={(e) => setManagerEmail(e.target.value)}
+          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        />
+        <p className="mt-1 text-xs text-graytext">
+          A pessoa recebe um e-mail de convite pra definir a própria senha e já entra como diretor(a)
+          desta organização.
+        </p>
+      </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <div className="flex items-center gap-3">
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+        >
+          {saving ? "Criando…" : "Criar organização e convidar gestor"}
+        </button>
+        <button type="button" onClick={onCancel} className="text-sm text-graytext underline">
+          cancelar
+        </button>
+      </div>
+    </form>
   );
 }
