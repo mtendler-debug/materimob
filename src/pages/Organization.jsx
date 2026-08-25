@@ -224,19 +224,117 @@ function OrganizationDetail({ org, role, onChange }) {
             <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot={dashboard.nota_media != null ? `nota média ${String(dashboard.nota_media).replace(".", ",")}` : "recebidas"} />
             <Kpi label="Propostas" value={dashboard.total_propostas} foot={`${dashboard.propostas_interesse} com interesse`} />
           </div>
+
           {dashboard.unidades_por_status && Object.keys(dashboard.unidades_por_status).length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {Object.entries(dashboard.unidades_por_status).map(([status, n]) => (
-                <span key={status} className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-                  {n} {(STATUS_LABELS[status] || status).toLowerCase()}
-                </span>
-              ))}
+            <div className="mt-4 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Funil de unidades</p>
+              <FunnelBar counts={dashboard.unidades_por_status} />
             </div>
           )}
-          {dashboard.imobiliarias_parceiras?.length > 0 && (
-            <p className="mt-3 text-xs text-graytext">
-              Imobiliárias parceiras: {dashboard.imobiliarias_parceiras.join(", ")}
-            </p>
+
+          {dashboard.por_lancamento?.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Comparação entre lançamentos
+              </p>
+              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <table className="w-full min-w-[760px] border-collapse text-sm">
+                  <thead>
+                    <tr>
+                      {["Lançamento", "Status", "Unidades", "Roteiros", "Avaliações", "Nota média", "Propostas"].map((h) => (
+                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dashboard.por_lancamento.map((l) => (
+                      <tr key={l.id}>
+                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{l.name}</td>
+                        <td className="border-b border-rule p-[10px]">
+                          <span
+                            className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                            style={
+                              l.status === "ativo"
+                                ? { background: "#E3F0E4", color: "#2E7D32" }
+                                : { background: "#F1E4E0", color: "#B34A2E" }
+                            }
+                          >
+                            {LAUNCH_STATUS_LABELS[l.status] || l.status}
+                          </span>
+                        </td>
+                        <td className="min-w-[140px] border-b border-rule p-[10px]">
+                          <FunnelBar
+                            compact
+                            counts={{ disponivel: l.disponiveis, reservada: l.reservadas, vendida: l.vendidas }}
+                          />
+                        </td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{l.total_roteiros}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{l.total_avaliacoes}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          {l.nota_media != null ? String(l.nota_media).replace(".", ",") : "—"}
+                        </td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          {l.total_propostas} ({l.propostas_interesse} c/ interesse)
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {(dashboard.por_parceiro?.length > 0 || dashboard.top_corretores?.length > 0) && (
+            <div className="mt-6">
+              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Ecossistema</p>
+
+              {dashboard.por_parceiro?.length > 0 && (
+                <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                  <table className="w-full min-w-[560px] border-collapse text-sm">
+                    <thead>
+                      <tr>
+                        {["Imobiliária parceira", "Corretores", "Roteiros", "Propostas", "Interesse"].map((h) => (
+                          <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dashboard.por_parceiro.map((p) => (
+                        <tr key={p.organization_id}>
+                          <td className="border-b border-rule p-[10px] font-bold text-charcoal">{p.name}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_roteiros}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
+                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.propostas_interesse}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {dashboard.top_corretores?.length > 0 && (
+                <div className={dashboard.por_parceiro?.length > 0 ? "mt-4" : ""}>
+                  <p className="mb-2 text-xs text-graytext">Corretores que mais geram roteiros com seus lançamentos</p>
+                  <div className="space-y-[6px]">
+                    {dashboard.top_corretores.map((c) => (
+                      <LeaderboardBar
+                        key={c.user_id}
+                        label={c.full_name || c.email}
+                        sublabel={c.org_name || "Independente"}
+                        value={c.total_roteiros}
+                        max={dashboard.top_corretores[0].total_roteiros}
+                        foot={`${c.total_propostas} proposta(s) · ${c.propostas_interesse} c/ interesse`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -372,6 +470,65 @@ function OrganizationDetail({ org, role, onChange }) {
 }
 
 const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
+const UNIT_STATUS_COLORS = {
+  disponivel: { bg: "#E3F0E4", color: "#2E7D32" },
+  reservada: { bg: "#FFF3E0", color: "#B26A00" },
+  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+};
+const LAUNCH_STATUS_LABELS = { ativo: "Ativo", encerrado: "Encerrado" };
+const UNIT_STATUS_ORDER = ["disponivel", "reservada", "vendida"];
+
+function FunnelBar({ counts, compact }) {
+  const total = UNIT_STATUS_ORDER.reduce((sum, k) => sum + (counts[k] || 0), 0);
+  if (!total) return compact ? <span className="text-xs text-graytext">—</span> : null;
+  return (
+    <div>
+      <div className={`flex overflow-hidden rounded-full ${compact ? "h-2" : "h-3"}`}>
+        {UNIT_STATUS_ORDER.map(
+          (k) =>
+            counts[k] > 0 && (
+              <div key={k} style={{ width: `${(counts[k] / total) * 100}%`, background: UNIT_STATUS_COLORS[k].color }} />
+            ),
+        )}
+      </div>
+      {!compact && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {UNIT_STATUS_ORDER.map(
+            (k) =>
+              counts[k] > 0 && (
+                <span
+                  key={k}
+                  className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                  style={{ background: UNIT_STATUS_COLORS[k].bg, color: UNIT_STATUS_COLORS[k].color }}
+                >
+                  {counts[k]} {STATUS_LABELS[k].toLowerCase()}
+                </span>
+              ),
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LeaderboardBar({ label, sublabel, value, max, foot }) {
+  const pct = max > 0 ? Math.max((value / max) * 100, 4) : 0;
+  return (
+    <div className="rounded-[10px] bg-white px-3 py-2 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-sm font-bold text-charcoal">{label}</span>
+        <span className="shrink-0 text-xs text-graytext">{sublabel}</span>
+      </div>
+      <div className="mt-1.5 flex items-center gap-2">
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-light">
+          <div className="h-full rounded-full bg-gold" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="w-6 shrink-0 text-right text-xs font-bold text-graytext">{value}</span>
+      </div>
+      <div className="mt-1 text-[11px] text-graytext">{foot}</div>
+    </div>
+  );
+}
 
 function Kpi({ label, value, foot }) {
   return (
