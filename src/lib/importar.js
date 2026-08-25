@@ -8,6 +8,7 @@ export async function importarPortfolio(selectionId, item, position) {
     .from("av_properties")
     .insert({
       selection_id: selectionId,
+      source_portfolio_property_id: item.id,
       name: item.name,
       color: item.color,
       address: item.address,

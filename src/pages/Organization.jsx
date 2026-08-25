@@ -375,28 +375,87 @@ function OrganizationDetail({ org, role, onChange }) {
                 </tr>
               </thead>
               <tbody>
-                {teamDashboard.por_corretor?.map((c) => (
-                  <tr key={c.user_id}>
-                    <td className="border-b border-rule p-[10px] text-charcoal">{c.full_name || c.email}</td>
-                    <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[c.role]}</td>
-                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_roteiros}</td>
-                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_avaliacoes}</td>
-                    <td className="border-b border-rule p-[10px] text-center text-graytext">
-                      {c.nota_media != null ? String(c.nota_media).replace(".", ",") : "—"}
-                    </td>
-                    <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_propostas}</td>
-                    <td className="border-b border-rule p-[10px] text-center">
-                      {c.ativo_30d && (
-                        <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
-                          ativo
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {teamDashboard.por_corretor?.map((c) => {
+                  const maxRoteiros = Math.max(...teamDashboard.por_corretor.map((x) => x.total_roteiros), 1);
+                  return (
+                    <tr key={c.user_id}>
+                      <td className="border-b border-rule p-[10px] text-charcoal">{c.full_name || c.email}</td>
+                      <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[c.role]}</td>
+                      <td className="min-w-[90px] border-b border-rule p-[10px]">
+                        <div className="mx-auto w-16 text-center text-graytext">{c.total_roteiros}</div>
+                        <div className="mx-auto mt-1 h-1 w-16 overflow-hidden rounded-full bg-light">
+                          <div
+                            className="h-full rounded-full bg-gold"
+                            style={{ width: `${c.total_roteiros > 0 ? Math.max((c.total_roteiros / maxRoteiros) * 100, 6) : 0}%` }}
+                          />
+                        </div>
+                      </td>
+                      <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_avaliacoes}</td>
+                      <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        {c.nota_media != null ? String(c.nota_media).replace(".", ",") : "—"}
+                      </td>
+                      <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_propostas}</td>
+                      <td className="border-b border-rule p-[10px] text-center">
+                        {c.ativo_30d && (
+                          <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
+                            ativo
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
+
+          {teamDashboard.atividade_periodo?.length > 0 && (
+            <div className="mt-6 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Atividade da equipe — roteiros por semana
+              </p>
+              <ActivityBars data={teamDashboard.atividade_periodo} />
+            </div>
+          )}
+
+          {teamDashboard.portfolio_performance?.length > 0 && (
+            <div className="mt-6">
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+                Desempenho do portfólio
+              </p>
+              <p className="mb-2 text-xs text-graytext">
+                Quantas vezes qualquer corretor da plataforma usou cada imóvel — contagem a partir de
+                agora, roteiros importados antes desta métrica não entram.
+              </p>
+              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <table className="w-full min-w-[640px] border-collapse text-sm">
+                  <thead>
+                    <tr>
+                      {["Imóvel", "Usos", "Corretores", "Avaliações", "Nota média", "Propostas"].map((h) => (
+                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {teamDashboard.portfolio_performance.map((p) => (
+                      <tr key={p.id}>
+                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{p.name}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_usos}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_avaliacoes}</td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          {p.nota_media != null ? String(p.nota_media).replace(".", ",") : "—"}
+                        </td>
+                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -507,6 +566,31 @@ function FunnelBar({ counts, compact }) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function formatSemana(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function ActivityBars({ data }) {
+  const max = Math.max(...data.map((d) => d.total_roteiros), 1);
+  return (
+    <div className="flex items-end gap-2">
+      {data.map((d) => (
+        <div key={d.semana} className="flex flex-1 flex-col items-center gap-1">
+          <span className="text-[10px] font-bold text-charcoal">{d.total_roteiros}</span>
+          <div className="flex h-20 w-full items-end">
+            <div
+              className="w-full rounded-t-[4px] bg-gold"
+              style={{ height: `${d.total_roteiros > 0 ? Math.max((d.total_roteiros / max) * 100, 6) : 2}%` }}
+            />
+          </div>
+          <span className="text-[9px] text-graytext">{formatSemana(d.semana)}</span>
+        </div>
+      ))}
     </div>
   );
 }
