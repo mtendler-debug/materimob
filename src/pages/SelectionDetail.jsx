@@ -115,7 +115,7 @@ export default function SelectionDetail() {
 
         <div className="mt-3 flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-charcoal">{selection.title}</h1>
+            <h1 className="font-serif text-[24px] font-semibold text-charcoal">{selection.title}</h1>
             <p className="text-sm text-graytext">{selection.client_name}</p>
           </div>
           <button
@@ -144,7 +144,7 @@ export default function SelectionDetail() {
         </div>
 
         <SectionTitle>Dashboard</SectionTitle>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
           <Kpi label="Avaliações" value={dash.totalAvaliacoes} foot={`${dash.totalAvaliadores} pessoa(s)`} />
           <Kpi label="Líder do ranking" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
           <Kpi label="Nota média geral" value={n1(mediaGeral)} foot="escala de 1 a 10" />
@@ -152,7 +152,7 @@ export default function SelectionDetail() {
         </div>
 
         {properties.some((p) => p.latitude != null && p.longitude != null) && (
-          <div className="mt-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="mt-3 overflow-hidden rounded-[14px] border border-rule">
             <Map
               pins={properties
                 .filter((p) => p.latitude != null && p.longitude != null)
@@ -169,7 +169,7 @@ export default function SelectionDetail() {
               return (
                 <div key={p.id} className="rounded-[14px] border border-rule bg-white p-4">
                   <div className="flex items-center justify-between text-sm">
-                    <b className="text-charcoal">{p.name}</b>
+                    <b className="font-serif font-semibold text-charcoal">{p.name}</b>
                     <span className="text-graytext">
                       {n1(r?.notaMedia)}/10 · {r?.avaliacoes ?? 0} aval.
                     </span>
@@ -187,7 +187,7 @@ export default function SelectionDetail() {
         )}
 
         {selection.criteria?.length > 0 && (
-          <div className="mt-3 overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="mt-3 overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
             <table className="w-full min-w-[460px] border-collapse text-[13px]">
               <thead>
                 <tr>
@@ -227,7 +227,7 @@ export default function SelectionDetail() {
           <div className="mt-3 space-y-2">
             {dash.comentarios.map((c) => (
               <div key={c.property_id} className="rounded-[14px] border border-rule bg-white p-4">
-                <b style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                <b className="font-serif font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
                 {c.comentarios.map((cm, i) => (
                   <div key={i} className="my-2 border-l-[3px] border-rule pl-3 text-[13px]">
                     <div className="text-xs font-bold text-charcoal">
@@ -247,16 +247,16 @@ export default function SelectionDetail() {
 
         <SectionTitle>Ranking</SectionTitle>
         {dash.ranking.length === 0 ? (
-          <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">
+          <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">
             O ranking aparece assim que a primeira avaliação for enviada.
           </div>
         ) : (
           <div className="space-y-2">
-            {dash.ranking.map((r) => (
+            {dash.ranking.map((r, i) => (
               <div
                 key={r.property_id}
-                className="flex items-center gap-3 rounded-[13px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]"
-                style={{ borderLeft: `6px solid ${r.color || "#A68A5B"}` }}
+                className={`flex items-center gap-3 rounded-[13px] border border-rule bg-white p-[15px] ${i === 0 ? "border-l-4" : "border-l-[3px]"}`}
+                style={{ borderLeftColor: r.color || "#A68A5B" }}
               >
                 <div
                   className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
@@ -265,13 +265,13 @@ export default function SelectionDetail() {
                   {r.posicao}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[15.5px] font-bold leading-tight text-charcoal">{r.name}</div>
+                  <div className="font-serif text-[15.5px] leading-tight font-semibold text-charcoal">{r.name}</div>
                   <div className="mt-[1px] text-xs text-graytext">
                     nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
                   </div>
                 </div>
                 <div className="pl-2 text-right">
-                  <b className="block text-[21px] leading-[1.1]">{n1(r.score)}</b>
+                  <b className="font-serif block text-[21px] leading-[1.1] font-semibold">{n1(r.score)}</b>
                   <span className="text-[10.5px] text-muted">score</span>
                 </div>
               </div>
@@ -328,7 +328,7 @@ export default function SelectionDetail() {
 
         <SectionTitle>Propostas ({proposals.length})</SectionTitle>
         {proposals.length > 0 && (
-          <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mb-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
             <Kpi label="Propostas recebidas" value={propKpis.total} foot="" />
             <Kpi label="Confirmaram interesse" value={propKpis.comInteresse} foot="topo do funil de fechamento" />
             <Kpi label="Maior proposta" value={brl(propKpis.maiorValor)} foot="" />
@@ -347,9 +347,9 @@ function SectionTitle({ children }) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] truncate text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] truncate text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
@@ -1093,11 +1093,11 @@ function EvaluationsTable({ evaluations, properties, onChange }) {
   }
 
   if (!evaluations.length) {
-    return <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma resposta ainda.</div>;
+    return <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma resposta ainda.</div>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
       <table className="w-full min-w-[600px] border-collapse text-[13.5px]">
         <thead>
           <tr>
@@ -1160,11 +1160,11 @@ function ProposalsTable({ proposals, properties }) {
   const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
 
   if (!proposals.length) {
-    return <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma proposta ainda.</div>;
+    return <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma proposta ainda.</div>;
   }
 
   return (
-    <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
       <table className="w-full min-w-[600px] border-collapse text-[13.5px]">
         <thead>
           <tr>
@@ -1186,7 +1186,7 @@ function ProposalsTable({ proposals, properties }) {
                 </td>
                 <td className="border-b border-rule p-[10px] font-bold text-charcoal">{x.proposer_name}</td>
                 <td className="border-b border-rule p-[10px]">
-                  <span className="font-bold" style={{ color: property?.color || "#A68A5B" }}>
+                  <span className="font-serif font-semibold" style={{ color: property?.color || "#A68A5B" }}>
                     {property?.name}
                   </span>
                 </td>
