@@ -25,8 +25,8 @@ export default function Selections() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-xl font-medium text-charcoal">Meus roteiros</h1>
-        <p className="text-sm text-graytext">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meus roteiros</h1>
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           Visão solta de todos os roteiros, sem agrupar por cliente — pra criar um atendimento
           novo, use{" "}
           <Link to="/app" className="underline">
@@ -35,7 +35,7 @@ export default function Selections() {
           .
         </p>
 
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-[#B34A2E]">{error}</p>}
 
         <div className="mt-6 space-y-2">
           {selections === null && <p className="text-sm text-muted">Carregando…</p>}
@@ -44,12 +44,12 @@ export default function Selections() {
             <Link
               key={s.id}
               to={`/app/selections/${s.id}`}
-              className="block rounded-md border border-rule bg-white p-4 hover:border-gold"
+              className="block rounded-[14px] border border-rule bg-white p-4 hover:border-gold"
             >
-              <p className="font-medium text-charcoal">{s.title}</p>
+              <p className="font-serif font-semibold text-charcoal">{s.title}</p>
               <p className="text-sm text-graytext">{s.client_name}</p>
               {s.archived && (
-                <span className="mt-1 inline-block rounded bg-light px-2 py-0.5 text-xs text-graytext">
+                <span className="mt-[6px] inline-block rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
                   arquivada
                 </span>
               )}
