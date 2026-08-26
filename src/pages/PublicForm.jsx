@@ -93,8 +93,8 @@ export default function PublicForm() {
     return (
       <Shell title={data.title} subtitle={data.subtitle}>
         <div className="mt-6 text-center">
-          <div className="my-6 text-[46px] leading-none">✓</div>
-          <h2 className="text-[21px] font-bold text-charcoal">Avaliação enviada</h2>
+          <div className="mx-auto my-6 flex h-[66px] w-[66px] items-center justify-center rounded-full bg-light text-[28px] text-gold">✓</div>
+          <h2 className="font-serif text-[21px] font-semibold text-charcoal">Avaliação enviada</h2>
           <p className="mx-auto mt-2 mb-6 max-w-xs text-[14.5px] text-graytext">{doneMsg}</p>
           <button
             onClick={() => setView("funnel")}
@@ -212,7 +212,8 @@ function Funnel({ properties, draft, onOpen }) {
     <>
       {groups.map((g) => (
         <div key={g.key}>
-          <h2 className="mt-[26px] mb-[10px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+          <h2 className="mt-[26px] mb-[10px] flex items-center gap-[7px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+            <span className="inline-block h-[7px] w-[7px] rounded-full" style={{ background: g.chipColor }} />
             {g.label} · {g.items.length}
           </h2>
           {g.items.map((p) => {
@@ -240,10 +241,10 @@ function Funnel({ properties, draft, onOpen }) {
             return (
               <div
                 key={p.id}
-                className="mb-3 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
-                style={{ borderLeft: `5px solid ${p.color || "#A68A5B"}` }}
+                className="mb-3 rounded-[14px] border border-rule border-l-4 bg-white p-4"
+                style={{ borderLeftColor: p.color || "#A68A5B" }}
               >
-                <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{p.name}</h3>
+                <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{p.name}</h3>
                 {p.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{p.address}</p>}
                 {p.summary && <p className="m-0 mb-3 text-xs text-graytext">{p.summary}</p>}
                 <PropertyMedia property={p} />
@@ -285,10 +286,10 @@ function ChooseUnit({ property, draft, onBack, onChoose }) {
       </button>
 
       <div
-        className="mt-[10px] rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
-        style={{ borderLeft: `5px solid ${property.color || "#1C1C1C"}` }}
+        className="mt-[10px] rounded-[14px] border border-rule border-l-4 bg-white p-4"
+        style={{ borderLeftColor: property.color || "#1C1C1C" }}
       >
-        <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{property.name}</h3>
+        <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{property.name}</h3>
         <p className="m-0 text-[12.5px] text-graytext">
           Você já avaliou o empreendimento. Agora escolha qual unidade quer avaliar.
         </p>
@@ -430,10 +431,10 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
       </button>
 
       <div
-        className="mt-[10px] rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
-        style={{ borderLeft: `5px solid ${accent}` }}
+        className="mt-[10px] rounded-[14px] border border-rule border-l-4 bg-white p-4"
+        style={{ borderLeftColor: accent }}
       >
-        <h3 className="m-0 mb-[3px] text-[17px] font-bold text-charcoal">{property.name}</h3>
+        <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{property.name}</h3>
         {property.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{property.address}</p>}
         {property.summary && <p className="m-0 text-xs text-graytext">{property.summary}</p>}
         <PropertyMedia property={property} />
@@ -449,7 +450,7 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
           <p className="m-0 text-[10.5px] font-bold tracking-[.14em] text-gold uppercase">
             Avaliando a unidade
           </p>
-          <h4 className="mt-1 mb-0 text-[15px] font-bold text-charcoal">{unit?.name}</h4>
+          <h4 className="font-serif mt-1 mb-0 text-[15px] font-semibold text-charcoal">{unit?.name}</h4>
           {unit?.table_value != null && (
             <div className="mt-[10px] rounded-[11px] bg-light p-3 text-[13px] text-graytext">
               Valor de tabela desta unidade:{" "}
@@ -617,7 +618,7 @@ function Shell({ title, subtitle, children }) {
           <div className="text-[11px] font-bold uppercase tracking-[.18em] text-gold">
             Avaliador Materimob
           </div>
-          <h1 className="mt-2 mb-1 text-[23px] font-bold leading-tight">{title}</h1>
+          <h1 className="font-serif mt-2 mb-1 text-[23px] font-semibold leading-tight">{title}</h1>
           {subtitle && <p className="m-0 text-[13px] text-[#C9C9C9]">{subtitle}</p>}
         </div>
       </header>
