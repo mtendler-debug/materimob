@@ -26,6 +26,35 @@ function Centered({ children }) {
   );
 }
 
+// Painel é uma página longa numa rolagem só (panorama, mapa, ranking,
+// cronograma, propostas no fim) — depois de mexer em algo lá embaixo
+// não tinha como voltar pro início sem arrastar o dedo a página
+// inteira. Some quando está perto do topo, pra não competir com o
+// cabeçalho.
+function BackToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setVisible(window.scrollY > 400);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label="Voltar ao início do painel"
+      className="fixed right-4 bottom-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-charcoal text-white shadow-[0_2px_8px_rgba(0,0,0,.25)]"
+    >
+      ↑
+    </button>
+  );
+}
+
 export default function PublicPanel() {
   const { token } = useParams();
   const [loading, setLoading] = useState(true);
@@ -333,6 +362,7 @@ export default function PublicPanel() {
           Painel gerado automaticamente a partir das avaliações enviadas.
         </p>
       </div>
+      <BackToTop />
     </div>
   );
 }
