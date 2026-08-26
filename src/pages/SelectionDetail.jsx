@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../lib/AuthContext";
 import { Gantt } from "../components/Gantt";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 import { aggregateSelection, aggregateProposals, avg } from "../lib/aggregate";
@@ -45,6 +46,7 @@ function shade(hex, v) {
 
 export default function SelectionDetail() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [selection, setSelection] = useState(null);
   const [properties, setProperties] = useState(null);
   const [evaluations, setEvaluations] = useState(null);
@@ -59,7 +61,13 @@ export default function SelectionDetail() {
       { data: props2 },
     ] = await Promise.all([
       supabase.from("av_selections").select("*, av_clients(token, name)").eq("id", id).single(),
-      supabase.from("av_properties").select("*, av_units(*)").eq("selection_id", id).order("position"),
+      supabase
+        .from("av_properties")
+        .select(
+          "*, av_units(*, launch_unit:av_launch_units(status, reserved_by, reserved_for), portfolio_unit:av_portfolio_units(status, reserved_by, reserved_for))",
+        )
+        .eq("selection_id", id)
+        .order("position"),
       supabase.from("av_evaluations").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
       supabase.from("av_proposals").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
     ]);
@@ -292,7 +300,7 @@ export default function SelectionDetail() {
         <SectionTitle>Imóveis</SectionTitle>
         <div className="space-y-3">
           {properties.map((p) => (
-            <PropertyCard key={p.id} property={p} onChange={load} />
+            <PropertyCard key={p.id} property={p} onChange={load} currentUserId={user?.id} />
           ))}
         </div>
         <NewPropertyForm selectionId={id} existingCount={properties.length} onCreated={load} />
@@ -535,7 +543,7 @@ function MilestonesEditor({ selection, onSaved }) {
   );
 }
 
-function PropertyCard({ property, onChange }) {
+function PropertyCard({ property, onChange, currentUserId }) {
   const [showUnitForm, setShowUnitForm] = useState(false);
   const [unitName, setUnitName] = useState("");
   const [unitValue, setUnitValue] = useState("");
@@ -634,6 +642,30 @@ function PropertyCard({ property, onChange }) {
 
   async function saveUnit(unitId, dados) {
     await supabase.from("av_units").update(dados).eq("id", unitId);
+    onChange();
+  }
+
+  async function toggleVisited(unitId, visited) {
+    await supabase.from("av_units").update({ visited }).eq("id", unitId);
+    onChange();
+  }
+
+  // Unidade ligada a lançamento/portfólio: confirmar venda passa pela
+  // função atômica (o corretor não é gerente+ da organização dona do
+  // estoque, só pode confirmar a própria reserva). Unidade avulsa
+  // (cadastrada à mão, sem vínculo): é dado só do corretor, atualiza
+  // direto.
+  async function confirmSale(unit) {
+    if (!window.confirm(`Confirmar venda de "${unit.name}"?`)) return;
+    if (unit.launch_unit_id) {
+      const { error } = await supabase.rpc("confirm_launch_unit_sale", { p_unit_id: unit.launch_unit_id });
+      if (error) alert("Erro: " + error.message);
+    } else if (unit.portfolio_unit_id) {
+      const { error } = await supabase.rpc("confirm_portfolio_unit_sale", { p_unit_id: unit.portfolio_unit_id });
+      if (error) alert("Erro: " + error.message);
+    } else {
+      await supabase.from("av_units").update({ sold: true }).eq("id", unit.id);
+    }
     onChange();
   }
 
@@ -795,9 +827,26 @@ function PropertyCard({ property, onChange }) {
         Unidades visitadas e valor de tabela
       </label>
       <div className="mt-1 space-y-1">
-        {(property.units ?? []).map((u) => (
-          <UnitEditRow key={u.id} unit={u} onSave={saveUnit} onRemove={removeUnit} />
-        ))}
+        {(property.units ?? []).map((u) => {
+          const status = u.launch_unit?.status ?? u.portfolio_unit?.status ?? (u.sold ? "vendida" : undefined);
+          const reservedFor = u.launch_unit?.reserved_for ?? u.portfolio_unit?.reserved_for;
+          const canConfirmSale = u.launch_unit_id
+            ? u.launch_unit?.status === "reservada" && u.launch_unit?.reserved_by === currentUserId
+            : u.portfolio_unit_id
+              ? u.portfolio_unit?.status === "reservada" && u.portfolio_unit?.reserved_by === currentUserId
+              : !u.sold;
+          return (
+            <UnitEditRow
+              key={u.id}
+              unit={{ ...u, status, reserved_for: reservedFor }}
+              onSave={saveUnit}
+              onRemove={removeUnit}
+              onToggleVisited={toggleVisited}
+              onMarkSold={() => confirmSale(u)}
+              canConfirmSale={canConfirmSale}
+            />
+          );
+        })}
       </div>
 
       {showUnitForm ? (

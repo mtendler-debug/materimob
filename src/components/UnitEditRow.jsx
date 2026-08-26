@@ -17,11 +17,14 @@ const STATUS_COLORS = {
 // já tinha, só faltava o gatilho de edição. Fotos e condições de
 // pagamento são próprias da unidade — ficam em branco por padrão e usam
 // as do empreendimento quando não preenchidas (ver PropertyMedia).
-// onMarkSold/onRelease são opcionais — só o portfólio (Portfolio.jsx)
-// passa, porque só lá a unidade tem status próprio (venda/reserva). No
-// roteiro do corretor (SelectionDetail.jsx) a unidade é só uma cópia,
-// sem esse controle.
-export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease }) {
+// onMarkSold/onRelease são opcionais — Portfolio.jsx e SelectionDetail.jsx
+// passam versões diferentes (dono edita a unidade compartilhada direto;
+// corretor confirma só a própria reserva via RPC) — ver cada tela.
+// canConfirmSale deixa a decisão de "pode confirmar venda agora" pra
+// quem chama; sem ele, cai no padrão antigo (status === "reservada").
+// onToggleVisited é só do roteiro do corretor — portfólio não tem esse
+// conceito.
+export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, canConfirmSale, onToggleVisited }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(unit.name);
   const [value, setValue] = useState(unit.table_value ?? "");
@@ -97,19 +100,32 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease }) {
     );
   }
 
+  const podeConfirmar = onMarkSold && (canConfirmSale ?? unit.status === "reservada");
+
   return (
     <div className="flex items-center justify-between text-sm text-graytext">
-      <button type="button" onClick={() => setEditing(true)} className="text-left hover:underline">
-        {unit.name}
-        {(unit.photo_urls?.length > 0 || unit.payment_terms) && (
-          <span className="ml-1 text-xs" title="Tem fotos ou condições de pagamento próprias">
-            •
-          </span>
+      <span className="flex min-w-0 items-center gap-2">
+        {onToggleVisited && (
+          <input
+            type="checkbox"
+            checked={!!unit.visited}
+            onChange={(e) => onToggleVisited(unit.id, e.target.checked)}
+            title="Unidade visitada"
+            className="h-[15px] w-[15px] shrink-0 accent-[#a68a5b]"
+          />
         )}
-      </button>
-      <span className="flex items-center gap-2">
+        <button type="button" onClick={() => setEditing(true)} className="truncate text-left hover:underline">
+          {unit.name}
+          {(unit.photo_urls?.length > 0 || unit.payment_terms) && (
+            <span className="ml-1 text-xs" title="Tem fotos ou condições de pagamento próprias">
+              •
+            </span>
+          )}
+        </button>
+      </span>
+      <span className="flex shrink-0 items-center gap-2">
         {unit.table_value != null && <span>{brl(unit.table_value)}</span>}
-        {onMarkSold && unit.status && unit.status !== "disponivel" && (
+        {unit.status && unit.status !== "disponivel" && (
           <span
             className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
             style={{ background: STATUS_COLORS[unit.status].bg, color: STATUS_COLORS[unit.status].color }}
@@ -126,15 +142,15 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease }) {
             ×
           </button>
         )}
-        {onMarkSold && unit.status === "reservada" && (
-          <>
-            <button type="button" onClick={() => onMarkSold(unit.id)} className="text-xs font-bold text-[#2E7D32]">
-              confirmar venda
-            </button>
-            <button type="button" onClick={() => onRelease(unit.id)} className="text-xs font-bold text-[#B34A2E]">
-              desfazer reserva
-            </button>
-          </>
+        {podeConfirmar && (
+          <button type="button" onClick={() => onMarkSold(unit.id)} className="text-xs font-bold text-[#2E7D32]">
+            confirmar venda
+          </button>
+        )}
+        {podeConfirmar && onRelease && (
+          <button type="button" onClick={() => onRelease(unit.id)} className="text-xs font-bold text-[#B34A2E]">
+            desfazer reserva
+          </button>
         )}
       </span>
     </div>
