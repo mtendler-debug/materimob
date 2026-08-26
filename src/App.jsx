@@ -25,6 +25,12 @@ import Estoque from "./pages/Estoque";
 import TeamPicks from "./pages/TeamPicks";
 import Profile from "./pages/Profile";
 import MyPerformance from "./pages/MyPerformance";
+import CrmLayout from "./pages/crm/CrmLayout";
+import CrmDashboard from "./pages/crm/CrmDashboard";
+import Pipeline from "./pages/crm/Pipeline";
+import Leads from "./pages/crm/Leads";
+import LeadDetail from "./pages/crm/LeadDetail";
+import Opportunities from "./pages/crm/Opportunities";
 
 export default function App() {
   return (
@@ -45,6 +51,13 @@ export default function App() {
         <Route path="/app/selections/:id" element={<SelectionDetail />} />
         <Route path="/app/perfil" element={<Profile />} />
         <Route path="/app/desempenho" element={<MyPerformance />} />
+        <Route path="/app/crm" element={<CrmLayout />}>
+          <Route index element={<CrmDashboard />} />
+          <Route path="pipeline" element={<Pipeline />} />
+          <Route path="leads" element={<Leads />} />
+          <Route path="leads/:id" element={<LeadDetail />} />
+          <Route path="oportunidades" element={<Opportunities />} />
+        </Route>
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/portfolio" element={<Portfolio />} />
         <Route
