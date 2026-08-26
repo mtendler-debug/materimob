@@ -64,7 +64,7 @@ export default function SelectionDetail() {
       supabase
         .from("av_properties")
         .select(
-          "*, av_units(*, launch_unit:av_launch_units(status, reserved_by, reserved_for), portfolio_unit:av_portfolio_units(status, reserved_by, reserved_for))",
+          "*, av_units(*, launch_unit:av_launch_units(status, reserved_by, reserved_for, launch_id), portfolio_unit:av_portfolio_units(status, reserved_by, reserved_for))",
         )
         .eq("selection_id", id)
         .order("position"),
@@ -300,7 +300,13 @@ export default function SelectionDetail() {
         <SectionTitle>Imóveis</SectionTitle>
         <div className="space-y-3">
           {properties.map((p) => (
-            <PropertyCard key={p.id} property={p} onChange={load} currentUserId={user?.id} />
+            <PropertyCard
+              key={p.id}
+              property={p}
+              onChange={load}
+              currentUserId={user?.id}
+              clientId={selection.client_id}
+            />
           ))}
         </div>
         <NewPropertyForm selectionId={id} existingCount={properties.length} onCreated={load} />
@@ -543,10 +549,11 @@ function MilestonesEditor({ selection, onSaved }) {
   );
 }
 
-function PropertyCard({ property, onChange, currentUserId }) {
+function PropertyCard({ property, onChange, currentUserId, clientId }) {
   const [showUnitForm, setShowUnitForm] = useState(false);
   const [unitName, setUnitName] = useState("");
   const [unitValue, setUnitValue] = useState("");
+  const [crmMsg, setCrmMsg] = useState("");
 
   const [name, setName] = useState(property.name);
   const [color, setColor] = useState(property.color || "#5C5C5C");
@@ -619,6 +626,49 @@ function PropertyCard({ property, onChange, currentUserId }) {
     if (!window.confirm(`Remover "${property.name}" do funil? Avaliações e propostas deste imóvel também somem.`)) return;
     await supabase.from("av_properties").delete().eq("id", property.id);
     onChange();
+  }
+
+  // Atalho do roteiro pro CRM: em vez de recriar lead+oportunidade
+  // manualmente lá, aproveita o cliente e o imóvel que já estão aqui.
+  // Reaproveita o lead mais recente do cliente se já existir (RLS já
+  // restringe a busca aos leads do próprio corretor).
+  async function adicionarAoCRM() {
+    if (!clientId) {
+      setCrmMsg("Este roteiro não tem cliente vinculado — não é possível adicionar ao CRM.");
+      return;
+    }
+    setCrmMsg("Adicionando…");
+    const launchId = (property.units ?? []).find((u) => u.launch_unit?.launch_id)?.launch_unit?.launch_id ?? null;
+    const portfolioPropertyId = property.source_portfolio_property_id ?? null;
+    const singleUnit = (property.units ?? []).length === 1 ? property.units[0] : null;
+
+    const { data: leads, error: leadsError } = await supabase
+      .from("av_leads")
+      .select("id")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (leadsError) { setCrmMsg("Erro: " + leadsError.message); return; }
+    let leadId = leads?.[0]?.id;
+    if (!leadId) {
+      const { data: novoLead, error } = await supabase
+        .from("av_leads")
+        .insert({ client_id: clientId })
+        .select("id")
+        .single();
+      if (error) { setCrmMsg("Erro: " + error.message); return; }
+      leadId = novoLead.id;
+    }
+    const { error: oppError } = await supabase.from("av_opportunities").insert({
+      lead_id: leadId,
+      type: "compra",
+      property: property.name,
+      portfolio_property_id: portfolioPropertyId,
+      launch_id: launchId,
+      value: singleUnit?.table_value ?? null,
+    });
+    if (oppError) { setCrmMsg("Erro: " + oppError.message); return; }
+    setCrmMsg("Adicionado ao CRM.");
   }
 
   async function addUnit(e) {
@@ -888,6 +938,15 @@ function PropertyCard({ property, onChange, currentUserId }) {
           {saving ? "Salvando…" : "Salvar imóvel"}
         </button>
         {msg && <span className="text-sm text-graytext">{msg}</span>}
+        <button
+          onClick={adicionarAoCRM}
+          disabled={!clientId}
+          title={clientId ? "" : "Roteiro sem cliente vinculado"}
+          className="text-xs font-bold text-graytext underline disabled:opacity-40 disabled:no-underline"
+        >
+          Adicionar ao CRM
+        </button>
+        {crmMsg && <span className="text-sm text-graytext">{crmMsg}</span>}
         <button onClick={removeProperty} className="ml-auto text-xs font-bold text-[#B34A2E]">
           remover imóvel
         </button>
