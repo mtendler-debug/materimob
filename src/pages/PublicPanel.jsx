@@ -30,13 +30,18 @@ function Centered({ children }) {
 // cronograma, propostas no fim) — depois de mexer em algo lá embaixo
 // não tinha como voltar pro início sem arrastar o dedo a página
 // inteira. Some quando está perto do topo, pra não competir com o
-// cabeçalho.
+// cabeçalho. O anel ao redor do botão mostra o quanto falta rolar.
 function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const R = 19;
+  const circumference = 2 * Math.PI * R;
 
   useEffect(() => {
     function onScroll() {
+      const max = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       setVisible(window.scrollY > 400);
+      setProgress(max > 0 ? window.scrollY / max : 0);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -48,9 +53,22 @@ function BackToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Voltar ao início do painel"
-      className="fixed right-4 bottom-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-charcoal text-white shadow-[0_2px_8px_rgba(0,0,0,.25)]"
+      className="fixed right-4 bottom-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-charcoal text-white shadow-[0_4px_14px_rgba(0,0,0,.28)]"
     >
-      ↑
+      <svg className="pointer-events-none absolute inset-[-2px] h-[48px] w-[48px] -rotate-90" viewBox="0 0 44 44">
+        <circle
+          cx="22"
+          cy="22"
+          r={R}
+          fill="none"
+          stroke="#A68A5B"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - circumference * progress}
+        />
+      </svg>
+      <span className="relative">↑</span>
     </button>
   );
 }
@@ -99,42 +117,70 @@ export default function PublicPanel() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="bg-charcoal px-[18px] pt-[26px] pb-6 text-white">
-        <div className="mx-auto max-w-[900px]">
-          <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
-            Avaliador Materimob
+      <header className="relative overflow-hidden bg-charcoal px-[18px] pt-9 pb-11 text-white">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "radial-gradient(600px 260px at 85% -10%, rgba(166,138,91,.22), transparent 70%)" }}
+        />
+        <div className="relative mx-auto max-w-[900px]">
+          <div className="text-[11px] font-bold uppercase tracking-[.2em] text-gold">Avaliador MaterImob</div>
+          <h1 className="font-serif mt-[14px] mb-[6px] text-[28px] leading-[1.15] font-semibold sm:text-[34px]">{title}</h1>
+          {subtitle && <p className="m-0 max-w-[46ch] text-[14px] text-[#CFC9BD]">{subtitle}</p>}
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[12.5px] text-[#B6AE9E]">
+            <span>
+              <b className="font-semibold text-white">{properties.length}</b> imóve{properties.length === 1 ? "l" : "is"} no roteiro
+            </span>
+            <span>
+              <b className="font-semibold text-white">{data.totalAvaliacoes}</b> avaliação(ões)
+            </span>
+            {lider && (
+              <span>
+                <b className="font-semibold text-white">{lider.name}</b> na liderança
+              </span>
+            )}
           </div>
-          <h1 className="mt-[9px] mb-1 text-[25px] leading-tight font-bold">{title}</h1>
-          {subtitle && <p className="m-0 text-[13.5px] text-[#C9C9C9]">{subtitle}</p>}
         </div>
       </header>
 
-      <div className="mx-auto max-w-[900px] px-[18px] pb-10">
+      <div className="mx-auto max-w-[900px] px-[18px] pt-8 pb-16">
         {archived && (
-          <Card className="mt-4" style={{ background: "#F4EFE6", borderLeft: "5px solid #A68A5B" }}>
+          <Card className="mt-0" style={{ background: "#F4EFE6", borderLeft: "5px solid #A68A5B" }}>
             <b>Atendimento encerrado.</b> Este painel segue disponível para consulta, mas o formulário
             de avaliação não recebe mais respostas.
           </Card>
         )}
 
-        <SectionTitle>Panorama</SectionTitle>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Kpi label="Imóveis no funil" value={properties.length} foot={`${unrated.length} sem avaliação`} />
+        <SectionTitle first>Panorama</SectionTitle>
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+          <Kpi lead label="Imóveis no funil" value={properties.length} foot={`${unrated.length} sem avaliação`} />
           <Kpi label="Avaliações" value={data.totalAvaliacoes} foot={`${data.totalAvaliadores} pessoa(s)`} />
-          <Kpi label="Preferido" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
+          <Kpi small label="Preferido" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
           <Kpi label="Nota média" value={n1(mediaGeral)} foot="escala de 1 a 10" />
         </div>
 
         {properties.some((p) => p.latitude != null && p.longitude != null) && (
           <>
             <SectionTitle>Mapa dos imóveis</SectionTitle>
-            <div className="mb-4 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="overflow-hidden rounded-[16px] border border-rule bg-white">
               <Map
                 pins={properties
                   .filter((p) => p.latitude != null && p.longitude != null)
                   .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#A68A5B" }))}
                 height={260}
               />
+              <div className="flex flex-wrap gap-4 border-t border-rule px-[18px] py-3 text-[12.5px] text-graytext">
+                {properties
+                  .filter((p) => p.latitude != null && p.longitude != null)
+                  .map((p) => (
+                    <span key={p.id}>
+                      <i
+                        className="mr-[6px] inline-block h-2 w-2 rounded-full align-[-1px]"
+                        style={{ background: p.color || "#A68A5B" }}
+                      />
+                      {p.name}
+                    </span>
+                  ))}
+              </div>
             </div>
           </>
         )}
@@ -143,11 +189,13 @@ export default function PublicPanel() {
         {ranking.length === 0 ? (
           <Empty>O ranking aparece assim que a primeira avaliação for enviada.</Empty>
         ) : (
-          ranking.map((r) => (
+          ranking.map((r, i) => (
             <div
               key={r.property_id}
-              className="mb-[10px] flex items-center gap-[13px] rounded-[13px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]"
-              style={{ borderLeft: `6px solid ${r.color || "#A68A5B"}` }}
+              className={`mb-[10px] flex items-center gap-[16px] rounded-[14px] border border-rule bg-white p-[16px] ${
+                i === 0 ? "border-l-4" : "border-l-[3px]"
+              }`}
+              style={{ borderLeftColor: r.color || "#A68A5B" }}
             >
               <div
                 className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
@@ -156,11 +204,11 @@ export default function PublicPanel() {
                 {r.posicao}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[15.5px] font-bold leading-tight text-charcoal">{r.name}</div>
-                <div className="mt-[1px] text-xs text-graytext">
+                <div className="text-[15.5px] leading-tight font-semibold text-charcoal">{r.name}</div>
+                <div className="mt-[2px] text-xs text-graytext">
                   nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
                 </div>
-                <div className="mt-[7px] h-[6px] max-w-[300px] overflow-hidden rounded-full bg-light">
+                <div className="mt-[9px] h-[5px] max-w-[320px] overflow-hidden rounded-full bg-light">
                   <div
                     className="h-full rounded-full"
                     style={{ width: `${r.score * 10}%`, background: r.color || "#A68A5B" }}
@@ -168,8 +216,8 @@ export default function PublicPanel() {
                 </div>
               </div>
               <div className="pl-2 text-right">
-                <b className="block text-[21px] leading-[1.1]">{n1(r.score)}</b>
-                <span className="text-[10.5px] text-muted">score</span>
+                <b className="font-serif block text-[22px] leading-[1.1] font-semibold">{n1(r.score)}</b>
+                <span className="text-[10px] tracking-[.06em] text-muted uppercase">score</span>
               </div>
             </div>
           ))
@@ -211,14 +259,14 @@ export default function PublicPanel() {
 
         {criteria.length > 0 && (
           <>
-            <SectionTitle>Comparativo por critério</SectionTitle>
-            <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <SectionTitle note="média de 1 a 5">Comparativo por critério</SectionTitle>
+            <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
               <table className="w-full min-w-[460px] border-collapse text-[13px]">
                 <thead>
                   <tr>
-                    <th className="bg-charcoal p-[9px] text-left text-[11px] font-bold text-white">Critério</th>
+                    <th className="bg-charcoal p-[11px] text-left text-[10.5px] font-bold tracking-[.05em] text-white uppercase">Critério</th>
                     {comparativo.map((c) => (
-                      <th key={c.property_id} className="bg-charcoal p-[9px] text-center text-[11px] font-bold text-white">
+                      <th key={c.property_id} className="bg-charcoal p-[11px] text-center text-[10.5px] font-bold tracking-[.05em] text-white uppercase">
                         {c.name.split(" ")[0]}
                       </th>
                     ))}
@@ -227,14 +275,14 @@ export default function PublicPanel() {
                 <tbody>
                   {criteria.map((crit) => (
                     <tr key={crit}>
-                      <td className="border-b border-rule p-[9px] font-semibold text-charcoal">{crit}</td>
+                      <td className="border-b border-rule bg-white p-[10px] font-semibold text-charcoal">{crit}</td>
                       {comparativo.map((c) => {
                         const m = (c.medias ?? []).find((x) => x.criterio === crit);
                         const v = m ? m.media : null;
                         return (
                           <td
                             key={c.property_id}
-                            className="border-b border-rule p-[9px] text-center text-graytext"
+                            className="border-b border-rule p-[10px] text-center text-graytext"
                             style={v == null ? {} : { background: shade(c.color || "#A68A5B", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
                           >
                             {n1(v)}
@@ -244,9 +292,9 @@ export default function PublicPanel() {
                     </tr>
                   ))}
                   <tr>
-                    <td className="p-[9px] font-semibold text-charcoal">Média geral</td>
+                    <td className="bg-white p-[10px] font-semibold text-charcoal">Média geral</td>
                     {comparativo.map((c) => (
-                      <td key={c.property_id} className="p-[9px] text-center">
+                      <td key={c.property_id} className="bg-white p-[10px] text-center">
                         <b>{n1(c.mediaCriterios)}</b>
                       </td>
                     ))}
@@ -255,7 +303,7 @@ export default function PublicPanel() {
               </table>
             </div>
             {temExtras && (
-              <p className="mt-[-4px] text-[12.5px] text-graytext">
+              <p className="mt-3 text-[12.5px] text-graytext">
                 A tabela acima traz os critérios avaliados em todos os imóveis. Alguns imóveis têm
                 critérios próprios, listados na seção seguinte — eles também entram na média geral.
               </p>
@@ -274,7 +322,7 @@ export default function PublicPanel() {
                 return (
                   <Card key={c.property_id}>
                     <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
-                      <b className="text-[15.5px]" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                      <b className="font-serif text-[15.5px] font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
                       <span className="text-[11.5px] text-muted">
                         {property.extra_criteria.length} critério(s) exclusivo(s) · {rankEntry?.avaliacoes ?? 0} avaliação(ões)
                       </span>
@@ -309,7 +357,7 @@ export default function PublicPanel() {
             {porUnidade.map((p) => (
               <Card key={p.property_id}>
                 <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
-                  <b className="text-[15.5px]" style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
+                  <b className="font-serif text-[15.5px] font-semibold" style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
                   <span className="text-[11.5px] text-muted">{p.units.length} unidades avaliadas</span>
                 </div>
                 {p.units
@@ -330,31 +378,48 @@ export default function PublicPanel() {
         )}
 
         <SectionTitle>Propostas</SectionTitle>
-        <Proposals token={token} proposals={proposals} properties={properties} archived={archived} onChange={load} />
-
-        {!archived && <ProposalForm token={token} properties={properties} onCreated={load} />}
+        {archived ? (
+          <Proposals token={token} proposals={proposals} properties={properties} archived={archived} onChange={load} />
+        ) : (
+          <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+            <div>
+              <Proposals token={token} proposals={proposals} properties={properties} archived={archived} onChange={load} />
+            </div>
+            <div className="lg:sticky lg:top-5">
+              <ProposalForm token={token} properties={properties} onCreated={load} />
+            </div>
+          </div>
+        )}
 
         <SectionTitle>O que cada um achou</SectionTitle>
         {comentarios.length === 0 ? (
           <Empty>Ainda não há comentários escritos.</Empty>
         ) : (
           comentarios.map((c) => (
-            <Card key={c.property_id}>
-              <b style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+            <div key={c.property_id} className="mb-5">
+              <div className="font-serif mb-2 text-[15px] font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</div>
               {c.comentarios.map((cm, i) => (
-                <div key={i} className="my-[14px] border-l-[3px] py-[2px] pl-3 text-[13.5px]" style={{ borderColor: c.color || "#E2DED6" }}>
-                  <div className="text-[12.5px] font-bold">
-                    {cm.evaluator_name}{" "}
-                    <span className="font-normal text-muted">
-                      {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}
-                      · nota {cm.overall_score}/10{cm.unit_name ? ` · ${cm.unit_name}` : ""}
+                <div key={i} className="mb-[10px] rounded-[14px] border border-rule bg-white p-4">
+                  <div className="mb-2 flex items-center gap-[10px]">
+                    <span
+                      className="flex h-7 w-7 flex-none items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{ background: c.color || "#A68A5B" }}
+                    >
+                      {cm.evaluator_name?.[0]?.toUpperCase() ?? "?"}
                     </span>
+                    <div className="text-[12.5px] font-bold">
+                      {cm.evaluator_name}{" "}
+                      <span className="font-normal text-muted">
+                        {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}
+                        · nota {cm.overall_score}/10{cm.unit_name ? ` · ${cm.unit_name}` : ""}
+                      </span>
+                    </div>
                   </div>
-                  {cm.strengths && <p className="my-1 text-graytext"><b>+</b> {cm.strengths}</p>}
-                  {cm.concerns && <p className="my-1 text-graytext"><b>−</b> {cm.concerns}</p>}
+                  {cm.strengths && <p className="my-1 pl-[38px] text-[13.5px] text-graytext"><b>+</b> {cm.strengths}</p>}
+                  {cm.concerns && <p className="my-1 pl-[38px] text-[13.5px] text-graytext"><b>−</b> {cm.concerns}</p>}
                 </div>
               ))}
-            </Card>
+            </div>
           ))
         )}
 
@@ -382,11 +447,11 @@ function PropertyAboutCard({ property }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-3 text-left"
       >
-        <b style={{ color: property.color || "#A68A5B" }}>{property.name}</b>
-        <span className="shrink-0 text-xs font-bold text-graytext">{open ? "fechar ▲" : "ver detalhes ▼"}</span>
+        <b className="font-serif text-[16px] font-semibold" style={{ color: property.color || "#A68A5B" }}>{property.name}</b>
+        <span className={`shrink-0 text-graytext transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
       {open && (
-        <>
+        <div className="mt-3 border-t border-rule pt-3">
           <PropertyMedia property={property} />
           {unidadesComMidia.map((u) => (
             <div key={u.id} className="mt-3 border-t border-rule pt-3">
@@ -394,7 +459,7 @@ function PropertyAboutCard({ property }) {
               <PropertyMedia property={u} />
             </div>
           ))}
-        </>
+        </div>
       )}
     </Card>
   );
@@ -423,9 +488,9 @@ function Proposals({ token, proposals, properties, archived, onChange }) {
         const unit = property?.units?.find((u) => u.id === x.unit_id);
         const desagio = x.table_value ? (1 - x.value / x.table_value) * 100 : null;
         return (
-          <Card key={x.id} style={{ borderLeft: `5px solid ${property?.color || "#A68A5B"}` }}>
+          <Card key={x.id} style={{ borderLeft: `4px solid ${property?.color || "#A68A5B"}` }}>
             <div className="flex flex-wrap items-baseline gap-[10px]">
-              <b className="text-[15px]">{brl(x.value)}</b>
+              <b className="font-serif text-[17px] font-semibold">{brl(x.value)}</b>
               {desagio != null && (
                 <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
                   {n1(desagio)}% abaixo da tabela
@@ -525,8 +590,8 @@ function ProposalForm({ token, properties, onCreated }) {
   }
 
   return (
-    <Card>
-      <b className="text-[15.5px]">Registrar uma proposta</b>
+    <div className="rounded-[16px] border border-rule bg-white p-[20px]">
+      <b className="font-serif text-[18px] font-semibold">Registrar uma proposta</b>
       <p className="mt-[6px] text-[13px] text-graytext">
         Indique quanto você pagaria por um dos imóveis. A consultoria recebe e conduz a negociação a
         partir daí.
@@ -663,34 +728,43 @@ function ProposalForm({ token, properties, onCreated }) {
       >
         {busy ? "Enviando…" : "Enviar proposta"}
       </button>
-    </Card>
+    </div>
   );
 }
 
-function SectionTitle({ children }) {
-  return <h2 className="mt-[34px] mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+function SectionTitle({ children, note, first = false }) {
+  return (
+    <div
+      className={`mb-5 flex items-baseline justify-between gap-3 ${
+        first ? "mt-0" : "mt-14 border-t border-rule pt-10"
+      }`}
+    >
+      <h2 className="text-[12px] font-bold tracking-[.14em] text-graytext uppercase">{children}</h2>
+      {note && <span className="text-[12.5px] text-muted">{note}</span>}
+    </div>
+  );
 }
 
 function Card({ children, className = "", style }) {
   return (
-    <div className={`mb-3 rounded-[14px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.06)] ${className}`} style={style}>
+    <div className={`mb-3 rounded-[14px] border border-rule bg-white p-[18px] ${className}`} style={style}>
       {children}
     </div>
   );
 }
 
-function Kpi({ label, value, foot }) {
+function Kpi({ label, value, foot, lead = false, small = false }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+    <div className={`bg-white p-[16px] ${lead ? "border-t-2 border-t-gold" : "border-t-2 border-t-transparent"}`}>
+      <div className="text-[10px] font-bold tracking-[.08em] text-muted uppercase">{label}</div>
+      <div className={`font-serif mt-[6px] leading-[1.15] font-semibold ${small ? "text-[19px]" : "text-2xl"}`}>{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
 }
 
 function Empty({ children }) {
-  return <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">{children}</div>;
+  return <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">{children}</div>;
 }
 
 const UNIT_STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
