@@ -104,9 +104,8 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <p className="text-sm uppercase tracking-wide text-muted">Avaliador MaterImob</p>
-        <h1 className="mt-1 text-xl font-medium text-charcoal">Meus clientes</h1>
-        <p className="mt-2 text-sm text-graytext">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meus clientes</h1>
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           Cada cliente ganha um link permanente que reúne todos os roteiros que você já criou pra
           ele. Precisa de imóveis pra apresentar? Veja{" "}
           <Link to="/app/imoveis" className="underline">
@@ -117,49 +116,54 @@ export default function Dashboard() {
 
         <button
           onClick={() => setShowForm((v) => !v)}
-          className="mt-6 rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90"
+          className="mt-5 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90"
         >
           {showForm ? "Cancelar" : "+ Novo atendimento"}
         </button>
 
         {showForm && (
-          <form onSubmit={handleCreate} className="mt-4 space-y-3 rounded-md border border-rule bg-white p-4">
-            <Field label="Título" value={title} onChange={setTitle} required />
-            <Field label="Subtítulo" value={subtitle} onChange={setSubtitle} />
-            <Field label="Nome do cliente" value={clientName} onChange={setClientName} required />
-            <Field label="Telefone do cliente" value={clientPhone} onChange={setClientPhone} />
-            <Field label="E-mail do cliente" value={clientEmail} onChange={setClientEmail} />
-            <div>
-              <label className="block text-xs font-medium text-graytext">Critérios (um por linha)</label>
-              <textarea
-                value={criteria}
-                onChange={(e) => setCriteria(e.target.value)}
-                rows={4}
-                placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
-                className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
-              />
-              <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
+          <form onSubmit={handleCreate} className="mt-4 rounded-[14px] border border-rule bg-white p-5">
+            <h2 className="font-serif mb-4 text-[16px] font-semibold text-charcoal">Novo atendimento</h2>
+            <div className="space-y-3">
+              <Field label="Título" value={title} onChange={setTitle} required />
+              <Field label="Subtítulo" value={subtitle} onChange={setSubtitle} />
+              <Field label="Nome do cliente" value={clientName} onChange={setClientName} required />
+              <Field label="Telefone do cliente" value={clientPhone} onChange={setClientPhone} />
+              <Field label="E-mail do cliente" value={clientEmail} onChange={setClientEmail} />
+              <div>
+                <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
+                  Critérios (um por linha)
+                </label>
+                <textarea
+                  value={criteria}
+                  onChange={(e) => setCriteria(e.target.value)}
+                  rows={4}
+                  placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
+                  className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                />
+                <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
+                  Critérios das unidades (um por linha)
+                </label>
+                <textarea
+                  value={unitCriteria}
+                  onChange={(e) => setUnitCriteria(e.target.value)}
+                  rows={4}
+                  placeholder={"Planta e distribuição\nVista\nRuído"}
+                  className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                />
+              </div>
+              {error && <p className="text-sm text-[#B34A2E]">{error}</p>}
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              >
+                {saving ? "Salvando…" : "Criar seleção"}
+              </button>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-graytext">
-                Critérios das unidades (um por linha)
-              </label>
-              <textarea
-                value={unitCriteria}
-                onChange={(e) => setUnitCriteria(e.target.value)}
-                rows={4}
-                placeholder={"Planta e distribuição\nVista\nRuído"}
-                className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
-              />
-            </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
-              type="submit"
-              disabled={saving}
-              className="rounded-md bg-charcoal px-3 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-50"
-            >
-              {saving ? "Salvando…" : "Criar seleção"}
-            </button>
           </form>
         )}
 
@@ -183,9 +187,9 @@ export default function Dashboard() {
                 <Link
                   key={s.id}
                   to={`/app/selections/${s.id}`}
-                  className="block rounded-md border border-rule bg-white p-4 hover:border-gold"
+                  className="block rounded-[12px] border border-rule bg-white p-4 hover:border-gold"
                 >
-                  <p className="font-medium text-charcoal">{s.title}</p>
+                  <p className="font-serif font-semibold text-charcoal">{s.title}</p>
                   <p className="text-sm text-graytext">{s.client_name}</p>
                 </Link>
               ))}
@@ -201,10 +205,10 @@ function ClientCard({ client, onChange }) {
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
+    <div className="rounded-[16px] border border-rule bg-white p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <b className="text-lg text-charcoal">{client.name || "Sem nome"}</b>
-        <span className="text-xs text-muted">{client.selections.length} roteiro(s)</span>
+        <b className="font-serif text-[18px] font-semibold text-charcoal">{client.name || "Sem nome"}</b>
+        <span className="text-[11.5px] text-muted">{client.selections.length} roteiro(s)</span>
       </div>
       {(client.phone || client.email) && (
         <p className="mt-1 text-sm text-graytext">{[client.phone, client.email].filter(Boolean).join(" · ")}</p>
@@ -258,7 +262,7 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <Link to={`/app/selections/${selection.id}`} className="font-bold text-charcoal hover:underline">
+        <Link to={`/app/selections/${selection.id}`} className="font-serif text-[15px] font-semibold text-charcoal hover:underline">
           {selection.title}
         </Link>
         {selection.archived && (
@@ -268,7 +272,7 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
         )}
       </div>
 
-      <div className="mt-2 space-y-1.5 rounded-[9px] border border-rule p-2">
+      <div className="mt-2 divide-y divide-rule overflow-hidden rounded-[10px] border border-rule">
         <LinkLine
           label="Permanente"
           url={homeUrl}
@@ -305,10 +309,10 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
 
 function LinkLine({ label, url, copied, onCopy, openable }) {
   return (
-    <div className="flex items-center gap-2 rounded-[9px] bg-light px-2 py-1.5">
-      <span className="w-20 shrink-0 text-[10px] font-bold uppercase text-graytext">{label}</span>
-      <span className="flex-1 truncate text-xs text-graytext">{url}</span>
-      <button onClick={onCopy} className="shrink-0 rounded-[7px] bg-charcoal px-2 py-1 text-[11px] font-bold text-white">
+    <div className="flex items-center gap-[10px] px-[10px] py-[7px] text-xs">
+      <span className="w-[70px] shrink-0 text-[9.5px] font-bold tracking-[.06em] text-muted uppercase">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-graytext">{url}</span>
+      <button onClick={onCopy} className="shrink-0 rounded-[6px] bg-charcoal px-[9px] py-1 text-[10.5px] font-bold text-white">
         {copied ? "Copiado!" : "copiar"}
       </button>
       {openable && (
@@ -316,7 +320,7 @@ function LinkLine({ label, url, copied, onCopy, openable }) {
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="shrink-0 rounded-[7px] border border-rule px-2 py-1 text-[11px] font-bold text-charcoal"
+          className="ml-1 shrink-0 rounded-[6px] border border-rule px-[9px] py-1 text-[10.5px] font-bold text-charcoal"
         >
           abrir
         </a>
@@ -328,13 +332,13 @@ function LinkLine({ label, url, copied, onCopy, openable }) {
 function Field({ label, value, onChange, required }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-graytext">{label}</label>
+      <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">{label}</label>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="mt-1 w-full rounded-md border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+        className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
       />
     </div>
   );
