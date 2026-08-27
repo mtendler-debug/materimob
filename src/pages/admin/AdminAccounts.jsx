@@ -67,7 +67,7 @@ export default function AdminAccounts() {
   if (!accounts) return <p className="text-sm text-muted">Carregando…</p>;
 
   return (
-    <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
       <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>

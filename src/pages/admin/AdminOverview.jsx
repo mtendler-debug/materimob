@@ -82,7 +82,7 @@ export default function AdminOverview() {
         </button>
         {backfillMsg && !backfilling && <span className="text-xs text-graytext">{backfillMsg}</span>}
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
         <Kpi label="Contas" value={data.contas} foot={`${data.contas_30d} nos últimos 30 dias`} />
         <Kpi label="Organizações" value={data.organizacoes} foot={`${data.organizacoes_ativas} ativas`} />
         <Kpi label="Lançamentos" value={data.lancamentos} foot={`${data.unidades} unidade(s)`} />
@@ -113,7 +113,7 @@ export default function AdminOverview() {
       {data.atividade_periodo?.length > 0 && (
         <>
           <SectionTitle>Atividade da plataforma — por semana</SectionTitle>
-          <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="rounded-[14px] border border-rule bg-white p-4">
             <ActivityBars data={data.atividade_periodo} />
           </div>
         </>
@@ -130,7 +130,7 @@ export default function AdminOverview() {
               <span className="inline-block h-[9px] w-[9px] rounded-full align-middle" style={{ background: "#4A6FA5" }} /> portfólio
             </span>
           </p>
-          <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="overflow-hidden rounded-[14px] border border-rule">
             <Map
               pins={data.mapa.map((m) => ({
                 lat: m.latitude,
@@ -153,9 +153,9 @@ function SectionTitle({ children }) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );

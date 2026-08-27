@@ -55,7 +55,7 @@ export default function AdminOrganizations() {
         </button>
       )}
 
-      <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
         <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>
@@ -69,7 +69,7 @@ export default function AdminOrganizations() {
         <tbody>
           {orgs.map((o) => (
             <tr key={o.id}>
-              <td className="border-b border-rule p-[10px] font-bold text-charcoal">{o.name}</td>
+              <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{o.name}</td>
               <td className="border-b border-rule p-[10px] text-graytext">{TIPO_LABELS[o.tipo] || o.tipo}</td>
               <td className="border-b border-rule p-[10px]">
                 <span
