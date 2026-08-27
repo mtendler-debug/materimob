@@ -21,7 +21,7 @@ export default function Organization() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-xl font-bold text-charcoal">Organização</h1>
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Organização</h1>
 
         {memberships.length > 1 && (
           <OrgSwitcher memberships={memberships} activeOrgId={activeOrgId} onSwitch={setActiveOrgId} />
@@ -208,7 +208,7 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
 
   return (
     <div className="rounded-[14px] border border-rule bg-white p-4">
-      <p className="text-lg font-bold text-charcoal">{org.name}</p>
+      <p className="font-serif text-lg font-semibold text-charcoal">{org.name}</p>
       <p className="text-sm text-graytext">
         {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
         {org.address ? ` · ${org.address}` : ""}
@@ -289,7 +289,7 @@ function OrganizationDetail({ org, role, onChange }) {
             Números somados de todos os lançamentos desta organização — sem nome de cliente nem
             identidade de corretor.
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
             <Kpi label="Lançamentos" value={dashboard.total_lancamentos} foot={`${dashboard.total_unidades} unidade(s)`} />
             <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
             <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot={dashboard.nota_media != null ? `nota média ${String(dashboard.nota_media).replace(".", ",")}` : "recebidas"} />
@@ -299,7 +299,7 @@ function OrganizationDetail({ org, role, onChange }) {
           </div>
 
           {dashboard.unidades_por_status && Object.keys(dashboard.unidades_por_status).length > 0 && (
-            <div className="mt-4 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Funil de unidades</p>
               <FunnelBar counts={dashboard.unidades_por_status} />
             </div>
@@ -310,7 +310,7 @@ function OrganizationDetail({ org, role, onChange }) {
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
                 Comparação entre lançamentos
               </p>
-              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
                 <table className="w-full min-w-[760px] border-collapse text-sm">
                   <thead>
                     <tr>
@@ -324,7 +324,7 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {dashboard.por_lancamento.map((l) => (
                       <tr key={l.id}>
-                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{l.name}</td>
+                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{l.name}</td>
                         <td className="border-b border-rule p-[10px]">
                           <span
                             className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
@@ -368,7 +368,7 @@ function OrganizationDetail({ org, role, onChange }) {
 
               {(dashboard.por_parceiro?.some((p) => p.latitude != null) ||
                 dashboard.top_corretores?.some((c) => c.latitude != null)) && (
-                <div className="mb-4 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <div className="mb-4 overflow-hidden rounded-[14px] border border-rule">
                   <Map
                     pins={[
                       ...(dashboard.por_parceiro ?? [])
@@ -384,7 +384,7 @@ function OrganizationDetail({ org, role, onChange }) {
               )}
 
               {dashboard.por_parceiro?.length > 0 && (
-                <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
                   <table className="w-full min-w-[560px] border-collapse text-sm">
                     <thead>
                       <tr>
@@ -398,7 +398,7 @@ function OrganizationDetail({ org, role, onChange }) {
                     <tbody>
                       {dashboard.por_parceiro.map((p) => (
                         <tr key={p.organization_id}>
-                          <td className="border-b border-rule p-[10px] font-bold text-charcoal">{p.name}</td>
+                          <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{p.name}</td>
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_roteiros}</td>
                           <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
@@ -444,7 +444,7 @@ function OrganizationDetail({ org, role, onChange }) {
           <p className="text-xs text-graytext">
             Números somados de todos os corretores desta organização.
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
             <Kpi label="Roteiros" value={teamDashboard.total_roteiros} foot={`${teamDashboard.total_membros} corretor(es)`} />
             <Kpi label="Clientes" value={teamDashboard.total_clientes} foot="atendidos" />
             <Kpi
@@ -464,7 +464,7 @@ function OrganizationDetail({ org, role, onChange }) {
           <p className="mt-5 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
             Ranking da equipe
           </p>
-          <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <thead>
                 <tr>
@@ -517,7 +517,7 @@ function OrganizationDetail({ org, role, onChange }) {
           </div>
 
           {teamDashboard.atividade_periodo?.length > 0 && (
-            <div className="mt-6 rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="mt-6 rounded-[14px] border border-rule bg-white p-4">
               <p className="mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
                 Atividade da equipe — roteiros por semana
               </p>
@@ -534,7 +534,7 @@ function OrganizationDetail({ org, role, onChange }) {
                 Quantas vezes qualquer corretor da plataforma usou cada imóvel — contagem a partir de
                 agora, roteiros importados antes desta métrica não entram.
               </p>
-              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
                 <table className="w-full min-w-[640px] border-collapse text-sm">
                   <thead>
                     <tr>
@@ -548,7 +548,7 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {teamDashboard.portfolio_performance.map((p) => (
                       <tr key={p.id}>
-                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{p.name}</td>
+                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{p.name}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_usos}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_avaliacoes}</td>
@@ -562,7 +562,7 @@ function OrganizationDetail({ org, role, onChange }) {
                 </table>
               </div>
               {teamDashboard.portfolio_performance.some((p) => p.latitude != null) && (
-                <div className="mt-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+                <div className="mt-3 overflow-hidden rounded-[14px] border border-rule">
                   <Map
                     pins={teamDashboard.portfolio_performance
                       .filter((p) => p.latitude != null && p.longitude != null)
@@ -579,7 +579,7 @@ function OrganizationDetail({ org, role, onChange }) {
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
                 Mapa de projetos
               </p>
-              <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <div className="overflow-hidden rounded-[14px] border border-rule">
                 <Map
                   pins={teamDashboard.launches_em_roteiro
                     .filter((l) => l.latitude != null && l.longitude != null)
@@ -595,7 +595,7 @@ function OrganizationDetail({ org, role, onChange }) {
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
                 Mapa de imóveis em roteiro
               </p>
-              <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <div className="overflow-hidden rounded-[14px] border border-rule">
                 <Map
                   pins={teamDashboard.imoveis_em_roteiro
                     .filter((im) => im.latitude != null && im.longitude != null)
@@ -611,7 +611,7 @@ function OrganizationDetail({ org, role, onChange }) {
               <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
                 Vendas por incorporadora
               </p>
-              <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
                 <table className="w-full min-w-[520px] border-collapse text-sm">
                   <thead>
                     <tr>
@@ -625,7 +625,7 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {teamDashboard.por_incorporadora.map((i) => (
                       <tr key={i.organization_id}>
-                        <td className="border-b border-rule p-[10px] font-bold text-charcoal">{i.name}</td>
+                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{i.name}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_roteiros}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_vendas}</td>
                         <td className="border-b border-rule p-[10px] text-center text-graytext">
@@ -645,7 +645,7 @@ function OrganizationDetail({ org, role, onChange }) {
         <div>
           <SectionTitle>Lançamentos</SectionTitle>
           {launches?.some((l) => l.latitude != null && l.longitude != null) && (
-            <div className="mb-3 overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="mb-3 overflow-hidden rounded-[14px] border border-rule">
               <Map
                 pins={launches
                   .filter((l) => l.latitude != null && l.longitude != null)
@@ -665,7 +665,7 @@ function OrganizationDetail({ org, role, onChange }) {
                   to={`/app/lancamentos/${l.id}`}
                   className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
                 >
-                  <span className="text-charcoal">{l.name}</span>
+                  <span className="font-serif font-semibold text-charcoal">{l.name}</span>
                   <span className="text-graytext">{disponiveis}/{total} disponível(is)</span>
                 </Link>
               );
@@ -683,7 +683,7 @@ function OrganizationDetail({ org, role, onChange }) {
           {properties?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
           {properties?.map((p) => (
             <div key={p.id} className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm">
-              <span className="text-charcoal">{p.name}</span>
+              <span className="font-serif font-semibold text-charcoal">{p.name}</span>
               <span className="text-graytext">{p.av_portfolio_units?.length ?? 0} unidade(s)</span>
             </div>
           ))}
@@ -695,7 +695,7 @@ function OrganizationDetail({ org, role, onChange }) {
 
       <div>
         <SectionTitle>Equipe</SectionTitle>
-        <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+        <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
@@ -790,9 +790,9 @@ function ActivityBars({ data }) {
 function LeaderboardBar({ label, sublabel, value, max, foot }) {
   const pct = max > 0 ? Math.max((value / max) * 100, 4) : 0;
   return (
-    <div className="rounded-[10px] bg-white px-3 py-2 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="rounded-[10px] border border-rule bg-white px-3 py-2">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-sm font-bold text-charcoal">{label}</span>
+        <span className="font-serif font-semibold text-charcoal">{label}</span>
         <span className="shrink-0 text-xs text-graytext">{sublabel}</span>
       </div>
       <div className="mt-1.5 flex items-center gap-2">
@@ -812,9 +812,9 @@ function brl(n) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
