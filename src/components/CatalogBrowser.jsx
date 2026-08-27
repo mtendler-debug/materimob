@@ -115,7 +115,7 @@ function CatalogCard({ item, action }) {
     <div className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#A68A5B"}` }}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-bold text-charcoal">{item.name}</p>
+          <p className="font-serif font-semibold text-charcoal">{item.name}</p>
           {item.orgName && (
             <p className="text-xs text-graytext">
               {item.orgId ? (

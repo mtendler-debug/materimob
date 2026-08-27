@@ -49,10 +49,10 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-xl font-bold text-charcoal">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">
           {dono.coluna === "organization_id" ? `Portfólio · ${org.name}` : "Meu estoque"}
         </h1>
-        <p className="text-sm text-graytext">
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           {dono.coluna === "organization_id"
             ? "Imóveis cadastrados aqui ficam disponíveis para todo o time importar nas seleções dos clientes."
             : "Os imóveis que você mesmo representa — só você vê, e pode escolher quais mostrar em cada roteiro."}

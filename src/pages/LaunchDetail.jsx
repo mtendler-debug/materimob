@@ -81,7 +81,7 @@ export default function LaunchDetail() {
         </Link>
 
         <div className="mt-3" style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}`, paddingLeft: 14 }}>
-          <h1 className="text-xl font-bold text-charcoal">{launch.name}</h1>
+          <h1 className="font-serif text-[24px] font-semibold text-charcoal">{launch.name}</h1>
           {launch.organizations?.name && (
             <p className="text-xs text-graytext">
               Publicado por{" "}
@@ -242,9 +242,9 @@ function SectionTitle({ children }) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
@@ -260,7 +260,7 @@ function LaunchDashboard({ dashboard }) {
         Números agregados de todos os roteiros feitos a partir deste lançamento — sem nome de
         cliente nem identidade do corretor.
       </p>
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
         <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
         <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot="recebidas" />
         <Kpi label="Nota média" value={n1(dashboard.nota_media)} foot="escala de 1 a 10" />

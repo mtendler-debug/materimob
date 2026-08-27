@@ -49,7 +49,7 @@ export default function Showcase() {
         <Link to="/app/lancamentos" className="text-sm text-graytext underline">
           ← Lançamentos
         </Link>
-        <h1 className="mt-3 text-xl font-bold text-charcoal">{org.name}</h1>
+        <h1 className="font-serif mt-3 text-[27px] font-semibold text-charcoal">{org.name}</h1>
         <p className="text-sm text-graytext">{org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"}</p>
 
         {launches.length > 0 && (
@@ -94,7 +94,7 @@ function LaunchCard({ launch }) {
       className="block rounded-[14px] border border-rule bg-white p-4 hover:border-gold"
       style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}` }}
     >
-      <p className="font-bold text-charcoal">{launch.name}</p>
+      <p className="font-serif font-semibold text-charcoal">{launch.name}</p>
       {launch.address && <p className="text-sm text-graytext">{launch.address}</p>}
       <div className="mt-2 flex flex-wrap gap-2">
         {Object.entries(counts).map(([status, n]) => (
@@ -115,7 +115,7 @@ function LaunchCard({ launch }) {
 function PropertyCard({ property }) {
   return (
     <div className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${property.color || "#A68A5B"}` }}>
-      <p className="font-bold text-charcoal">{property.name}</p>
+      <p className="font-serif font-semibold text-charcoal">{property.name}</p>
       {property.address && <p className="text-sm text-graytext">{property.address}</p>}
       {property.summary && <p className="text-xs text-graytext">{property.summary}</p>}
       {property.units?.length > 0 && (

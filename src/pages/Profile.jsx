@@ -66,8 +66,8 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-xl font-bold text-charcoal">Meu perfil</h1>
-        <p className="text-sm text-graytext">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meu perfil</h1>
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           Nome, CRECI e telefone aparecem para os colegas da sua organização e, quando fizer
           sentido, para os clientes que você atende.
         </p>

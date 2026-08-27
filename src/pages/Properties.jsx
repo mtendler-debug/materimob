@@ -44,8 +44,8 @@ export default function Properties() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-xl font-bold text-charcoal">Imóveis</h1>
-        <p className="text-sm text-graytext">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Imóveis</h1>
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           Tudo que está publicado na plataforma — portfólio e lançamentos juntos. Ache o que
           mostrar pro cliente e adicione direto num roteiro.
         </p>
@@ -58,7 +58,7 @@ export default function Properties() {
             <div className="mb-6 space-y-3">
               {picksResolvidos.map((it) => (
                 <div key={`pick-${it.kind}-${it.id}`} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${it.color || "#A68A5B"}` }}>
-                  <p className="font-bold text-charcoal">{it.name}</p>
+                  <p className="font-serif font-semibold text-charcoal">{it.name}</p>
                   {it.orgName && <p className="text-xs text-graytext">{it.orgName}</p>}
                   {it.note && (
                     <p className="mt-2 rounded-[9px] bg-light p-2 text-xs text-graytext">

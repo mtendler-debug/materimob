@@ -84,8 +84,8 @@ export default function TeamPicks() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-xl font-bold text-charcoal">Seleção do time</h1>
-        <p className="text-sm text-graytext">
+        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Seleção do time</h1>
+        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           O que você escolher aqui aparece em destaque para todo o time da {org.name} em Imóveis —
           de qualquer origem da plataforma, com a nota que você quiser escrever.
         </p>
@@ -99,7 +99,7 @@ export default function TeamPicks() {
             <div key={pick.id} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#A68A5B"}` }}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="font-bold text-charcoal">{item.name}</p>
+                  <p className="font-serif font-semibold text-charcoal">{item.name}</p>
                   {item.orgName && (
                     <p className="text-xs text-graytext">
                       {item.orgName} {item.kind === "lancamento" ? "· lançamento" : "· pronto"}

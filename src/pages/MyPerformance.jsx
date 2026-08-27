@@ -28,9 +28,9 @@ function formatSemana(dateStr) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
@@ -80,11 +80,11 @@ export default function MyPerformance() {
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-2xl space-y-6">
         <div>
-          <h1 className="text-xl font-bold text-charcoal">Meu desempenho</h1>
-          <p className="text-sm text-graytext">Números agregados de todos os seus roteiros e clientes.</p>
+          <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meu desempenho</h1>
+          <p className="mt-2 text-sm text-graytext">Números agregados de todos os seus roteiros e clientes.</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
           <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_clientes} cliente(s)`} />
           <Kpi
             label="Avaliações"
@@ -101,7 +101,7 @@ export default function MyPerformance() {
         </div>
 
         {dashboard.atividade_periodo?.length > 0 && (
-          <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+          <div className="rounded-[14px] border border-rule bg-white p-4">
             <SectionTitle>Atividade — roteiros por semana</SectionTitle>
             <ActivityBars data={dashboard.atividade_periodo} />
           </div>
@@ -110,7 +110,7 @@ export default function MyPerformance() {
         {dashboard.clientes?.length > 0 && (
           <div>
             <SectionTitle>Meus clientes</SectionTitle>
-            <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
               <table className="w-full min-w-[520px] border-collapse text-sm">
                 <thead>
                   <tr>
@@ -124,7 +124,7 @@ export default function MyPerformance() {
                 <tbody>
                   {dashboard.clientes.map((c) => (
                     <tr key={c.id}>
-                      <td className="border-b border-rule p-[10px] font-bold text-charcoal">{c.name}</td>
+                      <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{c.name}</td>
                       <td className="border-b border-rule p-[10px]">
                         <span
                           className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
@@ -149,7 +149,7 @@ export default function MyPerformance() {
         {dashboard.por_incorporadora?.length > 0 && (
           <div>
             <SectionTitle>Vendas por incorporadora</SectionTitle>
-            <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
               <table className="w-full min-w-[480px] border-collapse text-sm">
                 <thead>
                   <tr>
@@ -163,7 +163,7 @@ export default function MyPerformance() {
                 <tbody>
                   {dashboard.por_incorporadora.map((i) => (
                     <tr key={i.organization_id}>
-                      <td className="border-b border-rule p-[10px] font-bold text-charcoal">{i.name}</td>
+                      <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{i.name}</td>
                       <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_roteiros}</td>
                       <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_vendas}</td>
                       <td className="border-b border-rule p-[10px] text-center text-graytext">
@@ -180,7 +180,7 @@ export default function MyPerformance() {
         {dashboard.unidades_em_roteiro?.some((u) => u.latitude != null) && (
           <div>
             <SectionTitle>Mapa de unidades em roteiro</SectionTitle>
-            <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="overflow-hidden rounded-[14px] border border-rule">
               <Map
                 pins={dashboard.unidades_em_roteiro
                   .filter((u) => u.latitude != null && u.longitude != null)
@@ -194,7 +194,7 @@ export default function MyPerformance() {
         {dashboard.vendas_localizacao?.some((v) => v.latitude != null) && (
           <div>
             <SectionTitle>Mapa de vendas</SectionTitle>
-            <div className="overflow-hidden rounded-[14px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div className="overflow-hidden rounded-[14px] border border-rule">
               <Map
                 pins={dashboard.vendas_localizacao
                   .filter((v) => v.latitude != null && v.longitude != null)
