@@ -4,12 +4,12 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-bg p-6">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-xl font-bold text-charcoal">Administração</h1>
-        <p className="text-sm text-graytext">
+        <h1 className="font-serif text-[26px] font-semibold text-charcoal">Administração</h1>
+        <p className="mt-1 max-w-[68ch] text-sm leading-relaxed text-graytext">
           Painel do time MaterImob — números agregados e gestão de organizações e contas. Nunca
           mostra conteúdo de avaliação nem contato de cliente final.
         </p>
-        <nav className="mt-4 flex gap-4 border-b border-rule">
+        <nav className="mt-4 flex gap-5 border-b border-rule">
           <Tab to="/admin" end>
             Visão geral
           </Tab>
