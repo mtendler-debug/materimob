@@ -61,7 +61,7 @@ export default function AppLayout() {
       <header className="bg-charcoal text-white">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-6 pt-5 pb-4">
           <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
-            Avaliador MaterImob
+            MaterImob
           </div>
           <div className="flex items-center gap-3">
             {memberships.length > 1 && (

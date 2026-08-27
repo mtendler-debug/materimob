@@ -62,7 +62,7 @@ export default function Login() {
 
   return (
     <Card>
-      <h1 className="text-center text-xl font-bold text-charcoal">Avaliador MaterImob</h1>
+      <h1 className="text-center text-xl font-bold text-charcoal">MaterImob</h1>
       <p className="mt-1 text-center text-sm text-graytext">
         {mode === "entrar" ? "Entrar na sua conta" : "Criar uma conta"}
       </p>

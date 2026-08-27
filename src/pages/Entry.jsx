@@ -7,7 +7,7 @@ function Placeholder({ label }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg p-6 text-center">
       <div>
-        <p className="text-sm uppercase tracking-wide text-muted">Avaliador MaterImob</p>
+        <p className="text-sm uppercase tracking-wide text-muted">MaterImob</p>
         <h1 className="mt-2 text-xl font-bold text-charcoal">{label}</h1>
       </div>
     </div>

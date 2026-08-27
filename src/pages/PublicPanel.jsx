@@ -123,7 +123,7 @@ export default function PublicPanel() {
           style={{ background: "radial-gradient(600px 260px at 85% -10%, rgba(166,138,91,.22), transparent 70%)" }}
         />
         <div className="relative mx-auto max-w-[900px]">
-          <div className="text-[11px] font-bold uppercase tracking-[.2em] text-gold">Avaliador MaterImob</div>
+          <div className="text-[11px] font-bold uppercase tracking-[.2em] text-gold">MaterImob</div>
           <h1 className="font-serif mt-[14px] mb-[6px] text-[28px] leading-[1.15] font-semibold sm:text-[34px]">{title}</h1>
           {subtitle && <p className="m-0 max-w-[46ch] text-[14px] text-[#CFC9BD]">{subtitle}</p>}
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[12.5px] text-[#B6AE9E]">

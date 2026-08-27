@@ -47,7 +47,7 @@ export default function ClientHome() {
       <header className="bg-charcoal px-[18px] pt-[26px] pb-6 text-white">
         <div className="mx-auto max-w-[700px]">
           <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
-            Avaliador Materimob
+            MaterImob
           </div>
           <h1 className="mt-[9px] mb-1 text-[22px] leading-tight font-bold">Olá, {client.name}</h1>
           <p className="m-0 text-[13.5px] text-[#C9C9C9]">
