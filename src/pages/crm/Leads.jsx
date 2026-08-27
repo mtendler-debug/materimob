@@ -71,7 +71,7 @@ export default function Leads() {
 
       {showForm && <NewLeadForm onCreated={() => { setShowForm(false); reload(); }} />}
 
-      <div className="overflow-x-auto rounded-[14px] bg-white shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
             <tr>
@@ -85,7 +85,7 @@ export default function Leads() {
           <tbody>
             {filtrados.map((l) => (
               <tr key={l.id}>
-                <td className="border-b border-rule p-[10px] font-bold text-charcoal">
+                <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">
                   <Link to={`/app/crm/leads/${l.id}`} className="hover:underline">
                     {l.av_clients?.name}
                   </Link>

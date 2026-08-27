@@ -62,7 +62,7 @@ export default function Opportunities() {
                     >
                       {OPP_TYPE_LABELS[o.type]}
                     </span>
-                    <span className="text-charcoal">{o.property || o.lead.av_clients?.name}</span>
+                    <span className="font-serif font-semibold text-charcoal">{o.property || o.lead.av_clients?.name}</span>
                   </span>
                   <span className="text-graytext">{brl(o.value)}</span>
                 </Link>

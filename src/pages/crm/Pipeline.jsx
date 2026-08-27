@@ -50,7 +50,7 @@ function Column({ stage, leads }) {
   return (
     <div
       ref={setNodeRef}
-      className={`min-h-[200px] rounded-[14px] p-2 ${isOver ? "bg-light" : "bg-[#F1EEE8]"}`}
+      className={`min-h-[200px] rounded-[14px] border bg-light p-2 ${isOver ? "border-2 border-gold" : "border-rule"}`}
     >
       <div className="mb-2 px-1">
         <p className="text-[11px] font-bold uppercase tracking-[.1em] text-graytext">{LEAD_STAGE_LABELS[stage]}</p>
@@ -79,9 +79,9 @@ function LeadCard({ lead }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`cursor-grab rounded-[10px] bg-white p-2 shadow-[0_1px_3px_rgba(0,0,0,.08)] ${isDragging ? "opacity-60" : ""}`}
+      className={`cursor-grab rounded-[10px] border border-rule bg-white p-2 ${isDragging ? "opacity-60" : ""}`}
     >
-      <Link to={`/app/crm/leads/${lead.id}`} onClick={(e) => isDragging && e.preventDefault()} className="text-sm font-bold text-charcoal hover:underline">
+      <Link to={`/app/crm/leads/${lead.id}`} onClick={(e) => isDragging && e.preventDefault()} className="font-serif text-sm font-semibold text-charcoal hover:underline">
         {lead.av_clients?.name}
       </Link>
       {lead.av_clients?.phone && <p className="text-xs text-graytext">{lead.av_clients.phone}</p>}

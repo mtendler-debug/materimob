@@ -12,9 +12,9 @@ import {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+    <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="mt-[5px] text-2xl leading-[1.15] font-bold">{value}</div>
+      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );
@@ -53,7 +53,7 @@ export default function CrmDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
         <Kpi label="Leads" value={totalLeads} foot="no funil" />
         <Kpi label="Oportunidades" value={totalOportunidades} foot="geradas" />
         <Kpi label="Volume em aberto" value={brl(volumeAberto)} foot="oportunidades ativas" />
@@ -64,7 +64,7 @@ export default function CrmDashboard() {
         <SectionTitle>Leads por etapa</SectionTitle>
         <div className="space-y-[6px]">
           {porEtapa.map((e) => (
-            <div key={e.stage} className="rounded-[10px] bg-white px-3 py-2 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div key={e.stage} className="rounded-[10px] border border-rule bg-white px-3 py-2">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-sm font-bold text-charcoal">{LEAD_STAGE_LABELS[e.stage]}</span>
                 <span className="text-xs text-graytext">{e.n}</span>
@@ -81,7 +81,7 @@ export default function CrmDashboard() {
         <SectionTitle>Oportunidades por tipo</SectionTitle>
         <div className="grid grid-cols-3 gap-3">
           {porTipo.map((t) => (
-            <div key={t.type} className="rounded-[14px] bg-white p-[15px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <div key={t.type} className="rounded-[14px] border border-rule bg-white p-[15px]">
               <span
                 className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
                 style={{ background: OPP_TYPE_COLORS[t.type].bg, color: OPP_TYPE_COLORS[t.type].color }}
@@ -105,7 +105,7 @@ export default function CrmDashboard() {
                 to={`/app/crm/leads/${l.id}`}
                 className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
               >
-                <span className="text-charcoal">{l.av_clients?.name}</span>
+                <span className="font-serif font-semibold text-charcoal">{l.av_clients?.name}</span>
                 <span className="text-graytext">
                   {l.av_opportunities.length} oportunidades ·{" "}
                   {brl(l.av_opportunities.reduce((s, o) => s + (o.value ?? 0), 0))}

@@ -93,7 +93,7 @@ export default function LeadDetail() {
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-4">
           <div className="rounded-[14px] border border-rule bg-white p-4">
-            <p className="text-lg font-bold text-charcoal">{lead.av_clients?.name}</p>
+            <p className="font-serif text-lg font-semibold text-charcoal">{lead.av_clients?.name}</p>
             <p className="text-sm text-graytext">
               {lead.av_clients?.phone || "sem telefone"} · {lead.av_clients?.email || "sem e-mail"}
             </p>
