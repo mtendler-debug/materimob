@@ -8,7 +8,7 @@ import { useOrganization, canManage } from "../lib/useOrganization";
 // de quem está logado, não de uma lista fixa repetida em cada página.
 export default function AppLayout() {
   const { user, signOut } = useAuth();
-  const { accountType, isPlatformAdmin, loading: loadingProfile } = useProfile();
+  const { accountType, isPlatformAdmin, hasCrmAccess, loading: loadingProfile } = useProfile();
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading: loadingOrg } = useOrganization();
   const location = useLocation();
   const [aviso, setAviso] = useState(null);
@@ -35,7 +35,7 @@ export default function AppLayout() {
   const itensBase = [
     { to: "/app", label: "Meus clientes", end: true },
     { to: "/app/desempenho", label: "Meu desempenho" },
-    { to: "/app/crm", label: "CRM" },
+    { to: "/app/crm", label: hasCrmAccess ? "CRM" : "CRM 🔒" },
     { to: "/app/imoveis", label: "Imóveis" },
     { to: "/app/portfolio", label: "Meu estoque" },
     { to: "/app/selecoes", label: "Meus roteiros" },

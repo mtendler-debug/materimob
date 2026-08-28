@@ -19,6 +19,7 @@ async function loadOrCreateProfile(userId) {
 export function useProfile() {
   const [profile, setProfile] = useState(undefined);
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
+  const [hasCrmAccess, setHasCrmAccess] = useState(false);
 
   async function load() {
     const {
@@ -27,21 +28,24 @@ export function useProfile() {
     if (!user) {
       setProfile(null);
       setIsPlatformAdmin(false);
+      setHasCrmAccess(false);
       return;
     }
 
-    // As duas buscas rodam em paralelo e só então os dois estados são
-    // atualizados juntos — se `isPlatformAdmin` fosse setado depois de
-    // `profile` num await separado, `loading` (baseado só em `profile`)
-    // vira false por um instante com `isPlatformAdmin` ainda no valor
-    // antigo, e um RoleRoute que ler o estado nesse instante redireciona
-    // um admin de verdade pra fora do /admin.
-    const [profileRow, { data: admin }] = await Promise.all([
+    // As três buscas rodam em paralelo e só então os estados são
+    // atualizados juntos — se `isPlatformAdmin`/`hasCrmAccess` fossem
+    // setados depois de `profile` num await separado, `loading`
+    // (baseado só em `profile`) vira false por um instante com os
+    // outros dois ainda no valor antigo, e uma tela que ler o estado
+    // nesse instante barra quem tinha acesso de verdade.
+    const [profileRow, { data: admin }, { data: crm }] = await Promise.all([
       loadOrCreateProfile(user.id),
       supabase.rpc("is_platform_admin"),
+      supabase.rpc("has_crm_access"),
     ]);
     setProfile(profileRow);
     setIsPlatformAdmin(!!admin);
+    setHasCrmAccess(!!crm);
   }
 
   useEffect(() => {
@@ -54,6 +58,7 @@ export function useProfile() {
     profile: profile ?? null,
     accountType: profile?.account_type ?? null,
     isPlatformAdmin,
+    hasCrmAccess,
     loading,
     reload: load,
   };

@@ -39,6 +39,19 @@ export default function AdminOrganizations() {
     load();
   }
 
+  async function toggleCrm(org) {
+    const acao = org.crm_included ? "remover" : "incluir";
+    if (!window.confirm(`Confirma ${acao} o CRM no plano de "${org.name}"?`)) return;
+    setBusyId(org.id);
+    const { error } = await supabase.from("organizations").update({ crm_included: !org.crm_included }).eq("id", org.id);
+    setBusyId(null);
+    if (error) {
+      alert("Erro: " + error.message);
+      return;
+    }
+    load();
+  }
+
   if (error) return <p className="text-sm text-red-600">{error}</p>;
   if (!orgs) return <p className="text-sm text-muted">Carregando…</p>;
 
@@ -59,7 +72,7 @@ export default function AdminOrganizations() {
         <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>
-            {["Organização", "Tipo", "Status", "Membros", "Lançamentos", "Unidades", "Imóveis", ""].map((h) => (
+            {["Organização", "Tipo", "Status", "CRM", "Membros", "Lançamentos", "Unidades", "Imóveis", ""].map((h) => (
               <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
                 {h}
               </th>
@@ -79,15 +92,30 @@ export default function AdminOrganizations() {
                   {STATUS_LABELS[o.status] || o.status}
                 </span>
               </td>
+              <td className="border-b border-rule p-[10px]">
+                <span
+                  className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                  style={o.crm_included ? { background: "#E3F0E4", color: "#2E7D32" } : { background: "#EDEAE4", color: "#5C5C5C" }}
+                >
+                  {o.crm_included ? "incluído" : "não incluído"}
+                </span>
+              </td>
               <td className="border-b border-rule p-[10px] text-center text-graytext">{o.membros}</td>
               <td className="border-b border-rule p-[10px] text-center text-graytext">{o.lancamentos}</td>
               <td className="border-b border-rule p-[10px] text-center text-graytext">{o.unidades}</td>
               <td className="border-b border-rule p-[10px] text-center text-graytext">{o.imoveis}</td>
-              <td className="border-b border-rule p-[10px] text-right">
+              <td className="border-b border-rule p-[10px] text-right whitespace-nowrap">
+                <button
+                  disabled={busyId === o.id}
+                  onClick={() => toggleCrm(o)}
+                  className="text-xs font-bold text-graytext underline disabled:opacity-50"
+                >
+                  {o.crm_included ? "remover CRM" : "incluir CRM"}
+                </button>
                 <button
                   disabled={busyId === o.id}
                   onClick={() => toggleStatus(o)}
-                  className="text-xs font-bold text-graytext underline disabled:opacity-50"
+                  className="ml-3 text-xs font-bold text-graytext underline disabled:opacity-50"
                 >
                   {o.status === "suspensa" ? "reativar" : "suspender"}
                 </button>
