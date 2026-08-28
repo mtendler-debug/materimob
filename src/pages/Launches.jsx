@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { geocodeAddress } from "../lib/geocode";
+import { BookImporter } from "../components/BookImporter";
 
 function linesToArray(text) {
   return text
@@ -52,7 +53,10 @@ export default function Launches() {
         </div>
 
         {org && org.tipo === "incorporadora" && canManage(role) && (
-          <NewLaunch organizationId={org.id} onCreated={load} />
+          <div className="mt-6 flex flex-wrap items-start gap-2">
+            <NewLaunch organizationId={org.id} onCreated={load} />
+            <BookImporter kind="launch" ownerFields={{ organization_id: org.id }} onImported={load} />
+          </div>
         )}
       </div>
     </div>

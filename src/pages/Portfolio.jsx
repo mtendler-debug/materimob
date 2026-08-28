@@ -5,6 +5,7 @@ import { useOrganization, canManage } from "../lib/useOrganization";
 import { parseCsv, downloadCsv } from "../lib/csv";
 import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
+import { BookImporter } from "../components/BookImporter";
 import { geocodeAddress } from "../lib/geocode";
 
 function linesToArray(text) {
@@ -67,7 +68,10 @@ export default function Portfolio() {
         </div>
 
         <NewPortfolioProperty dono={dono} onCreated={load} />
-        <ImportSpreadsheet dono={dono} onImported={load} />
+        <div className="mt-3 flex flex-wrap items-start gap-2">
+          <ImportSpreadsheet dono={dono} onImported={load} />
+          <BookImporter kind="portfolio" ownerFields={{ [dono.coluna]: dono.id }} onImported={load} />
+        </div>
       </div>
     </div>
   );
