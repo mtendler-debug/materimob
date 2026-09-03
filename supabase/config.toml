@@ -404,6 +404,12 @@ verify_jwt = false
 [functions.cliente-painel]
 verify_jwt = false
 
+# Servidor MCP: quem chama é o agente de IA (via Console da Anthropic),
+# não um usuário logado nem um cliente com token — a autenticação própria
+# (MCP_ACCESS_TOKEN) é checada dentro da função.
+[functions.aval-mcp]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327
