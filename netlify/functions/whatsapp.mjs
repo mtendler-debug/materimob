@@ -121,6 +121,19 @@ export default async (req) => {
     const mode = url.searchParams.get("hub.mode");
     const token = url.searchParams.get("hub.verify_token");
     const challenge = url.searchParams.get("hub.challenge");
+    if (url.searchParams.get("debug") === "1") {
+      return new Response(
+        JSON.stringify({
+          mode,
+          challenge,
+          tokenReceivedLen: token?.length ?? null,
+          envTokenLen: process.env.WHATSAPP_VERIFY_TOKEN?.length ?? null,
+          envTokenSet: process.env.WHATSAPP_VERIFY_TOKEN !== undefined,
+          match: token === process.env.WHATSAPP_VERIFY_TOKEN,
+        }),
+        { status: 200, headers: { "content-type": "application/json" } }
+      );
+    }
     if (mode === "subscribe" && token === process.env.WHATSAPP_VERIFY_TOKEN) {
       return new Response(challenge, { status: 200 });
     }
