@@ -141,6 +141,17 @@ export default async (req) => {
     return new Response("Bad Request", { status: 400 });
   }
 
+  if (url.searchParams.get("debug") === "1") {
+    try {
+      await processPayload(payload);
+      return new Response("EVENT_RECEIVED debug ok", { status: 200 });
+    } catch (err) {
+      return new Response("debug error: " + (err?.message ?? String(err)), {
+        status: 500,
+      });
+    }
+  }
+
   // Responde já — o processamento não pode segurar o 200.
   processPayload(payload).catch((err) =>
     console.error("whatsapp webhook: falha ao processar", err)
