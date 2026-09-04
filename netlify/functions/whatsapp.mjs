@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import crypto from "node:crypto";
 
+// build: força novo deploy pra garantir que as env vars mais recentes
+// (WHATSAPP_VERIFY_TOKEN etc.) sejam carregadas pela função.
+
 // Fase 1 ("Porteiro e eco"): recebe webhook do WhatsApp, valida, grava em
 // `mensagens`, e roteia — sem nenhuma chamada à Claude API ainda (isso é
 // Fase 2). Responde 200 rápido; nada aqui deve esperar rede lenta.
