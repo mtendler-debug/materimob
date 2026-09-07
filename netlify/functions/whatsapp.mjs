@@ -141,6 +141,8 @@ export default async (req) => {
     return new Response("Bad Request", { status: 400 });
   }
 
+  console.log("whatsapp webhook payload:", rawBody);
+
   // Responde já — o processamento não pode segurar o 200.
   processPayload(payload).catch((err) =>
     console.error("whatsapp webhook: falha ao processar", err)
