@@ -141,12 +141,15 @@ export default async (req) => {
     return new Response("Bad Request", { status: 400 });
   }
 
-  console.log("whatsapp webhook payload:", rawBody);
-
-  // Responde já — o processamento não pode segurar o 200.
-  processPayload(payload).catch((err) =>
-    console.error("whatsapp webhook: falha ao processar", err)
-  );
+  // Netlify Functions congela a execução assim que a resposta é enviada —
+  // "fire and forget" aqui perde a gravação no meio do caminho. As
+  // gravações são rápidas o bastante pra caber dentro do limite de 5s da
+  // Meta, então esperamos terminar antes de responder.
+  try {
+    await processPayload(payload);
+  } catch (err) {
+    console.error("whatsapp webhook: falha ao processar", err);
+  }
 
   return new Response("EVENT_RECEIVED", { status: 200 });
 };
