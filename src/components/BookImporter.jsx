@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { ImageUploader } from "./ImageUploader";
+import { storageKeyFor } from "../lib/storage";
 
 // Assistente em etapas pra abastecer o cadastro a partir de material que o
 // corretor já tem: 1) book (a IA lê e monta nome/endereço/unidades),
@@ -57,7 +58,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
   async function uploadToBooks(files) {
     const urls = [];
     for (const file of files) {
-      const path = `${user.id}/${Date.now()}-${file.name}`;
+      const path = storageKeyFor(user.id, file);
       const { error: upError } = await supabase.storage.from("books").upload(path, file);
       if (upError) throw upError;
       const { data } = supabase.storage.from("books").getPublicUrl(path);

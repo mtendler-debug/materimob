@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
+import { storageKeyFor } from "../lib/storage";
 
 // Upload de imagem pro bucket público "imoveis" — usado tanto pra uma
 // planta única (multiple=false) quanto pra uma galeria de fotos
@@ -15,7 +16,7 @@ export function ImageUploader({ label, value, onChange, multiple }) {
   async function enviar(file) {
     setBusy(true);
     setError("");
-    const path = `${user.id}/${Date.now()}-${file.name}`;
+    const path = storageKeyFor(user.id, file);
     const { error: upError } = await supabase.storage.from("imoveis").upload(path, file);
     if (upError) {
       setBusy(false);
