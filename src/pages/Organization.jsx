@@ -155,6 +155,24 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
   const [name, setName] = useState(org.name);
   const [address, setAddress] = useState(org.address ?? "");
   const [saving, setSaving] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+
+  async function sair() {
+    if (
+      !window.confirm(
+        `Sair de "${org.name}"? Você volta a ser corretor autônomo e perde acesso ao que é exclusivo da organização.`,
+      )
+    )
+      return;
+    setLeaving(true);
+    const { error } = await supabase.from("organization_members").delete().eq("organization_id", org.id);
+    if (error) {
+      setLeaving(false);
+      window.alert("Não foi possível sair: " + error.message);
+      return;
+    }
+    window.location.href = "/";
+  }
 
   async function salvar() {
     if (!name.trim()) return;
@@ -222,6 +240,13 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
             editar
           </button>
         )}
+        <button
+          onClick={sair}
+          disabled={leaving}
+          className="text-xs font-bold text-graytext underline disabled:opacity-50"
+        >
+          {leaving ? "saindo…" : "sair da organização"}
+        </button>
       </div>
     </div>
   );
