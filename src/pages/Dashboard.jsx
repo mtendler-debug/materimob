@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../lib/AuthContext";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 
 export default function Dashboard() {
   const [clients, setClients] = useState(null);
   const [orphanSelections, setOrphanSelections] = useState([]);
+  const [filtro, setFiltro] = useState("ativos"); // ativos|inativos|todos
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -23,7 +25,7 @@ export default function Dashboard() {
     const { data, error: loadError } = await supabase
       .from("av_selections")
       .select(
-        "id, title, client_name, archived, created_at, client_id, token_form, token_panel, av_clients(id, name, phone, email, token)",
+        "id, title, client_name, archived, created_at, client_id, token_form, token_panel, av_clients(id, name, phone, email, token, av_client_relations(archived))",
       )
       .order("created_at", { ascending: false });
     if (loadError) {
@@ -38,7 +40,10 @@ export default function Dashboard() {
         orphans.push(s);
         continue;
       }
-      if (!map.has(c.id)) map.set(c.id, { ...c, selections: [] });
+      if (!map.has(c.id)) {
+        const { av_client_relations, ...rest } = c;
+        map.set(c.id, { ...rest, archived: av_client_relations?.[0]?.archived ?? false, selections: [] });
+      }
       map.get(c.id).selections.push(s);
     }
     setClients([...map.values()]);
@@ -167,14 +172,31 @@ export default function Dashboard() {
           </form>
         )}
 
-        <div className="mt-6 space-y-3">
+        {clients !== null && clients.length > 0 && (
+          <div className="mt-5 flex items-center gap-2">
+            <label className="text-[11.5px] font-bold uppercase tracking-[.06em] text-graytext">Mostrar</label>
+            <select
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              className="rounded-[8px] border border-rule bg-white px-2 py-1 text-sm"
+            >
+              <option value="ativos">Clientes ativos</option>
+              <option value="inativos">Clientes inativos</option>
+              <option value="todos">Todos os clientes</option>
+            </select>
+          </div>
+        )}
+
+        <div className="mt-4 space-y-3">
           {clients === null && <p className="text-sm text-muted">Carregando…</p>}
           {clients?.length === 0 && orphanSelections.length === 0 && (
             <p className="text-sm text-muted">Nenhum cliente ainda. Crie um atendimento pra começar.</p>
           )}
-          {clients?.map((c) => (
-            <ClientCard key={c.id} client={c} onChange={load} />
-          ))}
+          {clients
+            ?.filter((c) => filtro === "todos" || (filtro === "inativos") === !!c.archived)
+            .map((c) => (
+              <ClientCard key={c.id} client={c} onChange={load} />
+            ))}
         </div>
 
         {orphanSelections.length > 0 && (
@@ -202,7 +224,20 @@ export default function Dashboard() {
 }
 
 function ClientCard({ client, onChange }) {
+  const { user } = useAuth();
+  const [mostrarDesativados, setMostrarDesativados] = useState(false);
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
+  const roteirosDesativados = client.selections.filter((s) => s.archived);
+  const roteirosVisiveis = mostrarDesativados ? client.selections : client.selections.filter((s) => !s.archived);
+
+  async function alternarClienteArquivado() {
+    const acao = client.archived ? "reativar" : "desativar";
+    if (!window.confirm(`Confirma ${acao} "${client.name || "este cliente"}"?`)) return;
+    await supabase
+      .from("av_client_relations")
+      .upsert({ user_id: user.id, client_id: client.id, archived: !client.archived }, { onConflict: "user_id,client_id" });
+    onChange();
+  }
 
   return (
     <div className="rounded-[16px] border border-rule bg-white p-5">
@@ -214,13 +249,35 @@ function ClientCard({ client, onChange }) {
         <p className="mt-1 text-sm text-graytext">{[client.phone, client.email].filter(Boolean).join(" · ")}</p>
       )}
 
+      <div className="mt-2 flex items-center gap-3">
+        {client.archived && (
+          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+            cliente desativado
+          </span>
+        )}
+        <button onClick={alternarClienteArquivado} className="text-xs font-bold text-[#B34A2E] underline">
+          {client.archived ? "reativar cliente" : "desativar cliente"}
+        </button>
+      </div>
+
       <div className="mt-3 divide-y divide-rule border-t border-rule">
-        {client.selections.map((s) => (
+        {roteirosVisiveis.map((s) => (
           <div key={s.id} className="py-3">
             <RoteiroRow selection={s} homeUrl={homeUrl} onChange={onChange} />
           </div>
         ))}
       </div>
+
+      {roteirosDesativados.length > 0 && (
+        <button
+          onClick={() => setMostrarDesativados((v) => !v)}
+          className="mt-2 text-xs font-bold text-graytext underline"
+        >
+          {mostrarDesativados
+            ? "ocultar roteiros desativados"
+            : `mostrar roteiros desativados (${roteirosDesativados.length})`}
+        </button>
+      )}
     </div>
   );
 }
