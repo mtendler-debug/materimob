@@ -144,7 +144,7 @@ export default function PublicForm() {
           unitCriteria={data.unit_criteria}
           draft={draft}
           onPersist={persist}
-          onBack={() => setView(current.unitId ? "choose-unit" : "funnel")}
+          onBack={() => setView(current.property.units?.length > 0 ? "choose-unit" : "funnel")}
           onDone={(msg) => {
             setDoneMsg(msg);
             setView("done");
@@ -157,21 +157,17 @@ export default function PublicForm() {
   return (
     <Shell title={data.title} subtitle={data.subtitle}>
       <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
-        <b className="text-charcoal">Como funciona.</b> Primeiro você avalia o empreendimento em
-        geral, depois cada unidade que visitou — são notas diferentes, porque gostar do prédio e
-        gostar de uma unidade específica não é a mesma coisa. Leva poucos minutos por imóvel e o
-        que escrever fica salvo neste celular, mesmo sem internet.
+        <b className="text-charcoal">Como funciona.</b> Você escolhe o que avaliar: o
+        empreendimento em geral, uma unidade específica, ou os dois — são notas diferentes,
+        porque gostar do prédio e gostar de uma unidade específica não é a mesma coisa. Leva
+        poucos minutos por imóvel e o que escrever fica salvo neste celular, mesmo sem internet.
       </div>
 
       <Funnel
         properties={data.properties}
         draft={draft}
         onOpen={(property) => {
-          const geralDone = draft.ans?.[evalKey(property.id, "")]?.sent;
-          if (!geralDone) {
-            setCurrent({ property, unitId: "" });
-            setView("form");
-          } else if (property.units?.length > 0) {
+          if (property.units?.length > 0) {
             setCurrent({ property, unitId: null });
             setView("choose-unit");
           } else {
@@ -220,22 +216,14 @@ function Funnel({ properties, draft, onOpen }) {
             const feitas = [];
             const geral = draft.ans?.[evalKey(p.id, "")];
             if (geral?.sent) feitas.push({ nome: "empreendimento", nota: geral.nota });
-            let unidadesFeitas = 0;
             (p.units ?? []).forEach((u) => {
               const a = draft.ans?.[evalKey(p.id, u.id)];
-              if (a?.sent) {
-                feitas.push({ nome: u.name, nota: a.nota });
-                unidadesFeitas++;
-              }
+              if (a?.sent) feitas.push({ nome: u.name, nota: a.nota });
             });
 
-            let botaoLabel = "Avaliar o empreendimento";
-            if (geral?.sent) {
-              if (p.units?.length > 0) {
-                botaoLabel = unidadesFeitas > 0 ? "Avaliar outra unidade" : "Avaliar uma unidade";
-              } else {
-                botaoLabel = "Avaliar de novo";
-              }
+            let botaoLabel = p.units?.length > 0 ? "Avaliar" : "Avaliar o empreendimento";
+            if (feitas.length > 0) {
+              botaoLabel = p.units?.length > 0 ? "Avaliar mais" : "Avaliar de novo";
             }
 
             return (
@@ -274,11 +262,14 @@ function Funnel({ properties, draft, onOpen }) {
   );
 }
 
-// Segunda etapa, só depois de avaliar o empreendimento: escolher qual
-// unidade avaliar. Gostar do prédio e gostar de uma unidade específica
-// são notas diferentes — por isso isso é uma tela própria, não uma opção
-// dentro do mesmo formulário.
+// Tela de escolha: o cliente decide o que quer avaliar — o
+// empreendimento em geral, uma unidade específica, ou os dois, em
+// qualquer ordem. Gostar do prédio e gostar de uma unidade específica
+// são notas diferentes, por isso continuam sendo avaliações separadas,
+// mas nenhuma é pré-requisito da outra.
 function ChooseUnit({ property, draft, onBack, onChoose }) {
+  const geralDone = draft.ans?.[evalKey(property.id, "")]?.sent;
+
   return (
     <div className="mt-5 pb-10">
       <button onClick={onBack} className="p-0 py-[6px] text-sm text-graytext">
@@ -291,11 +282,19 @@ function ChooseUnit({ property, draft, onBack, onChoose }) {
       >
         <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{property.name}</h3>
         <p className="m-0 text-[12.5px] text-graytext">
-          Você já avaliou o empreendimento. Agora escolha qual unidade quer avaliar.
+          Escolha o que quer avaliar. Pode fazer o empreendimento, uma ou mais unidades, ou tudo.
         </p>
       </div>
 
       <div className="mt-3 space-y-2">
+        <button
+          onClick={() => onChoose("")}
+          className="flex w-full items-center justify-between rounded-[12px] border-[1.5px] border-rule bg-white p-3 text-left hover:border-gold"
+        >
+          <span className="block text-[14.5px] font-bold text-charcoal">O empreendimento em geral</span>
+          {geralDone && <span className="shrink-0 text-xs font-bold text-[#2E7D32]">✓ avaliado</span>}
+        </button>
+
         {(property.units ?? []).map((u) => {
           const done = draft.ans?.[evalKey(property.id, u.id)]?.sent;
           return (
