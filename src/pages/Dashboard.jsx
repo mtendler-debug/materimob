@@ -225,10 +225,14 @@ export default function Dashboard() {
 
 function ClientCard({ client, onChange }) {
   const { user } = useAuth();
-  const [mostrarDesativados, setMostrarDesativados] = useState(false);
+  const [filtroRoteiros, setFiltroRoteiros] = useState("ativos"); // ativos|desativados|todos
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
   const roteirosDesativados = client.selections.filter((s) => s.archived);
-  const roteirosVisiveis = mostrarDesativados ? client.selections : client.selections.filter((s) => !s.archived);
+  const roteirosVisiveis = client.selections.filter((s) => {
+    if (filtroRoteiros === "todos") return true;
+    if (filtroRoteiros === "desativados") return s.archived;
+    return !s.archived;
+  });
 
   async function alternarClienteArquivado() {
     const acao = client.archived ? "reativar" : "desativar";
@@ -260,24 +264,32 @@ function ClientCard({ client, onChange }) {
         </button>
       </div>
 
-      <div className="mt-3 divide-y divide-rule border-t border-rule">
+      {(client.selections.length > 1 || roteirosDesativados.length > 0) && (
+        <div className="mt-3 flex items-center gap-2 border-t border-rule pt-3">
+          <label className="text-[11px] font-bold uppercase tracking-[.06em] text-graytext">Roteiros</label>
+          <select
+            value={filtroRoteiros}
+            onChange={(e) => setFiltroRoteiros(e.target.value)}
+            className="rounded-[8px] border border-rule bg-white px-2 py-1 text-xs"
+          >
+            <option value="ativos">Ativos</option>
+            <option value="desativados">Desativados ({roteirosDesativados.length})</option>
+            <option value="todos">Todos</option>
+          </select>
+        </div>
+      )}
+
+      <div
+        className={`mt-2 divide-y divide-rule ${
+          client.selections.length > 1 || roteirosDesativados.length > 0 ? "" : "border-t border-rule"
+        }`}
+      >
         {roteirosVisiveis.map((s) => (
           <div key={s.id} className="py-3">
             <RoteiroRow selection={s} homeUrl={homeUrl} onChange={onChange} />
           </div>
         ))}
       </div>
-
-      {roteirosDesativados.length > 0 && (
-        <button
-          onClick={() => setMostrarDesativados((v) => !v)}
-          className="mt-2 text-xs font-bold text-graytext underline"
-        >
-          {mostrarDesativados
-            ? "ocultar roteiros desativados"
-            : `mostrar roteiros desativados (${roteirosDesativados.length})`}
-        </button>
-      )}
     </div>
   );
 }
