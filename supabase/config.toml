@@ -410,6 +410,15 @@ verify_jwt = false
 [functions.aval-mcp]
 verify_jwt = false
 
+# Serve tanto o registro interno (Marcos logado, JWT opcional checado
+# dentro da função) quanto o formulário público por token — mesmo motivo
+# das funções acima, sem isso o caminho anônimo nunca chega ao código.
+[functions.pc-registro-cliente]
+verify_jwt = false
+
+[functions.pc-registro-form]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

@@ -14,6 +14,11 @@ import LaunchDetail from "./pages/LaunchDetail";
 import Showcase from "./pages/Showcase";
 import AcceptInvite from "./pages/AcceptInvite";
 import ClientHome from "./pages/ClientHome";
+import PublicPartnerForm from "./pages/PublicPartnerForm";
+import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
+import Parceiras from "./pages/parcerias/Parceiras";
+import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
+import Registros from "./pages/parcerias/Registros";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { RoleRoute } from "./components/RoleRoute";
 import AppLayout from "./components/AppLayout";
@@ -59,6 +64,12 @@ export default function App() {
           <Route path="oportunidades" element={<Opportunities />} />
         </Route>
         <Route path="/app/organizacao" element={<Organization />} />
+        <Route path="/app/parcerias" element={<ParceriasLayout />}>
+          <Route index element={<Parceiras />} />
+          <Route path="parceiras" element={<Parceiras />} />
+          <Route path="parceiras/:id" element={<ParceiraDetail />} />
+          <Route path="registros" element={<Registros />} />
+        </Route>
         <Route path="/app/portfolio" element={<Portfolio />} />
         <Route
           path="/app/lancamentos"
@@ -111,6 +122,7 @@ export default function App() {
       <Route path="/c/:token" element={<PublicForm />} />
       <Route path="/r/:token" element={<PublicPanel />} />
       <Route path="/cliente/:token" element={<ClientHome />} />
+      <Route path="/registrar/:token" element={<PublicPartnerForm />} />
     </Routes>
   );
 }

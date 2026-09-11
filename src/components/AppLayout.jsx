@@ -50,6 +50,13 @@ export default function AppLayout() {
     label: "CRM",
     itens: [{ to: "/app/crm", label: hasCrmAccess ? "CRM" : "CRM 🔒" }],
   };
+  const grupoParcerias = {
+    label: "Parcerias",
+    itens: [
+      { to: "/app/parcerias/parceiras", label: "Parceiras" },
+      { to: "/app/parcerias/registros", label: "Registros" },
+    ],
+  };
   const itensOrg = [];
   if (pertenceOrg) itensOrg.push({ to: "/app/organizacao", label: "Minha organização" });
   if (gerenteIncorporadora) itensOrg.push({ to: "/app/estoque", label: "Estoque" });
@@ -63,8 +70,8 @@ export default function AppLayout() {
   // continua no menu, só desce dentro do grupo Avaliador. account_type
   // nunca esconde a carteira.
   const grupos = ehOrganizacao
-    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoAdmin]
-    : [grupoAvaliador, grupoCrm, grupoOrg, grupoAdmin];
+    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoAdmin]
+    : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoAdmin];
 
   return (
     <div className="min-h-screen bg-bg md:flex">
