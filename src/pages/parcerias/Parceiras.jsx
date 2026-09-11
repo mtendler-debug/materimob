@@ -90,6 +90,7 @@ export default function Parceiras() {
   return (
     <div>
       <LinkAutocadastro />
+      <RecursosChaincorp userId={user.id} />
 
       {pendentesValidacao.length > 0 && (
         <div className="mt-4 rounded-[12px] border-[1.5px] border-gold bg-light p-3 text-sm text-charcoal">
@@ -183,6 +184,36 @@ export default function Parceiras() {
           </Link>
         ))}
       </div>
+    </div>
+  );
+}
+
+function RecursosChaincorp({ userId }) {
+  const [notas, setNotas] = useState(null);
+  const [aberto, setAberto] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("pc_config")
+      .select("canal_oficial_notas")
+      .eq("owner_id", userId)
+      .maybeSingle()
+      .then(({ data }) => setNotas(data?.canal_oficial_notas ?? ""));
+  }, [userId]);
+
+  if (!notas) return null;
+
+  return (
+    <div className="mt-3 rounded-[12px] border border-rule bg-white p-3">
+      <button
+        onClick={() => setAberto((v) => !v)}
+        className="text-xs font-bold text-charcoal underline"
+      >
+        {aberto ? "ocultar" : "ver"} recursos do canal oficial Chaincorp
+      </button>
+      {aberto && (
+        <pre className="mt-2 whitespace-pre-wrap font-sans text-xs text-graytext">{notas}</pre>
+      )}
     </div>
   );
 }
