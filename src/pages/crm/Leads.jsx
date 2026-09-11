@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { callFunction } from "../../lib/edgeFunctions";
 import {
   useLeadsWithOpportunities,
   LEAD_STAGES,
@@ -10,6 +11,22 @@ import {
   OPP_TYPE_LABELS,
   OPP_TYPE_COLORS,
 } from "../../lib/crm";
+
+// Best-effort: leva o lead também pro Leadlinks (CRM de WhatsApp em
+// paralelo que o Marcos já usa). Nunca bloqueia a criação do lead no
+// MaterImob, que já aconteceu antes desta chamada — se o Leadlinks
+// estiver fora do ar ou faltar email/phone, só ignora.
+function syncLeadToLeadlinks({ name, phone, email, source }) {
+  callFunction("leadlinks-push", {
+    method: "POST",
+    auth: true,
+    body: {
+      integration_source: "materimob-crm",
+      contact: { name, phone: phone || undefined, email: email || undefined },
+      deal: { title: `${name} — lead MaterImob`, custom_fields: { origem: source || "outro" } },
+    },
+  }).catch((err) => console.error("leadlinks: falha ao sincronizar lead", err));
+}
 
 export default function Leads() {
   const { leads, error, reload } = useLeadsWithOpportunities();
@@ -169,6 +186,7 @@ function NewLeadForm({ onCreated }) {
       setError("Erro ao criar lead: " + insertError.message);
       return;
     }
+    syncLeadToLeadlinks({ name: name.trim(), phone: phone.trim(), email: email.trim(), source });
     onCreated();
   }
 

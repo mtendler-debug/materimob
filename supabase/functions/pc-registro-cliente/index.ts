@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
 
   const { data: parceira } = await admin
     .from("pc_parceiras")
-    .select("id, owner_id, status_funil, token_registro, token_ativo")
+    .select("id, owner_id, nome_fantasia, status_funil, token_registro, token_ativo")
     .eq("id", parceira_id)
     .maybeSingle();
   if (!parceira) return json({ error: "parceira não encontrada" }, 404);
