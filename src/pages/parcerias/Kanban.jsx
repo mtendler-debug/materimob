@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { supabase } from "../../lib/supabase";
-import { STATUS_FUNIL_LABELS, PrioridadeChip } from "./Parceiras";
+import { STATUS_FUNIL_LABELS, PRIORIDADE_LABELS, PrioridadeChip } from "./Parceiras";
+
+const PRIORIDADE_ORDEM = { alta: 0, media: 1, baixa: 2 };
 
 const STATUS_FUNIL_COLORS = {
   nao_contatado: "#9A9A9A",
@@ -20,6 +22,10 @@ export default function Kanban() {
   const [parceiras, setParceiras] = useState(null);
   const [activeId, setActiveId] = useState(null);
   const [pendente, setPendente] = useState(null); // { parceira, novoStatus }
+  const [notaPendente, setNotaPendente] = useState(null); // parceira
+  const [filtroPrioridade, setFiltroPrioridade] = useState("todas");
+  const [ordenarPorPrioridade, setOrdenarPorPrioridade] = useState(false);
+  const [busca, setBusca] = useState("");
 
   async function load() {
     const { data } = await supabase
@@ -41,9 +47,24 @@ export default function Kanban() {
 
   if (!parceiras) return <p className="mt-4 text-sm text-muted">Carregando…</p>;
 
-  const visiveis = parceiras.filter((p) => p.validado);
   const invalidadas = parceiras.filter((p) => !p.validado);
   const active = parceiras.find((p) => p.id === activeId);
+
+  const q = busca.trim().toLowerCase();
+  let visiveis = parceiras.filter((p) => p.validado);
+  if (filtroPrioridade !== "todas") visiveis = visiveis.filter((p) => p.prioridade === filtroPrioridade);
+  if (q) {
+    visiveis = visiveis.filter((p) =>
+      [p.nome_fantasia, p.cidade, p.praca, p.segmento_foco, p.responsavel_nome].some((v) =>
+        v?.toLowerCase().includes(q)
+      )
+    );
+  }
+  if (ordenarPorPrioridade) {
+    visiveis = [...visiveis].sort(
+      (a, b) => (PRIORIDADE_ORDEM[a.prioridade] ?? 99) - (PRIORIDADE_ORDEM[b.prioridade] ?? 99)
+    );
+  }
 
   function handleDragStart(e) {
     setActiveId(e.active.id);
@@ -71,6 +92,35 @@ export default function Kanban() {
         </div>
       )}
 
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar por nome, cidade, praça ou segmento"
+          className="min-w-[220px] flex-1 rounded-[9px] border border-rule bg-white px-3 py-2 text-sm"
+        />
+        <select
+          value={filtroPrioridade}
+          onChange={(e) => setFiltroPrioridade(e.target.value)}
+          className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
+        >
+          <option value="todas">Todas as prioridades</option>
+          {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
+            <option key={k} value={k}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-[6px] rounded-[8px] border border-rule bg-white px-3 py-2 text-sm text-graytext">
+          <input
+            type="checkbox"
+            checked={ordenarPorPrioridade}
+            onChange={(e) => setOrdenarPorPrioridade(e.target.checked)}
+          />
+          Ordenar por prioridade
+        </label>
+      </div>
+
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="mt-4 flex gap-3 overflow-x-auto pb-4">
           {COLUNAS.map((status) => (
@@ -78,6 +128,7 @@ export default function Kanban() {
               key={status}
               status={status}
               parceiras={visiveis.filter((p) => p.status_funil === status)}
+              onNota={setNotaPendente}
             />
           ))}
         </div>
@@ -96,11 +147,22 @@ export default function Kanban() {
           }}
         />
       )}
+
+      {notaPendente && (
+        <ModalNovaObservacao
+          parceira={notaPendente}
+          onCancel={() => setNotaPendente(null)}
+          onDone={() => {
+            setNotaPendente(null);
+            load();
+          }}
+        />
+      )}
     </div>
   );
 }
 
-function Coluna({ status, parceiras }) {
+function Coluna({ status, parceiras, onNota }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const cor = STATUS_FUNIL_COLORS[status];
 
@@ -126,7 +188,7 @@ function Coluna({ status, parceiras }) {
       </div>
       <div className="flex-1 space-y-2 px-2 pb-2">
         {parceiras.map((p) => (
-          <Cartao key={p.id} parceira={p} />
+          <Cartao key={p.id} parceira={p} onNota={onNota} />
         ))}
         {parceiras.length === 0 && (
           <div className="rounded-[10px] border border-dashed border-rule py-6 text-center text-[11px] text-muted">
@@ -152,7 +214,7 @@ function waLink(telefone, nome) {
   return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
 }
 
-function Cartao({ parceira: p, overlay }) {
+function Cartao({ parceira: p, overlay, onNota }) {
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: p.id, disabled: overlay });
   const dias = diasSemContato(p.ultimo_contato_em);
@@ -200,6 +262,18 @@ function Cartao({ parceira: p, overlay }) {
           <p className="min-w-0 flex-1 truncate text-[10.5px] text-muted">
             {[p.responsavel_nome, p.responsavel_telefone].filter(Boolean).join(" · ")}
           </p>
+        )}
+        {!overlay && (
+          <button
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onNota(p);
+            }}
+            className="shrink-0 rounded-full bg-light px-[8px] py-[2px] text-[10px] font-bold text-graytext hover:opacity-80"
+          >
+            + nota
+          </button>
         )}
         {p.responsavel_telefone && !overlay && (
           <a
@@ -264,6 +338,64 @@ function ModalMudarStatus({ parceira, novoStatus, onCancel, onDone }) {
           autoFocus
           value={nota}
           onChange={(e) => setNota(e.target.value)}
+          rows={3}
+          className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        />
+        {error && <p className="mt-2 text-xs text-[#B34A2E]">{error}</p>}
+        <div className="mt-4 flex gap-2">
+          <button
+            onClick={confirmar}
+            disabled={busy}
+            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {busy ? "Salvando…" : "Confirmar"}
+          </button>
+          <button onClick={onCancel} className="rounded-[10px] px-4 py-2 text-sm font-bold text-graytext underline">
+            cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ModalNovaObservacao({ parceira, onCancel, onDone }) {
+  const [texto, setTexto] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function confirmar() {
+    if (!texto.trim()) return setError("Escreva a observação.");
+    setBusy(true);
+    setError("");
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const { error: insertError } = await supabase.from("pc_parceira_observacoes").insert({
+      owner_id: user.id,
+      parceira_id: parceira.id,
+      texto: texto.trim(),
+    });
+    setBusy(false);
+    if (insertError) return setError(insertError.message);
+    onDone();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4" onClick={onCancel}>
+      <div
+        className="w-full max-w-sm rounded-[16px] border border-rule bg-white p-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="text-[11px] font-bold uppercase tracking-[.09em] text-graytext">{parceira.nome_fantasia}</p>
+        <h3 className="font-serif mt-1 text-[17px] font-semibold text-charcoal">Nova observação</h3>
+        <label className="mt-3 mb-[6px] block text-[13px] font-semibold text-charcoal">
+          Texto livre — não altera o status
+        </label>
+        <textarea
+          autoFocus
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
           rows={3}
           className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
         />
