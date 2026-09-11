@@ -408,13 +408,82 @@ function ObservacoesTab({ parceiraId }) {
         {lista === null && <p className="text-sm text-muted">Carregando…</p>}
         {lista?.length === 0 && <p className="text-sm text-muted">Nenhuma observação ainda.</p>}
         {lista?.map((o) => (
-          <div key={o.id} className="rounded-[12px] border border-rule bg-white p-3">
-            <p className="text-sm text-charcoal">{o.texto}</p>
-            <p className="mt-1 text-[11px] text-muted">
-              {new Date(o.criado_em).toLocaleString("pt-BR")} · {o.criado_por}
-            </p>
-          </div>
+          <ObservacaoItem key={o.id} observacao={o} onChange={load} />
         ))}
+      </div>
+    </div>
+  );
+}
+
+function ObservacaoItem({ observacao: o, onChange }) {
+  const [editando, setEditando] = useState(false);
+  const [texto, setTexto] = useState(o.texto);
+  const [busy, setBusy] = useState(false);
+
+  async function salvar() {
+    if (!texto.trim()) return;
+    setBusy(true);
+    await supabase.from("pc_parceira_observacoes").update({ texto: texto.trim() }).eq("id", o.id);
+    setBusy(false);
+    setEditando(false);
+    onChange();
+  }
+
+  async function excluir() {
+    if (!confirm("Excluir esta observação?")) return;
+    setBusy(true);
+    await supabase.from("pc_parceira_observacoes").delete().eq("id", o.id);
+    setBusy(false);
+    onChange();
+  }
+
+  if (editando) {
+    return (
+      <div className="rounded-[12px] border border-gold bg-white p-3">
+        <textarea
+          autoFocus
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          rows={2}
+          className="w-full rounded-[9px] border border-rule bg-white p-2 text-sm"
+        />
+        <div className="mt-2 flex gap-2">
+          <button
+            onClick={salvar}
+            disabled={busy}
+            className="rounded-[8px] bg-charcoal px-3 py-1 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {busy ? "Salvando…" : "Salvar"}
+          </button>
+          <button
+            onClick={() => {
+              setTexto(o.texto);
+              setEditando(false);
+            }}
+            className="text-xs font-bold text-graytext underline"
+          >
+            cancelar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-[12px] border border-rule bg-white p-3">
+      <p className="text-sm text-charcoal">{o.texto}</p>
+      <div className="mt-1 flex items-center justify-between">
+        <p className="text-[11px] text-muted">
+          {new Date(o.criado_em).toLocaleString("pt-BR")} · {o.criado_por}
+        </p>
+        <div className="flex gap-2">
+          <button onClick={() => setEditando(true)} className="text-[11px] font-bold text-graytext underline">
+            editar
+          </button>
+          <button onClick={excluir} disabled={busy} className="text-[11px] font-bold text-[#B34A2E] underline">
+            excluir
+          </button>
+        </div>
       </div>
     </div>
   );
