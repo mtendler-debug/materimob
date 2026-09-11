@@ -31,12 +31,12 @@ Deno.serve(async (req) => {
 
   const { data: parceira } = await admin
     .from("pc_parceiras")
-    .select("id, owner_id, nome_fantasia, status, token_ativo")
+    .select("id, owner_id, nome_fantasia, status_funil, token_ativo")
     .eq("token_registro", token)
     .maybeSingle();
 
   if (!parceira) return json({ error: "link inválido" }, 404);
-  if (!parceira.token_ativo || parceira.status !== "ativa") {
+  if (!parceira.token_ativo || parceira.status_funil !== "parceria_firmada") {
     return json({ error: "link não está mais ativo" }, 403);
   }
 

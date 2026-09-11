@@ -15,6 +15,7 @@ import Showcase from "./pages/Showcase";
 import AcceptInvite from "./pages/AcceptInvite";
 import ClientHome from "./pages/ClientHome";
 import PublicPartnerForm from "./pages/PublicPartnerForm";
+import PublicPartnerSignup from "./pages/PublicPartnerSignup";
 import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
 import Parceiras from "./pages/parcerias/Parceiras";
 import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
@@ -123,6 +124,7 @@ export default function App() {
       <Route path="/r/:token" element={<PublicPanel />} />
       <Route path="/cliente/:token" element={<ClientHome />} />
       <Route path="/registrar/:token" element={<PublicPartnerForm />} />
+      <Route path="/parceria/cadastro" element={<PublicPartnerSignup />} />
     </Routes>
   );
 }

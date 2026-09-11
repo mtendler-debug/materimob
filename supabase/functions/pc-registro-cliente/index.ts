@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
 
   const { data: parceira } = await admin
     .from("pc_parceiras")
-    .select("id, owner_id, status, token_registro, token_ativo")
+    .select("id, owner_id, status_funil, token_registro, token_ativo")
     .eq("id", parceira_id)
     .maybeSingle();
   if (!parceira) return json({ error: "parceira não encontrada" }, 404);
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
     origemRegistro = "painel";
   } else {
     if (!token || token !== parceira.token_registro) return json({ error: "link inválido" }, 404);
-    if (!parceira.token_ativo || parceira.status !== "ativa") {
+    if (!parceira.token_ativo || parceira.status_funil !== "parceria_firmada") {
       return json({ error: "link não está mais ativo" }, 403);
     }
     const { count } = await admin

@@ -4,27 +4,48 @@ import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/AuthContext";
 import { generateToken } from "../../lib/token";
 
-export const STATUS_PARCEIRA_LABELS = {
-  prospect: "Prospect",
+export const STATUS_FUNIL_LABELS = {
+  nao_contatado: "Não contatado",
+  contato_iniciado: "Contato iniciado",
+  reuniao_agendada: "Reunião agendada",
   em_negociacao: "Em negociação",
-  ativa: "Ativa",
-  pausada: "Pausada",
-  encerrada: "Encerrada",
+  parceria_firmada: "Parceria firmada",
+  sem_interesse: "Sem interesse",
+  pausado: "Pausado",
 };
 
-const STATUS_PARCEIRA_COLORS = {
-  prospect: { bg: "#E3EDF8", color: "#1565C0" },
+const STATUS_FUNIL_COLORS = {
+  nao_contatado: { bg: "#EDEAE4", color: "#5C5C5C" },
+  contato_iniciado: { bg: "#E3EDF8", color: "#1565C0" },
+  reuniao_agendada: { bg: "#E3EDF8", color: "#1565C0" },
   em_negociacao: { bg: "#FFF3E0", color: "#B26A00" },
-  ativa: { bg: "#E3F0E4", color: "#2E7D32" },
-  pausada: { bg: "#EDEAE4", color: "#5C5C5C" },
-  encerrada: { bg: "#F1E4E0", color: "#B34A2E" },
+  parceria_firmada: { bg: "#E3F0E4", color: "#2E7D32" },
+  sem_interesse: { bg: "#F1E4E0", color: "#B34A2E" },
+  pausado: { bg: "#EDEAE4", color: "#5C5C5C" },
+};
+
+export const PRIORIDADE_LABELS = { alta: "Alta", media: "Média", baixa: "Baixa" };
+const PRIORIDADE_COLORS = {
+  alta: { bg: "#E3F0E4", color: "#2E7D32" },
+  media: { bg: "#FFF3E0", color: "#B26A00" },
+  baixa: { bg: "#EDEAE4", color: "#5C5C5C" },
 };
 
 export function StatusParceiraChip({ status }) {
-  const c = STATUS_PARCEIRA_COLORS[status] ?? STATUS_PARCEIRA_COLORS.prospect;
+  const c = STATUS_FUNIL_COLORS[status] ?? STATUS_FUNIL_COLORS.nao_contatado;
   return (
     <span className="rounded-full px-[10px] py-1 text-[10.5px] font-bold" style={{ background: c.bg, color: c.color }}>
-      {STATUS_PARCEIRA_LABELS[status] ?? status}
+      {STATUS_FUNIL_LABELS[status] ?? status}
+    </span>
+  );
+}
+
+export function PrioridadeChip({ prioridade }) {
+  if (!prioridade) return null;
+  const c = PRIORIDADE_COLORS[prioridade] ?? PRIORIDADE_COLORS.baixa;
+  return (
+    <span className="rounded-full px-[10px] py-1 text-[10.5px] font-bold" style={{ background: c.bg, color: c.color }}>
+      Prioridade {PRIORIDADE_LABELS[prioridade]}
     </span>
   );
 }
@@ -34,12 +55,13 @@ export default function Parceiras() {
   const [parceiras, setParceiras] = useState(null);
   const [busca, setBusca] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("todos");
+  const [filtroPrioridade, setFiltroPrioridade] = useState("todas");
   const [showNew, setShowNew] = useState(false);
 
   async function load() {
     const { data } = await supabase
       .from("pc_parceiras")
-      .select("id, nome_fantasia, cidade, uf, praca, status, criado_em:created_at")
+      .select("id, nome_fantasia, cidade, uf, praca, status_funil, prioridade, validado, created_at")
       .order("nome_fantasia");
     setParceiras(data ?? []);
   }
@@ -48,8 +70,12 @@ export default function Parceiras() {
     load();
   }, []);
 
+  const pendentesValidacao = (parceiras ?? []).filter((p) => !p.validado);
+
   const visiveis = (parceiras ?? []).filter((p) => {
-    if (filtroStatus !== "todos" && p.status !== filtroStatus) return false;
+    if (!p.validado) return false;
+    if (filtroStatus !== "todos" && p.status_funil !== filtroStatus) return false;
+    if (filtroPrioridade !== "todas" && p.prioridade !== filtroPrioridade) return false;
     if (busca.trim()) {
       const q = busca.trim().toLowerCase();
       return (
@@ -63,6 +89,23 @@ export default function Parceiras() {
 
   return (
     <div>
+      <LinkAutocadastro />
+
+      {pendentesValidacao.length > 0 && (
+        <div className="mt-4 rounded-[12px] border-[1.5px] border-gold bg-light p-3 text-sm text-charcoal">
+          <b>{pendentesValidacao.length}</b> parceira(s) chegaram por autocadastro e aguardam sua validação:{" "}
+          {pendentesValidacao.map((p, i) => (
+            <span key={p.id}>
+              {i > 0 && ", "}
+              <Link to={`/app/parcerias/parceiras/${p.id}`} className="underline">
+                {p.nome_fantasia}
+              </Link>
+            </span>
+          ))}
+          .
+        </div>
+      )}
+
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <input
           value={busca}
@@ -76,7 +119,19 @@ export default function Parceiras() {
           className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
         >
           <option value="todos">Todos os status</option>
-          {Object.entries(STATUS_PARCEIRA_LABELS).map(([k, label]) => (
+          {Object.entries(STATUS_FUNIL_LABELS).map(([k, label]) => (
+            <option key={k} value={k}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <select
+          value={filtroPrioridade}
+          onChange={(e) => setFiltroPrioridade(e.target.value)}
+          className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
+        >
+          <option value="todas">Todas as prioridades</option>
+          {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
             <option key={k} value={k}>
               {label}
             </option>
@@ -121,10 +176,34 @@ export default function Parceiras() {
                 {p.praca ? ` · ${p.praca}` : ""}
               </p>
             </div>
-            <StatusParceiraChip status={p.status} />
+            <div className="flex items-center gap-2">
+              <PrioridadeChip prioridade={p.prioridade} />
+              <StatusParceiraChip status={p.status_funil} />
+            </div>
           </Link>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LinkAutocadastro() {
+  const [copiado, setCopiado] = useState(false);
+  const url = `${window.location.origin}/parceria/cadastro`;
+
+  function copiar() {
+    navigator.clipboard.writeText(url);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 1500);
+  }
+
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[12px] border border-rule bg-white p-3 text-xs text-graytext">
+      <span className="font-bold text-charcoal">Link de autocadastro (mande pra quem você quer que se cadastre sozinho):</span>
+      <span className="break-all">{url}</span>
+      <button onClick={copiar} className="rounded-[7px] bg-charcoal px-3 py-1.5 font-bold text-white">
+        {copiado ? "Copiado!" : "Copiar"}
+      </button>
     </div>
   );
 }
@@ -134,9 +213,10 @@ function NovaParceira({ userId, onCreated }) {
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
   const [praca, setPraca] = useState("");
+  const [segmento, setSegmento] = useState("");
   const [responsavel, setResponsavel] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [status, setStatus] = useState("prospect");
+  const [prioridade, setPrioridade] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -151,9 +231,14 @@ function NovaParceira({ userId, onCreated }) {
       cidade: cidade.trim() || null,
       uf: uf.trim().toUpperCase() || null,
       praca: praca.trim() || null,
+      segmento_foco: segmento.trim() || null,
       responsavel_nome: responsavel.trim() || null,
       responsavel_telefone: telefone.trim() || null,
-      status,
+      prioridade: prioridade || null,
+      prioridade_justificativa: prioridade ? "Definida na criação do cadastro." : null,
+      prioridade_calculada_em: prioridade ? new Date().toISOString() : null,
+      status_funil: "nao_contatado",
+      origem: "Cadastro manual",
       token_registro: generateToken(),
     });
     setSaving(false);
@@ -167,18 +252,19 @@ function NovaParceira({ userId, onCreated }) {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Nome fantasia" value={nome} onChange={setNome} required />
         <Field label="Praça" value={praca} onChange={setPraca} placeholder="Ex.: Interior SP Norte" />
-        <Field label="Cidade" value={cidade} onChange={setCidade} />
+        <Field label="Cidade / região de atuação" value={cidade} onChange={setCidade} />
         <Field label="UF" value={uf} onChange={setUf} maxLength={2} />
-        <Field label="Responsável" value={responsavel} onChange={setResponsavel} />
+        <Field label="Responsável (contato)" value={responsavel} onChange={setResponsavel} />
         <Field label="Telefone do responsável" value={telefone} onChange={setTelefone} placeholder="+55 11 99999-9999" />
         <div>
-          <label className="mb-[6px] block text-[13px] font-semibold text-charcoal">Status</label>
+          <label className="mb-[6px] block text-[13px] font-semibold text-charcoal">Prioridade (opcional)</label>
           <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            value={prioridade}
+            onChange={(e) => setPrioridade(e.target.value)}
             className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
           >
-            {Object.entries(STATUS_PARCEIRA_LABELS).map(([k, label]) => (
+            <option value="">Ainda não avaliada</option>
+            {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
               <option key={k} value={k}>
                 {label}
               </option>
@@ -186,6 +272,14 @@ function NovaParceira({ userId, onCreated }) {
           </select>
         </div>
       </div>
+      <label className="mt-3 mb-[6px] block text-[13px] font-semibold text-charcoal">Segmento / foco de produto</label>
+      <textarea
+        value={segmento}
+        onChange={(e) => setSegmento(e.target.value)}
+        rows={2}
+        placeholder="Ex.: Alto padrão, lançamentos, popular/MCMV, locação, rural…"
+        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+      />
       {error && <p className="mt-3 text-sm text-[#B34A2E]">{error}</p>}
       <button
         type="submit"
