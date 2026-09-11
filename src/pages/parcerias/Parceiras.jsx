@@ -88,7 +88,7 @@ export default function Parceiras() {
   });
 
   return (
-    <div>
+    <div className="mx-auto max-w-4xl">
       <LinkAutocadastro />
       <RecursosChaincorp userId={user.id} />
 

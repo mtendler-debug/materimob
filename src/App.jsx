@@ -20,6 +20,7 @@ import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
 import Parceiras from "./pages/parcerias/Parceiras";
 import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
 import Registros from "./pages/parcerias/Registros";
+import Kanban from "./pages/parcerias/Kanban";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { RoleRoute } from "./components/RoleRoute";
 import AppLayout from "./components/AppLayout";
@@ -66,7 +67,8 @@ export default function App() {
         </Route>
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/parcerias" element={<ParceriasLayout />}>
-          <Route index element={<Parceiras />} />
+          <Route index element={<Kanban />} />
+          <Route path="kanban" element={<Kanban />} />
           <Route path="parceiras" element={<Parceiras />} />
           <Route path="parceiras/:id" element={<ParceiraDetail />} />
           <Route path="registros" element={<Registros />} />

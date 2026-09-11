@@ -53,6 +53,7 @@ export default function AppLayout() {
   const grupoParcerias = {
     label: "Parcerias",
     itens: [
+      { to: "/app/parcerias/kanban", label: "Kanban" },
       { to: "/app/parcerias/parceiras", label: "Parceiras" },
       { to: "/app/parcerias/registros", label: "Registros" },
     ],

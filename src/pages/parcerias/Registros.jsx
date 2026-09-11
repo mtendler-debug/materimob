@@ -55,7 +55,7 @@ export default function Registros() {
   });
 
   return (
-    <div>
+    <div className="mx-auto max-w-4xl">
       <div className="mt-4 flex flex-wrap gap-1 border-b border-rule">
         {TABS.map((t) => (
           <button

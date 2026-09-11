@@ -27,7 +27,7 @@ export default function ParceiraDetail() {
   if (!parceira) return <p className="mt-4 text-sm text-muted">Carregando…</p>;
 
   return (
-    <div>
+    <div className="mx-auto max-w-4xl">
       <Link to="/app/parcerias/parceiras" className="mt-4 inline-block text-sm text-graytext underline">
         ← todas as parceiras
       </Link>
