@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
+import { Link, useNavigate } from "react-router-dom";
+import { DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { supabase } from "../../lib/supabase";
 import { STATUS_FUNIL_LABELS, PrioridadeChip } from "./Parceiras";
 
@@ -32,6 +32,12 @@ export default function Kanban() {
   useEffect(() => {
     load();
   }, []);
+
+  // Distância mínima antes de considerar arraste: sem isso, todo clique
+  // vira um "drag" de zero pixels e o card nunca abre por clique simples.
+  // Precisa vir antes do return condicional abaixo — hook não pode ser
+  // chamado condicionalmente.
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
   if (!parceiras) return <p className="mt-4 text-sm text-muted">Carregando…</p>;
 
@@ -65,7 +71,7 @@ export default function Kanban() {
         </div>
       )}
 
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="mt-4 flex gap-3 overflow-x-auto pb-4">
           {COLUNAS.map((status) => (
             <Coluna
@@ -140,7 +146,14 @@ function diasSemContato(data) {
 
 const PRIORIDADE_ACCENT = { alta: "#2E7D32", media: "#B26A00", baixa: "#C9C4B8" };
 
+function waLink(telefone, nome) {
+  const numero = (telefone || "").replace(/\D/g, "");
+  const texto = `Olá${nome ? ", " + nome.split(" ")[0] : ""}! Aqui é o Marcos, da Chaincorp Incorporações.`;
+  return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+}
+
 function Cartao({ parceira: p, overlay }) {
+  const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: p.id, disabled: overlay });
   const dias = diasSemContato(p.ultimo_contato_em);
   const accent = PRIORIDADE_ACCENT[p.prioridade] ?? "transparent";
@@ -150,20 +163,17 @@ function Cartao({ parceira: p, overlay }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      onClick={() => !overlay && !isDragging && navigate(`/app/parcerias/parceiras/${p.id}`)}
       style={{ borderLeftColor: accent }}
-      className={`group rounded-[12px] border border-l-[3px] bg-white p-3 transition-all ${
+      className={`group select-none rounded-[12px] border border-l-[3px] bg-white p-3 transition-all ${
         overlay
           ? "rotate-[1.5deg] border-gold"
-          : `cursor-grab border-rule active:cursor-grabbing ${isDragging ? "opacity-30" : "hover:border-gold"}`
+          : `cursor-pointer border-rule active:cursor-grabbing ${isDragging ? "opacity-30" : "hover:border-gold"}`
       }`}
     >
-      <Link
-        to={`/app/parcerias/parceiras/${p.id}`}
-        onClick={(e) => (isDragging || overlay) && e.preventDefault()}
-        className="font-serif block text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline"
-      >
+      <p className="font-serif text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline">
         {p.nome_fantasia}
-      </Link>
+      </p>
       <p className="mt-[3px] text-[11.5px] text-graytext">
         {[p.cidade, p.praca].filter(Boolean).join(" · ") || "—"}
       </p>
@@ -185,11 +195,25 @@ function Cartao({ parceira: p, overlay }) {
         )}
       </div>
 
-      {(p.responsavel_nome || p.responsavel_telefone) && (
-        <p className="mt-[7px] truncate text-[10.5px] text-muted">
-          {[p.responsavel_nome, p.responsavel_telefone].filter(Boolean).join(" · ")}
-        </p>
-      )}
+      <div className="mt-[9px] flex items-center justify-between gap-2">
+        {(p.responsavel_nome || p.responsavel_telefone) && (
+          <p className="min-w-0 flex-1 truncate text-[10.5px] text-muted">
+            {[p.responsavel_nome, p.responsavel_telefone].filter(Boolean).join(" · ")}
+          </p>
+        )}
+        {p.responsavel_telefone && !overlay && (
+          <a
+            href={waLink(p.responsavel_telefone, p.responsavel_nome)}
+            target="_blank"
+            rel="noreferrer"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0 rounded-full bg-[#E3F0E4] px-[8px] py-[2px] text-[10px] font-bold text-[#2E7D32] hover:opacity-80"
+          >
+            WhatsApp
+          </a>
+        )}
+      </div>
     </div>
   );
 }
