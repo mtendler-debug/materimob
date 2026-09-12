@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
+import { addClientToCrm } from "../lib/crm";
 
 export default function Dashboard() {
   const [clients, setClients] = useState(null);
@@ -226,6 +227,7 @@ export default function Dashboard() {
 function ClientCard({ client, onChange }) {
   const { user } = useAuth();
   const [filtroRoteiros, setFiltroRoteiros] = useState("ativos"); // ativos|desativados|todos
+  const [crmMsg, setCrmMsg] = useState("");
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
   const roteirosDesativados = client.selections.filter((s) => s.archived);
   const roteirosVisiveis = client.selections.filter((s) => {
@@ -241,6 +243,12 @@ function ClientCard({ client, onChange }) {
       .from("av_client_relations")
       .upsert({ user_id: user.id, client_id: client.id, archived: !client.archived }, { onConflict: "user_id,client_id" });
     onChange();
+  }
+
+  async function adicionarAoCRM() {
+    setCrmMsg("Adicionando…");
+    const { error, existed } = await addClientToCrm(client.id);
+    setCrmMsg(error ? "Erro: " + error.message : existed ? "Já estava no CRM." : "Adicionado ao CRM.");
   }
 
   return (
@@ -262,6 +270,10 @@ function ClientCard({ client, onChange }) {
         <button onClick={alternarClienteArquivado} className="text-xs font-bold text-[#B34A2E] underline">
           {client.archived ? "reativar cliente" : "desativar cliente"}
         </button>
+        <button onClick={adicionarAoCRM} className="text-xs font-bold text-graytext underline">
+          adicionar ao CRM
+        </button>
+        {crmMsg && <span className="text-xs text-graytext">{crmMsg}</span>}
       </div>
 
       {(client.selections.length > 1 || roteirosDesativados.length > 0) && (

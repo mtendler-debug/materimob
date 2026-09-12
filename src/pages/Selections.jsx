@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { addClientToCrm } from "../lib/crm";
 
 export default function Selections() {
   const [selections, setSelections] = useState(null);
@@ -80,11 +81,19 @@ export default function Selections() {
 }
 
 function SelectionRow({ selection: s, onChange }) {
+  const [crmMsg, setCrmMsg] = useState("");
+
   async function alternarArquivado() {
     const acao = s.archived ? "reativar" : "desativar";
     if (!window.confirm(`Confirma ${acao} este roteiro?`)) return;
     await supabase.from("av_selections").update({ archived: !s.archived }).eq("id", s.id);
     onChange();
+  }
+
+  async function adicionarAoCRM() {
+    setCrmMsg("Adicionando…");
+    const { error, existed } = await addClientToCrm(s.client_id);
+    setCrmMsg(error ? "Erro: " + error.message : existed ? "Já estava no CRM." : "Adicionado ao CRM.");
   }
 
   return (
@@ -107,6 +116,15 @@ function SelectionRow({ selection: s, onChange }) {
         <button onClick={alternarArquivado} className="text-xs font-bold text-[#B34A2E] underline">
           {s.archived ? "reativar roteiro" : "desativar roteiro"}
         </button>
+        <button
+          onClick={adicionarAoCRM}
+          disabled={!s.client_id}
+          title={s.client_id ? "" : "Roteiro sem cliente vinculado"}
+          className="text-xs font-bold text-graytext underline disabled:opacity-40 disabled:no-underline"
+        >
+          adicionar ao CRM
+        </button>
+        {crmMsg && <span className="text-xs text-graytext">{crmMsg}</span>}
       </div>
     </div>
   );

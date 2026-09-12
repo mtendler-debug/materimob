@@ -42,6 +42,23 @@ export function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
 }
 
+// Garante que o cliente tenha um lead no CRM — reaproveita se já
+// existir (RLS já restringe a busca ao lead do próprio corretor). Usado
+// em Meus clientes e Meus roteiros, pra levar um cliente pro CRM sem
+// precisar abrir um roteiro/imóvel específico primeiro (esse caminho já
+// existe em SelectionDetail, por oportunidade).
+export async function addClientToCrm(clientId) {
+  const { data: leads, error: leadsError } = await supabase
+    .from("av_leads")
+    .select("id")
+    .eq("client_id", clientId)
+    .limit(1);
+  if (leadsError) return { error: leadsError };
+  if (leads?.length) return { error: null, existed: true };
+  const { error } = await supabase.from("av_leads").insert({ client_id: clientId });
+  return { error, existed: false };
+}
+
 // Leads com as próprias oportunidades e os dados do cliente (av_clients)
 // já embutidos — usado por Pipeline/Leads/CrmDashboard, que precisam
 // exatamente da mesma lista.
