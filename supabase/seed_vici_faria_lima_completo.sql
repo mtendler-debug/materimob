@@ -11,7 +11,7 @@
 -- entra à parte.
 
 update av_launches set
-  address = 'Rua dos Cariris — Pinheiros, São Paulo/SP (a 4 min a pé da Estação Faria Lima)',
+  address = 'Rua dos Cariris, 422 — Pinheiros, São Paulo/SP (a 4 min a pé da Estação Faria Lima)',
   summary = 'Chaincorp & MF7 · Cariris Incorporadora SPE LTDA · arquitetura Nura, paisagismo Neusa Nakata, interiores DP Barros · terreno 2.230m² · torre única: subsolo + térreo com lojas + lajes corporativas (1º-5º pav.) + lazer residencial (1º e 6º pav.) + 17 pavimentos residenciais tipo + lazer no rooftop (24º pav.) · 340 studios de 25m² · unidades HIS-2 · incorporação registrada (matrícula 188.209, 23/04/2026) · intermediação MF7 Vendas',
   floor_plan_url = 'https://izslgjvxbthjxabtepti.supabase.co/storage/v1/object/public/imoveis/235daabd-e714-4b49-bbdb-c74ae37c10b9/vici-faria-lima/Mf7_Cariris_Pavimento_Tipo_HR.jpg',
   book_urls = array['https://izslgjvxbthjxabtepti.supabase.co/storage/v1/object/public/books/235daabd-e714-4b49-bbdb-c74ae37c10b9/vici-faria-lima-book.pdf'],

@@ -8,7 +8,7 @@
 -- conteúdo relevante.
 
 update av_launches set
-  address = 'Rua Apinajés, 1875 — Vila Madalena, São Paulo/SP',
+  address = 'Rua Apinajés, 1875 — Perdizes, São Paulo/SP (próximo ao Metrô Vila Madalena)',
   summary = 'Chaincorp & 360º Suítes · Ilha Arquitetura · torre única, 9 pavimentos · 72 unidades (studios 18-23m², studio garden 20-35m², 1 dorm 26-40m², 2 dorms 37-49m²) + 1 loja · concebido para locação short/mid/long stay, gestão 360 Suítes (maior conta do Airbnb da América Latina) · incorporação registrada (matrícula 130.152, 08/04/26) · unidades HIS-2',
   floor_plan_url = 'https://izslgjvxbthjxabtepti.supabase.co/storage/v1/object/public/imoveis/235daabd-e714-4b49-bbdb-c74ae37c10b9/pina1875/Plantas/Chaincorp_Apinajes_Planta_2oPavimento_HR.jpg',
   photo_urls = array[
