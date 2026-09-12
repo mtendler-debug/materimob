@@ -299,7 +299,10 @@ function OrganizationDetail({ org, role, onChange }) {
     loadPortfolio();
     if (incorporadora) loadLaunches();
     if (incorporadora && manage) loadDashboard();
-    if (!incorporadora && manage) loadTeamDashboard();
+    // Painel da equipe (roteiros/avaliações) também vale pra
+    // incorporadora — o diretor pode atuar como corretor também, não só
+    // acompanhar o agregado de lançamentos.
+    if (manage) loadTeamDashboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [org.id]);
 
@@ -463,7 +466,7 @@ function OrganizationDetail({ org, role, onChange }) {
         </div>
       )}
 
-      {!incorporadora && manage && teamDashboard && (
+      {manage && teamDashboard && (
         <div>
           <SectionTitle>Painel da equipe</SectionTitle>
           <p className="text-xs text-graytext">
