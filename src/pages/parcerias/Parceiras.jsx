@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/AuthContext";
 import { generateToken } from "../../lib/token";
+import ImportarParceiras from "./ImportarParceiras";
 
 export const STATUS_FUNIL_LABELS = {
   nao_contatado: "Não contatado",
@@ -57,6 +58,7 @@ export default function Parceiras() {
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroPrioridade, setFiltroPrioridade] = useState("todas");
   const [showNew, setShowNew] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   async function load() {
     const { data } = await supabase
@@ -139,10 +141,22 @@ export default function Parceiras() {
           ))}
         </select>
         <button
-          onClick={() => setShowNew((v) => !v)}
+          onClick={() => {
+            setShowImport(false);
+            setShowNew((v) => !v);
+          }}
           className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90"
         >
           {showNew ? "Cancelar" : "+ Nova parceira"}
+        </button>
+        <button
+          onClick={() => {
+            setShowNew(false);
+            setShowImport((v) => !v);
+          }}
+          className="rounded-[10px] border border-rule bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+        >
+          {showImport ? "Cancelar" : "Importar planilha"}
         </button>
       </div>
 
@@ -151,6 +165,18 @@ export default function Parceiras() {
           userId={user.id}
           onCreated={() => {
             setShowNew(false);
+            load();
+          }}
+        />
+      )}
+
+      {showImport && (
+        <ImportarParceiras
+          userId={user.id}
+          parceirasExistentes={parceiras}
+          onCancel={() => setShowImport(false)}
+          onImported={() => {
+            setShowImport(false);
             load();
           }}
         />
