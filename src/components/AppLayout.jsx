@@ -11,7 +11,7 @@ export default function AppLayout() {
   const { user, signOut } = useAuth();
   const { accountType, isPlatformAdmin, hasCrmAccess, loading: loadingProfile } = useProfile();
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading: loadingOrg } = useOrganization();
-  const marcaSubdominio = useTenantBranding();
+  const marcaPortal = useTenantBranding();
   const location = useLocation();
   const [aviso, setAviso] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -24,18 +24,18 @@ export default function AppLayout() {
     setMobileOpen(false);
   }, [location]);
 
-  // Quem entra por um subdomínio de marca (ex. chaincorp.materimob.com.br)
-  // e é membro daquela organização já atua "vestindo" ela, sem precisar
+  // Quem entra por um portal de marca (ex. materimob.com.br/chaincorp) e
+  // é membro daquela organização já atua "vestindo" ela, sem precisar
   // trocar manualmente em "Ver como".
   useEffect(() => {
-    if (!marcaSubdominio || loadingOrg) return;
-    const souMembro = memberships.some((m) => m.organizations.id === marcaSubdominio.id);
-    if (souMembro && activeOrgId !== marcaSubdominio.id) setActiveOrgId(marcaSubdominio.id);
-  }, [marcaSubdominio, loadingOrg, memberships, activeOrgId, setActiveOrgId]);
+    if (!marcaPortal || loadingOrg) return;
+    const souMembro = memberships.some((m) => m.organizations.id === marcaPortal.id);
+    if (souMembro && activeOrgId !== marcaPortal.id) setActiveOrgId(marcaPortal.id);
+  }, [marcaPortal, loadingOrg, memberships, activeOrgId, setActiveOrgId]);
 
   // A marca da organização ativa (cores/logo) reskina a casca do app —
-  // funciona tanto vindo do subdomínio quanto trocando em "Ver como",
-  // não depende de estar no domínio próprio (esse ainda não existe no ar).
+  // funciona tanto vindo do portal com marca quanto trocando em "Ver
+  // como".
   const marca = org?.cor_primaria || org?.cor_secundaria ? org : null;
   const corSidebar = marca?.cor_secundaria || undefined;
   const corDestaque = marca?.cor_primaria || undefined;

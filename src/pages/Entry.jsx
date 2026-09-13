@@ -24,10 +24,10 @@ export default function Entry() {
   const marca = useTenantBranding();
 
   if (loadingAuth) return <Placeholder label="Carregando…" />;
-  // Num subdomínio com marca (ex. chaincorp.materimob.com.br), quem chega
+  // Num portal com marca (ex. materimob.com.br/chaincorp), quem chega
   // deslogado é time convidado, não lead de marketing — vai direto pro
   // login em vez da página de vendas do MaterImob. marca === undefined
-  // enquanto resolve o subdomínio; espera pra não piscar a Landing à toa.
+  // enquanto resolve o slug; espera pra não piscar a Landing à toa.
   if (!user) {
     if (marca === undefined) return <Placeholder label="Carregando…" />;
     return marca ? <Navigate to="/entrar" replace /> : <Landing />;

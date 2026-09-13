@@ -1,33 +1,37 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "./supabase";
 
-const RESERVADOS = new Set(["app", "www", "api", "admin", "mail", "static", "assets", "cdn", "materimob"]);
+// Primeiros pedaços de caminho que já são rota de verdade — nunca tratar
+// como slug de organização. Mesma lista do lado do banco
+// (valida_subdominio_reservado), duplicada aqui só porque o front decide
+// antes de perguntar ao banco.
+const RESERVADOS = new Set(["app", "admin", "entrar", "convite", "c", "r", "cliente", "registrar", "parceria"]);
 
-// "chaincorp.materimob.com.br" -> "chaincorp". Em localhost, preview do
-// Netlify ou no domínio nu, não há 4 partes — sem marca, é o caminho
-// padrão. Nunca lança erro: pior caso é não personalizar.
-function subdominioAtual() {
-  const partes = window.location.hostname.split(".");
-  if (partes.length < 4) return null;
-  const slug = partes[0].toLowerCase();
-  return RESERVADOS.has(slug) ? null : slug;
+// "materimob.com.br/chaincorp" -> "chaincorp". Resolvido uma vez, no
+// carregamento da página — não muda mais se o usuário navegar dentro do
+// app depois (evita a marca sumir no meio de um redirecionamento interno
+// pra /app). Nunca lança erro: pior caso é não personalizar.
+function slugAtual() {
+  const primeiroPedaco = window.location.pathname.split("/")[1]?.toLowerCase();
+  if (!primeiroPedaco) return null;
+  return RESERVADOS.has(primeiroPedaco) ? null : primeiroPedaco;
 }
 
 const TenantBrandingContext = createContext(null);
 
-// undefined = ainda resolvendo, null = domínio padrão (sem marca),
+// undefined = ainda resolvendo, null = endereço padrão (sem marca),
 // objeto = { id, name, nome_exibicao, logo_url, cor_primaria, cor_secundaria }.
 export function TenantBrandingProvider({ children }) {
   const [branding, setBranding] = useState(undefined);
 
   useEffect(() => {
-    const slug = subdominioAtual();
+    const slug = slugAtual();
     if (!slug) {
       setBranding(null);
       return;
     }
     supabase
-      .rpc("organization_branding", { p_subdominio: slug })
+      .rpc("organization_branding", { p_slug: slug })
       .then(({ data, error }) => setBranding(!error && data?.[0] ? data[0] : null));
   }, []);
 

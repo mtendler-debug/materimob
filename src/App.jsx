@@ -46,6 +46,11 @@ export default function App() {
       <Routes>
       <Route path="/" element={<Entry />} />
       <Route path="/entrar" element={<Login />} />
+      {/* Portal com marca própria, ex. materimob.com.br/chaincorp — o
+          slug em si só decide a cor/logo (via TenantBrandingProvider,
+          resolvido pelo caminho); quem já está logado é levado adiante
+          pelo próprio Login. */}
+      <Route path="/:orgSlug" element={<Login />} />
 
       <Route
         element={

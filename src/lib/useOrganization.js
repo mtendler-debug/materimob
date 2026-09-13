@@ -25,7 +25,7 @@ export function useOrganization() {
     const { data } = await supabase
       .from("organization_members")
       .select(
-        "role, organizations(id, name, tipo, nome_exibicao, logo_url, cor_primaria, cor_secundaria, subdominio, address, latitude, longitude)",
+        "role, organizations(id, name, tipo, nome_exibicao, logo_url, cor_primaria, cor_secundaria, slug, address, latitude, longitude)",
       )
       .eq("user_id", user.id);
     setMemberships(data ?? []);

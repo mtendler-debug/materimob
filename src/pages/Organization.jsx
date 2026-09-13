@@ -262,7 +262,7 @@ function MarcaCard({ org, manage, onChange }) {
   const [logoUrl, setLogoUrl] = useState(org.logo_url ?? "");
   const [corPrimaria, setCorPrimaria] = useState(org.cor_primaria ?? "#A68A5B");
   const [corSecundaria, setCorSecundaria] = useState(org.cor_secundaria ?? "#1C1C1C");
-  const [subdominio, setSubdominio] = useState(org.subdominio ?? "");
+  const [slug, setSlug] = useState(org.slug ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -278,16 +278,16 @@ function MarcaCard({ org, manage, onChange }) {
         logo_url: logoUrl.trim() || null,
         cor_primaria: corPrimaria || null,
         cor_secundaria: corSecundaria || null,
-        subdominio: subdominio.trim() || null,
+        slug: slug.trim() || null,
       })
       .eq("id", org.id);
     setSaving(false);
     if (saveError) {
       setError(
-        saveError.message.includes("organizations_subdominio_unico")
-          ? "Esse subdomínio já está em uso por outra organização."
+        saveError.message.includes("organizations_slug_unico")
+          ? "Esse endereço já está em uso por outra organização."
           : saveError.message.includes("reservado")
-            ? "Esse subdomínio é reservado pelo próprio Materimob."
+            ? "Esse endereço é reservado pelo próprio Materimob."
             : "Erro ao salvar: " + saveError.message,
       );
       return;
@@ -296,7 +296,7 @@ function MarcaCard({ org, manage, onChange }) {
     onChange();
   }
 
-  const temMarca = Boolean(org.cor_primaria || org.cor_secundaria || org.logo_url || org.subdominio);
+  const temMarca = Boolean(org.cor_primaria || org.cor_secundaria || org.logo_url || org.slug);
 
   if (!editing) {
     return (
@@ -305,7 +305,7 @@ function MarcaCard({ org, manage, onChange }) {
         {temMarca ? (
           <p className="text-sm text-graytext">
             {org.nome_exibicao || org.name}
-            {org.subdominio ? ` · https://${org.subdominio}.materimob.com.br` : " · sem subdomínio ainda"}
+            {org.slug ? ` · materimob.com.br/${org.slug}` : " · sem endereço próprio ainda"}
           </p>
         ) : (
           <p className="text-sm text-graytext">
@@ -320,14 +320,14 @@ function MarcaCard({ org, manage, onChange }) {
     );
   }
 
-  const previewUrl = subdominio.trim() ? `https://${subdominio.trim()}.materimob.com.br` : null;
+  const previewUrl = slug.trim() ? `materimob.com.br/${slug.trim()}` : null;
 
   return (
     <div className="rounded-[14px] border border-rule bg-white p-4">
       <p className="font-serif text-lg font-semibold text-charcoal">Marca e domínio</p>
       <p className="mt-1 text-xs text-graytext">
-        Aparece pro seu time quando estiver atuando dentro desta organização — no menu, no login e,
-        depois que o domínio estiver ligado, em {subdominio.trim() || "seu-slug"}.materimob.com.br.
+        Aparece pro seu time quando estiver atuando dentro desta organização — no menu, no login e
+        em materimob.com.br/{slug.trim() || "seu-endereço"}.
       </p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-[1.3fr_1fr]">
@@ -385,17 +385,17 @@ function MarcaCard({ org, manage, onChange }) {
             </div>
           </div>
           <div>
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Subdomínio</label>
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
             <div className="mt-1 flex items-stretch">
-              <input
-                value={subdominio}
-                onChange={(e) => setSubdominio(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                placeholder="chaincorp"
-                className="w-full rounded-l-[9px] border-[1.5px] border-r-0 border-rule px-3 py-2 text-sm"
-              />
-              <span className="flex items-center rounded-r-[9px] border-[1.5px] border-rule bg-light px-2 text-xs text-graytext">
-                .materimob.com.br
+              <span className="flex items-center rounded-l-[9px] border-[1.5px] border-r-0 border-rule bg-light px-2 text-xs text-graytext">
+                materimob.com.br/
               </span>
+              <input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                placeholder="chaincorp"
+                className="w-full rounded-r-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              />
             </div>
             {previewUrl && <p className="mt-1 text-xs text-graytext">→ {previewUrl}</p>}
           </div>
