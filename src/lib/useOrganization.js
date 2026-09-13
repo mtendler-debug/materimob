@@ -24,7 +24,9 @@ export function useOrganization() {
     // senão a lista poderia devolver membros de outras contas.
     const { data } = await supabase
       .from("organization_members")
-      .select("role, organizations(id, name, tipo)")
+      .select(
+        "role, organizations(id, name, tipo, nome_exibicao, logo_url, cor_primaria, cor_secundaria, subdominio, address, latitude, longitude)",
+      )
       .eq("user_id", user.id);
     setMemberships(data ?? []);
   }

@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { useProfile } from "../lib/useProfile";
 import { useOrganization, canManage } from "../lib/useOrganization";
+import { useTenantBranding } from "../lib/tenantBranding";
 
 // Único componente que monta o menu de /app e /admin — a partir do papel
 // de quem está logado, não de uma lista fixa repetida em cada página.
@@ -10,6 +11,7 @@ export default function AppLayout() {
   const { user, signOut } = useAuth();
   const { accountType, isPlatformAdmin, hasCrmAccess, loading: loadingProfile } = useProfile();
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading: loadingOrg } = useOrganization();
+  const marcaSubdominio = useTenantBranding();
   const location = useLocation();
   const [aviso, setAviso] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -21,6 +23,22 @@ export default function AppLayout() {
     if (location.state?.aviso) setAviso(location.state.aviso);
     setMobileOpen(false);
   }, [location]);
+
+  // Quem entra por um subdomínio de marca (ex. chaincorp.materimob.com.br)
+  // e é membro daquela organização já atua "vestindo" ela, sem precisar
+  // trocar manualmente em "Ver como".
+  useEffect(() => {
+    if (!marcaSubdominio || loadingOrg) return;
+    const souMembro = memberships.some((m) => m.organizations.id === marcaSubdominio.id);
+    if (souMembro && activeOrgId !== marcaSubdominio.id) setActiveOrgId(marcaSubdominio.id);
+  }, [marcaSubdominio, loadingOrg, memberships, activeOrgId, setActiveOrgId]);
+
+  // A marca da organização ativa (cores/logo) reskina a casca do app —
+  // funciona tanto vindo do subdomínio quanto trocando em "Ver como",
+  // não depende de estar no domínio próprio (esse ainda não existe no ar).
+  const marca = org?.cor_primaria || org?.cor_secundaria ? org : null;
+  const corSidebar = marca?.cor_secundaria || undefined;
+  const corDestaque = marca?.cor_primaria || undefined;
 
   if (loadingProfile || loadingOrg) {
     return (
@@ -76,8 +94,13 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-bg md:flex">
-      <div className="flex items-center justify-between bg-charcoal px-4 py-3 text-white md:hidden">
-        <span className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">MaterImob</span>
+      <div
+        className="flex items-center justify-between bg-charcoal px-4 py-3 text-white md:hidden"
+        style={corSidebar ? { background: corSidebar } : undefined}
+      >
+        <span className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold" style={corDestaque ? { color: corDestaque } : undefined}>
+          {marca?.nome_exibicao || marca?.name || "MaterImob"}
+        </span>
         <button onClick={() => setMobileOpen(true)} aria-label="Abrir menu" className="px-1 text-2xl leading-none">
           ☰
         </button>
@@ -91,9 +114,19 @@ export default function AppLayout() {
         className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-none flex-col overflow-y-auto bg-charcoal text-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={corSidebar ? { background: corSidebar } : undefined}
       >
         <div className="px-5 pt-6 pb-4">
-          <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">MaterImob</div>
+          {marca?.logo_url ? (
+            <img src={marca.logo_url} alt={marca.nome_exibicao || marca.name} className="max-h-7" />
+          ) : (
+            <div
+              className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold"
+              style={corDestaque ? { color: corDestaque } : undefined}
+            >
+              {marca?.nome_exibicao || "MaterImob"}
+            </div>
+          )}
         </div>
 
         {memberships.length > 1 && (
@@ -128,10 +161,11 @@ export default function AppLayout() {
                     className={({ isActive }) =>
                       `block rounded-[8px] border-l-[2.5px] px-[9px] py-2 text-[13.5px] font-semibold ${
                         isActive
-                          ? "border-gold bg-[#262220] text-white"
+                          ? `${corDestaque ? "" : "border-gold"} bg-[#262220] text-white`
                           : "border-transparent text-[#CFC9BD] hover:text-white"
                       }`
                     }
+                    style={({ isActive }) => (isActive && corDestaque ? { borderLeftColor: corDestaque } : undefined)}
                   >
                     {i.label}
                   </NavLink>

@@ -252,6 +252,203 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
   );
 }
 
+// Marca e domínio — white-label da organização. Mesmas colunas lidas por
+// useOrganization() pra reskinar a casca do app (ver AppLayout.jsx); aqui
+// é só a tela pra editar. Gate de UI segue o mesmo "manage" (gerente+) que
+// já vale pro "editar" do card acima, mesma organização/coluna.
+function MarcaCard({ org, manage, onChange }) {
+  const [editing, setEditing] = useState(false);
+  const [nomeExibicao, setNomeExibicao] = useState(org.nome_exibicao ?? "");
+  const [logoUrl, setLogoUrl] = useState(org.logo_url ?? "");
+  const [corPrimaria, setCorPrimaria] = useState(org.cor_primaria ?? "#A68A5B");
+  const [corSecundaria, setCorSecundaria] = useState(org.cor_secundaria ?? "#1C1C1C");
+  const [subdominio, setSubdominio] = useState(org.subdominio ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  if (!manage) return null;
+
+  async function salvar() {
+    setSaving(true);
+    setError("");
+    const { error: saveError } = await supabase
+      .from("organizations")
+      .update({
+        nome_exibicao: nomeExibicao.trim() || null,
+        logo_url: logoUrl.trim() || null,
+        cor_primaria: corPrimaria || null,
+        cor_secundaria: corSecundaria || null,
+        subdominio: subdominio.trim() || null,
+      })
+      .eq("id", org.id);
+    setSaving(false);
+    if (saveError) {
+      setError(
+        saveError.message.includes("organizations_subdominio_unico")
+          ? "Esse subdomínio já está em uso por outra organização."
+          : saveError.message.includes("reservado")
+            ? "Esse subdomínio é reservado pelo próprio Materimob."
+            : "Erro ao salvar: " + saveError.message,
+      );
+      return;
+    }
+    setEditing(false);
+    onChange();
+  }
+
+  const temMarca = Boolean(org.cor_primaria || org.cor_secundaria || org.logo_url || org.subdominio);
+
+  if (!editing) {
+    return (
+      <div className="rounded-[14px] border border-rule bg-white p-4">
+        <p className="font-serif text-lg font-semibold text-charcoal">Marca e domínio</p>
+        {temMarca ? (
+          <p className="text-sm text-graytext">
+            {org.nome_exibicao || org.name}
+            {org.subdominio ? ` · https://${org.subdominio}.materimob.com.br` : " · sem subdomínio ainda"}
+          </p>
+        ) : (
+          <p className="text-sm text-graytext">
+            Ainda com a aparência padrão do MaterImob — configure aqui pra vestir o sistema com a
+            cara da organização.
+          </p>
+        )}
+        <button onClick={() => setEditing(true)} className="mt-2 text-xs font-bold text-graytext underline">
+          {temMarca ? "editar marca" : "configurar marca"}
+        </button>
+      </div>
+    );
+  }
+
+  const previewUrl = subdominio.trim() ? `https://${subdominio.trim()}.materimob.com.br` : null;
+
+  return (
+    <div className="rounded-[14px] border border-rule bg-white p-4">
+      <p className="font-serif text-lg font-semibold text-charcoal">Marca e domínio</p>
+      <p className="mt-1 text-xs text-graytext">
+        Aparece pro seu time quando estiver atuando dentro desta organização — no menu, no login e,
+        depois que o domínio estiver ligado, em {subdominio.trim() || "seu-slug"}.materimob.com.br.
+      </p>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-[1.3fr_1fr]">
+        <div className="space-y-3">
+          <div>
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome de exibição</label>
+            <input
+              value={nomeExibicao}
+              onChange={(e) => setNomeExibicao(e.target.value)}
+              placeholder={org.name}
+              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Logo (URL da imagem)</label>
+            <input
+              value={logoUrl}
+              onChange={(e) => setLogoUrl(e.target.value)}
+              placeholder="https://…"
+              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="flex gap-4">
+            <div>
+              <label className="block text-[11.5px] font-bold text-graytext uppercase">Cor primária</label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="color"
+                  value={corPrimaria}
+                  onChange={(e) => setCorPrimaria(e.target.value)}
+                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-rule"
+                />
+                <input
+                  value={corPrimaria}
+                  onChange={(e) => setCorPrimaria(e.target.value)}
+                  className="w-24 rounded-[9px] border-[1.5px] border-rule px-2 py-2 text-xs"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[11.5px] font-bold text-graytext uppercase">Cor secundária</label>
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="color"
+                  value={corSecundaria}
+                  onChange={(e) => setCorSecundaria(e.target.value)}
+                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-rule"
+                />
+                <input
+                  value={corSecundaria}
+                  onChange={(e) => setCorSecundaria(e.target.value)}
+                  className="w-24 rounded-[9px] border-[1.5px] border-rule px-2 py-2 text-xs"
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="block text-[11.5px] font-bold text-graytext uppercase">Subdomínio</label>
+            <div className="mt-1 flex items-stretch">
+              <input
+                value={subdominio}
+                onChange={(e) => setSubdominio(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                placeholder="chaincorp"
+                className="w-full rounded-l-[9px] border-[1.5px] border-r-0 border-rule px-3 py-2 text-sm"
+              />
+              <span className="flex items-center rounded-r-[9px] border-[1.5px] border-rule bg-light px-2 text-xs text-graytext">
+                .materimob.com.br
+              </span>
+            </div>
+            {previewUrl && <p className="mt-1 text-xs text-graytext">→ {previewUrl}</p>}
+          </div>
+
+          {error && <p className="text-sm text-[#B34A2E]">{error}</p>}
+
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              onClick={salvar}
+              disabled={saving}
+              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            >
+              {saving ? "Salvando…" : "Salvar"}
+            </button>
+            <button onClick={() => setEditing(false)} className="text-sm text-graytext underline">
+              cancelar
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[.06em] text-graytext">
+            Pré-visualização
+          </p>
+          <div className="flex h-[150px] overflow-hidden rounded-[12px] border border-rule">
+            <div className="flex w-2/5 flex-col gap-2 p-3" style={{ background: corSecundaria }}>
+              {logoUrl ? (
+                <img src={logoUrl} alt="" className="max-h-5" />
+              ) : (
+                <span
+                  className="text-[9px] font-bold uppercase tracking-[.08em]"
+                  style={{ color: corPrimaria }}
+                >
+                  {(nomeExibicao || org.name).slice(0, 16)}
+                </span>
+              )}
+              <span className="h-[6px] rounded-full" style={{ background: corPrimaria }} />
+              <span className="h-[6px] w-3/4 rounded-full bg-white/15" />
+            </div>
+            <div className="flex-1 space-y-2 bg-[#f7f5f2] p-3">
+              <p className="font-serif text-[13px] font-semibold" style={{ color: corSecundaria }}>
+                {nomeExibicao || org.name}
+              </p>
+              <span className="block h-[5px] w-3/4 rounded-full bg-black/10" />
+              <span className="block h-[5px] w-1/2 rounded-full bg-black/10" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function OrganizationDetail({ org, role, onChange }) {
   const [roster, setRoster] = useState(null);
   const [properties, setProperties] = useState(null);
@@ -309,6 +506,7 @@ function OrganizationDetail({ org, role, onChange }) {
   return (
     <div className="mt-4 space-y-6">
       <OrgHeaderCard org={org} role={role} manage={manage} onChange={onChange} />
+      <MarcaCard org={org} manage={manage} onChange={onChange} />
 
       {incorporadora && manage && dashboard && (
         <div>

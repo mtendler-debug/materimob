@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
+import { useTenantBranding } from "../lib/tenantBranding";
 
 export default function Login() {
   const { user, loading } = useAuth();
+  const marca = useTenantBranding();
   const [mode, setMode] = useState("entrar"); // "entrar" | "cadastrar"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +52,7 @@ export default function Login() {
 
   if (confirmEmailSent) {
     return (
-      <Card>
+      <Card marca={marca}>
         <h1 className="text-center text-xl font-bold text-charcoal">Quase lá</h1>
         <p className="mt-2 text-center text-sm text-graytext">
           Enviamos um link de confirmação para <strong>{email}</strong>.
@@ -61,10 +63,19 @@ export default function Login() {
   }
 
   return (
-    <Card>
-      <h1 className="text-center text-xl font-bold text-charcoal">MaterImob</h1>
+    <Card marca={marca}>
+      {marca?.logo_url && (
+        <img src={marca.logo_url} alt={marca.nome_exibicao || marca.name} className="mx-auto mb-4 max-h-10" />
+      )}
+      <h1 className="text-center text-xl font-bold text-charcoal">
+        {marca?.nome_exibicao || marca?.name || "MaterImob"}
+      </h1>
       <p className="mt-1 text-center text-sm text-graytext">
-        {mode === "entrar" ? "Entrar na sua conta" : "Criar uma conta"}
+        {mode === "entrar"
+          ? marca
+            ? "Portal de parcerias"
+            : "Entrar na sua conta"
+          : "Criar uma conta"}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-3 text-left">
@@ -106,7 +117,12 @@ export default function Login() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="w-full rounded-[10px] px-4 py-[11px] text-sm font-bold hover:opacity-90 disabled:opacity-50"
+          style={
+            marca
+              ? { background: marca.cor_primaria || "#a68a5b", color: marca.cor_secundaria || "#1c1c1c" }
+              : { background: "#1c1c1c", color: "#fff" }
+          }
         >
           {busy ? "Aguarde…" : mode === "entrar" ? "Entrar" : "Criar conta"}
         </button>
@@ -123,13 +139,18 @@ export default function Login() {
           ? "Ainda não tem conta? Criar uma"
           : "Já tem conta? Entrar"}
       </button>
+
+      {marca && <p className="mt-5 text-center text-[10.5px] text-muted">gerenciado por MaterImob</p>}
     </Card>
   );
 }
 
-function Card({ children }) {
+function Card({ children, marca }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-bg p-6">
+    <div
+      className="flex min-h-screen items-center justify-center p-6"
+      style={{ background: marca?.cor_secundaria || "var(--color-bg)" }}
+    >
       <div className="w-full max-w-sm rounded-[20px] bg-white p-8 shadow-sm">{children}</div>
     </div>
   );

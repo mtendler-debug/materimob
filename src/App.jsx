@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { TenantBrandingProvider } from "./lib/tenantBranding";
 import Login from "./pages/Login";
 import Entry from "./pages/Entry";
 import Dashboard from "./pages/Dashboard";
@@ -41,7 +42,8 @@ import Opportunities from "./pages/crm/Opportunities";
 
 export default function App() {
   return (
-    <Routes>
+    <TenantBrandingProvider>
+      <Routes>
       <Route path="/" element={<Entry />} />
       <Route path="/entrar" element={<Login />} />
 
@@ -128,5 +130,6 @@ export default function App() {
       <Route path="/registrar/:token" element={<PublicPartnerForm />} />
       <Route path="/parceria/cadastro" element={<PublicPartnerSignup />} />
     </Routes>
+    </TenantBrandingProvider>
   );
 }

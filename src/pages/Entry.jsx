@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { useProfile, homeForAccountType } from "../lib/useProfile";
+import { useTenantBranding } from "../lib/tenantBranding";
 import Landing from "./Landing";
 
 function Placeholder({ label }) {
@@ -20,9 +21,17 @@ function Placeholder({ label }) {
 export default function Entry() {
   const { user, loading: loadingAuth } = useAuth();
   const { accountType, loading: loadingProfile } = useProfile();
+  const marca = useTenantBranding();
 
   if (loadingAuth) return <Placeholder label="Carregando…" />;
-  if (!user) return <Landing />;
+  // Num subdomínio com marca (ex. chaincorp.materimob.com.br), quem chega
+  // deslogado é time convidado, não lead de marketing — vai direto pro
+  // login em vez da página de vendas do MaterImob. marca === undefined
+  // enquanto resolve o subdomínio; espera pra não piscar a Landing à toa.
+  if (!user) {
+    if (marca === undefined) return <Placeholder label="Carregando…" />;
+    return marca ? <Navigate to="/entrar" replace /> : <Landing />;
+  }
   if (loadingProfile) return <Placeholder label="Carregando…" />;
 
   return <Navigate to={homeForAccountType(accountType)} replace />;
