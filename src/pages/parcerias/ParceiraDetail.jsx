@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { generateToken } from "../../lib/token";
 import { callFunction } from "../../lib/edgeFunctions";
@@ -170,9 +170,12 @@ function MudarStatus({ parceira, onChange }) {
 }
 
 function DadosTab({ parceira, onChange }) {
+  const navigate = useNavigate();
+  const { confirm, toast } = useFeedback();
   const [form, setForm] = useState(parceira);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
 
   function set(field) {
     return (value) => {
@@ -210,6 +213,34 @@ function DadosTab({ parceira, onChange }) {
     setSaving(false);
     setSaved(true);
     onChange();
+  }
+
+  // pc_registros_cliente e pc_comissoes apontam pra parceira sem cascade
+  // (de propósito — histórico de cliente/comissão não pode sumir junto) —
+  // o banco recusa a exclusão sozinho quando existe algum; aqui só traduz
+  // esse erro (23503) em vez de deixar a mensagem crua do Postgres.
+  async function excluir() {
+    if (
+      !(await confirm(
+        `Excluir "${parceira.nome_fantasia}"? Observações, interesses e corretores vinculados somem junto. Essa ação não pode ser desfeita.`,
+        { confirmLabel: "Excluir parceira" },
+      ))
+    )
+      return;
+    setExcluindo(true);
+    const { error } = await supabase.from("pc_parceiras").delete().eq("id", parceira.id);
+    setExcluindo(false);
+    if (error) {
+      toast(
+        error.code === "23503"
+          ? "Não é possível excluir: existem registros de cliente ou comissões vinculados a esta parceira."
+          : "Erro ao excluir: " + error.message,
+        "danger",
+      );
+      return;
+    }
+    toast(`"${parceira.nome_fantasia}" excluída.`);
+    navigate("/app/parcerias/parceiras");
   }
 
   return (
@@ -289,6 +320,17 @@ function DadosTab({ parceira, onChange }) {
           {saving ? "Salvando…" : "Salvar"}
         </button>
         {saved && <span className="text-xs font-bold text-[#2E7D32]">Salvo ✓</span>}
+      </div>
+
+      <div className="mt-6 border-t border-rule pt-4">
+        <button
+          type="button"
+          onClick={excluir}
+          disabled={excluindo}
+          className="text-xs font-bold text-rose-800 underline disabled:opacity-50"
+        >
+          {excluindo ? "excluindo…" : "excluir parceira"}
+        </button>
       </div>
     </form>
   );

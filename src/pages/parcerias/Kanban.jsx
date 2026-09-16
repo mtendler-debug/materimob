@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { supabase } from "../../lib/supabase";
 import { STATUS_FUNIL_LABELS, PRIORIDADE_LABELS, PrioridadeChip } from "./Parceiras";
+import { useFeedback } from "../../lib/feedback";
 
 const PRIORIDADE_ORDEM = { alta: 0, media: 1, baixa: 2 };
 
@@ -19,6 +20,7 @@ const STATUS_FUNIL_COLORS = {
 const COLUNAS = Object.keys(STATUS_FUNIL_LABELS);
 
 export default function Kanban() {
+  const { confirm, toast } = useFeedback();
   const [parceiras, setParceiras] = useState(null);
   const [activeId, setActiveId] = useState(null);
   const [pendente, setPendente] = useState(null); // { parceira, novoStatus }
@@ -38,6 +40,32 @@ export default function Kanban() {
   useEffect(() => {
     load();
   }, []);
+
+  // pc_registros_cliente e pc_comissoes apontam pra parceira sem cascade
+  // (de propósito, pra não sumir histórico de cliente/comissão junto) — o
+  // banco recusa sozinho quando existe algum; aqui só traduz o erro 23503
+  // em vez da mensagem crua do Postgres.
+  async function excluirParceira(p) {
+    if (
+      !(await confirm(
+        `Excluir "${p.nome_fantasia}"? Observações, interesses e corretores vinculados somem junto. Essa ação não pode ser desfeita.`,
+        { confirmLabel: "Excluir parceira" },
+      ))
+    )
+      return;
+    const { error } = await supabase.from("pc_parceiras").delete().eq("id", p.id);
+    if (error) {
+      toast(
+        error.code === "23503"
+          ? "Não é possível excluir: existem registros de cliente ou comissões vinculados a esta parceira."
+          : "Erro ao excluir: " + error.message,
+        "danger",
+      );
+      return;
+    }
+    toast(`"${p.nome_fantasia}" excluída.`);
+    load();
+  }
 
   // Distância mínima antes de considerar arraste: sem isso, todo clique
   // vira um "drag" de zero pixels e o card nunca abre por clique simples.
@@ -129,6 +157,7 @@ export default function Kanban() {
               status={status}
               parceiras={visiveis.filter((p) => p.status_funil === status)}
               onNota={setNotaPendente}
+              onExcluir={excluirParceira}
             />
           ))}
         </div>
@@ -162,7 +191,7 @@ export default function Kanban() {
   );
 }
 
-function Coluna({ status, parceiras, onNota }) {
+function Coluna({ status, parceiras, onNota, onExcluir }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const cor = STATUS_FUNIL_COLORS[status];
 
@@ -188,7 +217,7 @@ function Coluna({ status, parceiras, onNota }) {
       </div>
       <div className="flex-1 space-y-2 px-2 pb-2">
         {parceiras.map((p) => (
-          <Cartao key={p.id} parceira={p} onNota={onNota} />
+          <Cartao key={p.id} parceira={p} onNota={onNota} onExcluir={onExcluir} />
         ))}
         {parceiras.length === 0 && (
           <div className="rounded-[10px] border border-dashed border-rule py-6 text-center text-[11px] text-muted">
@@ -214,7 +243,7 @@ function waLink(telefone, nome) {
   return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
 }
 
-function Cartao({ parceira: p, overlay, onNota }) {
+function Cartao({ parceira: p, overlay, onNota, onExcluir }) {
   const navigate = useNavigate();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: p.id, disabled: overlay });
   const dias = diasSemContato(p.ultimo_contato_em);
@@ -227,13 +256,27 @@ function Cartao({ parceira: p, overlay, onNota }) {
       {...attributes}
       onClick={() => !overlay && !isDragging && navigate(`/app/parcerias/parceiras/${p.id}`)}
       style={{ borderLeftColor: accent }}
-      className={`group select-none rounded-[12px] border border-l-[3px] bg-white p-3 transition-all ${
+      className={`group relative select-none rounded-[12px] border border-l-[3px] bg-white p-3 transition-all ${
         overlay
           ? "rotate-[1.5deg] border-gold"
           : `cursor-pointer border-rule active:cursor-grabbing ${isDragging ? "opacity-30" : "hover:border-gold"}`
       }`}
     >
-      <p className="font-serif text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline">
+      {!overlay && (
+        <button
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onExcluir(p);
+          }}
+          aria-label={`Excluir ${p.nome_fantasia}`}
+          title="Excluir parceira"
+          className="absolute top-2 right-2 rounded-full px-[6px] py-[1px] text-[11px] font-bold text-rose-800 opacity-0 transition-opacity hover:bg-rose-100 group-hover:opacity-100"
+        >
+          ×
+        </button>
+      )}
+      <p className="font-serif text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline pr-4">
         {p.nome_fantasia}
       </p>
       <p className="mt-[3px] text-[11.5px] text-graytext">

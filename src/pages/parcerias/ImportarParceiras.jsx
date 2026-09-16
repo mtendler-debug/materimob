@@ -89,6 +89,30 @@ function normalizarPrioridade(valor) {
   return achado?.[0] ?? null;
 }
 
+// Mescla em vez de duplicar: só preenche o que a parceira já cadastrada
+// ainda não tinha — nunca sobrescreve um dado real que já existia. Status
+// do funil fica de fora de propósito (muda pelo Kanban/card, com a
+// observação obrigatória que já existe lá, nunca silenciosamente aqui).
+function construirPatchMescla(existente, r) {
+  const patch = {};
+  const preencheSeVazio = (campo, novo) => {
+    if (novo && !existente[campo]) patch[campo] = novo;
+  };
+  preencheSeVazio("cidade", r.cidade);
+  preencheSeVazio("uf", r.uf);
+  preencheSeVazio("praca", r.praca);
+  preencheSeVazio("segmento_foco", r.segmento_foco);
+  preencheSeVazio("responsavel_nome", r.responsavel_nome);
+  preencheSeVazio("responsavel_telefone", r.responsavel_telefone);
+  preencheSeVazio("responsavel_email", r.responsavel_email);
+  if (r.prioridade && !existente.prioridade) {
+    patch.prioridade = r.prioridade;
+    patch.prioridade_justificativa = "Definida na importação da planilha.";
+    patch.prioridade_calculada_em = new Date().toISOString();
+  }
+  return patch;
+}
+
 function montarRegistro(linha, colunas, mapeamento) {
   const valores = {};
   colunas.forEach((_, i) => {
@@ -137,7 +161,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
   const [progresso, setProgresso] = useState(0);
   const [resultado, setResultado] = useState(null);
 
-  const nomesExistentes = new Set((parceirasExistentes ?? []).map((p) => normalizar(p.nome_fantasia)));
+  const existentesPorNome = new Map((parceirasExistentes ?? []).map((p) => [normalizar(p.nome_fantasia), p]));
 
   async function lerArquivo(e) {
     const arquivo = e.target.files?.[0];
@@ -190,11 +214,11 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
   // selecionados fica null logo após escolher o arquivo ou remapear uma
   // coluna — computa a seleção padrão aqui (nunca usa `selecionados` null
   // no resto do render) e agenda o valor de verdade pro próximo render.
+  // Tudo marcado por padrão — quem já existe mescla (só preenche o que
+  // faltava) em vez de duplicar, então não há risco em deixar marcado.
   let selecionadosAtual = selecionados;
   if (selecionadosAtual === null) {
-    selecionadosAtual = new Set(
-      registros.map((_, i) => i).filter((i) => !nomesExistentes.has(normalizar(registros[i].nome_fantasia))),
-    );
+    selecionadosAtual = new Set(registros.map((_, i) => i));
     setSelecionados(selecionadosAtual);
   }
 
@@ -203,8 +227,31 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
     const alvo = [...selecionadosAtual].map((i) => registros[i]);
     const falhas = [];
     let feitos = 0;
+    let mesclados = 0;
+    let processados = 0;
     for (const r of alvo) {
-      setProgresso(feitos);
+      setProgresso(processados);
+      processados++;
+      const existente = existentesPorNome.get(normalizar(r.nome_fantasia));
+
+      if (existente) {
+        const patch = construirPatchMescla(existente, r);
+        const { error } = Object.keys(patch).length
+          ? await supabase.from("pc_parceiras").update(patch).eq("id", existente.id)
+          : { error: null };
+        if (error) {
+          falhas.push({ nome: r.nome_fantasia, erro: error.message });
+          continue;
+        }
+        if (r.observacao) {
+          await supabase
+            .from("pc_parceira_observacoes")
+            .insert({ owner_id: userId, parceira_id: existente.id, texto: r.observacao });
+        }
+        mesclados++;
+        continue;
+      }
+
       const { data, error } = await supabase
         .from("pc_parceiras")
         .insert({
@@ -237,7 +284,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
       }
       feitos++;
     }
-    setResultado({ total: alvo.length, feitos, falhas });
+    setResultado({ total: alvo.length, feitos, mesclados, falhas });
     setEtapa("resultado");
   }
 
@@ -311,7 +358,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
           </p>
           <div className="mt-2 space-y-1.5">
             {registros.map((r, i) => {
-              const jaExiste = nomesExistentes.has(normalizar(r.nome_fantasia));
+              const existente = existentesPorNome.get(normalizar(r.nome_fantasia));
               return (
                 <label
                   key={i}
@@ -330,9 +377,9 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
                   </span>
                   <PrioridadeChip prioridade={r.prioridade} />
                   <StatusParceiraChip status={r.status_funil} />
-                  {jaExiste && (
-                    <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-                      já existe uma com esse nome
+                  {existente && (
+                    <span className="rounded-full bg-purple-100 px-[10px] py-1 text-[10.5px] font-bold text-purple-800">
+                      já existe — vai mesclar, sem duplicar
                     </span>
                   )}
                 </label>
@@ -357,7 +404,8 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
       {etapa === "resultado" && resultado && (
         <div className="mt-4">
           <p className="text-sm text-charcoal">
-            <b>{resultado.feitos}</b> parceira(s) importada(s) com sucesso
+            <b>{resultado.feitos}</b> parceira(s) nova(s) importada(s)
+            {resultado.mesclados > 0 && <>, <b>{resultado.mesclados}</b> mesclada(s) com cadastros existentes</>}
             {resultado.falhas.length > 0 && `, ${resultado.falhas.length} com erro`}.
           </p>
           {resultado.falhas.length > 0 && (

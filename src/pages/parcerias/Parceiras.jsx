@@ -66,7 +66,9 @@ export default function Parceiras() {
   async function load() {
     const { data } = await supabase
       .from("pc_parceiras")
-      .select("id, nome_fantasia, cidade, uf, praca, status_funil, prioridade, validado, created_at")
+      .select(
+        "id, nome_fantasia, cidade, uf, praca, segmento_foco, responsavel_nome, responsavel_telefone, responsavel_email, status_funil, prioridade, validado, created_at",
+      )
       .order("nome_fantasia");
     setParceiras(data ?? []);
   }
