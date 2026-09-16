@@ -23,9 +23,9 @@ export const SOURCE_LABELS = {
 export const OPP_TYPES = ["compra", "venda", "permuta"];
 export const OPP_TYPE_LABELS = { compra: "Compra", venda: "Venda", permuta: "Permuta" };
 export const OPP_TYPE_COLORS = {
-  compra: { bg: "#E3EEF5", color: "#2F6690" },
-  venda: { bg: "#FFF3E0", color: "#B26A00" },
-  permuta: { bg: "#F1E4F5", color: "#7A3E8C" },
+  compra: { bg: "#E0F2FE", color: "#075985" },
+  venda: { bg: "#FEF3C7", color: "#92400E" },
+  permuta: { bg: "#F3E8FF", color: "#6B21A8" },
 };
 
 export const OPP_STAGES = ["aberta", "negociacao", "proposta", "fechada", "perdida"];

@@ -5,6 +5,7 @@ import { useOrganization, ROLE_LABELS, canManage } from "../lib/useOrganization"
 import { generateToken } from "../lib/token";
 import { geocodeAddress } from "../lib/geocode";
 import { Map } from "../components/Map";
+import { useFeedback } from "../lib/feedback";
 
 export default function Organization() {
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading, reload } = useOrganization();
@@ -151,6 +152,7 @@ function TipoOption({ value, current, onSelect, children }) {
 }
 
 function OrgHeaderCard({ org, role, manage, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(org.name);
   const [address, setAddress] = useState(org.address ?? "");
@@ -159,16 +161,17 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
 
   async function sair() {
     if (
-      !window.confirm(
+      !(await confirm(
         `Sair de "${org.name}"? Você volta a ser corretor autônomo e perde acesso ao que é exclusivo da organização.`,
-      )
+        { confirmLabel: "Sair da organização" },
+      ))
     )
       return;
     setLeaving(true);
     const { error } = await supabase.from("organization_members").delete().eq("organization_id", org.id);
     if (error) {
       setLeaving(false);
-      window.alert("Não foi possível sair: " + error.message);
+      toast("Não foi possível sair: " + error.message, "danger");
       return;
     }
     window.location.href = "/";
@@ -260,7 +263,7 @@ function MarcaCard({ org, manage, onChange }) {
   const [editing, setEditing] = useState(false);
   const [nomeExibicao, setNomeExibicao] = useState(org.nome_exibicao ?? "");
   const [logoUrl, setLogoUrl] = useState(org.logo_url ?? "");
-  const [corPrimaria, setCorPrimaria] = useState(org.cor_primaria ?? "#A68A5B");
+  const [corPrimaria, setCorPrimaria] = useState(org.cor_primaria ?? "#0284C7");
   const [corSecundaria, setCorSecundaria] = useState(org.cor_secundaria ?? "#1C1C1C");
   const [slug, setSlug] = useState(org.slug ?? "");
   const [saving, setSaving] = useState(false);
@@ -599,7 +602,7 @@ function OrganizationDetail({ org, role, onChange }) {
                     pins={[
                       ...(dashboard.por_parceiro ?? [])
                         .filter((p) => p.latitude != null && p.longitude != null)
-                        .map((p) => ({ lat: p.latitude, lng: p.longitude, label: `${p.name} (imobiliária)`, color: "#a68a5b" })),
+                        .map((p) => ({ lat: p.latitude, lng: p.longitude, label: `${p.name} (imobiliária)`, color: "#0284C7" })),
                       ...(dashboard.top_corretores ?? [])
                         .filter((c) => c.latitude != null && c.longitude != null)
                         .map((c) => ({ lat: c.latitude, lng: c.longitude, label: `${c.full_name || c.email} (corretor)`, color: "#4A6FA5" })),
@@ -948,9 +951,9 @@ function OrganizationDetail({ org, role, onChange }) {
 
 const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
 const UNIT_STATUS_COLORS = {
-  disponivel: { bg: "#E3F0E4", color: "#2E7D32" },
-  reservada: { bg: "#FFF3E0", color: "#B26A00" },
-  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+  disponivel: { bg: "#D1FAE5", color: "#065F46" },
+  reservada: { bg: "#FEF3C7", color: "#92400E" },
+  vendida: { bg: "#FFE4E6", color: "#9F1239" },
 };
 const LAUNCH_STATUS_LABELS = { ativo: "Ativo", encerrado: "Encerrado" };
 const UNIT_STATUS_ORDER = ["disponivel", "reservada", "vendida"];

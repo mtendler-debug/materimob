@@ -11,6 +11,7 @@ import {
   OPP_TYPE_LABELS,
   OPP_TYPE_COLORS,
 } from "../../lib/crm";
+import { useFeedback } from "../../lib/feedback";
 
 // Best-effort: leva o lead também pro Leadlinks (CRM de WhatsApp em
 // paralelo que o Marcos já usa). Nunca bloqueia a criação do lead no
@@ -29,15 +30,17 @@ function syncLeadToLeadlinks({ name, phone, email, source }) {
 }
 
 export default function Leads() {
+  const { confirm, toast } = useFeedback();
   const { leads, error, reload } = useLeadsWithOpportunities();
   const [busca, setBusca] = useState("");
   const [filtroEtapa, setFiltroEtapa] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   async function removerLead(id) {
-    if (!window.confirm("Remover este lead? As oportunidades vinculadas também somem.")) return;
+    if (!(await confirm("Remover este lead? As oportunidades vinculadas também somem.", { confirmLabel: "Remover" }))) return;
     await supabase.from("av_leads").delete().eq("id", id);
     reload();
+    toast("Lead removido.");
   }
 
   if (error) return <p className="text-sm text-red-600">{error}</p>;

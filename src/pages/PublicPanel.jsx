@@ -4,6 +4,7 @@ import { callFunction } from "../lib/edgeFunctions";
 import { Gantt } from "../components/Gantt";
 import { PropertyMedia } from "../components/PropertyMedia";
 import { Map } from "../components/Map";
+import { useFeedback } from "../lib/feedback";
 
 function n1(v) {
   return v == null ? "—" : (Math.round(v * 10) / 10).toFixed(1).replace(".", ",");
@@ -61,7 +62,7 @@ function BackToTop() {
           cy="22"
           r={R}
           fill="none"
-          stroke="#A68A5B"
+          stroke="#0284C7"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -144,7 +145,7 @@ export default function PublicPanel() {
 
       <div className="mx-auto max-w-[900px] px-[18px] pt-8 pb-16">
         {archived && (
-          <Card className="mt-0" style={{ background: "#F4EFE6", borderLeft: "5px solid #A68A5B" }}>
+          <Card className="mt-0" style={{ background: "#F4EFE6", borderLeft: "5px solid #0284C7" }}>
             <b>Atendimento encerrado.</b> Este painel segue disponível para consulta, mas o formulário
             de avaliação não recebe mais respostas.
           </Card>
@@ -165,7 +166,7 @@ export default function PublicPanel() {
               <Map
                 pins={properties
                   .filter((p) => p.latitude != null && p.longitude != null)
-                  .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#A68A5B" }))}
+                  .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#0284C7" }))}
                 height={260}
               />
               <div className="flex flex-wrap gap-4 border-t border-rule px-[18px] py-3 text-[12.5px] text-graytext">
@@ -175,7 +176,7 @@ export default function PublicPanel() {
                     <span key={p.id}>
                       <i
                         className="mr-[6px] inline-block h-2 w-2 rounded-full align-[-1px]"
-                        style={{ background: p.color || "#A68A5B" }}
+                        style={{ background: p.color || "#0284C7" }}
                       />
                       {p.name}
                     </span>
@@ -195,11 +196,11 @@ export default function PublicPanel() {
               className={`mb-[10px] flex items-center gap-[16px] rounded-[14px] border border-rule bg-white p-[16px] ${
                 i === 0 ? "border-l-4" : "border-l-[3px]"
               }`}
-              style={{ borderLeftColor: r.color || "#A68A5B" }}
+              style={{ borderLeftColor: r.color || "#0284C7" }}
             >
               <div
                 className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
-                style={{ background: r.color || "#A68A5B" }}
+                style={{ background: r.color || "#0284C7" }}
               >
                 {r.posicao}
               </div>
@@ -211,7 +212,7 @@ export default function PublicPanel() {
                 <div className="mt-[9px] h-[5px] max-w-[320px] overflow-hidden rounded-full bg-light">
                   <div
                     className="h-full rounded-full"
-                    style={{ width: `${r.score * 10}%`, background: r.color || "#A68A5B" }}
+                    style={{ width: `${r.score * 10}%`, background: r.color || "#0284C7" }}
                   />
                 </div>
               </div>
@@ -283,7 +284,7 @@ export default function PublicPanel() {
                           <td
                             key={c.property_id}
                             className="border-b border-rule p-[10px] text-center text-graytext"
-                            style={v == null ? {} : { background: shade(c.color || "#A68A5B", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
+                            style={v == null ? {} : { background: shade(c.color || "#0284C7", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
                           >
                             {n1(v)}
                           </td>
@@ -322,7 +323,7 @@ export default function PublicPanel() {
                 return (
                   <Card key={c.property_id}>
                     <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
-                      <b className="font-serif text-[15.5px] font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                      <b className="font-serif text-[15.5px] font-semibold" style={{ color: c.color || "#0284C7" }}>{c.name}</b>
                       <span className="text-[11.5px] text-muted">
                         {property.extra_criteria.length} critério(s) exclusivo(s) · {rankEntry?.avaliacoes ?? 0} avaliação(ões)
                       </span>
@@ -334,9 +335,9 @@ export default function PublicPanel() {
                         <div key={crit} className="flex items-center gap-3 border-b border-rule py-[11px] last:border-0">
                           <div className="min-w-0 flex-1 text-[13.5px] text-graytext">{crit}</div>
                           <div className="h-[7px] w-[110px] flex-none overflow-hidden rounded-full bg-light">
-                            <div className="h-full rounded-full" style={{ width: `${v ? (v / 5) * 100 : 0}%`, background: c.color || "#A68A5B" }} />
+                            <div className="h-full rounded-full" style={{ width: `${v ? (v / 5) * 100 : 0}%`, background: c.color || "#0284C7" }} />
                           </div>
-                          <div className="w-14 flex-none text-right text-sm font-bold" style={{ color: v ? c.color || "#A68A5B" : "#9A9A9A" }}>
+                          <div className="w-14 flex-none text-right text-sm font-bold" style={{ color: v ? c.color || "#0284C7" : "#9A9A9A" }}>
                             {v == null ? "—" : `${n1(v)}/5`}
                           </div>
                         </div>
@@ -357,7 +358,7 @@ export default function PublicPanel() {
             {porUnidade.map((p) => (
               <Card key={p.property_id}>
                 <div className="mb-[6px] flex flex-wrap items-baseline gap-[9px]">
-                  <b className="font-serif text-[15.5px] font-semibold" style={{ color: p.color || "#A68A5B" }}>{p.name}</b>
+                  <b className="font-serif text-[15.5px] font-semibold" style={{ color: p.color || "#0284C7" }}>{p.name}</b>
                   <span className="text-[11.5px] text-muted">{p.units.length} unidades avaliadas</span>
                 </div>
                 {p.units
@@ -369,7 +370,7 @@ export default function PublicPanel() {
                         {u.table_value ? ` · ${brl(u.table_value)}` : ""} · {u.evaluations_count} avaliação(ões)
                       </div>
                       <UnitStatusBadge status={u.status} />
-                      <div className="font-bold" style={{ color: p.color || "#A68A5B" }}>{n1(u.overall_avg)}/10</div>
+                      <div className="font-bold" style={{ color: p.color || "#0284C7" }}>{n1(u.overall_avg)}/10</div>
                     </div>
                   ))}
               </Card>
@@ -397,13 +398,13 @@ export default function PublicPanel() {
         ) : (
           comentarios.map((c) => (
             <div key={c.property_id} className="mb-5">
-              <div className="font-serif mb-2 text-[15px] font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</div>
+              <div className="font-serif mb-2 text-[15px] font-semibold" style={{ color: c.color || "#0284C7" }}>{c.name}</div>
               {c.comentarios.map((cm, i) => (
                 <div key={i} className="mb-[10px] rounded-[14px] border border-rule bg-white p-4">
                   <div className="mb-2 flex items-center gap-[10px]">
                     <span
                       className="flex h-7 w-7 flex-none items-center justify-center rounded-full text-xs font-bold text-white"
-                      style={{ background: c.color || "#A68A5B" }}
+                      style={{ background: c.color || "#0284C7" }}
                     >
                       {cm.evaluator_name?.[0]?.toUpperCase() ?? "?"}
                     </span>
@@ -447,7 +448,7 @@ function PropertyAboutCard({ property }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-3 text-left"
       >
-        <b className="font-serif text-[16px] font-semibold" style={{ color: property.color || "#A68A5B" }}>{property.name}</b>
+        <b className="font-serif text-[16px] font-semibold" style={{ color: property.color || "#0284C7" }}>{property.name}</b>
         <span className={`shrink-0 text-graytext transition-transform duration-200 ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
       {open && (
@@ -466,6 +467,7 @@ function PropertyAboutCard({ property }) {
 }
 
 function Proposals({ token, proposals, properties, archived, onChange }) {
+  const { confirm, toast } = useFeedback();
   if (proposals.length === 0) {
     return (
       <Empty>
@@ -476,9 +478,10 @@ function Proposals({ token, proposals, properties, archived, onChange }) {
   }
 
   async function remove(id) {
-    if (!window.confirm("Remover esta proposta?")) return;
+    if (!(await confirm("Remover esta proposta?"))) return;
     await callFunction("aval-proposal", { method: "DELETE", params: { token, id } });
     onChange();
+    toast("Proposta removida.");
   }
 
   return (
@@ -488,7 +491,7 @@ function Proposals({ token, proposals, properties, archived, onChange }) {
         const unit = property?.units?.find((u) => u.id === x.unit_id);
         const desagio = x.table_value ? (1 - x.value / x.table_value) * 100 : null;
         return (
-          <Card key={x.id} style={{ borderLeft: `4px solid ${property?.color || "#A68A5B"}` }}>
+          <Card key={x.id} style={{ borderLeft: `4px solid ${property?.color || "#0284C7"}` }}>
             <div className="flex flex-wrap items-baseline gap-[10px]">
               <b className="font-serif text-[17px] font-semibold">{brl(x.value)}</b>
               {desagio != null && (
@@ -506,7 +509,7 @@ function Proposals({ token, proposals, properties, archived, onChange }) {
               </span>
             </div>
             <div className="mt-1 text-[13px] text-graytext">
-              <span className="font-bold" style={{ color: property?.color || "#A68A5B" }}>
+              <span className="font-bold" style={{ color: property?.color || "#0284C7" }}>
                 {property?.name}
               </span>
               {unit ? ` · ${unit.name}` : ""}
@@ -769,8 +772,8 @@ function Empty({ children }) {
 
 const UNIT_STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
 const UNIT_STATUS_COLORS = {
-  reservada: { bg: "#FFF3E0", color: "#B26A00" },
-  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+  reservada: { bg: "#FEF3C7", color: "#92400E" },
+  vendida: { bg: "#FFE4E6", color: "#9F1239" },
 };
 
 function UnitStatusBadge({ status }) {

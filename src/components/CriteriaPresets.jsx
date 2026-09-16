@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { useFeedback } from "../lib/feedback";
 
 // Seletor de modelos de critérios reutilizáveis: o corretor monta a lista de
 // critérios que quiser (no bloco de notas dele, se preferir) e salva aqui
 // como modelo, pra reaproveitar em outras seleções sem digitar de novo.
 export function CriteriaPresets({ criteriaText, onApply }) {
+  const { confirm, toast } = useFeedback();
   const [presets, setPresets] = useState([]);
   const [selected, setSelected] = useState("");
   const [naming, setNaming] = useState(false);
@@ -23,10 +25,13 @@ export function CriteriaPresets({ criteriaText, onApply }) {
     load();
   }, []);
 
-  function apply(id) {
+  async function apply(id) {
     const preset = presets.find((p) => p.id === id);
     if (!preset) return;
-    if (criteriaText.trim() && !window.confirm(`Substituir os critérios atuais pelos do modelo "${preset.name}"?`)) {
+    if (
+      criteriaText.trim() &&
+      !(await confirm(`Substituir os critérios atuais pelos do modelo "${preset.name}"?`, { tone: "warning", confirmLabel: "Substituir" }))
+    ) {
       return;
     }
     onApply(preset.criteria.join("\n"));
@@ -54,15 +59,17 @@ export function CriteriaPresets({ criteriaText, onApply }) {
     setNaming(false);
     setName("");
     load();
+    toast(`Modelo "${trimmed}" salvo.`);
   }
 
   async function remove() {
     const preset = presets.find((p) => p.id === selected);
     if (!preset) return;
-    if (!window.confirm(`Excluir o modelo "${preset.name}"?`)) return;
+    if (!(await confirm(`Excluir o modelo "${preset.name}"?`))) return;
     await supabase.from("av_criteria_presets").delete().eq("id", preset.id);
     setSelected("");
     load();
+    toast(`Modelo "${preset.name}" excluído.`);
   }
 
   return (

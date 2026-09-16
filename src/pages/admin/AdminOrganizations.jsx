@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useFeedback } from "../../lib/feedback";
 
 const TIPO_LABELS = { imobiliaria: "Imobiliária", incorporadora: "Incorporadora" };
 const STATUS_LABELS = { ativa: "Ativa", pendente: "Pendente", suspensa: "Suspensa" };
 const STATUS_COLORS = {
-  ativa: { bg: "#E3F0E4", color: "#2E7D32" },
-  pendente: { bg: "#FFF3E0", color: "#B26A00" },
-  suspensa: { bg: "#F1E4E0", color: "#B34A2E" },
+  ativa: { bg: "#D1FAE5", color: "#065F46" },
+  pendente: { bg: "#FEF3C7", color: "#92400E" },
+  suspensa: { bg: "#FFE4E6", color: "#9F1239" },
 };
 
 export default function AdminOrganizations() {
+  const { confirm, toast } = useFeedback();
   const [orgs, setOrgs] = useState(null);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
@@ -28,27 +30,29 @@ export default function AdminOrganizations() {
   async function toggleStatus(org) {
     const novoStatus = org.status === "suspensa" ? "ativa" : "suspensa";
     const acao = novoStatus === "suspensa" ? "suspender" : "reativar";
-    if (!window.confirm(`Confirma ${acao} "${org.name}"?`)) return;
+    if (!(await confirm(`Confirma ${acao} "${org.name}"?`, { tone: novoStatus === "suspensa" ? "danger" : "info" }))) return;
     setBusyId(org.id);
     const { error } = await supabase.from("organizations").update({ status: novoStatus }).eq("id", org.id);
     setBusyId(null);
     if (error) {
-      alert("Erro: " + error.message);
+      toast("Erro: " + error.message, "danger");
       return;
     }
+    toast(`"${org.name}" ${novoStatus === "suspensa" ? "suspensa" : "reativada"}.`);
     load();
   }
 
   async function toggleCrm(org) {
     const acao = org.crm_included ? "remover" : "incluir";
-    if (!window.confirm(`Confirma ${acao} o CRM no plano de "${org.name}"?`)) return;
+    if (!(await confirm(`Confirma ${acao} o CRM no plano de "${org.name}"?`))) return;
     setBusyId(org.id);
     const { error } = await supabase.from("organizations").update({ crm_included: !org.crm_included }).eq("id", org.id);
     setBusyId(null);
     if (error) {
-      alert("Erro: " + error.message);
+      toast("Erro: " + error.message, "danger");
       return;
     }
+    toast(`CRM ${acao === "incluir" ? "incluído no" : "removido do"} plano de "${org.name}".`);
     load();
   }
 
@@ -95,7 +99,7 @@ export default function AdminOrganizations() {
               <td className="border-b border-rule p-[10px]">
                 <span
                   className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
-                  style={o.crm_included ? { background: "#E3F0E4", color: "#2E7D32" } : { background: "#EDEAE4", color: "#5C5C5C" }}
+                  style={o.crm_included ? { background: "#D1FAE5", color: "#065F46" } : { background: "#F1F5F9", color: "#475569" }}
                 >
                   {o.crm_included ? "incluído" : "não incluído"}
                 </span>

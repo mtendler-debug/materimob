@@ -57,7 +57,7 @@ export default function Properties() {
             </h2>
             <div className="mb-6 space-y-3">
               {picksResolvidos.map((it) => (
-                <div key={`pick-${it.kind}-${it.id}`} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${it.color || "#A68A5B"}` }}>
+                <div key={`pick-${it.kind}-${it.id}`} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${it.color || "#0284C7"}` }}>
                   <p className="font-serif font-semibold text-charcoal">{it.name}</p>
                   {it.orgName && <p className="text-xs text-graytext">{it.orgName}</p>}
                   {it.note && (

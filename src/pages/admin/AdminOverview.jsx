@@ -124,7 +124,7 @@ export default function AdminOverview() {
           <SectionTitle>Mapa da plataforma</SectionTitle>
           <p className="mb-2 text-xs text-graytext">
             <span className="mr-3">
-              <span className="inline-block h-[9px] w-[9px] rounded-full align-middle" style={{ background: "#a68a5b" }} /> lançamento
+              <span className="inline-block h-[9px] w-[9px] rounded-full align-middle" style={{ background: "#0284C7" }} /> lançamento
             </span>
             <span>
               <span className="inline-block h-[9px] w-[9px] rounded-full align-middle" style={{ background: "#4A6FA5" }} /> portfólio
@@ -136,7 +136,7 @@ export default function AdminOverview() {
                 lat: m.latitude,
                 lng: m.longitude,
                 label: m.name,
-                color: m.tipo === "lancamento" ? "#a68a5b" : "#4A6FA5",
+                color: m.tipo === "lancamento" ? "#0284C7" : "#4A6FA5",
               }))}
               height={320}
             />

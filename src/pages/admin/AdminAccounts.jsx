@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../lib/AuthContext";
+import { useFeedback } from "../../lib/feedback";
 
 const TIPO_LABELS = { corretor: "Corretor", imobiliaria: "Imobiliária", incorporadora: "Incorporadora" };
 
 export default function AdminAccounts() {
   const { user } = useAuth();
+  const { confirm, toast } = useFeedback();
   const [accounts, setAccounts] = useState(null);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
@@ -22,33 +24,36 @@ export default function AdminAccounts() {
 
   async function toggleAdmin(account) {
     if (account.id === user?.id) {
-      alert("Você não pode remover o próprio acesso de administrador por aqui.");
+      toast("Você não pode remover o próprio acesso de administrador por aqui.", "warning");
       return;
     }
     const acao = account.e_admin ? "remover" : "conceder";
-    if (!window.confirm(`Confirma ${acao} acesso de administrador para ${account.email}?`)) return;
+    if (!(await confirm(`Confirma ${acao} acesso de administrador para ${account.email}?`, { tone: account.e_admin ? "danger" : "info" })))
+      return;
     setBusyId(account.id);
     const { error } = account.e_admin
       ? await supabase.from("platform_admins").delete().eq("user_id", account.id)
       : await supabase.from("platform_admins").insert({ user_id: account.id });
     setBusyId(null);
     if (error) {
-      alert("Erro: " + error.message);
+      toast("Erro: " + error.message, "danger");
       return;
     }
+    toast(`Acesso de administrador ${acao === "conceder" ? "concedido a" : "removido de"} ${account.email}.`);
     load();
   }
 
   async function deleteAccount(account) {
     if (account.id === user?.id) {
-      alert("Você não pode excluir a própria conta por aqui.");
+      toast("Você não pode excluir a própria conta por aqui.", "warning");
       return;
     }
-    const ok = window.confirm(
+    const ok = await confirm(
       `Excluir "${account.full_name || account.email}" (${account.email})?\n\n` +
         `Os roteiros, avaliações, propostas e estoque pessoal dessa conta somem junto. ` +
         `Organizações que ela criou continuam existindo, só perdem a atribuição de quem criou.\n\n` +
         `Essa ação não pode ser desfeita.`,
+      { confirmLabel: "Excluir conta" },
     );
     if (!ok) return;
     setBusyId(account.id);
@@ -57,9 +62,10 @@ export default function AdminAccounts() {
     });
     setBusyId(null);
     if (fnError || data?.error) {
-      alert("Erro: " + (data?.error || fnError.message));
+      toast("Erro: " + (data?.error || fnError.message), "danger");
       return;
     }
+    toast(`Conta de ${account.email} excluída.`);
     load();
   }
 

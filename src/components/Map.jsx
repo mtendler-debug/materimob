@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css";
 function pinIcon(color) {
   return L.divIcon({
     className: "",
-    html: `<div style="width:16px;height:16px;border-radius:50%;background:${color || "#a68a5b"};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.4)"></div>`,
+    html: `<div style="width:16px;height:16px;border-radius:50%;background:${color || "#0284C7"};border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.4)"></div>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   });

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { addClientToCrm } from "../lib/crm";
+import { useFeedback } from "../lib/feedback";
 
 export default function Selections() {
   const [selections, setSelections] = useState(null);
@@ -81,13 +82,15 @@ export default function Selections() {
 }
 
 function SelectionRow({ selection: s, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [crmMsg, setCrmMsg] = useState("");
 
   async function alternarArquivado() {
     const acao = s.archived ? "reativar" : "desativar";
-    if (!window.confirm(`Confirma ${acao} este roteiro?`)) return;
+    if (!(await confirm(`Confirma ${acao} este roteiro?`, { tone: s.archived ? "info" : "danger" }))) return;
     await supabase.from("av_selections").update({ archived: !s.archived }).eq("id", s.id);
     onChange();
+    toast(`Roteiro ${s.archived ? "reativado" : "desativado"}.`);
   }
 
   async function adicionarAoCRM() {

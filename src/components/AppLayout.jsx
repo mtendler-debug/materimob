@@ -33,9 +33,9 @@ export default function AppLayout() {
     if (souMembro && activeOrgId !== marcaPortal.id) setActiveOrgId(marcaPortal.id);
   }, [marcaPortal, loadingOrg, memberships, activeOrgId, setActiveOrgId]);
 
-  // A marca da organização ativa (cores/logo) reskina a casca do app —
-  // funciona tanto vindo do portal com marca quanto trocando em "Ver
-  // como".
+  // A marca da organização ativa (cores/logo) segue reskinando a sidebar
+  // por cima da base pastel — funciona tanto vindo do portal com marca
+  // quanto trocando em "Ver como".
   const marca = org?.cor_primaria || org?.cor_secundaria ? org : null;
   const corSidebar = marca?.cor_secundaria || undefined;
   const corDestaque = marca?.cor_primaria || undefined;
@@ -92,39 +92,49 @@ export default function AppLayout() {
     ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoAdmin]
     : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoAdmin];
 
+  const { grupoLabel, itemLabel } = breadcrumbAtual(grupos, location.pathname);
+
   return (
     <div className="min-h-screen bg-bg md:flex">
-      <div
-        className="flex items-center justify-between bg-charcoal px-4 py-3 text-white md:hidden"
-        style={corSidebar ? { background: corSidebar } : undefined}
-      >
-        <span className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold" style={corDestaque ? { color: corDestaque } : undefined}>
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:hidden">
+        <span className="text-[10.5px] font-bold tracking-[.2em] text-slate-800 uppercase">
           {marca?.nome_exibicao || marca?.name || "MaterImob"}
         </span>
-        <button onClick={() => setMobileOpen(true)} aria-label="Abrir menu" className="px-1 text-2xl leading-none">
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Abrir menu"
+          className="rounded-lg px-2 py-1 text-2xl leading-none text-slate-500 transition-colors hover:bg-slate-100"
+        >
           ☰
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-30 bg-slate-900/30 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-none flex-col overflow-y-auto bg-charcoal text-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-none flex-col overflow-y-auto border-r border-slate-200 bg-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={corSidebar ? { background: corSidebar } : undefined}
       >
-        <div className="px-5 pt-6 pb-4">
-          {marca?.logo_url ? (
-            <img src={marca.logo_url} alt={marca.nome_exibicao || marca.name} className="max-h-7" />
-          ) : (
+        <div className="space-y-2 px-5 pt-6 pb-4">
+          <div className="text-[10.5px] font-bold tracking-[.2em] text-slate-800 uppercase">MaterImob</div>
+
+          {/* Selo do cliente ativo — a organização em que o usuário está
+              atuando agora, independente de ela ter cor própria configurada. */}
+          {org && (
             <div
-              className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold"
-              style={corDestaque ? { color: corDestaque } : undefined}
+              className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-purple-200 bg-purple-100 px-2.5 py-1 text-[11px] font-semibold text-purple-800"
+              style={corDestaque ? { background: "rgba(255,255,255,.16)", borderColor: "rgba(255,255,255,.3)", color: corSidebar ? "#fff" : undefined } : undefined}
+              title={org.nome_exibicao || org.name}
             >
-              {marca?.nome_exibicao || "MaterImob"}
+              {marca?.logo_url ? (
+                <img src={marca.logo_url} alt="" className="h-3.5 max-w-[60px] object-contain" />
+              ) : (
+                <span className="truncate">{org.nome_exibicao || org.name}</span>
+              )}
             </div>
           )}
         </div>
@@ -134,7 +144,7 @@ export default function AppLayout() {
             <select
               value={activeOrgId ?? ""}
               onChange={(e) => setActiveOrgId(e.target.value)}
-              className="w-full rounded-[9px] border border-[#444] bg-charcoal px-2 py-1.5 text-xs text-white"
+              className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-700 transition-colors focus:border-sky-300 focus:outline-none"
             >
               {memberships.map((m) => (
                 <option key={m.organizations.id} value={m.organizations.id}>
@@ -151,7 +161,7 @@ export default function AppLayout() {
             .filter((g) => g.itens.length > 0)
             .map((g) => (
               <div key={g.label} className="mb-5">
-                <p className="mb-1.5 px-2 text-[9.5px] font-bold tracking-[.1em] text-[#8A8477] uppercase">{g.label}</p>
+                <p className="mb-1.5 px-2 text-[9.5px] font-bold tracking-[.1em] text-slate-400 uppercase">{g.label}</p>
                 {g.itens.map((i) => (
                   <NavLink
                     key={i.to}
@@ -159,13 +169,15 @@ export default function AppLayout() {
                     end={i.end}
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
-                      `block rounded-[8px] border-l-[2.5px] px-[9px] py-2 text-[13.5px] font-semibold ${
+                      `block rounded-lg px-[9px] py-2 text-[13.5px] font-semibold transition-colors ${
                         isActive
-                          ? `${corDestaque ? "" : "border-gold"} bg-[#262220] text-white`
-                          : "border-transparent text-[#CFC9BD] hover:text-white"
+                          ? "bg-sky-100 text-sky-800"
+                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
                       }`
                     }
-                    style={({ isActive }) => (isActive && corDestaque ? { borderLeftColor: corDestaque } : undefined)}
+                    style={({ isActive }) =>
+                      isActive && corDestaque ? { background: "rgba(255,255,255,.18)", color: corSidebar ? "#fff" : undefined } : undefined
+                    }
                   >
                     {i.label}
                   </NavLink>
@@ -174,19 +186,37 @@ export default function AppLayout() {
             ))}
         </nav>
 
-        <div className="mt-auto border-t border-[#333] px-5 py-4 text-[11px] text-[#8A8477]">
-          <p className="truncate text-[#B9B9B9]">{user?.email}</p>
-          <button onClick={signOut} className="mt-1 underline hover:text-white">
+        <div className="mt-auto border-t border-slate-200 px-5 py-4 text-[11px] text-slate-400">
+          <p className="truncate text-slate-500">{user?.email}</p>
+          <button onClick={signOut} className="mt-1 font-semibold text-slate-500 underline transition-colors hover:text-slate-800">
             Sair
           </button>
         </div>
       </aside>
 
       <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-20 hidden border-b border-slate-200 bg-white/90 px-6 py-3 backdrop-blur md:block">
+          <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] font-medium text-slate-400">
+            <span>MaterImob</span>
+            {grupoLabel && (
+              <>
+                <span aria-hidden="true">/</span>
+                <span>{grupoLabel}</span>
+              </>
+            )}
+            {itemLabel && (
+              <>
+                <span aria-hidden="true">/</span>
+                <span className="text-slate-700">{itemLabel}</span>
+              </>
+            )}
+          </nav>
+        </header>
+
         {aviso && (
-          <div className="border-b border-rule bg-light px-6 py-2 text-center text-xs text-graytext">
-            {aviso}{" "}
-            <button onClick={() => setAviso(null)} className="ml-2 underline hover:text-charcoal">
+          <div className="flex items-center justify-center gap-2 border-b border-sky-200 bg-sky-100 px-6 py-2 text-center text-xs text-sky-800">
+            {aviso}
+            <button onClick={() => setAviso(null)} className="font-semibold underline transition-colors hover:text-sky-900">
               fechar
             </button>
           </div>
@@ -195,4 +225,17 @@ export default function AppLayout() {
       </div>
     </div>
   );
+}
+
+// Deriva "grupo / item" do menu a partir do caminho atual — sem precisar
+// anotar cada rota com o próprio breadcrumb à parte.
+function breadcrumbAtual(grupos, pathname) {
+  for (const g of grupos.filter(Boolean)) {
+    for (const i of g.itens) {
+      if (i.end ? pathname === i.to : pathname.startsWith(i.to)) {
+        return { grupoLabel: g.label, itemLabel: i.label };
+      }
+    }
+  }
+  return { grupoLabel: null, itemLabel: null };
 }

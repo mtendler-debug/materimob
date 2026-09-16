@@ -6,6 +6,7 @@ import { generateToken } from "../lib/token";
 import { parseCsv, downloadCsv } from "../lib/csv";
 import { importarLancamento } from "../lib/importar";
 import { ImageUploader } from "../components/ImageUploader";
+import { useFeedback } from "../lib/feedback";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -16,9 +17,9 @@ function n1(v) {
 
 const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
 const STATUS_COLORS = {
-  disponivel: { bg: "#E3F0E4", color: "#2E7D32" },
-  reservada: { bg: "#FFF3E0", color: "#B26A00" },
-  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+  disponivel: { bg: "#D1FAE5", color: "#065F46" },
+  reservada: { bg: "#FEF3C7", color: "#92400E" },
+  vendida: { bg: "#FFE4E6", color: "#9F1239" },
 };
 const STAGE_LABELS = { "a-visitar": "A visitar", visitado: "Visitado", negociacao: "Em negociação", descartado: "Descartado" };
 
@@ -80,7 +81,7 @@ export default function LaunchDetail() {
           ← Lançamentos
         </Link>
 
-        <div className="mt-3" style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}`, paddingLeft: 14 }}>
+        <div className="mt-3" style={{ borderLeft: `5px solid ${launch.color || "#0284C7"}`, paddingLeft: 14 }}>
           <h1 className="font-serif text-[24px] font-semibold text-charcoal">{launch.name}</h1>
           {launch.organizations?.name && (
             <p className="text-xs text-graytext">
@@ -300,6 +301,7 @@ function LaunchDashboard({ dashboard }) {
 }
 
 function UnitRow({ unit, manage, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(unit.name);
   const [value, setValue] = useState(unit.table_value ?? "");
@@ -333,23 +335,26 @@ function UnitRow({ unit, manage, onChange }) {
   }
 
   async function remover() {
-    if (!window.confirm(`Remover "${unit.name}"?`)) return;
+    if (!(await confirm(`Remover "${unit.name}"?`))) return;
     await supabase.from("av_launch_units").delete().eq("id", unit.id);
     onChange();
+    toast(`"${unit.name}" removida.`);
   }
 
   async function markSold() {
-    if (!window.confirm(`Marcar "${unit.name}" como vendida?`)) return;
+    if (!(await confirm(`Marcar "${unit.name}" como vendida?`, { tone: "warning", confirmLabel: "Marcar como vendida" }))) return;
     await supabase.from("av_launch_units").update({ status: "vendida" }).eq("id", unit.id);
     onChange();
+    toast(`"${unit.name}" marcada como vendida.`);
   }
   async function release() {
-    if (!window.confirm(`Desfazer a reserva de "${unit.name}"?`)) return;
+    if (!(await confirm(`Desfazer a reserva de "${unit.name}"?`, { tone: "warning", confirmLabel: "Desfazer reserva" }))) return;
     await supabase
       .from("av_launch_units")
       .update({ status: "disponivel", reserved_by: null, reserved_for: null })
       .eq("id", unit.id);
     onChange();
+    toast("Reserva desfeita.");
   }
 
   if (editing) {

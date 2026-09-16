@@ -3,12 +3,14 @@ import { supabase } from "../lib/supabase";
 import { useOrganization } from "../lib/useOrganization";
 import { loadCatalogItems } from "../lib/catalogo";
 import { CatalogBrowser } from "../components/CatalogBrowser";
+import { useFeedback } from "../lib/feedback";
 
 // A curadoria de verdade da imobiliária: escolhe, de qualquer origem da
 // plataforma, o que o time dela deve estar oferecendo. Mecanismo puro —
 // nenhuma categoria embutida, a imobiliária escolhe o que quiser e escreve
 // a observação que quiser. Aparece pro time em /app/imoveis.
 export default function TeamPicks() {
+  const { confirm, toast } = useFeedback();
   const { org, loading: loadingOrg } = useOrganization();
   const [picks, setPicks] = useState(null);
   const [items, setItems] = useState(null);
@@ -55,9 +57,10 @@ export default function TeamPicks() {
   }
 
   async function remover(pickId) {
-    if (!window.confirm("Remover da seleção do time?")) return;
+    if (!(await confirm("Remover da seleção do time?"))) return;
     await supabase.from("av_team_picks").delete().eq("id", pickId);
     loadPicks();
+    toast("Removido da seleção do time.");
   }
 
   async function editarNota(pick) {
@@ -96,7 +99,7 @@ export default function TeamPicks() {
         {picksResolvidos.length === 0 && <p className="text-sm text-muted">Nenhum item selecionado ainda.</p>}
         <div className="space-y-2">
           {picksResolvidos.map(({ pick, item }, i) => (
-            <div key={pick.id} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#A68A5B"}` }}>
+            <div key={pick.id} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#0284C7"}` }}>
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
                   <p className="font-serif font-semibold text-charcoal">{item.name}</p>

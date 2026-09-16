@@ -7,6 +7,7 @@ import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
 import { BookImporter } from "../components/BookImporter";
 import { geocodeAddress } from "../lib/geocode";
+import { useFeedback } from "../lib/feedback";
 
 function linesToArray(text) {
   return text
@@ -78,6 +79,7 @@ export default function Portfolio() {
 }
 
 function PortfolioPropertyEditor({ property, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [name, setName] = useState(property.name);
   const [color, setColor] = useState(property.color || "#5C5C5C");
   const [address, setAddress] = useState(property.address ?? "");
@@ -132,9 +134,10 @@ function PortfolioPropertyEditor({ property, onChange }) {
   }
 
   async function remove() {
-    if (!window.confirm(`Remover "${property.name}" do portfólio?`)) return;
+    if (!(await confirm(`Remover "${property.name}" do portfólio?`))) return;
     await supabase.from("av_portfolio_properties").delete().eq("id", property.id);
     onChange();
+    toast(`"${property.name}" removido do portfólio.`);
   }
 
   async function addUnit(e) {
@@ -162,18 +165,20 @@ function PortfolioPropertyEditor({ property, onChange }) {
   }
 
   async function markSold(unitId) {
-    if (!window.confirm("Marcar esta unidade como vendida?")) return;
+    if (!(await confirm("Marcar esta unidade como vendida?", { tone: "warning", confirmLabel: "Marcar como vendida" }))) return;
     await supabase.from("av_portfolio_units").update({ status: "vendida" }).eq("id", unitId);
     onChange();
+    toast("Unidade marcada como vendida.");
   }
 
   async function releaseUnit(unitId) {
-    if (!window.confirm("Desfazer a reserva desta unidade?")) return;
+    if (!(await confirm("Desfazer a reserva desta unidade?", { tone: "warning", confirmLabel: "Desfazer reserva" }))) return;
     await supabase
       .from("av_portfolio_units")
       .update({ status: "disponivel", reserved_by: null, reserved_for: null })
       .eq("id", unitId);
     onChange();
+    toast("Reserva desfeita.");
   }
 
   return (

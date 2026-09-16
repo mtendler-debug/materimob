@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useFeedback } from "../../lib/feedback";
 
 export const STATUS_REGISTRO_LABELS = {
   pendente: "Pendente",
@@ -82,6 +83,7 @@ export default function Registros() {
 }
 
 function RegistroCard({ registro: r, todos, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [busy, setBusy] = useState(false);
 
   async function validar() {
@@ -113,7 +115,8 @@ function RegistroCard({ registro: r, todos, onChange }) {
   }
 
   async function avancar(novoStatus) {
-    if (!window.confirm(`Avançar este registro para "${STATUS_REGISTRO_LABELS[novoStatus]}"?`)) return;
+    if (!(await confirm(`Avançar este registro para "${STATUS_REGISTRO_LABELS[novoStatus]}"?`, { tone: "info", confirmLabel: "Avançar" })))
+      return;
     setBusy(true);
     await supabase.from("pc_registros_cliente").update({ status: novoStatus }).eq("id", r.id);
     await supabase.from("pc_registro_eventos").insert({
@@ -124,6 +127,7 @@ function RegistroCard({ registro: r, todos, onChange }) {
     });
     setBusy(false);
     onChange();
+    toast(`Registro avançado para "${STATUS_REGISTRO_LABELS[novoStatus]}".`);
   }
 
   async function cancelar() {

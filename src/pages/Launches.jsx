@@ -14,9 +14,9 @@ function linesToArray(text) {
 
 const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
 const STATUS_COLORS = {
-  disponivel: { bg: "#E3F0E4", color: "#2E7D32" },
-  reservada: { bg: "#FFF3E0", color: "#B26A00" },
-  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+  disponivel: { bg: "#D1FAE5", color: "#065F46" },
+  reservada: { bg: "#FEF3C7", color: "#92400E" },
+  vendida: { bg: "#FFE4E6", color: "#9F1239" },
 };
 
 export default function Launches() {
@@ -73,7 +73,7 @@ function LaunchCard({ launch }) {
     <Link
       to={`/app/lancamentos/${launch.id}`}
       className="block rounded-[14px] border border-rule bg-white p-4 hover:border-gold"
-      style={{ borderLeft: `5px solid ${launch.color || "#A68A5B"}` }}
+      style={{ borderLeft: `5px solid ${launch.color || "#0284C7"}` }}
     >
       <p className="font-serif font-semibold text-charcoal">{launch.name}</p>
       {launch.organizations?.name && <p className="text-xs text-graytext">{launch.organizations.name}</p>}

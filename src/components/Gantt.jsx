@@ -89,7 +89,7 @@ export function Gantt({ milestones, properties }) {
             <div className="mt-4 mb-2 text-[10px] font-bold uppercase tracking-[.12em] text-muted">Etapas do processo</div>
             {marcos.map((m) => (
               <Lane key={m.nome} label={m.nome}>
-                <Bar inicio={m.inicio} fim={m.fim} cor="#A68A5B" label="" />
+                <Bar inicio={m.inicio} fim={m.fim} cor="#0284C7" label="" />
               </Lane>
             ))}
           </>
@@ -108,7 +108,7 @@ export function Gantt({ milestones, properties }) {
       <div className="mt-3 flex flex-wrap gap-[14px] text-[11.5px] text-graytext">
         {marcos.length > 0 && (
           <span>
-            <i className="mr-[5px] inline-block h-[10px] w-[10px] rounded-[3px] align-[-1px]" style={{ background: "#A68A5B" }} />
+            <i className="mr-[5px] inline-block h-[10px] w-[10px] rounded-[3px] align-[-1px]" style={{ background: "#0284C7" }} />
             etapas do processo
           </span>
         )}

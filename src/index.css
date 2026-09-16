@@ -1,21 +1,46 @@
 @import "tailwindcss";
 
+/* Design System "Pastel Simétrico" — off-white + branco puro, acentos
+   pastel (sky/emerald/amber/rose/purple), Inter. Os nomes dos tokens
+   (bg/charcoal/gold/graytext/light/rule/muted) continuam os de antes
+   pra não precisar reescrever toda className do app — só o valor por
+   trás mudou, exceto onde a troca de tom exigia trocar a classe em si
+   (ver componentes com `sky-`/`emerald-`/`amber-`/`rose-`/`purple-`
+   direto). Semânticos novos (success/warning/danger/secondary) ficam
+   como tokens próprios, usados no Toast, no Modal de confirmação e nos
+   badges de status refeitos. */
 @theme {
-  --color-bg: #f7f5f2;
-  --color-charcoal: #1c1c1c;
-  --color-gold: #a68a5b;
-  --color-graytext: #5c5c5c;
-  --color-light: #edeae4;
-  --color-rule: #e2ded6;
-  --color-muted: #9a9a9a;
+  --color-bg: #f8fafc; /* slate-50 */
+  --color-surface: #ffffff;
+  --color-charcoal: #1e293b; /* slate-800 — texto de alto contraste e preenchimento sólido (botão primário, sidebar) */
+  --color-graytext: #64748b; /* slate-500 — texto secundário */
+  --color-light: #f1f5f9; /* slate-100 — superfície leve / hover */
+  --color-rule: #e2e8f0; /* slate-200 — bordas */
+  --color-muted: #94a3b8; /* slate-400 — texto apagado */
 
-  --font-sans: "IBM Plex Sans", -apple-system, "system-ui", "Segoe UI", Roboto,
+  /* Acento primário — azul pastel */
+  --color-gold: #0284c7; /* sky-600 — só onde uma classe antiga (bg-gold/text-gold/border-gold) ainda não foi migrada pra sky-* explícito */
+
+  --color-success-bg: #d1fae5; /* emerald-100 */
+  --color-success-text: #065f46; /* emerald-800 */
+  --color-success-border: #6ee7b7; /* emerald-300 */
+  --color-warning-bg: #fef3c7; /* amber-100 */
+  --color-warning-text: #92400e; /* amber-800 */
+  --color-warning-border: #fcd34d; /* amber-300 */
+  --color-danger-bg: #ffe4e6; /* rose-100 */
+  --color-danger-text: #9f1239; /* rose-800 */
+  --color-danger-border: #fda4af; /* rose-300 */
+  --color-secondary-bg: #f3e8ff; /* purple-100 */
+  --color-secondary-text: #6b21a8; /* purple-800 */
+  --color-secondary-border: #d8b4fe; /* purple-300 */
+
+  --font-sans: "Inter", -apple-system, "system-ui", "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
-  --font-serif: "Fraunces", ui-serif, Georgia, "Iowan Old Style", "Times New Roman",
-    serif;
+  --font-serif: "Inter", -apple-system, "system-ui", "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
 }
 
 body {
   background-color: var(--color-bg);
-  color: var(--color-charcoal);
+  color: #334155; /* slate-700 — texto de leitura, ligeiramente mais claro que --color-charcoal (reservado a título/preenchimento sólido) */
 }

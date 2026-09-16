@@ -15,6 +15,7 @@ import {
   OPP_STAGE_ATIVA,
   brl,
 } from "../../lib/crm";
+import { useFeedback } from "../../lib/feedback";
 
 function SectionTitle({ children }) {
   return <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</p>;
@@ -23,6 +24,7 @@ function SectionTitle({ children }) {
 export default function LeadDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { confirm, toast } = useFeedback();
   const [lead, setLead] = useState(null);
   const [selections, setSelections] = useState(null);
   const [error, setError] = useState("");
@@ -70,8 +72,9 @@ export default function LeadDetail() {
   }
 
   async function removerLead() {
-    if (!window.confirm("Remover este lead? As oportunidades vinculadas também somem.")) return;
+    if (!(await confirm("Remover este lead? As oportunidades vinculadas também somem.", { confirmLabel: "Remover" }))) return;
     await supabase.from("av_leads").delete().eq("id", id);
+    toast("Lead removido.");
     navigate("/app/crm/leads");
   }
 
@@ -266,6 +269,7 @@ function PropertyPicker({ portfolioPropertyId, launchId, propertyText, onChange 
 }
 
 function OpportunityRow({ opportunity, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [editing, setEditing] = useState(false);
   const [property, setProperty] = useState(opportunity.property ?? "");
   const [portfolioPropertyId, setPortfolioPropertyId] = useState(opportunity.portfolio_property_id ?? null);
@@ -295,9 +299,10 @@ function OpportunityRow({ opportunity, onChange }) {
   }
 
   async function remover() {
-    if (!window.confirm("Remover esta oportunidade?")) return;
+    if (!(await confirm("Remover esta oportunidade?"))) return;
     await supabase.from("av_opportunities").delete().eq("id", opportunity.id);
     onChange();
+    toast("Oportunidade removida.");
   }
 
   return (

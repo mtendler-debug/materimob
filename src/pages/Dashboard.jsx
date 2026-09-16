@@ -5,6 +5,7 @@ import { useAuth } from "../lib/AuthContext";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 import { addClientToCrm } from "../lib/crm";
+import { useFeedback } from "../lib/feedback";
 
 export default function Dashboard() {
   const [clients, setClients] = useState(null);
@@ -226,6 +227,7 @@ export default function Dashboard() {
 
 function ClientCard({ client, onChange }) {
   const { user } = useAuth();
+  const { confirm, toast } = useFeedback();
   const [filtroRoteiros, setFiltroRoteiros] = useState("ativos"); // ativos|desativados|todos
   const [crmMsg, setCrmMsg] = useState("");
   const homeUrl = `${window.location.origin}/cliente/${client.token}`;
@@ -238,11 +240,12 @@ function ClientCard({ client, onChange }) {
 
   async function alternarClienteArquivado() {
     const acao = client.archived ? "reativar" : "desativar";
-    if (!window.confirm(`Confirma ${acao} "${client.name || "este cliente"}"?`)) return;
+    if (!(await confirm(`Confirma ${acao} "${client.name || "este cliente"}"?`, { tone: client.archived ? "info" : "danger" }))) return;
     await supabase
       .from("av_client_relations")
       .upsert({ user_id: user.id, client_id: client.id, archived: !client.archived }, { onConflict: "user_id,client_id" });
     onChange();
+    toast(`Cliente ${client.archived ? "reativado" : "desativado"}.`);
   }
 
   async function adicionarAoCRM() {
@@ -307,6 +310,7 @@ function ClientCard({ client, onChange }) {
 }
 
 function RoteiroRow({ selection, homeUrl, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [copiado, setCopiado] = useState(null); // "perfil" | "form" | "painel" | null
   const formUrl = `${window.location.origin}/c/${selection.token_form}`;
   const panelUrl = `${window.location.origin}/r/${selection.token_panel}`;
@@ -325,19 +329,26 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
   }
 
   async function gerarNovosLinks() {
-    if (!window.confirm("Gerar links novos invalida os links já enviados para este roteiro. Continuar?")) return;
+    if (
+      !(await confirm("Gerar links novos invalida os links já enviados para este roteiro. Continuar?", {
+        confirmLabel: "Gerar novos links",
+      }))
+    )
+      return;
     await supabase
       .from("av_selections")
       .update({ token_form: generateToken(), token_panel: generateToken() })
       .eq("id", selection.id);
     onChange();
+    toast("Novos links gerados.");
   }
 
   async function alternarArquivado() {
     const acao = selection.archived ? "reativar" : "desativar";
-    if (!window.confirm(`Confirma ${acao} este roteiro?`)) return;
+    if (!(await confirm(`Confirma ${acao} este roteiro?`, { tone: selection.archived ? "info" : "danger" }))) return;
     await supabase.from("av_selections").update({ archived: !selection.archived }).eq("id", selection.id);
     onChange();
+    toast(`Roteiro ${selection.archived ? "reativado" : "desativado"}.`);
   }
 
   return (

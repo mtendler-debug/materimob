@@ -15,21 +15,24 @@ export const STATUS_FUNIL_LABELS = {
   pausado: "Pausado",
 };
 
+// Paleta pastel semântica: neutro (sem contato ainda), sky (em conversa),
+// âmbar (negociando — atenção), esmeralda (fechado — sucesso), rosa (sem
+// interesse — encerrado).
 const STATUS_FUNIL_COLORS = {
-  nao_contatado: { bg: "#EDEAE4", color: "#5C5C5C" },
-  contato_iniciado: { bg: "#E3EDF8", color: "#1565C0" },
-  reuniao_agendada: { bg: "#E3EDF8", color: "#1565C0" },
-  em_negociacao: { bg: "#FFF3E0", color: "#B26A00" },
-  parceria_firmada: { bg: "#E3F0E4", color: "#2E7D32" },
-  sem_interesse: { bg: "#F1E4E0", color: "#B34A2E" },
-  pausado: { bg: "#EDEAE4", color: "#5C5C5C" },
+  nao_contatado: { bg: "#F1F5F9", color: "#475569" },
+  contato_iniciado: { bg: "#E0F2FE", color: "#075985" },
+  reuniao_agendada: { bg: "#E0F2FE", color: "#075985" },
+  em_negociacao: { bg: "#FEF3C7", color: "#92400E" },
+  parceria_firmada: { bg: "#D1FAE5", color: "#065F46" },
+  sem_interesse: { bg: "#FFE4E6", color: "#9F1239" },
+  pausado: { bg: "#F1F5F9", color: "#475569" },
 };
 
 export const PRIORIDADE_LABELS = { alta: "Alta", media: "Média", baixa: "Baixa" };
 const PRIORIDADE_COLORS = {
-  alta: { bg: "#E3F0E4", color: "#2E7D32" },
-  media: { bg: "#FFF3E0", color: "#B26A00" },
-  baixa: { bg: "#EDEAE4", color: "#5C5C5C" },
+  alta: { bg: "#FFE4E6", color: "#9F1239" },
+  media: { bg: "#FEF3C7", color: "#92400E" },
+  baixa: { bg: "#F1F5F9", color: "#475569" },
 };
 
 export function StatusParceiraChip({ status }) {

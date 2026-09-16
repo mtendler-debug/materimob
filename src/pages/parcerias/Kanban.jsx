@@ -7,13 +7,13 @@ import { STATUS_FUNIL_LABELS, PRIORIDADE_LABELS, PrioridadeChip } from "./Parcei
 const PRIORIDADE_ORDEM = { alta: 0, media: 1, baixa: 2 };
 
 const STATUS_FUNIL_COLORS = {
-  nao_contatado: "#9A9A9A",
-  contato_iniciado: "#1565C0",
-  reuniao_agendada: "#1565C0",
-  em_negociacao: "#B26A00",
-  parceria_firmada: "#2E7D32",
-  sem_interesse: "#B34A2E",
-  pausado: "#5C5C5C",
+  nao_contatado: "#475569",
+  contato_iniciado: "#075985",
+  reuniao_agendada: "#075985",
+  em_negociacao: "#92400E",
+  parceria_firmada: "#065F46",
+  sem_interesse: "#9F1239",
+  pausado: "#475569",
 };
 
 const COLUNAS = Object.keys(STATUS_FUNIL_LABELS);

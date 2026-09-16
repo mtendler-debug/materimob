@@ -11,6 +11,7 @@ import { geocodeAddress } from "../lib/geocode";
 import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
 import { Map } from "../components/Map";
+import { useFeedback } from "../lib/feedback";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -156,7 +157,7 @@ export default function SelectionDetail() {
             <Map
               pins={properties
                 .filter((p) => p.latitude != null && p.longitude != null)
-                .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#A68A5B" }))}
+                .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#0284C7" }))}
               height={220}
             />
           </div>
@@ -177,7 +178,7 @@ export default function SelectionDetail() {
                   <div className="mt-2 h-[7px] overflow-hidden rounded-full bg-light">
                     <div
                       className="h-full rounded-full"
-                      style={{ width: `${((r?.notaMedia ?? 0) / 10) * 100}%`, background: p.color || "#A68A5B" }}
+                      style={{ width: `${((r?.notaMedia ?? 0) / 10) * 100}%`, background: p.color || "#0284C7" }}
                     />
                   </div>
                 </div>
@@ -210,7 +211,7 @@ export default function SelectionDetail() {
                         <td
                           key={c.property_id}
                           className="border-b border-rule p-[9px] text-center text-graytext"
-                          style={v == null ? {} : { background: shade(c.color || "#A68A5B", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
+                          style={v == null ? {} : { background: shade(c.color || "#0284C7", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
                         >
                           {n1(v)}
                         </td>
@@ -227,7 +228,7 @@ export default function SelectionDetail() {
           <div className="mt-3 space-y-2">
             {dash.comentarios.map((c) => (
               <div key={c.property_id} className="rounded-[14px] border border-rule bg-white p-4">
-                <b className="font-serif font-semibold" style={{ color: c.color || "#A68A5B" }}>{c.name}</b>
+                <b className="font-serif font-semibold" style={{ color: c.color || "#0284C7" }}>{c.name}</b>
                 {c.comentarios.map((cm, i) => (
                   <div key={i} className="my-2 border-l-[3px] border-rule pl-3 text-[13px]">
                     <div className="text-xs font-bold text-charcoal">
@@ -256,11 +257,11 @@ export default function SelectionDetail() {
               <div
                 key={r.property_id}
                 className={`flex items-center gap-3 rounded-[13px] border border-rule bg-white p-[15px] ${i === 0 ? "border-l-4" : "border-l-[3px]"}`}
-                style={{ borderLeftColor: r.color || "#A68A5B" }}
+                style={{ borderLeftColor: r.color || "#0284C7" }}
               >
                 <div
                   className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
-                  style={{ background: r.color || "#A68A5B" }}
+                  style={{ background: r.color || "#0284C7" }}
                 >
                   {r.posicao}
                 </div>
@@ -550,6 +551,7 @@ function MilestonesEditor({ selection, onSaved }) {
 }
 
 function PropertyCard({ property, onChange, currentUserId, clientId }) {
+  const { confirm, toast } = useFeedback();
   const [showUnitForm, setShowUnitForm] = useState(false);
   const [unitName, setUnitName] = useState("");
   const [unitValue, setUnitValue] = useState("");
@@ -623,9 +625,15 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
   }
 
   async function removeProperty() {
-    if (!window.confirm(`Remover "${property.name}" do funil? Avaliações e propostas deste imóvel também somem.`)) return;
+    if (
+      !(await confirm(`Remover "${property.name}" do funil? Avaliações e propostas deste imóvel também somem.`, {
+        confirmLabel: "Remover",
+      }))
+    )
+      return;
     await supabase.from("av_properties").delete().eq("id", property.id);
     onChange();
+    toast(`"${property.name}" removido do roteiro.`);
   }
 
   // Atalho do roteiro pro CRM: em vez de recriar lead+oportunidade
@@ -706,17 +714,17 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
   // (cadastrada à mão, sem vínculo): é dado só do corretor, atualiza
   // direto.
   async function confirmSale(unit) {
-    if (!window.confirm(`Confirmar venda de "${unit.name}"?`)) return;
+    if (!(await confirm(`Confirmar venda de "${unit.name}"?`, { tone: "warning", confirmLabel: "Confirmar venda" }))) return;
+    let erro = null;
     if (unit.launch_unit_id) {
-      const { error } = await supabase.rpc("confirm_launch_unit_sale", { p_unit_id: unit.launch_unit_id });
-      if (error) alert("Erro: " + error.message);
+      ({ error: erro } = await supabase.rpc("confirm_launch_unit_sale", { p_unit_id: unit.launch_unit_id }));
     } else if (unit.portfolio_unit_id) {
-      const { error } = await supabase.rpc("confirm_portfolio_unit_sale", { p_unit_id: unit.portfolio_unit_id });
-      if (error) alert("Erro: " + error.message);
+      ({ error: erro } = await supabase.rpc("confirm_portfolio_unit_sale", { p_unit_id: unit.portfolio_unit_id }));
     } else {
       await supabase.from("av_units").update({ sold: true }).eq("id", unit.id);
     }
     onChange();
+    toast(erro ? "Erro: " + erro.message : `Venda de "${unit.name}" confirmada.`, erro ? "danger" : "success");
   }
 
   return (
@@ -1084,12 +1092,14 @@ function downloadEvaluationsCsv(selection, evaluations, properties) {
 }
 
 function EvaluationsTable({ evaluations, properties, onChange }) {
+  const { confirm, toast } = useFeedback();
   const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
 
   async function remove(id) {
-    if (!window.confirm("Excluir esta resposta?")) return;
+    if (!(await confirm("Excluir esta resposta?"))) return;
     await supabase.from("av_evaluations").delete().eq("id", id);
     onChange();
+    toast("Resposta excluída.");
   }
 
   if (!evaluations.length) {
@@ -1186,7 +1196,7 @@ function ProposalsTable({ proposals, properties }) {
                 </td>
                 <td className="border-b border-rule p-[10px] font-bold text-charcoal">{x.proposer_name}</td>
                 <td className="border-b border-rule p-[10px]">
-                  <span className="font-serif font-semibold" style={{ color: property?.color || "#A68A5B" }}>
+                  <span className="font-serif font-semibold" style={{ color: property?.color || "#0284C7" }}>
                     {property?.name}
                   </span>
                 </td>

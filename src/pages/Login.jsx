@@ -120,7 +120,7 @@ export default function Login() {
           className="w-full rounded-[10px] px-4 py-[11px] text-sm font-bold hover:opacity-90 disabled:opacity-50"
           style={
             marca
-              ? { background: marca.cor_primaria || "#a68a5b", color: marca.cor_secundaria || "#1c1c1c" }
+              ? { background: marca.cor_primaria || "#0284C7", color: marca.cor_secundaria || "#1c1c1c" }
               : { background: "#1c1c1c", color: "#fff" }
           }
         >

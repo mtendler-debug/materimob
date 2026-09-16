@@ -7,8 +7,8 @@ function brl(n) {
 
 const STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
 const STATUS_COLORS = {
-  reservada: { bg: "#FFF3E0", color: "#B26A00" },
-  vendida: { bg: "#F1E4E0", color: "#B34A2E" },
+  reservada: { bg: "#FEF3C7", color: "#92400E" },
+  vendida: { bg: "#FFE4E6", color: "#9F1239" },
 };
 
 // Linha de unidade que abre pra edição — antes disso, nome e valor eram
@@ -111,7 +111,7 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, can
             checked={!!unit.visited}
             onChange={(e) => onToggleVisited(unit.id, e.target.checked)}
             title="Unidade visitada"
-            className="h-[15px] w-[15px] shrink-0 accent-[#a68a5b]"
+            className="h-[15px] w-[15px] shrink-0 accent-[#0284C7]"
           />
         )}
         <button type="button" onClick={() => setEditing(true)} className="truncate text-left hover:underline">

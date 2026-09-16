@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 import { loadDraft, saveDraft, evalKey } from "../lib/draftStore";
 import { PropertyMedia } from "../components/PropertyMedia";
+import { useFeedback } from "../lib/feedback";
 
 const STAGES = [
   { key: "a-visitar", label: "A visitar", chipBg: "#FFF3E0", chipColor: "#B26A00" },
@@ -230,7 +231,7 @@ function Funnel({ properties, draft, onOpen }) {
               <div
                 key={p.id}
                 className="mb-3 rounded-[14px] border border-rule border-l-4 bg-white p-4"
-                style={{ borderLeftColor: p.color || "#A68A5B" }}
+                style={{ borderLeftColor: p.color || "#0284C7" }}
               >
                 <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{p.name}</h3>
                 {p.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{p.address}</p>}
@@ -321,6 +322,7 @@ function ChooseUnit({ property, draft, onBack, onChoose }) {
 }
 
 function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft, onPersist, onBack, onDone }) {
+  const { confirm } = useFeedback();
   const key = evalKey(property.id, unitId);
   const existing = draft.ans?.[key] ?? {};
   const isGeral = !unitId;
@@ -386,8 +388,9 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
     if (!nota) return setError("Falta a nota geral.");
 
     if (existing.sent) {
-      const ok = window.confirm(
+      const ok = await confirm(
         `Você já enviou uma avaliação para ${unit ? unit.name : "este empreendimento"}. Enviar de novo cria uma segunda avaliação. Continuar?`,
+        { tone: "warning", confirmLabel: "Enviar mesmo assim" },
       );
       if (!ok) return;
     }

@@ -6,6 +6,7 @@ import { callFunction } from "../../lib/edgeFunctions";
 import { STATUS_FUNIL_LABELS, PRIORIDADE_LABELS, StatusParceiraChip, PrioridadeChip } from "./Parceiras";
 import { RegistroForm } from "./RegistroForm";
 import { STATUS_REGISTRO_LABELS } from "./Registros";
+import { useFeedback } from "../../lib/feedback";
 
 const TABS = ["Dados", "Interesses", "Observações", "Corretores", "Registros", "Link de registro"];
 
@@ -416,6 +417,7 @@ function ObservacoesTab({ parceiraId }) {
 }
 
 function ObservacaoItem({ observacao: o, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [editando, setEditando] = useState(false);
   const [texto, setTexto] = useState(o.texto);
   const [busy, setBusy] = useState(false);
@@ -430,11 +432,12 @@ function ObservacaoItem({ observacao: o, onChange }) {
   }
 
   async function excluir() {
-    if (!confirm("Excluir esta observação?")) return;
+    if (!(await confirm("Excluir esta observação?"))) return;
     setBusy(true);
     await supabase.from("pc_parceira_observacoes").delete().eq("id", o.id);
     setBusy(false);
     onChange();
+    toast("Observação excluída.");
   }
 
   if (editando) {
@@ -671,6 +674,7 @@ function RegistrosTab({ parceira, onChange }) {
 }
 
 function LinkTab({ parceira, onChange }) {
+  const { confirm, toast } = useFeedback();
   const [copiado, setCopiado] = useState(false);
   const url = `${window.location.origin}/registrar/${parceira.token_registro}`;
 
@@ -688,9 +692,9 @@ function LinkTab({ parceira, onChange }) {
 
   async function renovar() {
     if (
-      !window.confirm(
-        "Gerar um link novo invalida o link atual na hora — ele para de funcionar. Continuar?",
-      )
+      !(await confirm("Gerar um link novo invalida o link atual na hora — ele para de funcionar. Continuar?", {
+        confirmLabel: "Gerar novo link",
+      }))
     )
       return;
     await supabase
@@ -698,6 +702,7 @@ function LinkTab({ parceira, onChange }) {
       .update({ token_registro: generateToken() })
       .eq("id", parceira.id);
     onChange();
+    toast("Novo link gerado.");
   }
 
   return (
