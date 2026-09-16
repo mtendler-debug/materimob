@@ -114,7 +114,7 @@ export default function AppLayout() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-none flex-col overflow-y-auto border-r border-slate-200 bg-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-none flex-col overflow-y-auto border-r border-slate-300 bg-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={corSidebar ? { background: corSidebar } : undefined}
@@ -161,7 +161,7 @@ export default function AppLayout() {
             .filter((g) => g.itens.length > 0)
             .map((g) => (
               <div key={g.label} className="mb-5">
-                <p className="mb-1.5 px-2 text-[9.5px] font-bold tracking-[.1em] text-slate-400 uppercase">{g.label}</p>
+                <p className="mb-1.5 px-2 text-[9.5px] font-bold tracking-[.1em] text-slate-500 uppercase">{g.label}</p>
                 {g.itens.map((i) => (
                   <NavLink
                     key={i.to}
@@ -169,14 +169,16 @@ export default function AppLayout() {
                     end={i.end}
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
-                      `block rounded-lg px-[9px] py-2 text-[13.5px] font-semibold transition-colors ${
+                      `block rounded-lg border-l-2 px-[9px] py-2 text-[13.5px] font-semibold transition-colors ${
                         isActive
-                          ? "bg-sky-100 text-sky-800"
-                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                          ? "border-sky-600 bg-sky-100 text-sky-900"
+                          : "border-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                       }`
                     }
                     style={({ isActive }) =>
-                      isActive && corDestaque ? { background: "rgba(255,255,255,.18)", color: corSidebar ? "#fff" : undefined } : undefined
+                      isActive && corDestaque
+                        ? { borderLeftColor: corDestaque, background: "rgba(255,255,255,.18)", color: corSidebar ? "#fff" : undefined }
+                        : undefined
                     }
                   >
                     {i.label}
@@ -186,9 +188,9 @@ export default function AppLayout() {
             ))}
         </nav>
 
-        <div className="mt-auto border-t border-slate-200 px-5 py-4 text-[11px] text-slate-400">
-          <p className="truncate text-slate-500">{user?.email}</p>
-          <button onClick={signOut} className="mt-1 font-semibold text-slate-500 underline transition-colors hover:text-slate-800">
+        <div className="mt-auto border-t border-slate-300 px-5 py-4 text-[11px] text-slate-500">
+          <p className="truncate text-slate-600">{user?.email}</p>
+          <button onClick={signOut} className="mt-1 font-semibold text-slate-600 underline transition-colors hover:text-slate-900">
             Sair
           </button>
         </div>
