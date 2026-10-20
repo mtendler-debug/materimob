@@ -114,20 +114,19 @@ export default function AppLayout() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-none flex-col overflow-y-auto border-r border-slate-300 bg-white transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-none flex-col overflow-y-auto bg-slate-900 transition-transform duration-200 md:sticky md:top-0 md:h-screen md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={corSidebar ? { background: corSidebar } : undefined}
       >
         <div className="space-y-2 px-5 pt-6 pb-4">
-          <div className="text-[10.5px] font-bold tracking-[.2em] text-slate-800 uppercase">MaterImob</div>
+          <div className="text-xs font-bold tracking-[.16em] text-white uppercase">MaterImob</div>
 
           {/* Selo do cliente ativo — a organização em que o usuário está
               atuando agora, independente de ela ter cor própria configurada. */}
           {org && (
             <div
-              className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-purple-200 bg-purple-100 px-2.5 py-1 text-[11px] font-semibold text-purple-800"
-              style={corDestaque ? { background: "rgba(255,255,255,.16)", borderColor: "rgba(255,255,255,.3)", color: corSidebar ? "#fff" : undefined } : undefined}
+              className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white"
               title={org.nome_exibicao || org.name}
             >
               {marca?.logo_url ? (
@@ -161,7 +160,7 @@ export default function AppLayout() {
             .filter((g) => g.itens.length > 0)
             .map((g) => (
               <div key={g.label} className="mb-5">
-                <p className="mb-1.5 px-2 text-[9.5px] font-bold tracking-[.1em] text-slate-500 uppercase">{g.label}</p>
+                <p className="mb-1.5 px-2 text-[11px] font-bold tracking-[.08em] text-slate-400 uppercase">{g.label}</p>
                 {g.itens.map((i) => (
                   <NavLink
                     key={i.to}
@@ -169,15 +168,13 @@ export default function AppLayout() {
                     end={i.end}
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
-                      `block rounded-lg border-l-2 px-[9px] py-2 text-[13.5px] font-semibold transition-colors ${
-                        isActive
-                          ? "border-sky-600 bg-sky-100 text-sky-900"
-                          : "border-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                      `block rounded-lg px-2.5 py-2.5 text-sm font-semibold transition-colors ${
+                        isActive ? "bg-sky-700 text-white" : "text-slate-200 hover:bg-white/10 hover:text-white"
                       }`
                     }
                     style={({ isActive }) =>
                       isActive && corDestaque
-                        ? { borderLeftColor: corDestaque, background: "rgba(255,255,255,.18)", color: corSidebar ? "#fff" : undefined }
+                        ? { background: "rgba(255,255,255,.18)", boxShadow: `inset 3px 0 0 ${corDestaque}` }
                         : undefined
                     }
                   >
@@ -188,9 +185,12 @@ export default function AppLayout() {
             ))}
         </nav>
 
-        <div className="mt-auto border-t border-slate-300 px-5 py-4 text-[11px] text-slate-500">
-          <p className="truncate text-slate-600">{user?.email}</p>
-          <button onClick={signOut} className="mt-1 font-semibold text-slate-600 underline transition-colors hover:text-slate-900">
+        <div className="mt-auto border-t border-slate-800 px-5 py-4 text-xs">
+          <p className="truncate text-slate-300">{user?.email}</p>
+          <button
+            onClick={signOut}
+            className="mt-2 rounded-lg border border-slate-600 px-3 py-1.5 font-semibold text-white transition-colors hover:bg-white/10"
+          >
             Sair
           </button>
         </div>
