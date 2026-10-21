@@ -1,6 +1,24 @@
+import { useCallback, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { supabase } from "../../lib/supabase";
 
 export default function ParceriasLayout() {
+  const [pendentes, setPendentes] = useState(0);
+
+  // Pedidos de acesso à Academia esperando liberação (só o dono do canal
+  // enxerga linhas de pc_acessos; para os demais a contagem é 0).
+  const contarPendentes = useCallback(async () => {
+    const { count } = await supabase
+      .from("pc_acessos")
+      .select("user_id", { count: "exact", head: true })
+      .eq("status", "pendente");
+    setPendentes(count ?? 0);
+  }, []);
+
+  useEffect(() => {
+    contarPendentes();
+  }, [contarPendentes]);
+
   return (
     <div className="min-h-screen bg-bg">
       <div className="px-6 pt-6">
@@ -11,23 +29,27 @@ export default function ParceriasLayout() {
             { to: "/app/parcerias/kanban", label: "Kanban" },
             { to: "/app/parcerias/parceiras", label: "Parceiras" },
             { to: "/app/parcerias/registros", label: "Registros" },
+            { to: "/app/parcerias/acessos", label: "Acessos", badge: pendentes },
           ].map((i) => (
             <NavLink
               key={i.to}
               to={i.to}
               className={({ isActive }) =>
-                `border-b-2 px-3 pb-3 text-sm font-bold ${
+                `flex items-center gap-1.5 border-b-2 px-3 pb-3 text-sm font-bold ${
                   isActive ? "border-gold text-charcoal" : "border-transparent text-graytext hover:text-charcoal"
                 }`
               }
             >
               {i.label}
+              {i.badge > 0 && (
+                <span className="rounded-full bg-amber-100 px-[7px] text-[11px] font-bold text-amber-800">{i.badge}</span>
+              )}
             </NavLink>
           ))}
         </nav>
       </div>
       <div className="px-6 pb-10">
-        <Outlet />
+        <Outlet context={{ contarPendentes }} />
       </div>
     </div>
   );

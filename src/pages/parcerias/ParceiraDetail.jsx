@@ -58,6 +58,7 @@ export default function ParceiraDetail() {
       </div>
 
       <MudarStatus parceira={parceira} onChange={load} />
+      <AcademiaToggle parceira={parceira} onChange={load} />
 
       <div className="mt-4 flex gap-1 overflow-x-auto border-b border-rule">
         {TABS.map((t) => (
@@ -88,6 +89,44 @@ export default function ParceiraDetail() {
 // Toda mudança de status vem com uma observação obrigatória — as duas
 // gravações acontecem juntas aqui, nunca como um campo solto dentro do
 // formulário geral de Dados.
+// Só as imobiliárias marcadas aqui (e validadas) aparecem na lista do cadastro
+// dos corretores parceiros em /academia. É independente do funil: liberar a
+// Academia não declara parceria firmada.
+function AcademiaToggle({ parceira, onChange }) {
+  const { toast } = useFeedback();
+  const [busy, setBusy] = useState(false);
+
+  async function alternar() {
+    setBusy(true);
+    const { error } = await supabase
+      .from("pc_parceiras")
+      .update({ ativa_na_academia: !parceira.ativa_na_academia })
+      .eq("id", parceira.id);
+    setBusy(false);
+    if (error) return toast(error.message, "danger");
+    onChange();
+  }
+
+  return (
+    <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-[12px] border border-rule bg-white p-3 text-sm text-charcoal">
+      <input
+        type="checkbox"
+        checked={!!parceira.ativa_na_academia}
+        onChange={alternar}
+        disabled={busy}
+        className="mt-0.5 h-4 w-4"
+      />
+      <span>
+        <b>Ativa na Academia de Vendas</b>
+        <span className="block text-xs text-graytext">
+          Aparece na lista de imobiliárias do cadastro dos corretores parceiros.
+          {!parceira.validado && " Só aparece depois de validar o cadastro."}
+        </span>
+      </span>
+    </label>
+  );
+}
+
 function MudarStatus({ parceira, onChange }) {
   const [show, setShow] = useState(false);
   const [novoStatus, setNovoStatus] = useState(parceira.status_funil);

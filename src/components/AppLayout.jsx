@@ -4,6 +4,8 @@ import { useAuth } from "../lib/AuthContext";
 import { useProfile } from "../lib/useProfile";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { useTenantBranding } from "../lib/tenantBranding";
+import { useAcessoCanal } from "../lib/AcessoCanal";
+import AcademiaTabBar, { MENU_ACADEMIA } from "./AcademiaTabBar";
 
 // Único componente que monta o menu de /app e /admin — a partir do papel
 // de quem está logado, não de uma lista fixa repetida em cada página.
@@ -12,6 +14,7 @@ export default function AppLayout() {
   const { accountType, isPlatformAdmin, hasCrmAccess, loading: loadingProfile } = useProfile();
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading: loadingOrg } = useOrganization();
   const marcaPortal = useTenantBranding();
+  const { acesso } = useAcessoCanal();
   const location = useLocation();
   const [aviso, setAviso] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -40,7 +43,7 @@ export default function AppLayout() {
   const corSidebar = marca?.cor_secundaria || undefined;
   const corDestaque = marca?.cor_primaria || undefined;
 
-  if (loadingProfile || loadingOrg) {
+  if (loadingProfile || loadingOrg || acesso === undefined) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg">
         <p className="text-sm text-muted">Carregando…</p>
@@ -76,6 +79,18 @@ export default function AppLayout() {
       { to: "/app/parcerias/registros", label: "Registros" },
     ],
   };
+  // Quem pediu acesso à Academia (em qualquer situação) vê a Academia primeiro:
+  // o parceiro continua sendo corretor, então o resto do menu segue logo abaixo.
+  // Só o Início tem tela na A1; os demais aparecem como "em breve".
+  const liberado = acesso?.status === "liberado";
+  const grupoAcademia = acesso
+    ? {
+        label: "Academia",
+        itens: MENU_ACADEMIA.filter(
+          (i) => i.to === "/app/academia" || (liberado && (!i.soGestor || acesso.papel === "gestor")),
+        ),
+      }
+    : null;
   const itensOrg = [];
   if (pertenceOrg) itensOrg.push({ to: "/app/organizacao", label: "Minha organização" });
   if (gerenteIncorporadora) itensOrg.push({ to: "/app/estoque", label: "Estoque" });
@@ -88,9 +103,10 @@ export default function AppLayout() {
   // Quando a casa é a organização, ela vem primeiro — mas "Meus clientes"
   // continua no menu, só desce dentro do grupo Avaliador. account_type
   // nunca esconde a carteira.
-  const grupos = ehOrganizacao
+  const gruposBase = ehOrganizacao
     ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoAdmin]
     : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoAdmin];
+  const grupos = grupoAcademia ? [grupoAcademia, ...gruposBase] : gruposBase;
 
   const { grupoLabel, itemLabel } = breadcrumbAtual(grupos, location.pathname);
 
@@ -161,7 +177,19 @@ export default function AppLayout() {
             .map((g) => (
               <div key={g.label} className="mb-5">
                 <p className="mb-1.5 px-2 text-[11px] font-bold tracking-[.08em] text-slate-400 uppercase">{g.label}</p>
-                {g.itens.map((i) => (
+                {g.itens.map((i) =>
+                  !i.to ? (
+                    <div
+                      key={i.label}
+                      aria-disabled="true"
+                      className="flex items-center justify-between gap-2 rounded-lg px-2.5 py-2.5 text-sm font-medium text-slate-400"
+                    >
+                      {i.label}
+                      <span className="rounded-full border border-slate-600 px-2 text-[10.5px] font-semibold text-slate-300">
+                        em breve
+                      </span>
+                    </div>
+                  ) : (
                   <NavLink
                     key={i.to}
                     to={i.to}
@@ -180,7 +208,8 @@ export default function AppLayout() {
                   >
                     {i.label}
                   </NavLink>
-                ))}
+                  ),
+                )}
               </div>
             ))}
         </nav>
@@ -225,6 +254,7 @@ export default function AppLayout() {
         )}
         <Outlet />
       </div>
+      {liberado && location.pathname.startsWith("/app/academia") && <AcademiaTabBar />}
     </div>
   );
 }
@@ -234,7 +264,7 @@ export default function AppLayout() {
 function breadcrumbAtual(grupos, pathname) {
   for (const g of grupos.filter(Boolean)) {
     for (const i of g.itens) {
-      if (i.end ? pathname === i.to : pathname.startsWith(i.to)) {
+      if (i.to && (i.end ? pathname === i.to : pathname.startsWith(i.to))) {
         return { grupoLabel: g.label, itemLabel: i.label };
       }
     }

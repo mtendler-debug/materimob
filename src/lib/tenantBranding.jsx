@@ -5,7 +5,7 @@ import { supabase } from "./supabase";
 // como slug de organização. Mesma lista do lado do banco
 // (valida_subdominio_reservado), duplicada aqui só porque o front decide
 // antes de perguntar ao banco.
-const RESERVADOS = new Set(["app", "admin", "entrar", "convite", "c", "r", "cliente", "registrar", "parceria"]);
+const RESERVADOS = new Set(["app", "admin", "entrar", "convite", "c", "r", "cliente", "registrar", "parceria", "academia"]);
 
 // "materimob.com.br/chaincorp" -> "chaincorp". Resolvido uma vez, no
 // carregamento da página — não muda mais se o usuário navegar dentro do

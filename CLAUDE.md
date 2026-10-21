@@ -14,8 +14,11 @@ Dois módulos hoje em produção (`materimob.com.br`), mais dois em construção
   no futuro).
 - **Agente de WhatsApp** — Fase 1 (Porteiro e eco) no ar; qualifica e responde clientes
   pelo WhatsApp do Marcos. Ver `CLAUDE.md`... este mesmo arquivo, seção própria abaixo.
-- **Parcerias** — painel de gestão do canal de imobiliárias parceiras da Chaincorp.
-  Fase P0 (banco) no ar; telas ainda não construídas.
+- **Parcerias** — painel de gestão do canal de imobiliárias parceiras da Chaincorp
+  (Kanban, Parceiras, Registros, formulário público de registro, autocadastro).
+- **Academia de Vendas** — materiais, treinamento e argumentos para o corretor de
+  imobiliária parceira, com login próprio. Fases A0 (banco) e A1 (acesso) no ar. Ver
+  seção própria abaixo.
 
 ## Stack atual — isto é o que vale, não o que documentos antigos descrevem
 
@@ -55,9 +58,10 @@ neles conflitar com o schema/código atual, o schema/código atual vence.
 - CRM: `av_leads`, `av_opportunities`. Acesso pago via `has_crm_access()`.
 - Multi-organização: `organizations`, `organization_members`, `organization_invites`.
 - Agente de WhatsApp: `conversas_agente`, `mensagens` (ver seção própria abaixo).
-- Parcerias: `pc_*` (11 tabelas, prefixo pra não colidir com `av_`/CRM). Todas usam
-  `owner_id` em vez de `user_id` — mesmo padrão de RLS, nome de coluna diferente porque
-  o documento original assim definiu.
+- Parcerias: `pc_*` (prefixo pra não colidir com `av_`/CRM). Todas usam `owner_id` em
+  vez de `user_id` — mesmo padrão de RLS, nome de coluna diferente porque o documento
+  original assim definiu.
+- Academia de Vendas: também `pc_*`, ver seção própria abaixo.
 
 ## Convenções de trabalho
 
@@ -84,6 +88,60 @@ neles conflitar com o schema/código atual, o schema/código atual vence.
   --color-graytext:#5c5c5c --color-light:#edeae4 --color-rule:#e2ded6
   --color-muted:#9a9a9a`. Borda, não sombra. Prototipar mudança de layout como Artifact e
   aprovar antes de tocar em componente React.
+
+---
+
+# Academia de Vendas — contexto específico do módulo
+
+Plano completo em `academia-import/ACADEMIA-INTEGRACAO.md` (decisões do Marcos, telas,
+fases A0 a A6). Conteúdo importado de `academia-import/conteudo/`; `referencia/` é o app
+antigo, só para consulta de comportamento e texto.
+
+## Como o acesso funciona
+
+- O corretor parceiro é um corretor (`profiles.account_type` não muda). O acesso ao canal
+  vive em `pc_acessos` (status pendente/liberado/recusado/bloqueado, papel corretor/gestor,
+  `parceira_id`). Cadastro público em `/academia`; o Marcos libera em
+  Parcerias → Acessos. Quem tem linha em `pc_acessos` entra por `/app/academia`.
+- **`pc_acessos` não tem política de INSERT, de propósito.** O padrão "for all using
+  (auth.uid() = owner_id)" deixaria qualquer usuário criar a própria linha já liberada e
+  como gestor. Linhas só nascem em `pc_solicitar_acesso`. Pelo mesmo motivo, "dono do canal"
+  é `pc_sou_dono_do_canal()` (administrador da plataforma + linha em `pc_config`), nunca só
+  "tem uma linha em pc_config", que qualquer usuário consegue criar.
+- Conteúdo (kits, argumentos, trilhas, aulas, quiz, avisos) é do dono; parceiro liberado só
+  lê o publicado. Gabarito do quiz fica em `pc_quiz_gabarito`, sem leitura para parceiro;
+  a correção é `pc_responder_quiz`. `pc_empreendimentos` NÃO é legível por parceiro
+  (tem comissão e tabela): o que o parceiro vê vem de `pc_kits`.
+- Atividade (`pc_atividades`) só entra por funções, sem UPDATE nem DELETE. A gamificação
+  vai ler daqui. O gatilho "status do registro vira atividade" fica para a A4.
+- Funções do app: `pc_meu_acesso`, `pc_solicitar_acesso`, `pc_decidir_acesso`,
+  `pc_editar_acesso`, `pc_meus_numeros`, `pc_minha_academia`, `pc_criar_envio`,
+  `pc_abrir_envio` (pública, link do cliente), `pc_responder_quiz`, `pc_painel_canal`.
+  Toda função nova: `revoke ... from public, anon, authenticated` e `grant` só a quem deve.
+- Marcar uma imobiliária como "Ativa na Academia" (`pc_parceiras.ativa_na_academia`, chave na
+  ficha da parceira) é o que a coloca na lista do cadastro. Independe do funil.
+- Cuidado ao mexer em `pc_parceiras`: o gatilho `pc_parceiras_sync_leadlinks` faz chamada HTTP
+  REAL ao Leadlinks em INSERT/UPDATE de `status_funil` ou `validado` com `validado = true`.
+  Não desfaz com rollback. Testes nunca devem criar parceira validada.
+
+## Migrações e teste
+
+`supabase/migrations_academia_a0_1..4_*.sql`, `migrations_academia_a1_cadastro.sql`,
+`seed_academia_conteudo.sql` (idempotente). Arquivos de imagem/PDF estão no bucket público
+`academia` (`projetos/<codigo>/...`); a pasta local foi removida.
+
+`supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 90 verificações".
+Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
+no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
+
+## Fases
+
+A0 banco, A1 acesso (cadastro, fila, menu): prontas. Faltam A2 Projetos e kit com envio
+por WhatsApp e página pública do cliente, A3 Treinamento e Argumentos, A4 Meus clientes
+(+ políticas de leitura de `pc_registros_cliente` com caminho que esconda observações
+internas), A5 visão do gestor, A6 troca do app antigo. Itens sem tela aparecem no menu com
+a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---
 

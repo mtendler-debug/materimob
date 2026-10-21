@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { useProfile, homeForAccountType } from "../lib/useProfile";
 import { useTenantBranding } from "../lib/tenantBranding";
+import { useAcessoCanal } from "../lib/AcessoCanal";
 import Landing from "./Landing";
 
 function Placeholder({ label }) {
@@ -22,6 +23,7 @@ export default function Entry() {
   const { user, loading: loadingAuth } = useAuth();
   const { accountType, loading: loadingProfile } = useProfile();
   const marca = useTenantBranding();
+  const { acesso } = useAcessoCanal();
 
   if (loadingAuth) return <Placeholder label="Carregando…" />;
   // Num portal com marca (ex. materimob.com.br/chaincorp), quem chega
@@ -32,7 +34,10 @@ export default function Entry() {
     if (marca === undefined) return <Placeholder label="Carregando…" />;
     return marca ? <Navigate to="/entrar" replace /> : <Landing />;
   }
-  if (loadingProfile) return <Placeholder label="Carregando…" />;
+  if (loadingProfile || acesso === undefined) return <Placeholder label="Carregando…" />;
+
+  // Quem pediu acesso à Academia entra por ela; o resto do app continua no menu.
+  if (acesso) return <Navigate to="/app/academia" replace />;
 
   return <Navigate to={homeForAccountType(accountType)} replace />;
 }

@@ -156,7 +156,7 @@ function Card({ children, marca }) {
   );
 }
 
-function traduzErro(message) {
+export function traduzErro(message) {
   if (message.includes("Invalid login credentials")) {
     return "E-mail ou senha incorretos.";
   }

@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { TenantBrandingProvider } from "./lib/tenantBranding";
 import { FeedbackProvider } from "./lib/feedback";
+import { AcessoCanalProvider } from "./lib/AcessoCanal";
 import Login from "./pages/Login";
 import Entry from "./pages/Entry";
 import Dashboard from "./pages/Dashboard";
@@ -18,10 +19,13 @@ import AcceptInvite from "./pages/AcceptInvite";
 import ClientHome from "./pages/ClientHome";
 import PublicPartnerForm from "./pages/PublicPartnerForm";
 import PublicPartnerSignup from "./pages/PublicPartnerSignup";
+import AcademiaCadastro from "./pages/AcademiaCadastro";
+import AcademiaInicio from "./pages/academia/AcademiaInicio";
 import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
 import Parceiras from "./pages/parcerias/Parceiras";
 import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
 import Registros from "./pages/parcerias/Registros";
+import Acessos from "./pages/parcerias/Acessos";
 import Kanban from "./pages/parcerias/Kanban";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { RoleRoute } from "./components/RoleRoute";
@@ -45,9 +49,11 @@ export default function App() {
   return (
     <FeedbackProvider>
     <TenantBrandingProvider>
+    <AcessoCanalProvider>
       <Routes>
       <Route path="/" element={<Entry />} />
       <Route path="/entrar" element={<Login />} />
+      <Route path="/academia" element={<AcademiaCadastro />} />
       {/* Portal com marca própria, ex. materimob.com.br/chaincorp — o
           slug em si só decide a cor/logo (via TenantBrandingProvider,
           resolvido pelo caminho); quem já está logado é levado adiante
@@ -74,6 +80,7 @@ export default function App() {
           <Route path="leads/:id" element={<LeadDetail />} />
           <Route path="oportunidades" element={<Opportunities />} />
         </Route>
+        <Route path="/app/academia" element={<AcademiaInicio />} />
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/parcerias" element={<ParceriasLayout />}>
           <Route index element={<Kanban />} />
@@ -81,6 +88,7 @@ export default function App() {
           <Route path="parceiras" element={<Parceiras />} />
           <Route path="parceiras/:id" element={<ParceiraDetail />} />
           <Route path="registros" element={<Registros />} />
+          <Route path="acessos" element={<Acessos />} />
         </Route>
         <Route path="/app/portfolio" element={<Portfolio />} />
         <Route
@@ -137,6 +145,7 @@ export default function App() {
       <Route path="/registrar/:token" element={<PublicPartnerForm />} />
       <Route path="/parceria/cadastro" element={<PublicPartnerSignup />} />
     </Routes>
+    </AcessoCanalProvider>
     </TenantBrandingProvider>
     </FeedbackProvider>
   );
