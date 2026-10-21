@@ -1,0 +1,2931 @@
+{
+ "projetos": [
+  {
+   "id": "verya",
+   "nome": "Verya Jardins",
+   "local": "Av. Rebouças, 1.444 · Jardins",
+   "fase": "Pré-lançamento",
+   "tags": [
+    "SCP",
+    "R2V",
+    "HMP",
+    "HIS-2"
+   ],
+   "ordem": 1,
+   "ativo": true,
+   "resumo": "Studio compacto em esquina da Av. Rebouças, entre Jardins e Pinheiros, a 350 m do metrô Oscar Freire.",
+   "destaques": "Entre Jardins e Pinheiros, a 3 quadras da Estação Oscar Freire e a 350 m da Rua Oscar Freire\nm² na Rebouças passou de R$ 10 mil (2019) para R$ 26 mil (2026), alta de 160%\nProduto para short e mid stay com gestão da 360 Suítes, maior operação de Airbnb da América Latina\nCenário realista de 80% de ocupação: cerca de R$ 7.800/mês líquidos, 19,4% ao ano\nRooftop com piscina coberta e vista permanente para os Jardins\nAo lado do futuro Hospital Sabará e perto do Hospital das Clínicas",
+   "ficha": "## Ficha técnica\n- Endereço: Av. Rebouças, nº 1.444, esquina com Rua Cristiano Viana, entre Jardins e Pinheiros, São Paulo/SP.\n- Realização: Chaincorp e MF7 (incorporadora/construtora fundada em 2014). Arquitetura: Nura Arquitetura Imobiliária. Interiores: DP Barros.\n- Fase: pré-lançamento. Material preliminar para estudo de mercado, só pode ser comercializado após expedição do alvará e registro do memorial de incorporação.\n- Torre única, térreo (loja + área comum), 1º ao 9º andar studios, 10º lazer, 11º ao 27º studios, 28º lazer no rooftop.\n- Total: 258 unidades + 1 loja de 235 m².\n- Produto: studios de 18 a 24 m² (predominam 18,50 m², 21,80 m², 22,20 m² e 24,20-24,80 m²).\n- Entrega prevista: julho/2029.\n\n## Enquadramento urbanístico\nEmpreendimento misto por enquadramento da unidade, cada apartamento tem uma sigla própria:\n- **R2V**, sem trava de renda, foco em investidor/uso livre (maioria das unidades).\n- **HMP** (Habitação de Mercado Popular), famílias com renda até 10 salários mínimos.\n- **HIS2** (Habitação de Interesse Social), famílias com renda entre 3 e 6 salários mínimos; unidades concentradas do 4º ao 9º andar, colunas 09 a 14.\nNo espelho de vendas (posição em set/2026): 205 unidades disponíveis (79,46%), 25 vendidas (9,69%), 28 bloqueadas (10,85%).\n\n## Preço (tabela set/2026, entrega jul/2029)\nFaixa de ~R$ 339 mil (24,2 m²) a ~R$ 493 mil (22,2 m², andares altos). Condições: 20% ato/entrada + 80% financiamento, sem juros informados na tabela-base (ver condições vigentes com consultor).\n\n## Localização e mobilidade\n- Entre os bairros Jardins e Pinheiros, próximo à Av. Faria Lima e Av. Paulista.\n- A 3 quadras da Estação Oscar Freire (Linha 9-Esmeralda), 9 min de bike da Faria Lima, 7 min de bike da Paulista/Consolação.\n- Ao lado do futuro Hospital Sabará de Pinheiros (novo hospital infantil, inauguração prevista 2027) e próximo ao Hospital das Clínicas (um dos maiores polos médicos da América Latina).\n- Rua Oscar Freire a 350 m; forte fluxo de turismo e vida noturna/gastronômica.\n\n## Diferenciais e áreas comuns\nPiscina coberta no rooftop, sky view, solarium, fitness (andar exclusivo), sauna, lavanderia, coworking, espaço delivery, bicicletário, lobby.\n\n## Tese comercial / short stay\nProduto concebido para locação de curta/média duração (parceria com 360 Suítes, maior conta de Airbnb da América Latina, +6.000 unidades administradas). Cenários de rentabilidade projetados (base em diária de R$ 460):\n- Pessimista (60% ocupação): R$ 5.540/mês líquido, 13,68% a.a.\n- Realista (80% ocupação): R$ 7.800/mês, 19,44% a.a.\n- Otimista (90% ocupação): R$ 9.050/mês, 22,44% a.a.\nDiária média da região: R$ 410–650. Ocupação média da região: 75–85%.\n\n## Argumentos de venda\nLocalização \"entre dois dos bairros mais desejados da cidade\"; região com valorização do m² de R$ 10 mil (2019) para R$ 26 mil (2026) na Rebouças (+160%); alta demanda por short/mid stay para público single e casal; vista permanente para os Jardins a partir do rooftop.",
+   "entrega": "Julho/2029",
+   "preco_desde": "a partir de R$ 339 mil",
+   "comissao": "Consultar condições vigentes",
+   "aviso": "Pré-lançamento. Material para estudo de mercado: a venda só acontece após alvará e registro do memorial de incorporação.",
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/verya/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/verya/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/verya/fotos/2.jpg",
+     "legenda": "Rooftop com piscina coberta"
+    },
+    {
+     "url": "/projetos/verya/fotos/3.jpg",
+     "legenda": "Academia no 10º andar"
+    },
+    {
+     "url": "/projetos/verya/fotos/4.jpg",
+     "legenda": "Studio decorado"
+    },
+    {
+     "url": "/projetos/verya/fotos/5.jpg",
+     "legenda": "Planta do studio"
+    },
+    {
+     "url": "/projetos/verya/fotos/6.jpg",
+     "legenda": "Entre Jardins e Pinheiros"
+    }
+   ],
+   "lamina_url": "/projetos/verya/lamina.jpg",
+   "guia_url": "/projetos/verya/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "O que é essa tal de SCP?",
+      "resposta": "Na fase de pré-lançamento, antes do alvará e do registro do memorial de incorporação, a lei não permite o contrato tradicional de compra e venda. A entrada acontece por participação em Sociedade em Conta de Participação, já vinculada a uma unidade determinada (metragem, tipologia e posição no edifício). Com o registro do memorial, o contrato se converte em compromisso de compra e venda da mesma unidade. Oriente o cliente a validar o contrato com sua assessoria jurídica."
+     },
+     {
+      "pergunta": "E se o studio não alugar tanto?",
+      "resposta": "Mostre os três cenários com transparência. Mesmo no pessimista, com 60% de ocupação, a estimativa é de R$ 5.540 líquidos por mês, cerca de 13,7% ao ano. Reforce que são estimativas de mercado, sem garantia de rentabilidade."
+     },
+     {
+      "pergunta": "Posso usar quando eu for a São Paulo?",
+      "resposta": "Sim. O produto permite uso misto: hospedagem própria quando o cliente estiver na capital e locação nos demais períodos."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "O Verya é realizado pela Chaincorp e pela MF7, incorporadoras com projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de renda passiva, quem quer diversificar fora da renda fixa",
+      "Opção A",
+      "Card 1 · \"Seu studio aluga. Você recebe.\""
+     ],
+     [
+      "Estilo de vida",
+      "Quem viaja com frequência a SP, pais de estudantes, uso misto",
+      "Opção B",
+      "Card 2 · \"Seu endereço entre Jardins e Pinheiros.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Condição antes da tabela pública.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação a tabela vigente e a disponibilidade atualizada do espelho de vendas.",
+     "Identifique o perfil do cliente: investidor, uso próprio/misto ou lead morno. Isso define a mensagem e o card.",
+     "Verifique o enquadramento adequado. Os cenários de renda e a liberdade para Airbnb valem para as unidades R2V. Para clientes que se enquadram em HIS2 ou HMP, a conversa é outra: acione a coordenação.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "Seu studio aluga. Você recebe.",
+      "R$ 7.800/mês estimados · 350 m do metrô · R2V · 360 Suítes",
+      "Junto da Opção A; Status para perfil investidor"
+     ],
+     [
+      "2 · Estilo de vida",
+      "Seu endereço entre Jardins e Pinheiros.",
+      "350 m do metrô · Rooftop · Academia no 10º andar",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Urgência",
+      "Condição antes da tabela pública.",
+      "20% de entrada · 33x sem juros · R2V limitadas",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": null,
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, leve para a próxima etapa: simulação da unidade, plantas ou uma conversa por ligação ou vídeo.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade no espelho e conduzir a formalização da participação via SCP."
+    ],
+    "pilula": {
+     "tese": "Studio compacto em esquina da Av. Rebouças, entre Jardins e Pinheiros, a 350 m do metrô Oscar Freire. Unidades R2V liberadas para Short Stay e Airbnb, com gestão opcional da 360 Suítes. Entrada em pré-lançamento via SCP com unidade determinada, 20% de entrada e saldo em até 33x sem juros.",
+     "gatilho": "A janela de pré-lançamento. As condições via SCP costumam ser mais vantajosas do que a tabela pública pós-lançamento, e as unidades R2V se concentram do 11º ao 27º andar. Os andares altos, com vista para os Jardins, tendem a sair primeiro. Use sempre a disponibilidade atualizada do espelho.",
+     "publico": "O investidor do interior que quer patrimônio em São Paulo sem administrar nada à distância. Também funciona para quem busca diversificação fora da renda fixa, pais com filhos estudando ou trabalhando na capital e profissionais que viajam com frequência a SP e querem uso misto."
+    },
+    "regras": [],
+    "numeros": [
+     [
+      "Produto",
+      "258 studios de 18,5 a 24,8 m², entrega prevista para julho de 2029."
+     ],
+     [
+      "Enquadramento",
+      "182 unidades R2V (70,5%), 100% do 11º ao 27º andar, com total liberdade para locação Short Stay e plataformas como Airbnb. As demais são HIS2 (50) e HMP (26), com limite de renda do comprador."
+     ],
+     [
+      "Localização",
+      "350 m do metrô Oscar Freire (Linha 4) e 5 minutos a pé da Rua Oscar Freire."
+     ],
+     [
+      "Condição",
+      "20% de entrada no ato e saldo de 80% em até 33 parcelas mensais sem juros (tabela de referência de setembro de 2026; confirme a vigência)."
+     ],
+     [
+      "Renda estimada (R2V)",
+      "cenário realista de R$ 7.800 líquidos/mês, cerca de 19,4% ao ano, com 80% de ocupação e diária média de R$ 470. Pessimista (60%): R$ 5.540/mês, 13,68% a.a. Otimista (90%): R$ 9.050/mês, 22,44% a.a."
+     ],
+     [
+      "Gestão",
+      "opcional pela 360 Suítes, maior operação de Airbnb da América Latina, com mobília, decoração, manutenção e operação de locação."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Estilo de vida)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/verya/cards/moradia-feed.jpg",
+      "stories": "/projetos/verya/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/verya/cards/escassez-feed.jpg",
+      "stories": "/projetos/verya/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/verya/cards/investimento-feed.jpg",
+      "stories": "/projetos/verya/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade que conversa com o que você busca em renda 📈\n\n🏙️ *Verya Jardins*: studios na Av. Rebouças, entre Jardins e Pinheiros\n🚇 350 m do metrô Oscar Freire\n🔑 Liberdade total para Airbnb e Short Stay, com gestão da 360 Suítes\n\nNo cenário realista do book (80% de ocupação), a estimativa é de *R$ 7.800 líquidos por mês*, cerca de *19% ao ano* 💰\n\n💳 Entrada de 20% e saldo em até 33x sem juros, ainda em condição de pré-lançamento.\n\nPosso te mandar a simulação da unidade [andar/metragem]?\n\n_Estimativas de mercado, sem garantia de rentabilidade._",
+      "quando": "primeiro contato com perfil investidor, ou quando o cliente pergunta sobre rendimento",
+      "titulo": "Investimento e rentabilidade"
+     },
+     {
+      "card": "Card 2 · Estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nImagina ter seu endereço em São Paulo numa esquina entre Jardins e Pinheiros?\n\n📍 Av. Rebouças, a 5 minutos a pé da Rua Oscar Freire\n🏊 Piscina coberta e sauna no rooftop, com vista para os Jardins\n🏋️ Andar inteiro de academia, coworking e lavanderia\n🛋️ Studios de 18 a 24,8 m², assinados pela Nura Arquitetura e com interiores DP Barros\n\nDá para usar quando estiver na capital e deixar rendendo nos outros dias.\n\nQuer que eu te mostre as plantas? Te envio agora 📲",
+      "quando": "cliente que vai a SP com frequência, pais de estudantes, quem valoriza endereço e lazer",
+      "titulo": "Moradia e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque abriu uma oportunidade em São Paulo que ainda está em pré-lançamento, antes da tabela pública.\n\nStudio nos Jardins, liberado para Airbnb, entrada a partir de [Valor de Entrada].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu às opções A e B",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Estimativas de mercado baseadas no book da incorporadora, sem garantia de rentabilidade. Empreendimento em pré-lançamento, sujeito às aprovações legais. Condições sujeitas à tabela vigente e à disponibilidade.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do Verya? 😉\n\nSe quiser, preparo a simulação da unidade com entrada e parcelas. Leva dois minutos.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Para te mandar a simulação certa, me confirma uma coisa:\n\nA ideia é renda com Airbnb, uso próprio ou os dois?",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar a unidade e tirar todas as dúvidas, por ligação ou vídeo. Qual fica melhor para você?",
+      "titulo": "Convite para conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Fale em \"participação com unidade determinada\", e não em \"compra e venda\", enquanto o empreendimento estiver em fase de SCP.",
+     "Rentabilidade é sempre estimativa. Nunca prometa ou garanta renda, ocupação ou valorização.",
+     "Use \"R2V com total liberdade para locação Short Stay e plataformas como Airbnb\" ao descrever esse enquadramento.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Verya Jardins, Av. Rebouças, 1.444, esquina com Rua Cristiano Viana, São Paulo/SP"
+     ],
+     [
+      "Fase",
+      "Pré-lançamento, com participação via SCP com unidade determinada"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vici",
+   "nome": "Vici Faria Lima",
+   "local": "Pinheiros",
+   "fase": "Em comercialização",
+   "tags": [
+    "HIS-2"
+   ],
+   "ordem": 2,
+   "ativo": true,
+   "resumo": "A entrada mais acessível no eixo Faria Lima: studio de 25 m² a cerca de R$ 13.200 o m², em um dos últimos terrenos disponíveis da região.",
+   "destaques": "4 minutos a pé da Estação Faria Lima, no eixo corporativo que mais cresce em São Paulo\nTerreno raro de 2.230 m² numa região praticamente sem estoque de terrenos\nPreço com HIS de R$ 13.200/m² contra R$ 22.000/m² do mercado livre: spread de cerca de 67% que se realiza na liberação\nProjeção MF7 em 13 anos: TIR nominal de 10,3% a 16,8% ao ano; somando locação, de 15,5% a 20,9%\nVizinho do Faena, ícone de ultraluxo da cidade\nPé-direito de 3,24 m e rooftop com piscina de borda infinita",
+   "ficha": "## Ficha técnica\n- Endereço: Rua dos Cariris, 422, Pinheiros, São Paulo/SP (4 min a pé da Estação Faria Lima).\n- Realização: MF7 (incorporadora, fundada em 2017) e Chaincorp. Arquitetura: Nura Arquitetura Imobiliária. Paisagismo: Neusa Nakata. Interiores: DP Barros.\n- Razão social: VICI Faria Lima – Cariris Incorporadora SPE LTDA, CNPJ 54.510.913/0001-87. Incorporação registrada em 23/04/2026 (matrícula 188.209).\n- Terreno: 2.230 m² (2.230,65 m² no projeto corporativo). Torre única, uso misto (\"Mix Used\"):\n  - 1 subsolo com vagas para o corporativo; térreo com lojas (loja de 1.019,72 m²); 1º ao 5º pavimento: lajes corporativas (648 m² e 660 m², 3 elevadores corporativos); lazer residencial no 1º e 6º pavimento; 17-19 pavimentos residenciais tipo; lazer no rooftop (24º pavimento).\n- Total: 340 apartamentos, todos studios de 25 m² (categoria HIS-2).\n- Entrega prevista: abril/2029 (conforme Tabelão Chaincorp).\n\n## Enquadramento urbanístico e regras HIS-2 (guia MF7 para investidores)\nUnidades aprovadas como **HIS-2** (renda familiar entre 3 e 6 salários mínimos). Regras para o investidor (comprador fora da faixa de renda):\n1. **Sem teto de renda** para comprar, mas não pode morar no imóvel, uso exclusivo para geração de renda via locação tradicional.\n2. **FGTS proibido** para amortizar ou pagar saldo devedor.\n3. **Matrícula gravada** com a destinação HIS-2.\n- **Regra dos 10 anos**: prazo conta a partir do Habite-se. Durante os 10 anos: aluguel limitado a inquilino com renda de até R$ 9.726/mês (base 2026, corrigido pelo INCC), aluguel não pode exceder 30% da renda do inquilino, contrato pela Lei do Inquilinato (mínimo 12–30 meses), **short stay/Airbnb proibido**. Revenda possível para outro investidor (mantém obrigações) ou para usuário final enquadrado (que passa a morar no imóvel).\n- **Após os 10 anos**: liberação total, venda livre a qualquer preço/comprador e aluguel livre (inclusive short stay).\n\n## Preço (Tabelão Chaincorp set/2026) e projeção de valorização\n- Studios HIS-2 de 25 m²: R$ 337.000 (à vista, R$ 13.480/m²) a R$ 383.600 (10% entrada + 30% obra + 60% financiamento, R$ 15.344/m²).\n- Lajes corporativas: R$ 18.000/m² (648 m² = R$ 11,67 milhões; 660 m² = R$ 11,88 milhões cada). Loja térreo (1.128,40 m²): R$ 18.001/m² = R$ 20,3 milhões.\n- Comissionamento: PF 2% / PJ 4%.\n- **Tese de investimento (análise MF7, mai/2026, horizonte 13 anos)**: preço atual com HIS R$ 13.200/m² vs. referência de mercado livre R$ 22.000/m² (spread de +67% que se realiza na liberação da HIS, ano 13). Cenários de TIR nominal: Conservador 10,3% (3,59x), Base 12,5% (4,62x), Otimista 14,7% (5,92x), Transformacional 16,8% (7,55x). Com locação capitalizada a CDI somada (unidade de 25 m², investimento R$ 330.000): TIR combinada de 15,5% a 20,9% a.a. nominal, múltiplo de 5,51x a 9,46x em 13 anos.\n\n## Localização e mobilidade\n4 min a pé da Estação Faria Lima; próximo à Estação Pinheiros (Linha 4-Amarela), Shopping Iguatemi, Shopping Eldorado, JK Iguatemi, Parque do Povo, Instituto Tomie Ohtake, SESC Pinheiros, Hospital HCor. Aluguel comercial médio na região: R$ 297/m²; taxa de vacância corporativa: 6%.\n\n## Diferenciais e áreas comuns\nLobby, bicicletário, churrasqueira, pet place, espaço leitura, espaço meditação/zen, redário, lavanderia, espaço podcast, meeting, coworking, lounge bar/jogos, salão de festas/gourmet, terraço lounge, fitness; no rooftop: churrasqueira, sauna, solário, pool bar, piscina com deck molhado e borda infinita. Pé-direito de 3,24 m nos studios.\n\n## Argumentos de venda\nLocalização \"encaixada\" entre Faria Lima, Shopping Eldorado e Av. Rebouças, eixo corporativo em forte expansão; terreno raro (2.250 m²) em região com landbank praticamente zero; adjacência ao Faena (ícone ultra-luxo); desconto de entrada de ~67% pela restrição HIS-2 frente ao mercado livre.",
+   "entrega": "Abril/2029",
+   "preco_desde": "a partir de R$ 337 mil",
+   "comissao": "PF 2% · PJ 4%",
+   "aviso": null,
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/vici/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/vici/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/vici/fotos/2.jpg",
+     "legenda": "Rooftop com piscina de borda infinita"
+    },
+    {
+     "url": "/projetos/vici/fotos/3.jpg",
+     "legenda": "Studio Executivo"
+    },
+    {
+     "url": "/projetos/vici/fotos/4.jpg",
+     "legenda": "Terraço lounge"
+    },
+    {
+     "url": "/projetos/vici/fotos/5.jpg",
+     "legenda": "Coworking"
+    },
+    {
+     "url": "/projetos/vici/fotos/6.jpg",
+     "legenda": "Pavimento tipo"
+    }
+   ],
+   "lamina_url": "/projetos/vici/lamina.jpg",
+   "guia_url": "/projetos/vici/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "O que é HIS-2? É habitação popular?",
+      "resposta": "HIS-2 é uma categoria urbanística da Prefeitura de São Paulo que permite construir mais em regiões centrais em troca de unidades destinadas a famílias de renda média. Na prática, é o que viabiliza um studio na Faria Lima por cerca de R$ 13.200 o m². O padrão construtivo e o lazer são os mesmos de um empreendimento de mercado."
+     },
+     {
+      "pergunta": "Posso colocar no Airbnb?",
+      "resposta": "Não nos 10 primeiros anos a partir do Habite-se. Nesse período, a locação é tradicional, para inquilinos dentro da faixa de renda da categoria. Depois disso, a unidade fica totalmente livre. Para quem quer renda de curta temporada desde já, apresente o Verya Jardins."
+     },
+     {
+      "pergunta": "10 anos não é tempo demais?",
+      "resposta": "É exatamente o que gera o desconto de entrada. O investidor recebe aluguel durante o período e, na liberação, a unidade passa a valer como imóvel de mercado livre no eixo Faria Lima. A projeção da MF7 aponta TIR combinada de 15,5% a 20,9% ao ano em 13 anos. São estimativas, sem garantia."
+     },
+     {
+      "pergunta": "Posso usar o FGTS?",
+      "resposta": "Não para amortizar ou quitar o saldo devedor dessa unidade. Oriente o cliente a planejar o financiamento sem contar com o FGTS."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "O Vici é realizado pela Chaincorp e pela MF7, incorporadoras com projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de patrimônio e valorização de longo prazo",
+      "Opção A",
+      "Card 1 · \"Faria Lima a R$ 13.200 o m².\""
+     ],
+     [
+      "Endereço e estilo de vida",
+      "Quem valoriza localização, qualidade do ativo e liquidez futura",
+      "Opção B",
+      "Card 2 · \"O endereço que a Faria Lima disputa.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Um dos últimos terrenos do eixo Faria Lima.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação a tabela vigente e a disponibilidade de unidades.",
+     "Identifique o perfil: investidor de longo prazo, cliente focado em endereço ou lead morno. Isso define a mensagem e o card.",
+     "Qualifique o uso pretendido. Investidor fora da faixa de renda HIS-2 não pode morar no imóvel. Quem quer morar precisa ter renda familiar entre 3 e 6 salários mínimos. Na dúvida, acione a coordenação.",
+     "Nunca ofereça o Vici como produto de Airbnb. Short Stay é proibido nos 10 primeiros anos a partir do Habite-se. Para esse perfil, o produto certo é o Verya Jardins.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "Faria Lima a R$ 13.200 o m².",
+      "+67% de spread · 4 min do metrô · TIR combinada 15,5% a 20,9% a.a. · HIS-2",
+      "Junto da Opção A; Status para perfil investidor"
+     ],
+     [
+      "2 · Endereço e estilo de vida",
+      "O endereço que a Faria Lima disputa.",
+      "4 min do metrô · Rooftop · Vizinho do Faena",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Urgência",
+      "Um dos últimos terrenos do eixo Faria Lima.",
+      "10% entrada · 30% obra · 60% financiados",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": null,
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, explique a regra HIS-2 antes da simulação. Um cliente que entende a regra desde o início fecha com mais segurança e não desiste na assinatura.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade e conduzir a proposta."
+    ],
+    "pilula": {
+     "tese": "A entrada mais acessível no eixo Faria Lima: studio de 25 m² a cerca de R$ 13.200 o m², em um dos últimos terrenos disponíveis da região. O investidor recebe locação tradicional durante o período HIS-2 e captura o spread para o mercado livre, projetado em +67%, quando a unidade se libera.",
+     "gatilho": "Escassez de terreno. O eixo Faria Lima, Rebouças e Eldorado tem landbank praticamente esgotado, e o preço por m² do Vici está bem abaixo da referência de mercado livre da região. A entrada de 10% torna o primeiro passo leve, e cada atualização de tabela encarece a mesma unidade.",
+     "publico": "O investidor de patrimônio com horizonte longo, que aceita a regra de 10 anos em troca de comprar Faria Lima com desconto relevante sobre o mercado livre. Também conversa com quem quer diversificar fora da renda fixa com um ativo real em São Paulo e com famílias que planejam patrimônio para a próxima geração."
+    },
+    "regras": [
+     {
+      "itens": [
+       "Sem teto de renda para o investidor comprar, mas o investidor fora da faixa não pode morar no imóvel. O uso é para geração de renda via locação.",
+       "Por 10 anos a partir do Habite-se, o aluguel é limitado a inquilinos com renda de até R$ 9.726 por mês (base 2026), sem passar de 30% da renda do inquilino. Short Stay e Airbnb são proibidos nesse período.",
+       "Depois dos 10 anos, a unidade fica livre para venda a qualquer preço e para qualquer comprador, e para aluguel livre, inclusive de curta duração. É aí que o spread se realiza.",
+       "O FGTS não pode amortizar nem quitar o saldo devedor dessa unidade, e a matrícula fica gravada com a destinação HIS-2."
+      ],
+      "titulo": "A regra HIS-2 que todo corretor precisa explicar"
+     }
+    ],
+    "numeros": [
+     [
+      "Produto",
+      "340 studios HIS-2 de 25 m², em torre de uso misto com pavimentos corporativos, lazer e residencial. Terreno de 2.230 m², raro na região."
+     ],
+     [
+      "Localização",
+      "Rua dos Cariris, 422, a 4 minutos a pé da Estação Faria Lima (Linha 4-Amarela), entre o Shopping Eldorado e a Av. Rebouças, vizinho do Faena e a poucos passos do HCor."
+     ],
+     [
+      "Preço",
+      "de R$ 337 mil a R$ 383,6 mil (tabela de referência de setembro de 2026; confirme a vigência). Equivale a cerca de R$ 13.200 o m²."
+     ],
+     [
+      "Condição",
+      "10% de entrada, 30% durante a obra e 60% financiados na entrega."
+     ],
+     [
+      "Tese de valorização",
+      "spread projetado de +67% na liberação da unidade, no ano 13, frente à referência de R$ 22.000 o m² no mercado livre. TIR só da valorização de 10,3% a 16,8% a.a., conforme o cenário."
+     ],
+     [
+      "Retorno combinado",
+      "somando a locação tradicional capitalizada ao CDI, a TIR combinada vai de 15,5% a 20,9% a.a., com múltiplo de 5,51x a 9,46x em 13 anos (análise MF7, mai/2026)."
+     ],
+     [
+      "Lazer",
+      "rooftop com piscina de borda infinita, pool bar, sauna e solário; fitness, coworking, salão de festas, gourmet, terraço lounge, espaço zen e pet place."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Endereço)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar uso e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/vici/cards/moradia-feed.jpg",
+      "stories": "/projetos/vici/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/vici/cards/escassez-feed.jpg",
+      "stories": "/projetos/vici/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/vici/cards/investimento-feed.jpg",
+      "stories": "/projetos/vici/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade rara para quem pensa em patrimônio 📈\n\n🏙️ *Vici Faria Lima*: studios de 25 m² em Pinheiros\n🚇 4 minutos a pé da Estação Faria Lima\n📐 Cerca de *R$ 13.200 o m²*, num eixo onde o mercado livre já pratica R$ 22.000\n\nA projeção da incorporadora indica um *spread de +67%* quando a unidade se libera das regras HIS-2, e uma TIR combinada de *15,5% a 20,9% ao ano* somando a locação 💰\n\n💳 Entrada de 10%, 30% na obra e 60% financiados na entrega.\n\nPosso te mandar a simulação completa?\n\n_Estimativas de mercado, sem garantia de rentabilidade._",
+      "quando": "primeiro contato com perfil investidor de longo prazo",
+      "titulo": "Investimento e valorização"
+     },
+     {
+      "card": "Card 2 · Endereço e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em ter um imóvel no endereço mais disputado de São Paulo?\n\n📍 Rua dos Cariris, entre o Shopping Eldorado e a Av. Rebouças\n🏊 Rooftop com piscina de borda infinita, pool bar e sauna\n💼 Coworking, fitness e terraço lounge\n✨ Vizinho do Faena e a poucos passos do HCor\n\nÉ o tipo de localização que não volta a aparecer: o eixo praticamente não tem mais terrenos.\n\nQuer que eu te mostre o projeto? Te envio agora 📲",
+      "quando": "cliente que valoriza localização e qualidade do ativo; abordagem institucional",
+      "titulo": "Endereço e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque saiu um dos últimos terrenos do eixo Faria Lima, e o studio começa em [Valor da Unidade].\n\nEntrada de 10%, saldo diluído na obra e financiamento na entrega.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu às opções A e B",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Projeções de valorização e TIR baseadas em análise MF7 de maio de 2026, estimativas de mercado sem garantia de rentabilidade. Unidades HIS-2 sujeitas às regras da categoria. Condições sujeitas à tabela vigente, à disponibilidade e à aprovação de crédito.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do Vici Faria Lima? 😉\n\nSe quiser, preparo a simulação com entrada, parcelas de obra e a projeção de valorização. Leva dois minutos.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Antes de te mandar a simulação, uma pergunta rápida:\n\nA ideia é investimento de longo prazo, ou você está pensando em morar? Pergunto porque a regra do HIS-2 muda conforme o perfil.",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar a unidade e explicar a regra do HIS-2 com calma, por ligação ou vídeo. Qual fica melhor para você?",
+      "titulo": "Convite para conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Explique a regra HIS-2 logo no início. Transparência evita desistência e protege a sua comissão.",
+     "Rentabilidade e valorização são sempre estimativas. Nunca prometa ou garanta renda, valorização ou prazo de revenda.",
+     "Nunca venda o Vici como produto para Airbnb no período de restrição.",
+     "Escreva sempre \"Vici Faria Lima\", nunca apenas \"VICI\" em caixa alta.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Recomende ao cliente validar a operação com advogado ou contador de confiança."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Vici Faria Lima, Rua dos Cariris, 422, Pinheiros, São Paulo/SP"
+     ],
+     [
+      "Enquadramento",
+      "Studios HIS-2 de 25 m², entrega prevista para abril de 2029"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "pina",
+   "nome": "Pina 1875 by 360 Suítes",
+   "local": "Rua Apinajés · Perdizes",
+   "fase": "Em comercialização",
+   "tags": [
+    "R2V",
+    "360 Suítes"
+   ],
+   "ordem": 3,
+   "ativo": true,
+   "resumo": "Studio em Perdizes a 3 quadras do Metrô Vila Madalena, com incorporação já registrada e gestão de locação pela 360 Suítes.",
+   "destaques": "A 3 quadras do Metrô Vila Madalena (Linha 2-Verde), perto da PUC-SP e do Hospital das Clínicas\nGestão de locação pela 360 Suítes, referência em short e mid stay em bairros nobres\nStudio no cenário realista de 83% de ocupação: cerca de R$ 4.180/mês, 17,4% ao ano\nOcupação média de locação na microrregião de 92%\nOpções de studio garden, 1 e 2 dormitórios e loja no térreo\nAutomação, fechadura eletrônica e lavanderia econômica",
+   "ficha": "## Ficha técnica\n- Endereço: Rua Apinajés, 1875, Perdizes, São Paulo/SP (região Vila Madalena/Perdizes, Zona Oeste).\n- Realização: Chaincorp & 360º Suítes (gestora de locação por temporada). Projeto arquitetônico e de interiores: Ilha Arquitetura.\n- Razão social: PINA1875 – Apinajés Mazal Empreendimentos Imobiliários SPE LTDA, CNPJ 47.550.696/0001-93. Incorporação registrada em 08/04/2026 (matrícula 130.152, 2º Oficial de Registro de Imóveis).\n- Torre única, 9 pavimentos. Total: 72 unidades + 1 loja (58 m², área da loja + vaga = 74,18 m²).\n- Tipologias: 12 studios garden (20–35 m²), 35 studios (18–23 m²), 17 unidades de 1 dormitório (26–40 m²), 8 unidades de 2 dormitórios (37–49 m²).\n- Entrega prevista: outubro/2028 (conforme Tabelão Chaincorp set/2026).\n\n## Enquadramento urbanístico\nEmpreendimento com unidades aprovadas como **HIS-2** (renda familiar entre 3 e 6 salários mínimos). Para investidores fora dessa faixa de renda, a unidade deve ser destinada à locação para público enquadrado, sem prazo final para essa obrigação, a menos que a unidade seja vendida a comprador enquadrado, quando passa a contar prazo de 10 anos até a liberação total. Há também unidades HMP (Habitação de Mercado Popular, renda até 10 salários mínimos, conforme Decreto nº 63.130/2024).\n\n## Preço (Tabelão Chaincorp set/2026 e tabela interna)\n- Studio garden 20 m²: R$ 250.000 (à vista) / 35 m²: R$ 437.500 (R$ 12.500/m²)\n- Studio 18 m²: R$ 225.000 (à vista) / 23 m²: R$ 317.400 (20% entrada + 80% obra)\n- 1 dorm. 26 m²: R$ 358.800 (R$ 13.800/m²) / 40 m²: R$ 552.000\n- 2 dorms. 37 m²: R$ 592.000 / 49 m²: R$ 784.000 (R$ 16.000/m²)\n- Loja térreo + vaga (58 m²): R$ 928.000\n- Studios HIS-2 (25 m²): R$ 337.000 a R$ 383.600\n- Comissionamento: PF 2% / PJ 4%.\n\n## Localização e mobilidade\nA 3 quadras do Metrô Vila Madalena (Linha 2-Verde). Entre PUC-SP (8 min), Parque da Água Branca (13 min), Allianz Parque, Hospital Albert Einstein (30 min) e Hospital das Clínicas (10 min).\n\n## Diferenciais e áreas comuns\nEstrutura de lazer completa no rooftop, casa de campo, coliving, coworking, fitness (andar exclusivo), lavanderia econômica (até 50% água/40% energia), pet care/pet place, deck. Automação integrada, fechadura eletrônica, tomadas USB, persianas integradas, preparação para individualização de gás.\n\n## Tese comercial / short stay\nGestão por 360 Suítes (referência em short/mid/long stay em bairros nobres de SP). Cenários de rentabilidade mensal (studio, diária de R$ 250):\n- Pessimista (60% ocupação): R$ 2.800, 11,60% a.a.\n- Realista (83% ocupação): R$ 4.180, 17,40% a.a.\n- Otimista (92% ocupação): R$ 4.720, 19,60% a.a.\n1 dorm. (diária R$ 325): de R$ 3.680 a R$ 6.176/mês (11,70% a 19,70% a.a.). 2 dorms. (diária R$ 465): de R$ 5.396 a R$ 8.967/mês (11,30% a 18,80% a.a.). Ocupação média de locação na microrregião: 92%.\n\n## Argumentos de venda\nPoucos minutos a pé do metrô Vila Madalena; bairro \"encantador, moderno e valorizado\"; alta procura por studios e 1 dormitório na região; unidades entregues mobiliadas/decoradas nas áreas comuns.",
+   "entrega": "Outubro/2028",
+   "preco_desde": "a partir de R$ 225 mil",
+   "comissao": "PF 2% · PJ 4%",
+   "aviso": "Os cenários de renda deste kit vêm da análise da 360 Suítes, baseada em locação por temporada. O empreendimento também tem unidades HIS-2 e HMP, que seguem regras próprias de locação. Confirme com a coordenação o enquadramento da unidade antes de apresentar a renda estimada ao cliente.",
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/pina/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/pina/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/pina/fotos/2.jpg",
+     "legenda": "Deck"
+    },
+    {
+     "url": "/projetos/pina/fotos/3.jpg",
+     "legenda": "Living do apartamento"
+    },
+    {
+     "url": "/projetos/pina/fotos/4.jpg",
+     "legenda": "Studio"
+    },
+    {
+     "url": "/projetos/pina/fotos/5.jpg",
+     "legenda": "Coworking"
+    },
+    {
+     "url": "/projetos/pina/fotos/6.jpg",
+     "legenda": "Planta tipo"
+    }
+   ],
+   "lamina_url": "/projetos/pina/lamina.jpg",
+   "guia_url": "/projetos/pina/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "Posso colocar no Airbnb?",
+      "resposta": "Depende do enquadramento da unidade. Os cenários de renda foram elaborados pela 360 Suítes, mas unidades HIS-2 e HMP seguem regras específicas de locação. Confirme com a coordenação antes de responder."
+     },
+     {
+      "pergunta": "O que significa incorporação registrada?",
+      "resposta": "Significa que o memorial de incorporação já está registrado em cartório (matrícula 130.152, desde 08/04/2026). É o que dá segurança jurídica para a venda na planta."
+     },
+     {
+      "pergunta": "E se não alugar tanto?",
+      "resposta": "Mostre os três cenários com transparência. Mesmo no pessimista, com 60% de ocupação, a estimativa para o studio é de R$ 2.800 por mês, cerca de 11,6% ao ano. São estimativas, sem garantia."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "A Chaincorp tem projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais de São Paulo. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de renda, quem quer gestão profissional sem trabalho operacional",
+      "Opção A",
+      "Card 1 · \"Studio em Perdizes. Renda com a 360 Suítes.\""
+     ],
+     [
+      "Endereço e estilo de vida",
+      "Quem valoriza bairro, lazer e mobilidade",
+      "Opção B",
+      "Card 2 · \"Entre a Vila Madalena e Perdizes.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Incorporação registrada. Entrega em 2028.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação a tabela vigente e a disponibilidade de unidades.",
+     "Identifique o perfil do cliente: investidor de renda, foco em endereço ou lead morno. Isso define a mensagem e o card.",
+     "Confirme o enquadramento da unidade. HIS-2 e HMP têm regras próprias de locação. Só apresente os cenários de renda da 360 Suítes para unidades que permitem esse modelo.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "Studio em Perdizes. Renda com a 360 Suítes.",
+      "R$ 4.180/mês estimados · 3 quadras do metrô · 83% de ocupação",
+      "Junto da Opção A; Status para investidor"
+     ],
+     [
+      "2 · Endereço",
+      "Entre a Vila Madalena e Perdizes.",
+      "3 quadras do metrô · Rooftop · 8 min da PUC-SP",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Urgência",
+      "Incorporação registrada. Entrega em 2028.",
+      "A partir de R$ 225 mil · 18 a 49 m² · out/2028",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": {
+     "texto": "Os cenários de renda deste kit vêm da análise da 360 Suítes, baseada em locação por temporada. O empreendimento também tem unidades HIS-2 e HMP, que seguem regras próprias de locação. Confirme com a coordenação o enquadramento da unidade antes de apresentar a renda estimada ao cliente.",
+     "titulo": "Atenção antes de usar os números de renda"
+    },
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, entenda o objetivo dele. Renda, uso próprio ou os dois definem qual unidade e qual enquadramento fazem sentido.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade e conduzir a proposta."
+    ],
+    "pilula": {
+     "tese": "Studio em Perdizes a 3 quadras do Metrô Vila Madalena, com incorporação já registrada e gestão de locação pela 360 Suítes. A entrada começa em R$ 225 mil, num bairro valorizado entre a Vila Madalena e a PUC-SP.",
+     "gatilho": "São apenas 72 unidades em torre única, com incorporação registrada e entrega prevista para 2028. Cada atualização de tabela encarece a mesma unidade, e os studios de entrada são os primeiros a sair.",
+     "publico": "O investidor que quer renda com gestão profissional e não quer administrar o imóvel à distância. Também conversa com pais de estudantes da PUC-SP e com quem busca o primeiro imóvel de investimento em São Paulo com tíquete acessível."
+    },
+    "regras": [
+     {
+      "itens": [
+       "Valores de referência, sujeitos a alteração sem aviso prévio e à disponibilidade. As condições de pagamento variam por unidade: confirme com a coordenação."
+      ],
+      "tabela": [
+       [
+        "Tipologia",
+        "Metragem",
+        "Preço"
+       ],
+       [
+        "Studio",
+        "18 m²",
+        "R$ 225.000"
+       ],
+       [
+        "Studio garden",
+        "20 m²",
+        "R$ 250.000"
+       ],
+       [
+        "Studio",
+        "23 m²",
+        "R$ 317.400"
+       ],
+       [
+        "1 dormitório",
+        "26 m²",
+        "R$ 358.800"
+       ],
+       [
+        "Studio garden",
+        "35 m²",
+        "R$ 437.500"
+       ],
+       [
+        "2 dormitórios",
+        "49 m²",
+        "R$ 784.000"
+       ]
+      ],
+      "titulo": "Preços por tipologia (Tabelão Chaincorp set/2026)"
+     },
+     {
+      "itens": [
+       "Investidor fora da faixa de renda pode comprar a unidade HIS-2, mas ela deve ser destinada à locação para público enquadrado, sem prazo final para essa obrigação.",
+       "Se a unidade for vendida a um comprador enquadrado, passa a contar o prazo de 10 anos até a liberação total.",
+       "Unidades HMP atendem famílias com renda de até 10 salários mínimos.",
+       "Para o cliente que quer Airbnb, confirme antes qual unidade permite locação por temporada."
+      ],
+      "titulo": "A regra HIS-2 e HMP que todo corretor precisa explicar"
+     }
+    ],
+    "numeros": [
+     [
+      "Produto",
+      "72 unidades em torre única de 9 pavimentos, mais uma loja térrea: 12 studios garden, 35 studios, 17 unidades de 1 dormitório e 8 de 2 dormitórios."
+     ],
+     [
+      "Localização",
+      "Rua Apinajés, 1875, a 3 quadras do Metrô Vila Madalena (Linha 2-Verde), a 8 minutos da PUC-SP, 13 minutos do Parque da Água Branca e perto do Allianz Parque."
+     ],
+     [
+      "Segurança jurídica",
+      "incorporação registrada em 08/04/2026, matrícula 130.152. Entrega prevista para outubro de 2028."
+     ],
+     [
+      "Renda estimada do studio",
+      "análise 360 Suítes com diária de R$ 460. Pessimista (60% de ocupação): R$ 2.800/mês, 11,60% a.a. Realista (83%): R$ 4.180/mês, 17,40% a.a. Otimista (92%): R$ 4.720/mês, 19,60% a.a."
+     ],
+     [
+      "Renda das demais tipologias",
+      "1 dormitório de R$ 3.680 a R$ 6.176 por mês (11,70% a 19,70% a.a.); 2 dormitórios de R$ 5.396 a R$ 8.967 por mês (11,30% a 18,80% a.a.)."
+     ],
+     [
+      "Lazer",
+      "estrutura completa no rooftop, casa de campo, coliving e coworking, fitness em andar exclusivo, lavanderia, pet place e deck."
+     ],
+     [
+      "Comissionamento",
+      "PF 2% / PJ 4%, conforme Tabelão Chaincorp set/2026."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Endereço)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/pina/cards/moradia-feed.jpg",
+      "stories": "/projetos/pina/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/pina/cards/escassez-feed.jpg",
+      "stories": "/projetos/pina/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/pina/cards/investimento-feed.jpg",
+      "stories": "/projetos/pina/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade de renda em São Paulo 📈\n\n🏙️ *Pina 1875*: studios em Perdizes, a 3 quadras do Metrô Vila Madalena\n🔑 Gestão da locação pela 360 Suítes, sem trabalho para você\n\nNo cenário realista da operadora, a estimativa é de *R$ 4.180 líquidos por mês*, cerca de *17% ao ano* 💰\n\n💳 Studios a partir de *R$ 225 mil*\n🏗️ Incorporação registrada, entrega prevista para out/2028\n\nPosso te mandar a simulação da unidade?\n\n_Estimativas de mercado, sem garantia de rentabilidade._",
+      "quando": "primeiro contato com perfil investidor de renda",
+      "titulo": "Investimento e rentabilidade"
+     },
+     {
+      "card": "Card 2 · Endereço e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em ter um endereço entre a Vila Madalena e Perdizes?\n\n📍 A 3 quadras do metrô e a 8 minutos da PUC-SP\n🌿 Rooftop com casa de campo, deck e pet place\n💻 Coworking, coliving e fitness em andar exclusivo\n🛋️ Plantas de 18 a 49 m², do studio ao 2 dormitórios\n\nQuer que eu te mostre as plantas? Te envio agora 📲",
+      "quando": "cliente que valoriza bairro, mobilidade e lazer",
+      "titulo": "Endereço e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque tenho uma oportunidade em Perdizes com incorporação já registrada: studio a 3 quadras do metrô a partir de [Valor da Unidade].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Cenários de renda da análise 360 Suítes, estimativas de mercado sem garantia de rentabilidade. Regras de locação variam conforme o enquadramento da unidade. Condições sujeitas à tabela vigente e à disponibilidade.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do Pina 1875? 😉\n\nSe quiser, preparo a simulação da unidade com valores e renda estimada. Leva dois minutos.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Para te mandar a simulação certa, me confirma uma coisa:\n\nA ideia é renda com locação, uso próprio ou os dois?",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar a unidade e tirar todas as dúvidas, por ligação ou vídeo. Qual fica melhor para você?",
+      "titulo": "Convite para conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Renda é sempre estimativa. Nunca prometa ou garanta renda, ocupação ou valorização.",
+     "Confirme o enquadramento antes de falar em Airbnb. Unidades HIS-2 e HMP têm regras próprias.",
+     "Use a incorporação registrada como argumento de segurança, citando a matrícula quando o cliente pedir.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Pina 1875, Rua Apinajés, 1875, Perdizes, São Paulo/SP"
+     ],
+     [
+      "Produto",
+      "72 unidades de 18 a 49 m², de studios a 2 dormitórios, entrega prevista para outubro de 2028"
+     ],
+     [
+      "Status",
+      "Incorporação registrada em 08/04/2026, matrícula 130.152"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rooftop",
+   "nome": "Rooftop Perdizes",
+   "local": "Rua Iperoig · Perdizes",
+   "fase": "Em aprovação",
+   "tags": [
+    "HIS-2",
+    "HMP",
+    "R2V"
+   ],
+   "ordem": 4,
+   "ativo": true,
+   "resumo": "Um futuro lançamento no alto de Perdizes com unidades R2V aprovadas para locação por temporada e operação da 360 Suítes.",
+   "destaques": "Esquina no topo de Perdizes, a 800 m da futura Estação Perdizes\nPlantas de 1 a 3 dormitórios: atende famílias e investidores\nUnidades R2V aprovadas para locação por temporada com a 360 Suítes\nSalão de festas e sauna com vista panorâmica no rooftop\nPlantas flexíveis com dormitório reversível",
+   "ficha": "## Ficha técnica\n- Endereço: Rua Ministro Gastão Mesquita, 351 x Rua Iperoig, Perdizes, São Paulo/SP.\n- Realização: Chaincorp Incorporadora. Projeto arquitetônico: Sambará Arquitetos.\n- Razão social: Full Iperoig Empreendimentos Imobiliários SPE LTDA, CNPJ 49.858.220/0001-40.\n- Status: **futuro lançamento, projeto em aprovação**. Só poderá ser comercializado após emissão do Registro de Incorporação (ainda não consta no Tabelão comercial vigente).\n- Torre única. Térreo: lazer e lojas. 1º ao 8º andar: apartamentos tipo. 9º andar: rooftop com lazer.\n- Total: 96 unidades. Lojas de 64 e 85 m².\n- Tipologias: 1 dormitório (24–36 m²), 2 dormitórios (52–62 m²), 3 dormitórios (59–64 m²).\n\n## Enquadramento urbanístico\nEmpreendimento com unidades aprovadas como **HIS-2** (renda familiar entre 3 e 6 salários mínimos) e unidades **HMP** (renda até 10 salários mínimos), conforme Decreto Municipal nº 63.130/2024.\n\n## Localização e mobilidade\nNo alto de Perdizes, a 800 metros da futura Estação Perdizes. Próximo a PUC-SP, Colégio Puerí Domus, Allianz Parque, Bourbon Shopping, Parque da Água Branca, Hospital Albert Einstein, Hospital das Clínicas, Hospital São Camilo.\n\n## Diferenciais e áreas comuns\nPiscina, deck molhado, solarium, churrasqueira, salão de festas com vista panorâmica, gourmet/copa, fitness, sauna com vista panorâmica, brinquedoteca, game pub, coworking com sala de reunião, espaço delivery, mini market, locker, lavanderia, bicicletário e pet care. Plantas flexíveis (dormitórios reversíveis para ampliação do living/suíte), infraestrutura para ar-condicionado e internet nas áreas comuns, persianas blackout, tomada USB, ponto grill no terraço, salão de festas no rooftop com vista 360°.\n\n## Argumentos de venda\nTorre única em esquina charmosa \"no topo de Perdizes\", com vista panorâmica; arquitetura com base em tijolos e fachada ativa; ideal para famílias (plantas de 1 a 3 dormitórios) e também para investidores (HIS-2/HMP).\n\n## Observação para a equipe comercial\nComo o projeto ainda está em aprovação, valores e condições de venda ainda não estão disponíveis no tabelão institucional, consultar status de lançamento antes de comprometer prazos com clientes.",
+   "entrega": "A definir",
+   "preco_desde": "Tabela ainda não divulgada",
+   "comissao": "A definir no lançamento",
+   "aviso": "O Rooftop Perdizes só poderá ser vendido após a emissão do Registro de Incorporação. Valores, tabela e condições ainda não foram divulgados. Este kit serve para formar uma lista de interesse: não receba sinal, não fale em reserva e não prometa preço ou data.",
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/rooftop/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/rooftop/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/rooftop/fotos/2.jpg",
+     "legenda": "Piscina"
+    },
+    {
+     "url": "/projetos/rooftop/fotos/3.jpg",
+     "legenda": "Living"
+    },
+    {
+     "url": "/projetos/rooftop/fotos/4.jpg",
+     "legenda": "Academia"
+    },
+    {
+     "url": "/projetos/rooftop/fotos/5.jpg",
+     "legenda": "Coworking"
+    },
+    {
+     "url": "/projetos/rooftop/fotos/6.jpg",
+     "legenda": "Planta tipo"
+    }
+   ],
+   "lamina_url": "/projetos/rooftop/lamina.jpg",
+   "guia_url": "/projetos/rooftop/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "Quanto custa?",
+      "resposta": "Os valores ainda não foram divulgados. O projeto está em aprovação e a tabela sai após a emissão do Registro de Incorporação. Quem está na lista recebe primeiro."
+     },
+     {
+      "pergunta": "Posso reservar uma unidade?",
+      "resposta": "Ainda não. A lista de interesse não é reserva nem compromisso de compra. Ela garante que você seja avisado antes da abertura das vendas."
+     },
+     {
+      "pergunta": "Todas as unidades são liberadas para Airbnb?",
+      "resposta": "Não. As unidades R2V são aprovadas para temporada. O projeto também terá unidades HIS-2 e HMP, com regras próprias que serão detalhadas na aprovação final."
+     },
+     {
+      "pergunta": "Quando fica pronto?",
+      "resposta": "O prazo de entrega ainda não foi definido, porque o projeto está em aprovação."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "A Chaincorp tem projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais de São Paulo. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de renda por temporada",
+      "Opção A",
+      "Card 1 · \"Renda de temporada no alto de Perdizes.\""
+     ],
+     [
+      "Endereço e estilo de vida",
+      "Famílias e quem valoriza vista e lazer",
+      "Opção B",
+      "Card 2 · \"Vista 360° do alto de Perdizes.\""
+     ],
+     [
+      "Lista de interesse",
+      "Lead morno ou quem quer ser avisado primeiro",
+      "Opção C",
+      "Card 3 · \"Seja avisado antes do lançamento.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação o status atual do projeto antes de cada envio.",
+     "Identifique o perfil: investidor de temporada, família ou lead morno.",
+     "Não mencione preços, prazos de entrega ou unidades específicas. Nada disso foi divulgado oficialmente.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "Renda de temporada no alto de Perdizes.",
+      "R2V · 360 Suítes · 24 m² · 800 m da futura estação",
+      "Junto da Opção A; Status para investidor"
+     ],
+     [
+      "2 · Endereço",
+      "Vista 360° do alto de Perdizes.",
+      "Rooftop · 1 a 3 dormitórios · PUC-SP",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Lista de interesse",
+      "Seja avisado antes do lançamento.",
+      "96 unidades · R2V · 1º a receber a tabela",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": {
+     "texto": "O Rooftop Perdizes só poderá ser vendido após a emissão do Registro de Incorporação. Valores, tabela e condições ainda não foram divulgados. Este kit serve para formar uma lista de interesse: não receba sinal, não fale em reserva e não prometa preço ou data.",
+     "titulo": "Atenção: projeto ainda não comercializável"
+    },
+    "passos": [
+     "Envie o texto primeiro. Ele apresenta o projeto e a ideia da lista de interesse.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso atrai interessados que você ainda não abordou.",
+     "Registre cada interessado com nome, telefone e perfil. Essa lista é o seu ativo para o dia do lançamento.",
+     "Envie a lista à coordenação para que seus clientes recebam as condições assim que forem divulgadas."
+    ],
+    "pilula": {
+     "tese": "Um futuro lançamento no alto de Perdizes com unidades R2V aprovadas para locação por temporada e operação da 360 Suítes. Quem entra na lista de interesse agora recebe tabela e condições antes da abertura das vendas.",
+     "gatilho": "Lançamentos com operação de temporada em Perdizes são raros, e quem está na lista recebe as condições primeiro. A escolha das melhores unidades costuma acontecer nos primeiros dias de vendas.",
+     "publico": "O investidor que quer renda de temporada num bairro valorizado da zona oeste, e famílias que buscam plantas de 2 e 3 dormitórios com vista e lazer completo."
+    },
+    "regras": [
+     {
+      "itens": [
+       "Pode: apresentar o projeto, a localização, o enquadramento R2V e montar uma lista de clientes interessados.",
+       "Não pode: receber sinal, prometer preço, prazo de entrega ou unidade específica, nem falar em compra antes do Registro de Incorporação.",
+       "Unidades HIS-2 e HMP terão regras de renda e locação detalhadas na aprovação final. Não ofereça essas unidades como produto de Airbnb."
+      ],
+      "titulo": "O que o corretor pode e não pode fazer nesta fase"
+     }
+    ],
+    "numeros": [
+     [
+      "Produto",
+      "torre única de 9 pavimentos com 96 unidades e duas lojas. Térreo com lazer e lojas, do 1º ao 8º andar os apartamentos tipo, e no 9º o rooftop com salão de festas."
+     ],
+     [
+      "Plantas",
+      "1 dormitório de 24 a 27 m², 2 suítes de 52 m² e planta flexível de 2 ou 3 dormitórios com 59 m²."
+     ],
+     [
+      "Enquadramento",
+      "unidades R2V aprovadas para locação por temporada, com operação em parceria com a 360 Suítes, a mesma operadora do Pina 1875. O projeto também terá unidades HIS-2 e HMP."
+     ],
+     [
+      "Localização",
+      "esquina da Rua Iperoig com a Rua Ministro Gastão Mesquita, a 800 m da futura Estação Perdizes. Perto da PUC-SP, Allianz Parque, Bourbon Shopping, Parque da Água Branca, Hospital Albert Einstein, Hospital das Clínicas e São Camilo."
+     ],
+     [
+      "Lazer",
+      "piscina e deck molhado, solarium, salão de festas e sauna com vista panorâmica, espaço gourmet, fitness, coworking e bicicletário."
+     ],
+     [
+      "Preços e condições",
+      "ainda não divulgados. Serão publicados após a emissão do Registro de Incorporação."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Endereço)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3"
+     ],
+     [
+      "Dia 5 a 7",
+      "Nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Quinzenal",
+      "Manter a lista aquecida",
+      "Status com os três cards 9:16"
+     ],
+     [
+      "Lançamento",
+      "Avisar a lista primeiro",
+      "Mensagem de abertura das vendas"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/rooftop/cards/moradia-feed.jpg",
+      "stories": "/projetos/rooftop/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/rooftop/cards/escassez-feed.jpg",
+      "stories": "/projetos/rooftop/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/rooftop/cards/investimento-feed.jpg",
+      "stories": "/projetos/rooftop/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nQuero te contar em primeira mão sobre um futuro lançamento em São Paulo 🏙️\n\n📍 *Rooftop Perdizes*: no alto de Perdizes, a 800 m da futura Estação Perdizes\n🔑 Unidades R2V aprovadas para locação por temporada e Airbnb\n🤝 Operação em parceria com a 360 Suítes\n\nO projeto está em aprovação, e quem entra na lista de interesse recebe tabela e condições antes de todo mundo.\n\nQuer que eu coloque seu nome na lista? 📲",
+      "quando": "investidor interessado em Airbnb e renda de curta temporada",
+      "titulo": "Investimento e renda de temporada"
+     },
+     {
+      "card": "Card 2 · Endereço e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá imaginou morar no alto de Perdizes, com vista 360° da cidade?\n\n🌇 Rooftop com salão de festas e sauna com vista panorâmica\n🏊 Piscina, deck molhado e solarium\n🛋️ Plantas de 1 a 3 dormitórios, de 24 a 64 m²\n🎓 Perto da PUC-SP, do Allianz Parque e do Bourbon Shopping\n\nÉ um futuro lançamento. Posso te avisar assim que as condições forem divulgadas?",
+      "quando": "famílias e clientes que valorizam vista, lazer e bairro",
+      "titulo": "Endereço e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Lista de interesse (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nEstou montando a lista de interesse de um futuro lançamento em Perdizes, com unidades liberadas para Airbnb.\n\nSem compromisso: você só recebe a tabela antes da abertura das vendas. Posso incluir seu nome? ✅",
+      "quando": "lead morno ou cliente que gosta de entrar cedo nos lançamentos",
+      "titulo": "Lista de interesse"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Projeto em fase de aprovação, comercialização somente após emissão do Registro de Incorporação. Valores e condições ainda não divulgados. A lista de interesse não constitui reserva nem compromisso de compra.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], viu a mensagem sobre o Rooftop Perdizes? 😉\n\nA lista de interesse é sem compromisso, só para você receber as condições primeiro.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Pronto, [Nome do Cliente], seu nome está na lista ✅\n\nPara eu te mandar as unidades certas quando abrir, me conta: a ideia é renda com temporada ou moradia?",
+      "titulo": "Cliente entrou na lista"
+     },
+     {
+      "texto": "[Nome do Cliente], como prometido, você é dos primeiros a saber: o Rooftop Perdizes abriu as vendas 🎉\n\nPosso te mandar a tabela e as unidades disponíveis agora?",
+      "titulo": "Abertura das vendas (quando a coordenação liberar)"
+     }
+    ],
+    "boas_praticas": [
+     "Não receba sinal nem fale em reserva antes do Registro de Incorporação.",
+     "Nunca invente preço ou prazo. Diga que serão divulgados após a aprovação.",
+     "Fale em R2V apenas para as unidades enquadradas. Não generalize a liberação para Airbnb.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Rooftop Perdizes, Rua Iperoig esquina com Rua Ministro Gastão Mesquita, Perdizes, São Paulo/SP"
+     ],
+     [
+      "Produto",
+      "96 unidades de 1 a 3 dormitórios, de 24 a 64 m², mais duas lojas"
+     ],
+     [
+      "Status",
+      "Futuro lançamento, projeto em fase de aprovação"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "full",
+   "nome": "Full Jardim São Paulo",
+   "local": "Jardim São Paulo",
+   "fase": "Entrega dez/2026",
+   "tags": [
+    "Pronto em breve"
+   ],
+   "ordem": 5,
+   "ativo": true,
+   "resumo": "Compacto inteligente no ponto mais nobre do Jardim São Paulo, a 500 m do metrô, com rooftop de dois andares e uma variedade rara de plantas, do studio de 16 m² ao 2 dormitórios de 40 m².",
+   "destaques": "Entrega mais próxima do portfólio Chaincorp: dezembro/2026\nA 500 m do Metrô Jardim São Paulo (Linha 1-Azul)\nMix de studios a 2 dormitórios: serve investidor e morador\nBairro tradicional com comércio, serviços, Shopping Center Norte e Sesc Santana\nComissão PJ de até 5% + bônus em campanha",
+   "ficha": "## Ficha técnica\n- Endereço: Rua Júlia Lopes de Almeida, 99, Jardim São Paulo, São Paulo/SP, a 500 m da Estação Jardim São Paulo do Metrô.\n- Realização: Chaincorp. Arquitetura: Tatiane Hernandes Arquitetura. Áreas comuns: Flying Studio.\n- Alvará nº 26014-23-SP-ALV. Comercialização somente após emissão do Registro de Incorporação.\n- Torre única, 16 pavimentos. Térreo: acesso, vagas e loja (19 m²). 1º e 2º: studios. 3º: gardens. 4º ao 13º: apartamentos tipo. 14º e 15º: rooftop com lazer.\n- Total: 82 unidades, 26 studios de categoria nR1-12 (14 unidades de 16 m² + 12 de 21 m²), e 55 apartamentos de categoria HMP/R2v-1 (11 de 32 m² [2 dorms] e 44 de 40 m² [2 dorms]).\n- Entrega prevista: dezembro/2026 (empreendimento mais próximo da entrega no portfólio Chaincorp).\n\n## Enquadramento urbanístico\n82 unidades autônomas: 1 loja (nR1-3, comércio local), 26 studios \"hospedagem/moradia\" (nR1-12), e 55 apartamentos de uso **HMP** (Habitação de Mercado Popular) e **R2v-1** (residencial regular, até 2.500 m² computáveis).\n\n## Preço (Tabelão Chaincorp set/2026)\n- 36 m² (HMP, 2 dorms): R$ 442.050,28 (R$ 12.279/m²)\n- 45,19 m² garden (HMP, 2 dorms): R$ 462.745,60 (R$ 10.240/m²)\n- Comissionamento: PF 2% / PJ até 5% + bônus.\n- Tabela interna (set/2026): unidades de ~35 a 74 m² (área total) na faixa de R$ 398 mil a R$ 758 mil, financiamento SFH, parcelas corrigidas por INCC até o Habite-se e depois por IGP-M.\n\n## Tipologias e plantas\nStudios de 16 e 21 m², apartamentos tipo de 1 e 2 dormitórios (31 a 40 m²) e gardens de 2 dormitórios (45, 55 e 63 m²). Todas as unidades com infraestrutura para ar-condicionado, ponto para cooktop, bacia dual flush, persianas de enrolar; unidades com terraço têm ponto grill e piso nivelado.\n\n## Especificações construtivas (Memorial Descritivo)\nAlvenaria convencional; portaria virtual; 2 elevadores atendendo térreo + 15 pavimentos; individualização de medição de água; instalação de ar-condicionado permitida apenas em unidades específicas (gardens e finais 01/02/04/05, além de studios listados) por limitação técnica de carga; não é possível instalar máquina de lavar louças nem aquecedor de água adicional. Fachada em argamassa monocapa ou massa texturizada.\n\n## Localização e mobilidade\nA 500 m do Metrô Jardim São Paulo (Linha 1-Azul); próximo à Estação Tucuruvi (4 min), Shopping Center Norte, Sesc Santana, Hospital São Camilo.\n\n## Diferenciais e áreas comuns\nPiscina, solarium, espaço descanso, sauna panorâmica, fitness, brinquedoteca, coworking, sala de reunião, espaço gourmet com churrasqueira, sky lounge, pet care, lavanderia coletiva, espaço delivery. Áreas comuns entregues equipadas e decoradas.\n\n## Argumentos de venda\nEntrega mais próxima do portfólio Chaincorp (dez/2026); \"a melhor localização do Jardim São Paulo\"; forte mix de tipologias (studio a 2 dormitórios) atendendo tanto investidor quanto morador; bairro com ampla infraestrutura de comércio e serviços.",
+   "entrega": "Dezembro/2026",
+   "preco_desde": "a partir de R$ 398 mil",
+   "comissao": "PF 2% · PJ até 5% + bônus",
+   "aviso": "O material de referência informa que a comercialização acontece somente após a emissão do Registro de Incorporação, e não traz tabela de preços. Confirme com a coordenação o status atual e a tabela vigente antes de falar em valores ou reserva.",
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/full/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/full/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/full/fotos/2.jpg",
+     "legenda": "Piscina no rooftop"
+    },
+    {
+     "url": "/projetos/full/fotos/3.jpg",
+     "legenda": "Rooftop lounge"
+    },
+    {
+     "url": "/projetos/full/fotos/4.jpg",
+     "legenda": "Living"
+    },
+    {
+     "url": "/projetos/full/fotos/5.jpg",
+     "legenda": "Suíte"
+    },
+    {
+     "url": "/projetos/full/fotos/6.jpg",
+     "legenda": "Planta de 2 dormitórios"
+    }
+   ],
+   "lamina_url": "/projetos/full/lamina.jpg",
+   "guia_url": "/projetos/full/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "Quanto custa?",
+      "resposta": "Solicite a tabela vigente à coordenação antes de responder valores."
+     },
+     {
+      "pergunta": "Quais as plantas?",
+      "resposta": "14 studios de 16 m², 12 studios de 21 m², 11 gardens de 32 m² e 44 apartamentos tipo de 40 m², ambos de 2 dormitórios."
+     },
+     {
+      "pergunta": "O projeto está aprovado?",
+      "resposta": "Sim, tem o Alvará nº 26014-23-SP-ALV. A comercialização acontece após a emissão do Registro de Incorporação."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "A Chaincorp tem projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais de São Paulo. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de primeiro imóvel e quem busca compacto com metrô",
+      "Opção A",
+      "Card 1 · \"O m² inteligente do Jardim São Paulo.\""
+     ],
+     [
+      "Endereço e estilo de vida",
+      "Jovens profissionais e casais",
+      "Opção B",
+      "Card 2 · \"Rooftop em dois andares, a 500 m do metrô.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Poucas unidades. Endereço nobre.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação o status de comercialização e a tabela vigente. O material de referência não traz preços.",
+     "Identifique o perfil: investidor de compacto, morador ou lead morno.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "O m² inteligente do Jardim São Paulo.",
+      "16 a 40 m² · 500 m do metrô · 82 unidades · 2 andares de rooftop",
+      "Junto da Opção A; Status para investidor"
+     ],
+     [
+      "2 · Endereço",
+      "Rooftop em dois andares, a 500 m do metrô.",
+      "Piscina · Sky lounge · Coworking",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Urgência",
+      "Poucas unidades. Endereço nobre.",
+      "14 studios de 16 m² · 12 de 21 m² · 55 de 2 dormitórios",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": {
+     "texto": "O material de referência informa que a comercialização acontece somente após a emissão do Registro de Incorporação, e não traz tabela de preços. Confirme com a coordenação o status atual e a tabela vigente antes de falar em valores ou reserva.",
+     "titulo": "Atenção antes de usar este kit"
+    },
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, descubra o objetivo. Investimento pede studio; moradia costuma pedir 2 dormitórios garden ou tipo.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade e conduzir a proposta."
+    ],
+    "pilula": {
+     "tese": "Compacto inteligente no ponto mais nobre do Jardim São Paulo, a 500 m do metrô, com rooftop de dois andares e uma variedade rara de plantas, do studio de 16 m² ao 2 dormitórios de 40 m².",
+     "gatilho": "São apenas 82 unidades, e os studios de 16 m² (14 unidades) e de 21 m² (12 unidades) são as plantas mais procuradas por investidores. Quem demonstra interesse agora tem prioridade na escolha.",
+     "publico": "O investidor que busca tíquete de entrada com metrô e boa demanda de locação, jovens profissionais e casais que querem morar perto do metrô com lazer completo."
+    },
+    "regras": [],
+    "numeros": [
+     [
+      "Produto",
+      "torre única de 16 pavimentos com 82 unidades: 14 studios de 16 m², 12 studios de 21 m², 11 apartamentos garden de 32 m² (2 dormitórios) e 44 apartamentos tipo de 40 m² (2 dormitórios)."
+     ],
+     [
+      "Localização",
+      "Rua Júlia Lopes de Almeida, 99, a 500 m da Estação Jardim São Paulo–Ayrton Senna (7 minutos a pé). Perto do Sesc Santana, do Hospital São Camilo e do Shopping Center Norte."
+     ],
+     [
+      "Lazer",
+      "dois andares de rooftop (14º e 15º) com piscina, solarium, sauna panorâmica, sky lounge, espaço gourmet com churrasqueira, fitness, coworking com sala de reunião, brinquedoteca, pet care, delivery e lavanderia."
+     ],
+     [
+      "Projeto",
+      "arquitetura de Tatiane Hernandes e áreas comuns concebidas pelo Flying Studio."
+     ],
+     [
+      "Preços e condições",
+      "solicite a tabela vigente à coordenação."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Endereço)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/full/cards/moradia-feed.jpg",
+      "stories": "/projetos/full/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/full/cards/escassez-feed.jpg",
+      "stories": "/projetos/full/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/full/cards/investimento-feed.jpg",
+      "stories": "/projetos/full/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade de compacto bem localizado em São Paulo 📈\n\n🏙️ *Full Jardim São Paulo*: no ponto mais nobre do bairro\n🚇 A 500 m da Estação Jardim São Paulo, Linha 1-Azul\n📐 Plantas de 16 a 40 m², do studio ao 2 dormitórios\n🌇 Rooftop com lazer completo em dois andares\n\nPosso te mandar a tabela e as plantas?",
+      "quando": "investidor de compactos e primeiro imóvel",
+      "titulo": "Investimento"
+     },
+     {
+      "card": "Card 2 · Endereço e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nQue tal morar a 500 m do metrô com um rooftop de dois andares?\n\n🏊 Piscina, solarium e sauna panorâmica\n🍷 Sky lounge e espaço gourmet com churrasqueira\n💻 Coworking com sala de reunião\n📍 Perto do Sesc Santana e do Shopping Center Norte\n\nQuer que eu te mostre as plantas? Te envio agora 📲",
+      "quando": "jovens profissionais, casais e quem valoriza lazer",
+      "titulo": "Endereço e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tem um lançamento no Jardim São Paulo, a 500 m do metrô, com studios a partir de 16 m² e poucas unidades.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Projeto aprovado com o Alvará nº 26014-23-SP-ALV, comercialização somente após emissão do Registro de Incorporação. Material preliminar, sujeito a alteração sem aviso prévio.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do Full Jardim São Paulo? 😉\n\nSe quiser, te mando as plantas e a tabela da tipologia que mais combina com você.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Para eu te mandar as opções certas:\n\nA ideia é investir para alugar ou morar?",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar o projeto, por ligação ou vídeo. Qual fica melhor para você?",
+      "titulo": "Convite para conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Não informe valores sem a tabela vigente confirmada pela coordenação.",
+     "Não fale em reserva ou sinal antes da liberação oficial da comercialização.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Full Jardim São Paulo, Rua Júlia Lopes de Almeida, 99, Jardim São Paulo, São Paulo/SP"
+     ],
+     [
+      "Produto",
+      "82 unidades de 16 a 40 m², de studios a 2 dormitórios, mais uma loja de 19 m²"
+     ],
+     [
+      "Status",
+      "Projeto aprovado com o Alvará nº 26014-23-SP-ALV, comercialização após emissão do Registro de Incorporação"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "blue",
+   "nome": "Blue Park",
+   "local": "Jardim São Paulo",
+   "fase": "Em comercialização",
+   "tags": [],
+   "ordem": 6,
+   "ativo": true,
+   "resumo": "Apartamento de 3 dormitórios em frente a um parque, a 2 minutos do metrô, num bairro tradicional da zona norte, com entrega prevista para 2027 e áreas comuns entregues decoradas.",
+   "destaques": "Em frente ao Parque Domingos Luís e a 2 minutos do Metrô Jardim São Paulo\nPlantas de 3 dormitórios e gardens: forte apelo para famílias\nPermite unir unidades, diferencial raro na concorrência\nÁreas comuns entregues equipadas e decoradas, com piscina e prainha\nComissão PJ de até 5% + bônus em campanha",
+   "ficha": "## Ficha técnica\n- Endereço: Rua Parque Domingos Luís, 77, esquina com Rua Joaquim Norberto, Jardim São Paulo, São Paulo/SP (zona norte), em frente ao Parque Domingos Luís e a 2 min a pé do Metrô Jardim São Paulo.\n- Realização: Chaincorp Empreendimentos e Participações. Arquitetura: Tatiane Hernandes Arquitetura. Áreas comuns: Flying Studio. Construção: GNG Engenharia.\n- Razão social: Full Joaquim Norberto Empreendimentos Imobiliários SPE LTDA, CNPJ 52.195.877/0001-89. Alvará nº 33049-23-SP-ALV.\n- Torre única, 15 pavimentos. Térreo: portaria, lobby, espaço delivery, bicicletário e vagas. 1º e 2º andar: vagas. 3º ao 14º andar: apartamentos tipo. 15º andar: lazer no rooftop.\n- Total: 72 unidades + loja de 36 m².\n- Tipologias: 3 dormitórios de 53, 56, 61 e 63 m²; Garden com 3 dormitórios de 61, 74 e 87 m².\n- Entrega prevista: maio/2027.\n\n## Enquadramento urbanístico\nUnidades com diferentes enquadramentos por final: **NR** (uso livre/regular), **HMP** (Habitação de Mercado Popular, renda até 10 salários mínimos). Consultar enquadramento específico por unidade no Tabelão.\n\n## Preço (Tabelão Chaincorp set/2026)\n- 61 m² garden (NR): R$ 678.025,68 (R$ 11.115/m²) / 74 m² garden (NR): R$ 776.327,68 (R$ 10.491/m²)\n- 53 m² (NR): R$ 651.655,82 (R$ 12.295/m²) / 53 m² (HMP): R$ 794.336,72 (R$ 14.987/m²)\n- 56 m² (NR): R$ 662.075,79 (R$ 11.823/m²)\n- 40 m² (HMP, 2 dorms): R$ 587.716,04 (R$ 14.693/m²)\n- Comissionamento: PF 2% / PJ até 5% + bônus (campanhas sujeitas a regulamento vigente).\n\n## Especificações construtivas (Cartilha do Corretor)\n- Estrutura convencional em concreto armado + fechamento em alvenaria. Pé-direito: 2,50 m em áreas secas, 2,30 m em áreas molhadas. Lajes de 12 cm. Paredes entre apartamentos: 19 cm (bloco cerâmico); internas: 9 cm (bloco de concreto).\n- Áreas molhadas entregues com revestimento, bancada de granito, cuba inox, louças e metais Deca/Docol (exceto chuveiro). Áreas secas entregues em contrapiso.\n- Preparação para ar-condicionado (suíte e living), aquecimento a gás (só chuveiros), infraestrutura para lava e seca, ponto grill no terraço, persianas de enrolar, caixilhos com atenuação acústica (NBR 15575).\n- Permite unir unidades e retirar caixilho entre living e terraço (piso nivelado). Vagas sorteadas, sem vaga de moto. Sem gerador de energia e sem reuso de água pluvial (opção consciente de custo). 2 elevadores (8 pessoas cada). Salão de festas: lotação máxima de 50 pessoas.\n\n## Localização e mobilidade\nEm frente ao Parque Domingos Luís, a 2 min do Metrô Jardim São Paulo (Linha 1-Azul, com conexões para Linha 2-Verde, 3-Vermelha, 5-Lilás). Próximo a Shopping Center Norte, SESC Santana, Hospital São Camilo.\n\n## Diferenciais e áreas comuns\nPiscina adulto e infantil, prainha, solarium, fitness, brinquedoteca, playground, lavanderia, coworking, sky lounge, pet place, bicicletário, espaço gourmet com churrasqueira a carvão, fireplace, espaço delivery. Áreas comuns entregues equipadas e decoradas.\n\n## Argumentos de venda\n\"O m² inteligente para você viver bem\"; bairro tradicional e valorizado da zona norte; possibilidade de unir unidades (diferencial raro na concorrência); forte apelo para famílias (plantas de 3 dormitórios).",
+   "entrega": "Maio/2027",
+   "preco_desde": "a partir de R$ 588 mil",
+   "comissao": "PF 2% · PJ até 5% + bônus",
+   "aviso": null,
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/blue/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/blue/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/blue/fotos/2.jpg",
+     "legenda": "Piscina, vista aérea"
+    },
+    {
+     "url": "/projetos/blue/fotos/3.jpg",
+     "legenda": "Piscina com prainha"
+    },
+    {
+     "url": "/projetos/blue/fotos/4.jpg",
+     "legenda": "Fitness"
+    },
+    {
+     "url": "/projetos/blue/fotos/5.jpg",
+     "legenda": "Living"
+    },
+    {
+     "url": "/projetos/blue/fotos/6.jpg",
+     "legenda": "Planta de 3 dormitórios"
+    }
+   ],
+   "lamina_url": "/projetos/blue/lamina.jpg",
+   "guia_url": "/projetos/blue/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "Dá para unir dois apartamentos?",
+      "resposta": "Sim, o projeto permite unir unidades, retirando o caixilho entre living e terraço, com piso nivelado. Confirme com a coordenação quais unidades permitem."
+     },
+     {
+      "pergunta": "O que é unidade HMP?",
+      "resposta": "HMP é Habitação de Mercado Popular, uma categoria para famílias com renda de até 10 salários mínimos. As unidades NR não têm essa exigência."
+     },
+     {
+      "pergunta": "As áreas comuns vêm prontas?",
+      "resposta": "Sim, as áreas comuns são entregues equipadas e decoradas."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "A Chaincorp tem projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais de São Paulo. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Patrimônio",
+      "Comprador de patrimônio e investidor de valorização na zona norte",
+      "Opção A",
+      "Card 1 · \"3 dormitórios em frente ao parque.\""
+     ],
+     [
+      "Moradia e estilo de vida",
+      "Famílias, upgrade de moradia, quem quer área verde",
+      "Opção B",
+      "Card 2 · \"Viva em frente a um parque.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Seu apartamento pronto em 2027.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação a tabela vigente e a disponibilidade de unidades.",
+     "Identifique o perfil: família, upgrade de moradia, patrimônio ou lead morno.",
+     "Confira o enquadramento da unidade. Unidades HMP exigem renda familiar de até 10 salários mínimos.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Patrimônio",
+      "3 dormitórios em frente ao parque.",
+      "A partir de R$ 651 mil · 2 min do metrô · mai/2027",
+      "Junto da Opção A; Status institucional"
+     ],
+     [
+      "2 · Moradia",
+      "Viva em frente a um parque.",
+      "Parque · Lazer completo · Gardens",
+      "Junto da Opção B; Status para famílias"
+     ],
+     [
+      "3 · Urgência",
+      "Seu apartamento pronto em 2027.",
+      "72 unidades · 3 dormitórios · 2 min do metrô",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": null,
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, entenda a composição da família. Número de filhos e uso do garden ajudam a escolher a planta certa.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade e conduzir a proposta."
+    ],
+    "pilula": {
+     "tese": "Apartamento de 3 dormitórios em frente a um parque, a 2 minutos do metrô, num bairro tradicional da zona norte, com entrega prevista para 2027 e áreas comuns entregues decoradas. O metro quadrado das unidades NR parte de cerca de R$ 10.500.",
+     "gatilho": "A entrega está próxima, em maio de 2027, e são apenas 72 unidades. Gardens e plantas que permitem unir unidades são as primeiras a sair.",
+     "publico": "Famílias que querem espaço, verde e mobilidade, casais em upgrade de moradia e investidores de patrimônio que buscam um 3 dormitórios com boa liquidez na zona norte."
+    },
+    "regras": [
+     {
+      "itens": [
+       "Valores sujeitos a alteração sem aviso prévio e à disponibilidade. Consulte o enquadramento específico de cada unidade. Unidades HMP atendem famílias com renda de até 10 salários mínimos."
+      ],
+      "tabela": [
+       [
+        "Metragem",
+        "Enquadramento",
+        "Preço",
+        "R$/m²"
+       ],
+       [
+        "53 m²",
+        "NR",
+        "R$ 651.656",
+        "R$ 12.295"
+       ],
+       [
+        "56 m²",
+        "NR",
+        "R$ 662.076",
+        "R$ 11.823"
+       ],
+       [
+        "61 m² garden",
+        "NR",
+        "R$ 678.026",
+        "R$ 11.115"
+       ],
+       [
+        "74 m² garden",
+        "NR",
+        "R$ 776.328",
+        "R$ 10.491"
+       ],
+       [
+        "40 m² (2 dorms)",
+        "HMP",
+        "R$ 587.716",
+        "R$ 14.693"
+       ],
+       [
+        "53 m²",
+        "HMP",
+        "R$ 794.337",
+        "R$ 14.987"
+       ]
+      ],
+      "titulo": "Enquadramentos e preços (Tabelão Chaincorp set/2026)"
+     }
+    ],
+    "numeros": [
+     [
+      "Produto",
+      "torre única de 15 pavimentos com 72 unidades e uma loja térrea. Apartamentos e gardens de 3 dormitórios, de 53 a 87 m²."
+     ],
+     [
+      "Diferencial raro",
+      "possibilidade de unir unidades, retirando o caixilho entre living e terraço, com piso nivelado."
+     ],
+     [
+      "Localização",
+      "em frente ao Parque Domingos Luís, a 2 minutos do Metrô Jardim São Paulo (Linha 1-Azul), perto do Shopping Center Norte, do Sesc Santana e do Hospital São Camilo."
+     ],
+     [
+      "Lazer",
+      "áreas comuns entregues equipadas e decoradas: piscina adulto e infantil com prainha, solarium, sky lounge, fitness, brinquedoteca, playground, lavanderia, coworking e pet place."
+     ],
+     [
+      "Entrega",
+      "prevista para maio de 2027, uma das mais próximas do portfólio."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Patrimônio ou Moradia)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/blue/cards/moradia-feed.jpg",
+      "stories": "/projetos/blue/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/blue/cards/escassez-feed.jpg",
+      "stories": "/projetos/blue/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/blue/cards/investimento-feed.jpg",
+      "stories": "/projetos/blue/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Patrimônio (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade rara na zona norte de São Paulo 🏡\n\n🌳 *Blue Park*: em frente ao Parque Domingos Luís\n🚇 2 minutos do Metrô Jardim São Paulo\n🛏️ Apartamentos de 3 dormitórios a partir de *R$ 651 mil*\n🗓️ Entrega prevista para maio de 2027\n\nÉ um 3 dormitórios com metrô, parque e bairro tradicional, uma combinação que valoriza e tem saída.\n\nPosso te mandar as plantas e a tabela?",
+      "quando": "comprador de patrimônio ou investidor de longo prazo",
+      "titulo": "Patrimônio e valorização"
+     },
+     {
+      "card": "Card 2 · Moradia e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá imaginou abrir a janela e ver um parque?\n\n🌳 Em frente ao Parque Domingos Luís\n🏊 Piscina com prainha, sky lounge e brinquedoteca\n🛏️ 3 dormitórios e gardens de 61 e 74 m²\n🔓 Possibilidade rara de unir unidades\n\nQuer que eu te mostre as plantas? Te envio agora 📲",
+      "quando": "famílias e upgrade de moradia",
+      "titulo": "Moradia e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tenho um 3 dormitórios em frente a um parque, a 2 minutos do metrô, com entrega prevista para 2027, a partir de [Valor da Unidade].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Valores do Tabelão Chaincorp set/2026, sujeitos a alteração sem aviso prévio e à disponibilidade. Entrega prevista para maio de 2027. Consulte o enquadramento específico de cada unidade.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do Blue Park? 😉\n\nSe quiser, preparo uma simulação com a unidade que mais combina com a sua família.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Para eu te mandar as opções certas:\n\nÉ para morar com a família ou como investimento?",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar o projeto, por ligação, vídeo ou no decorado. Qual fica melhor?",
+      "titulo": "Convite para visita ou conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Valores são sempre de referência. Confirme a tabela vigente antes de enviar qualquer número.",
+     "Confira o enquadramento antes de oferecer uma unidade HMP.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "Blue Park, Rua Parque Domingos Luís, 77, Jardim São Paulo, São Paulo/SP"
+     ],
+     [
+      "Produto",
+      "72 apartamentos e gardens de 3 dormitórios, de 53 a 87 m²"
+     ],
+     [
+      "Entrega prevista",
+      "Maio de 2027"
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vip",
+   "nome": "VIP Vila Prudente",
+   "local": "Vila Prudente",
+   "fase": "Em comercialização",
+   "tags": [
+    "96 unidades"
+   ],
+   "ordem": 7,
+   "ativo": true,
+   "resumo": "Apartamento de 2 dormitórios a partir de R$ 350 mil, com metro quadrado a partir de R$ 9.475, num terreno de esquina a 5 minutos do Metrô Vila Prudente, com lazer completo e construção Viccon.",
+   "destaques": "5 minutos a pé do Metrô Vila Prudente (Linha 2-Verde), com conexão para toda a cidade\nMix de 1 e 2 dormitórios e lofts duplex\nUnidades NR e R2V, sem trava de renda\nConstrução Viccon, conhecida pelo cumprimento de prazos\nCondomínio pensado para baixo custo ao morador",
+   "ficha": "## Ficha técnica\n- Endereço: Rua Américo Vespucci, 958, Vila Prudente, São Paulo/SP (zona leste), a 5 min do Metrô Vila Prudente (Linha 2-Verde e conexões).\n- Realização: Chaincorp Incorporadora. Construção: Viccon Construtora. Projeto arquitetônico e de interiores: Ilha Arquitetura.\n- Razão social: AMV Empreendimentos Imobiliários SPE LTDA, CNPJ 45.755.912/0001-08. Alvará nº 36.383-23-SP-ALV (23/08/2024). Comercialização somente após registro do memorial de incorporação.\n- Torre única, 17 pavimentos. Total: 96 unidades + loja de 100,36 m².\n- Tipologias: 29 apartamentos de 1 dormitório (25 a 29 m²), 59 apartamentos de 2 dormitórios (36 a 40 m²), 7 lofts duplex de 1 dormitório (33 a 35 m²), soma 95 unidades na ficha técnica do book contra 96 informadas no total; divergência do material original, confirmar com a incorporadora se necessário.\n- Entrega prevista: agosto/2028.\n\n## Enquadramento urbanístico\nUnidades com enquadramentos mistos: **NR** (regular/uso livre) e **R2V**, além de unidades sem enquadramento especial indicadas por número de final. Consultar enquadramento específico por unidade, não há registro de HIS/HMP nesta tabela (diferente de Pina1875, Vici e Rooftop).\n\n## Preço (Tabelão Chaincorp set/2026 e tabela interna)\n- 25 m² (1 dorm.): R$ 318.795,78 (R$ 12.752/m²) / 29 m² (1 dorm.): R$ 362.101,35 (R$ 12.486/m²)\n- 37 m² (2 dorms.): R$ 350.569,98 (R$ 9.475/m²) / 40 m² (2 dorms.): R$ 395.752,20 (R$ 9.894/m²)\n- 34 m² (duplex 1 dorm.): R$ 383.486,65 (R$ 11.279/m²)\n- Loja térreo (100 m²): R$ 888.738,98 (R$ 8.887/m²)\n- Comissionamento: PF 2% / PJ 4%.\n- Tabela interna (set/2026): unidades de 25 a 62 m² de área privativa, valores de ~R$ 304 mil a ~R$ 483 mil, financiamento SFH.\n\n## Especificações e diferenciais\nPersianas de enrolar (blackout), tomadas USB nos dormitórios, previsão para ar-condicionado, ponto grill, bancadas de granito e cuba inox na cozinha, bacia dual flush, ventilação natural. Condomínio 100% acessível, concebido para baixo custo ao morador (sem gerador de energia dedicado destacado no book), eletrodomésticos das áreas comuns com selo Procel A, lâmpadas LED no hall.\n\n## Localização e mobilidade\n5 min a pé do Metrô Vila Prudente (Linha 2-Verde), próximo à Estação CPTM Ipiranga, Mooca Plaza Shopping, ETEC José Rocha Mendes, Uninove, hospitais Rede Hora Certa e São Cristóvão.\n\n## Diferenciais e áreas comuns\nPiscina, deck molhado, espaço descanso, fitness, game pub, sauna panorâmica, espaço gourmet, churrasqueira, cine open air, fireplace, playground, brinquedoteca, pet place, co.kitchen, espaço delivery, mini market, coworking com sala de reunião, bicicletário e lavanderia.\n\n## Argumentos de venda\n\"Exclusivo como você e inteligente na hora de pagar\"; terreno de esquina com proposta contemporânea; mix variado de tipologias (1, 2 dormitórios e duplex); forte conectividade via Linha 2-Verde para toda a cidade; cultura de prazos da Viccon Construtora como diferencial de confiabilidade.",
+   "entrega": "Agosto/2028",
+   "preco_desde": "a partir de R$ 319 mil",
+   "comissao": "PF 2% · PJ 4%",
+   "aviso": "O material de referência informa que a comercialização acontece somente após o registro do memorial de incorporação. Confirme com a coordenação o status atual antes de falar em reserva ou proposta.",
+   "drive_url": null,
+   "tabela_url": null,
+   "youtube_url": null,
+   "capa_url": "/projetos/vip/capa.jpg",
+   "galeria": [
+    {
+     "url": "/projetos/vip/fotos/1.jpg",
+     "legenda": "Fachada"
+    },
+    {
+     "url": "/projetos/vip/fotos/2.jpg",
+     "legenda": "Piscina"
+    },
+    {
+     "url": "/projetos/vip/fotos/3.jpg",
+     "legenda": "Churrasqueira"
+    },
+    {
+     "url": "/projetos/vip/fotos/4.jpg",
+     "legenda": "Fitness"
+    },
+    {
+     "url": "/projetos/vip/fotos/5.jpg",
+     "legenda": "Living"
+    },
+    {
+     "url": "/projetos/vip/fotos/6.jpg",
+     "legenda": "Planta de 2 dormitórios"
+    }
+   ],
+   "lamina_url": "/projetos/vip/lamina.jpg",
+   "guia_url": "/projetos/vip/guia-do-kit.pdf",
+   "kit": {
+    "faq": [
+     {
+      "pergunta": "Como o 2 dormitórios pode ser mais barato que o 1 dormitório?",
+      "resposta": "O preço por m² do 2 dormitórios de 37 m² é o menor do projeto, R$ 9.475. Por isso ele sai a R$ 350.570, abaixo do 1 dormitório de 29 m² (R$ 362.101)."
+     },
+     {
+      "pergunta": "Posso alugar por temporada?",
+      "resposta": "Depende do enquadramento da unidade. O VIP tem unidades NR e R2V; consulte a coordenação para cada unidade."
+     },
+     {
+      "pergunta": "Quem constrói?",
+      "resposta": "A Viccon Construtora, conhecida pela cultura de cumprimento de prazos. A entrega está prevista para agosto de 2028."
+     },
+     {
+      "pergunta": "Não conheço a construtora.",
+      "resposta": "A Chaincorp tem projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais de São Paulo. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias."
+     }
+    ],
+    "mapa": [
+     [
+      "Investimento",
+      "Investidor de tíquete acessível e quem busca preço por m² baixo com metrô",
+      "Opção A",
+      "Card 1 · \"2 dormitórios a partir de R$ 350 mil.\""
+     ],
+     [
+      "Moradia e estilo de vida",
+      "Jovens casais, primeiro imóvel, quem busca lazer completo",
+      "Opção B",
+      "Card 2 · \"Exclusivo como você. Na Vila Prudente.\""
+     ],
+     [
+      "Reaquecimento",
+      "Lead morno, base antiga, contato sem resposta",
+      "Opção C",
+      "Card 3 · \"Inteligente na hora de pagar.\""
+     ]
+    ],
+    "antes": [
+     "Confirme com a coordenação a tabela vigente, a disponibilidade e o status de comercialização.",
+     "Identifique o perfil: investidor, primeiro imóvel ou lead morno.",
+     "Consulte o enquadramento da unidade (NR ou R2V) antes de falar em uso para locação.",
+     "Personalize todos os campos entre colchetes. Nunca envie a mensagem com colchetes visíveis."
+    ],
+    "cards": [
+     [
+      "1 · Investimento",
+      "2 dormitórios a partir de R$ 350 mil.",
+      "R$ 9.475/m² · 5 min do metrô · ago/2028 · Viccon",
+      "Junto da Opção A; Status para investidor"
+     ],
+     [
+      "2 · Moradia",
+      "Exclusivo como você. Na Vila Prudente.",
+      "Cine open air · Lofts duplex · Linha 2",
+      "Junto da Opção B; Status institucional"
+     ],
+     [
+      "3 · Urgência",
+      "Inteligente na hora de pagar.",
+      "R$ 318 mil · R$ 350 mil · R$ 383 mil",
+      "Follow-up e Opção C"
+     ]
+    ],
+    "dicas": [
+     "Leads antigos da sua base: comece direto pela Opção C. É uma abordagem leve, que reabre a conversa sem exigir que o cliente lembre do contato anterior.",
+     "Melhores horários: entre 9h e 11h30 e entre 18h e 20h30 nos dias úteis. Evite mensagens comerciais aos domingos e após as 21h."
+    ],
+    "alerta": {
+     "texto": "O material de referência informa que a comercialização acontece somente após o registro do memorial de incorporação. Confirme com a coordenação o status atual antes de falar em reserva ou proposta.",
+     "titulo": "Atenção antes de usar este kit"
+    },
+    "passos": [
+     "Envie o texto primeiro. Ele abre a conversa e dá contexto.",
+     "Logo em seguida, envie o card 1:1 correspondente. A imagem reforça a mensagem sem repetir tudo.",
+     "No mesmo dia, publique o card 9:16 no seu Status. Isso alcança também quem você ainda não abordou individualmente.",
+     "Quando o cliente responder, compare as plantas. Mostrar que o 2 dormitórios de 37 m² custa menos que o 1 dormitório de 29 m² costuma decidir a conversa.",
+     "Com interesse confirmado, acione a coordenação para reservar a unidade e conduzir a proposta."
+    ],
+    "pilula": {
+     "tese": "Apartamento de 2 dormitórios a partir de R$ 350 mil, com metro quadrado a partir de R$ 9.475, num terreno de esquina a 5 minutos do Metrô Vila Prudente, com lazer completo e construção Viccon.",
+     "gatilho": "O 2 dormitórios de 37 m² tem o menor preço por m² do projeto e custa menos que o 1 dormitório de 29 m². É o tipo de unidade que se esgota primeiro.",
+     "publico": "Jovens casais e quem compra o primeiro imóvel, além do investidor que busca tíquete acessível e preço por m² baixo com metrô, para locação tradicional."
+    },
+    "regras": [
+     {
+      "itens": [
+       "Valores sujeitos a alteração sem aviso prévio e à disponibilidade."
+      ],
+      "tabela": [
+       [
+        "Tipologia",
+        "Metragem",
+        "Preço",
+        "R$/m²"
+       ],
+       [
+        "1 dormitório",
+        "25 m²",
+        "R$ 318.796",
+        "R$ 12.752"
+       ],
+       [
+        "1 dormitório",
+        "29 m²",
+        "R$ 362.101",
+        "R$ 12.486"
+       ],
+       [
+        "2 dormitórios",
+        "37 m²",
+        "R$ 350.570",
+        "R$ 9.475"
+       ],
+       [
+        "2 dormitórios",
+        "40 m²",
+        "R$ 395.752",
+        "R$ 9.894"
+       ],
+       [
+        "Loft duplex, 1 dormitório",
+        "34 m²",
+        "R$ 383.487",
+        "R$ 11.279"
+       ],
+       [
+        "Loja térreo",
+        "100 m²",
+        "R$ 888.739",
+        "R$ 8.887"
+       ]
+      ],
+      "titulo": "Preços por tipologia (Tabelão Chaincorp set/2026)"
+     }
+    ],
+    "numeros": [
+     [
+      "Produto",
+      "terreno de esquina, torre única de 17 pavimentos com 96 unidades: 29 apartamentos de 1 dormitório (25 a 29 m²), 59 de 2 dormitórios (36 a 40 m²) e 7 lofts duplex de 1 dormitório (33 a 35 m²), mais uma loja de 100 m²."
+     ],
+     [
+      "Preço por m²",
+      "a partir de R$ 9.475 no 2 dormitórios de 37 m², o que torna o 2 dormitórios mais barato que o 1 dormitório de 29 m²."
+     ],
+     [
+      "Localização",
+      "a 5 minutos do Metrô Vila Prudente (Linha 2-Verde), perto da Estação CPTM Ipiranga, do Mooca Plaza Shopping, da Uninove e dos hospitais Rede Hora Certa e São Cristóvão."
+     ],
+     [
+      "Lazer",
+      "piscina e deck molhado, cine open air e fireplace, fitness e sauna panorâmica, espaço gourmet e churrasqueira, game pub e co.kitchen, playground, brinquedoteca, coworking e pet place."
+     ],
+     [
+      "Construção",
+      "Viccon Construtora, com cultura de cumprimento de prazos. Entrega prevista para agosto de 2028."
+     ],
+     [
+      "Enquadramento",
+      "unidades NR e R2V, sem faixa HIS ou HMP. Consulte o enquadramento de cada unidade com a coordenação."
+     ],
+     [
+      "Comissionamento",
+      "PF 2% / PJ 4%, conforme Tabelão Chaincorp set/2026."
+     ]
+    ],
+    "cadencia": [
+     [
+      "Dia 0",
+      "Primeiro contato conforme o perfil",
+      "Opção A ou B + card 1:1"
+     ],
+     [
+      "Dia 0",
+      "Publicação no Status",
+      "Card 9:16 (Investimento ou Moradia)"
+     ],
+     [
+      "Dia 2",
+      "Sem resposta: follow-up curto",
+      "Mensagem de follow-up + Card 3 (Urgência)"
+     ],
+     [
+      "Dia 5 a 7",
+      "Ainda sem resposta: nova abordagem",
+      "Opção C"
+     ],
+     [
+      "Após resposta",
+      "Qualificar e convidar para conversa",
+      "Mensagens de continuidade"
+     ],
+     [
+      "Semanal",
+      "Manter presença no Status",
+      "Alternar os três cards 9:16"
+     ]
+    ],
+    "cards_img": {
+     "moradia": {
+      "feed": "/projetos/vip/cards/moradia-feed.jpg",
+      "stories": "/projetos/vip/cards/moradia-stories.jpg"
+     },
+     "escassez": {
+      "feed": "/projetos/vip/cards/escassez-feed.jpg",
+      "stories": "/projetos/vip/cards/escassez-stories.jpg"
+     },
+     "investimento": {
+      "feed": "/projetos/vip/cards/investimento-feed.jpg",
+      "stories": "/projetos/vip/cards/investimento-stories.jpg"
+     }
+    },
+    "abordagens": [
+     {
+      "card": "Card 1 · Investimento (1:1)",
+      "tese": "investimento",
+      "opcao": "A",
+      "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade com um dos melhores preços por m² do nosso portfólio 📈\n\n🏙️ *VIP Vila Prudente*: terreno de esquina a 5 minutos do metrô\n🛏️ 2 dormitórios a partir de *R$ 350 mil*\n📐 Metro quadrado a partir de *R$ 9.475*\n🏗️ Construção Viccon, entrega prevista para ago/2028\n\nPosso te mandar as plantas e a tabela?",
+      "quando": "investidor de tíquete acessível",
+      "titulo": "Investimento"
+     },
+     {
+      "card": "Card 2 · Moradia e estilo de vida (1:1)",
+      "tese": "moradia",
+      "opcao": "B",
+      "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em morar a 5 minutos do Metrô Vila Prudente, com lazer de clube?\n\n🎬 Cine open air, fireplace e game pub\n🏊 Piscina, deck molhado e sauna panorâmica\n🛋️ 1 e 2 dormitórios e lofts duplex\n🛍️ Perto do Mooca Plaza Shopping\n\nQuer que eu te mostre as plantas? Te envio agora 📲",
+      "quando": "jovens casais e primeiro imóvel",
+      "titulo": "Moradia e estilo de vida"
+     },
+     {
+      "card": "Card 3 · Urgência (1:1)",
+      "tese": "escassez",
+      "opcao": "C",
+      "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tem um 2 dormitórios a 5 minutos do metrô a partir de [Valor da Unidade], mais barato que muito 1 dormitório da região.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰",
+      "quando": "lead morno, contato antigo da base ou cliente que não respondeu",
+      "titulo": "Reaquecimento de lead"
+     }
+    ],
+    "aviso_legal": "Material de uso interno da rede de parceiros. Valores do Tabelão Chaincorp set/2026, sujeitos a alteração sem aviso prévio e à disponibilidade. Comercialização somente após registro do memorial de incorporação.",
+    "continuidade": [
+     {
+      "texto": "[Nome do Cliente], conseguiu ver o material do VIP Vila Prudente? 😉\n\nSe quiser, preparo uma simulação da unidade que mais combina com você.",
+      "titulo": "Follow-up sem resposta (48 horas depois)"
+     },
+     {
+      "texto": "Perfeito, [Nome do Cliente]! Para eu te mandar as opções certas:\n\nA ideia é morar ou investir para alugar?",
+      "titulo": "Cliente demonstrou interesse"
+     },
+     {
+      "texto": "Ótimo! Tenho [dia] às [horário] ou [dia] às [horário] para te apresentar o projeto, por ligação ou vídeo. Qual fica melhor para você?",
+      "titulo": "Convite para conversa"
+     }
+    ],
+    "boas_praticas": [
+     "Valores são sempre de referência. Confirme a tabela vigente antes de enviar qualquer número.",
+     "Não fale em reserva ou sinal antes da liberação oficial da comercialização.",
+     "Uma mensagem por vez. Não envie as três opções ao mesmo cliente no mesmo dia.",
+     "Sem listas de transmissão em massa para contatos frios. Priorize clientes com quem você já tem relacionamento.",
+     "Registre cada contato e a resposta do cliente, para dar continuidade com a coordenação."
+    ],
+    "identificacao": [
+     [
+      "Empreendimento",
+      "VIP Vila Prudente, Rua Américo Vespucci, 958, Vila Prudente, São Paulo/SP"
+     ],
+     [
+      "Produto",
+      "96 unidades de 1 e 2 dormitórios e lofts duplex, de 25 a 40 m², mais uma loja de 100 m²"
+     ],
+     [
+      "Entrega prevista",
+      "Agosto de 2028, construção Viccon"
+     ]
+    ]
+   }
+  }
+ ],
+ "textos_whatsapp": [
+  {
+   "projeto": "blue",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tenho um 3 dormitórios em frente a um parque, a 2 minutos do metrô, com entrega prevista para 2027, a partir de [Valor da Unidade].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "blue",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade rara na zona norte de São Paulo 🏡\n\n🌳 *Blue Park*: em frente ao Parque Domingos Luís\n🚇 2 minutos do Metrô Jardim São Paulo\n🛏️ Apartamentos de 3 dormitórios a partir de *R$ 651 mil*\n🗓️ Entrega prevista para maio de 2027\n\nÉ um 3 dormitórios com metrô, parque e bairro tradicional, uma combinação que valoriza e tem saída.\n\nPosso te mandar as plantas e a tabela?\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "blue",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá imaginou abrir a janela e ver um parque?\n\n🌳 Em frente ao Parque Domingos Luís\n🏊 Piscina com prainha, sky lounge e brinquedoteca\n🛏️ 3 dormitórios e gardens de 61 e 74 m²\n🔓 Possibilidade rara de unir unidades\n\nQuer que eu te mostre as plantas? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "full",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tem um lançamento no Jardim São Paulo, a 500 m do metrô, com studios a partir de 16 m² e poucas unidades.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "full",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade de compacto bem localizado em São Paulo 📈\n\n🏙️ *Full Jardim São Paulo*: no ponto mais nobre do bairro\n🚇 A 500 m da Estação Jardim São Paulo, Linha 1-Azul\n📐 Plantas de 16 a 40 m², do studio ao 2 dormitórios\n🌇 Rooftop com lazer completo em dois andares\n\nPosso te mandar a tabela e as plantas?\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "full",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nQue tal morar a 500 m do metrô com um rooftop de dois andares?\n\n🏊 Piscina, solarium e sauna panorâmica\n🍷 Sky lounge e espaço gourmet com churrasqueira\n💻 Coworking com sala de reunião\n📍 Perto do Sesc Santana e do Shopping Center Norte\n\nQuer que eu te mostre as plantas? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "pina",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque tenho uma oportunidade em Perdizes com incorporação já registrada: studio a 3 quadras do metrô a partir de [Valor da Unidade].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "pina",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade de renda em São Paulo 📈\n\n🏙️ *Pina 1875*: studios em Perdizes, a 3 quadras do Metrô Vila Madalena\n🔑 Gestão da locação pela 360 Suítes, sem trabalho para você\n\nNo cenário realista da operadora, a estimativa é de *R$ 4.180 líquidos por mês*, cerca de *17% ao ano* 💰\n\n💳 Studios a partir de *R$ 225 mil*\n🏗️ Incorporação registrada, entrega prevista para out/2028\n\nPosso te mandar a simulação da unidade?\n\n👉 Conheça o projeto: {link}\n\n_Estimativas de mercado, sem garantia de rentabilidade._"
+  },
+  {
+   "projeto": "pina",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em ter um endereço entre a Vila Madalena e Perdizes?\n\n📍 A 3 quadras do metrô e a 8 minutos da PUC-SP\n🌿 Rooftop com casa de campo, deck e pet place\n💻 Coworking, coliving e fitness em andar exclusivo\n🛋️ Plantas de 18 a 49 m², do studio ao 2 dormitórios\n\nQuer que eu te mostre as plantas? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "rooftop",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nEstou montando a lista de interesse de um futuro lançamento em Perdizes, com unidades liberadas para Airbnb.\n\nSem compromisso: você só recebe a tabela antes da abertura das vendas. Posso incluir seu nome? ✅\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "rooftop",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nQuero te contar em primeira mão sobre um futuro lançamento em São Paulo 🏙️\n\n📍 *Rooftop Perdizes*: no alto de Perdizes, a 800 m da futura Estação Perdizes\n🔑 Unidades R2V aprovadas para locação por temporada e Airbnb\n🤝 Operação em parceria com a 360 Suítes\n\nO projeto está em aprovação, e quem entra na lista de interesse recebe tabela e condições antes de todo mundo.\n\nQuer que eu coloque seu nome na lista? 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "rooftop",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá imaginou morar no alto de Perdizes, com vista 360° da cidade?\n\n🌇 Rooftop com salão de festas e sauna com vista panorâmica\n🏊 Piscina, deck molhado e solarium\n🛋️ Plantas de 1 a 3 dormitórios, de 24 a 64 m²\n🎓 Perto da PUC-SP, do Allianz Parque e do Bourbon Shopping\n\nÉ um futuro lançamento. Posso te avisar assim que as condições forem divulgadas?\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "verya",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque abriu uma oportunidade em São Paulo que ainda está em pré-lançamento, antes da tabela pública.\n\nStudio nos Jardins, liberado para Airbnb, entrada a partir de [Valor de Entrada].\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "verya",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade que conversa com o que você busca em renda 📈\n\n🏙️ *Verya Jardins*: studios na Av. Rebouças, entre Jardins e Pinheiros\n🚇 350 m do metrô Oscar Freire\n🔑 Liberdade total para Airbnb e Short Stay, com gestão da 360 Suítes\n\nNo cenário realista do book (80% de ocupação), a estimativa é de *R$ 7.800 líquidos por mês*, cerca de *19% ao ano* 💰\n\n💳 Entrada de 20% e saldo em até 33x sem juros, ainda em condição de pré-lançamento.\n\nPosso te mandar a simulação da unidade [andar/metragem]?\n\n👉 Conheça o projeto: {link}\n\n_Estimativas de mercado, sem garantia de rentabilidade._"
+  },
+  {
+   "projeto": "verya",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nImagina ter seu endereço em São Paulo numa esquina entre Jardins e Pinheiros?\n\n📍 Av. Rebouças, a 5 minutos a pé da Rua Oscar Freire\n🏊 Piscina coberta e sauna no rooftop, com vista para os Jardins\n🏋️ Andar inteiro de academia, coworking e lavanderia\n🛋️ Studios de 18 a 24,8 m², assinados pela Nura Arquitetura e com interiores DP Barros\n\nDá para usar quando estiver na capital e deixar rendendo nos outros dias.\n\nQuer que eu te mostre as plantas? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "vici",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você porque saiu um dos últimos terrenos do eixo Faria Lima, e o studio começa em [Valor da Unidade].\n\nEntrada de 10%, saldo diluído na obra e financiamento na entrega.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "vici",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade rara para quem pensa em patrimônio 📈\n\n🏙️ *Vici Faria Lima*: studios de 25 m² em Pinheiros\n🚇 4 minutos a pé da Estação Faria Lima\n📐 Cerca de *R$ 13.200 o m²*, num eixo onde o mercado livre já pratica R$ 22.000\n\nA projeção da incorporadora indica um *spread de +67%* quando a unidade se libera das regras HIS-2, e uma TIR combinada de *15,5% a 20,9% ao ano* somando a locação 💰\n\n💳 Entrada de 10%, 30% na obra e 60% financiados na entrega.\n\nPosso te mandar a simulação completa?\n\n👉 Conheça o projeto: {link}\n\n_Estimativas de mercado, sem garantia de rentabilidade._"
+  },
+  {
+   "projeto": "vici",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em ter um imóvel no endereço mais disputado de São Paulo?\n\n📍 Rua dos Cariris, entre o Shopping Eldorado e a Av. Rebouças\n🏊 Rooftop com piscina de borda infinita, pool bar e sauna\n💼 Coworking, fitness e terraço lounge\n✨ Vizinho do Faena e a poucos passos do HCor\n\nÉ o tipo de localização que não volta a aparecer: o eixo praticamente não tem mais terrenos.\n\nQuer que eu te mostre o projeto? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "vip",
+   "tese": "escassez",
+   "texto": "Oi, [Nome do Cliente]! Aqui é [Nome do Corretor] 👋\n\nLembrei de você: tem um 2 dormitórios a 5 minutos do metrô a partir de [Valor da Unidade], mais barato que muito 1 dormitório da região.\n\nVale 5 minutos de conversa? Me diz o melhor horário ⏰\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "vip",
+   "tese": "investimento",
+   "texto": "Olá, [Nome do Cliente]! Tudo bem?\n\nSeparei uma oportunidade com um dos melhores preços por m² do nosso portfólio 📈\n\n🏙️ *VIP Vila Prudente*: terreno de esquina a 5 minutos do metrô\n🛏️ 2 dormitórios a partir de *R$ 350 mil*\n📐 Metro quadrado a partir de *R$ 9.475*\n🏗️ Construção Viccon, entrega prevista para ago/2028\n\nPosso te mandar as plantas e a tabela?\n\n👉 Conheça o projeto: {link}"
+  },
+  {
+   "projeto": "vip",
+   "tese": "moradia",
+   "texto": "[Nome do Cliente], boa tarde! 😊\n\nJá pensou em morar a 5 minutos do Metrô Vila Prudente, com lazer de clube?\n\n🎬 Cine open air, fireplace e game pub\n🏊 Piscina, deck molhado e sauna panorâmica\n🛋️ 1 e 2 dormitórios e lofts duplex\n🛍️ Perto do Mooca Plaza Shopping\n\nQuer que eu te mostre as plantas? Te envio agora 📲\n\n👉 Conheça o projeto: {link}"
+  }
+ ],
+ "trilhas": [
+  {
+   "id": 1,
+   "titulo": "Nível 1 · Conheça a Chaincorp e a Academia",
+   "descricao": "O ponto de partida de todo parceiro: quem é a Chaincorp, o que ela vende e como a parceria funciona no dia a dia.",
+   "nivel": 1,
+   "projeto": null,
+   "publico": "todos",
+   "nota_minima": 70,
+   "ordem": 1,
+   "publicada": true,
+   "aulas": [
+    {
+     "id": 1,
+     "tipo": "leitura",
+     "ordem": 1,
+     "titulo": "Quem é a Chaincorp",
+     "conteudo": "A Chaincorp Incorporações desenvolve apartamentos e studios compactos, de 18 a 87 m², em bairros centrais de São Paulo: Pinheiros, Perdizes, Vila Madalena, Vila Prudente, Jardim São Paulo, Jardins e Tatuapé.\n\nO posicionamento é de oportunidade de investimento em regiões de alta demanda, não de habitação popular. Para o corretor do interior, isso abre uma conversa nova com clientes que já investem e procuram renda, valorização e diversificação fora da própria cidade.\n\nGuarde três ideias:\n1. Localização central é o argumento principal.\n2. Produto compacto conversa com locação e com o primeiro imóvel de filhos que vão estudar ou trabalhar em São Paulo.\n3. A Chaincorp mantém um canal oficial de parcerias com coordenadores dedicados à sua região.",
+     "video_url": null,
+     "duracao_min": 8,
+     "material_url": null
+    },
+    {
+     "id": 2,
+     "tipo": "leitura",
+     "ordem": 2,
+     "titulo": "O portfólio atual",
+     "conteudo": "Empreendimentos disponíveis para a rede parceira:\n\n· Verya Jardins · Av. Rebouças, 1.444 · pré-lançamento, comercializado via SCP com unidade determinada\n· Vici Faria Lima · Pinheiros\n· Pina 1875 by 360 Suítes · Perdizes\n· Rooftop Perdizes · em aprovação\n· Full Jardim São Paulo · entrega prevista para dez/2026\n· Blue Park · Jardim São Paulo\n· VIP Vila Prudente\n\nCada lançamento tem kit de WhatsApp, book e pitch na área Kits de abordagem. Antes de apresentar, confira sempre a tabela vigente com o seu coordenador.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    },
+    {
+     "id": 3,
+     "tipo": "leitura",
+     "ordem": 3,
+     "titulo": "Como funciona a parceria",
+     "conteudo": "1. Sua imobiliária é cadastrada e aprovada na Academia.\n2. Cada corretor cria o próprio acesso e é aprovado pelo gestor da imobiliária.\n3. Você usa os kits para abordar clientes. Cada envio gera um link rastreável que mostra quando o cliente abriu o material.\n4. Com o cliente interessado, você registra o negócio na Academia.\n5. O coordenador de parcerias conduz a proposta com você até a assinatura.\n\nO coordenador de parcerias da sua região é o seu ponto de contato para treinamentos, eventos e dúvidas comerciais.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    },
+    {
+     "id": 4,
+     "tipo": "material",
+     "ordem": 4,
+     "titulo": "Como usar a Academia no celular",
+     "conteudo": "Abra a Academia pelo navegador do celular e salve na tela inicial. As áreas mais usadas no dia a dia são Projetos, para enviar materiais aos clientes, e Negócios, para registrar cada atendimento.\n\nDica: dispare sempre pelo botão verde do kit. Assim o link sai com o seu rastreio e o acesso do cliente aparece no seu painel.",
+     "video_url": null,
+     "duracao_min": 5,
+     "material_url": null
+    }
+   ],
+   "quiz": [
+    {
+     "id": 1,
+     "ordem": 1,
+     "opcoes": [
+      "Habitação popular com subsídio",
+      "Compactos em bairros centrais de SP como oportunidade de investimento",
+      "Casas em condomínio no interior",
+      "Salas comerciais"
+     ],
+     "correta": 1,
+     "enunciado": "Qual é o posicionamento principal do portfólio Chaincorp?",
+     "explicacao": "O portfólio é de studios e apartamentos compactos em regiões centrais de São Paulo, posicionados como investimento."
+    },
+    {
+     "id": 2,
+     "ordem": 2,
+     "opcoes": [
+      "Nada é registrado",
+      "O cliente recebe um link rastreável e o acesso aparece no seu painel",
+      "A Chaincorp liga para o cliente",
+      "A proposta é enviada automaticamente"
+     ],
+     "correta": 1,
+     "enunciado": "O que acontece quando você dispara um kit pelo Academia?",
+     "explicacao": "Cada disparo gera um link /p/ exclusivo; quando o cliente abre, o acesso é contado para você."
+    },
+    {
+     "id": 3,
+     "ordem": 3,
+     "opcoes": [
+      "O gestor da sua imobiliária",
+      "O próprio cliente",
+      "O coordenador de parcerias, com você",
+      "O cartório"
+     ],
+     "correta": 2,
+     "enunciado": "Quem conduz a proposta junto à Chaincorp quando o cliente decide?",
+     "explicacao": "O coordenador de parcerias conduz a proposta com o corretor até a assinatura."
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "titulo": "Nível 2 · Enquadramento HIS-2, HMP e R2V",
+   "descricao": "Enquadrar certo é o que evita perder a venda na análise de crédito. Domine as faixas e saiba qual material usar com cada cliente.",
+   "nivel": 2,
+   "projeto": null,
+   "publico": "todos",
+   "nota_minima": 70,
+   "ordem": 2,
+   "publicada": true,
+   "aulas": [
+    {
+     "id": 5,
+     "tipo": "video",
+     "ordem": 1,
+     "titulo": "HIS-2 e HMP: as faixas de renda",
+     "conteudo": "As unidades enquadradas como HIS-2 atendem famílias com renda de até 6 salários mínimos. As unidades HMP atendem famílias com renda de até 10 salários mínimos.\n\nO enquadramento é uma regra urbanística do imóvel, por isso a renda do comprador precisa ser compatível com a categoria da unidade escolhida. Na dúvida, consulte a Mesa de Crédito antes de apresentar a unidade.\n\nAssista ao vídeo de apoio e anote as perguntas para o próximo encontro com o seu coordenador.",
+     "video_url": null,
+     "duracao_min": 12,
+     "material_url": null
+    },
+    {
+     "id": 6,
+     "tipo": "leitura",
+     "ordem": 2,
+     "titulo": "R2V e o cliente investidor",
+     "conteudo": "As unidades R2V não têm trava de renda. São a linha natural para o investidor que busca renda com locação e não se enquadra, ou não quer se enquadrar, nas faixas HIS-2 e HMP.\n\nPergunte logo no início da conversa: o imóvel é para investir, para morar ou para um filho? A resposta define a linha de produto e o material que você vai enviar.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    },
+    {
+     "id": 7,
+     "tipo": "leitura",
+     "ordem": 3,
+     "titulo": "Modelo 1 e Modelo 2: qual material enviar",
+     "conteudo": "Modelo 1 · R2V · investidores. Linguagem de rentabilidade, localização e liquidez.\n\nModelo 2 · R2V, HMP e HIS-2 · moradores, famílias e locação de longo prazo. Linguagem de qualidade de vida e acesso à cidade.\n\nEscolher o modelo certo antes do primeiro envio aumenta a chance de o cliente abrir e responder.",
+     "video_url": null,
+     "duracao_min": 5,
+     "material_url": null
+    },
+    {
+     "id": 8,
+     "tipo": "roteiro",
+     "ordem": 4,
+     "titulo": "Os erros que derrubam uma venda",
+     "conteudo": "1. Apresentar unidade HIS-2 ou HMP sem confirmar a renda familiar bruta.\n2. Considerar renda que o cliente não consegue comprovar.\n3. Esquecer de perguntar se é o primeiro imóvel próprio.\n4. Enviar o material de moradia para um cliente investidor, e vice-versa.\n5. Deixar a documentação para depois da reserva.\n\nCheque esses cinco pontos antes de preencher a Ficha Cadastral.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    }
+   ],
+   "quiz": [
+    {
+     "id": 4,
+     "ordem": 1,
+     "opcoes": [
+      "3 salários mínimos",
+      "6 salários mínimos",
+      "10 salários mínimos",
+      "Sem limite"
+     ],
+     "correta": 1,
+     "enunciado": "Unidades HIS-2 atendem famílias com renda de até:",
+     "explicacao": "HIS-2 vai até 6 salários mínimos de renda familiar."
+    },
+    {
+     "id": 5,
+     "ordem": 2,
+     "opcoes": [
+      "6 salários mínimos",
+      "8 salários mínimos",
+      "10 salários mínimos",
+      "15 salários mínimos"
+     ],
+     "correta": 2,
+     "enunciado": "Unidades HMP atendem famílias com renda de até:",
+     "explicacao": "HMP vai até 10 salários mínimos."
+    },
+    {
+     "id": 6,
+     "ordem": 3,
+     "opcoes": [
+      "HIS-2",
+      "HMP",
+      "R2V",
+      "Nenhuma"
+     ],
+     "correta": 2,
+     "enunciado": "Qual linha não tem trava de renda?",
+     "explicacao": "R2V não tem restrição de renda e é a linha natural do investidor."
+    },
+    {
+     "id": 7,
+     "ordem": 4,
+     "opcoes": [
+      "Modelo 1 (R2V)",
+      "Modelo 2 (moradia)",
+      "Nenhum, só a tabela",
+      "O contrato"
+     ],
+     "correta": 0,
+     "enunciado": "Para um cliente investidor que busca renda com locação, o material indicado é:",
+     "explicacao": "O Modelo 1 fala com o investidor: rentabilidade, localização e liquidez."
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "titulo": "Nível 3 · Abordagem pelo WhatsApp com os kits",
+   "descricao": "Como transformar um contato frio em uma conversa, usando as três teses, os links rastreáveis e um follow-up disciplinado.",
+   "nivel": 3,
+   "projeto": null,
+   "publico": "todos",
+   "nota_minima": 70,
+   "ordem": 3,
+   "publicada": true,
+   "aulas": [
+    {
+     "id": 9,
+     "tipo": "leitura",
+     "ordem": 1,
+     "titulo": "As três teses: investimento, moradia e escassez",
+     "conteudo": "Investimento: para quem já tem patrimônio e quer renda. Fale de localização, demanda por locação e liquidez.\n\nMoradia: para quem vai morar ou colocar um filho em São Paulo. Fale de rotina, transporte e segurança.\n\nEscassez: para quem já demonstrou interesse e está adiando. Fale de prioridade na escolha da unidade e de condições de lançamento.\n\nCada kit da Academia tem as três versões prontas. Escolha antes de disparar.",
+     "video_url": null,
+     "duracao_min": 7,
+     "material_url": null
+    },
+    {
+     "id": 10,
+     "tipo": "material",
+     "ordem": 2,
+     "titulo": "Disparar o kit e ler os acessos",
+     "conteudo": "1. Em Projetos, abra o empreendimento e escolha a tese.\n2. Baixe a arte 1:1 ou 9:16 se quiser enviar a imagem junto.\n3. Toque em Disparar no WhatsApp e escolha o contato.\n4. Acompanhe em Meus envios quando o cliente abre o link.\n\nUm acesso sem resposta é um sinal de interesse. É a hora do follow-up.",
+     "video_url": null,
+     "duracao_min": 5,
+     "material_url": null
+    },
+    {
+     "id": 11,
+     "tipo": "roteiro",
+     "ordem": 3,
+     "titulo": "Follow-up em 48 horas",
+     "conteudo": "Se o cliente abriu o link e não respondeu, envie em até 48 horas:\n\n\"Oi, [nome]! Vi que você deu uma olhada no material do [empreendimento]. Ficou alguma dúvida que eu possa esclarecer? Posso separar as plantas que fazem mais sentido para o seu objetivo.\"\n\nSe não abriu, troque a tese e envie um segundo kit uma semana depois.",
+     "video_url": null,
+     "duracao_min": 5,
+     "material_url": null
+    },
+    {
+     "id": 12,
+     "tipo": "roteiro",
+     "ordem": 4,
+     "titulo": "Qualificar antes de apresentar",
+     "conteudo": "Quatro perguntas que economizam tempo:\n1. O imóvel é para investir, morar ou para um filho?\n2. Qual a renda familiar bruta aproximada?\n3. Já tem imóvel próprio?\n4. Pretende pagar com recursos próprios, financiamento ou os dois?\n\nCom as respostas, você escolhe a linha (HIS-2, HMP ou R2V) e o kit certo.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    }
+   ],
+   "quiz": [
+    {
+     "id": 8,
+     "ordem": 1,
+     "opcoes": [
+      "Esperar ele chamar",
+      "Fazer follow-up em até 48 horas",
+      "Enviar o mesmo link de novo no mesmo dia",
+      "Desistir do cliente"
+     ],
+     "correta": 1,
+     "enunciado": "O cliente abriu o link mas não respondeu. O melhor próximo passo é:",
+     "explicacao": "Um acesso sem resposta indica interesse; o follow-up em até 48 horas aproveita o momento."
+    },
+    {
+     "id": 9,
+     "ordem": 2,
+     "opcoes": [
+      "Escassez",
+      "Investimento",
+      "Moradia",
+      "Nenhuma"
+     ],
+     "correta": 2,
+     "enunciado": "Para um cliente que vai colocar o filho para estudar em SP, a tese mais indicada é:",
+     "explicacao": "A tese de moradia fala de rotina, transporte e segurança."
+    },
+    {
+     "id": 10,
+     "ordem": 3,
+     "opcoes": [
+      "Porque é mais bonito",
+      "Porque o link sai rastreado e o acesso aparece no seu painel",
+      "Porque o WhatsApp exige",
+      "Não faz diferença"
+     ],
+     "correta": 1,
+     "enunciado": "Por que disparar sempre pelo botão da Academia?",
+     "explicacao": "Sem o link da Academia não há como medir o interesse do cliente."
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "titulo": "Nível 4 · Do interesse ao fechamento",
+   "descricao": "Como registrar o negócio, organizar a documentação e contar com o coordenador até a assinatura.",
+   "nivel": 4,
+   "projeto": null,
+   "publico": "todos",
+   "nota_minima": 70,
+   "ordem": 4,
+   "publicada": true,
+   "aulas": [
+    {
+     "id": 18,
+     "tipo": "material",
+     "ordem": 1,
+     "titulo": "Registre cada negócio na Academia",
+     "conteudo": "Quando um cliente demonstrar interesse real, registre em Negócios: nome do cliente, projeto, unidade e valor. Atualize o status conforme a conversa avança: em negociação, proposta enviada, aprovada, vendida ou perdida.\n\nO registro mostra para a Chaincorp quem está atendendo cada cliente e ajuda o seu coordenador a apoiar você na hora certa.",
+     "video_url": null,
+     "duracao_min": 4,
+     "material_url": null
+    },
+    {
+     "id": 19,
+     "tipo": "roteiro",
+     "ordem": 2,
+     "titulo": "Checklist documental",
+     "conteudo": "Para a proposta seguir, peça ao cliente de uma vez só:\n· Cópia de RG e CPF\n· Comprovante de residência atualizado\n· Comprovante de rendimentos ou holerites\n· Comprovante de TED ou Pix do sinal\n\nCom os documentos em mãos, fale com o seu coordenador para enviar a proposta oficial da Chaincorp.",
+     "video_url": null,
+     "duracao_min": 4,
+     "material_url": null
+    },
+    {
+     "id": 20,
+     "tipo": "leitura",
+     "ordem": 3,
+     "titulo": "O papel do coordenador de parcerias",
+     "conteudo": "Você não está sozinho. O coordenador de parcerias da Chaincorp acompanha cada negócio da rede: tira dúvidas de produto, confirma tabela e disponibilidade, participa de reuniões com clientes quando necessário e conduz a proposta junto à Chaincorp até a assinatura.\n\nAcione o coordenador sempre que o cliente estiver pronto para avançar.",
+     "video_url": null,
+     "duracao_min": 3,
+     "material_url": null
+    }
+   ],
+   "quiz": [
+    {
+     "id": 16,
+     "ordem": 1,
+     "opcoes": [
+      "Só depois da venda",
+      "Assim que o cliente demonstrar interesse real",
+      "Nunca, é opcional",
+      "Só se o gestor pedir"
+     ],
+     "correta": 1,
+     "enunciado": "Quando registrar um negócio na Academia?",
+     "explicacao": "Registrar cedo permite que o coordenador apoie o atendimento."
+    },
+    {
+     "id": 17,
+     "ordem": 2,
+     "opcoes": [
+      "Certidão de casamento",
+      "Comprovante de TED ou Pix do sinal",
+      "Declaração de IR de 5 anos",
+      "Nenhum"
+     ],
+     "correta": 1,
+     "enunciado": "Qual destes documentos faz parte do checklist?",
+     "explicacao": "O comprovante do sinal é obrigatório."
+    },
+    {
+     "id": 18,
+     "ordem": 3,
+     "opcoes": [
+      "O cliente",
+      "O coordenador de parcerias, com o corretor",
+      "A imobiliária sozinha",
+      "O cartório"
+     ],
+     "correta": 1,
+     "enunciado": "Quem conduz a proposta junto à Chaincorp?",
+     "explicacao": "O coordenador conduz a proposta com o corretor até a assinatura."
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "titulo": "Produto · Verya Jardins",
+   "descricao": "Tudo o que você precisa para apresentar o Verya Jardins, na Av. Rebouças, com segurança.",
+   "nivel": 5,
+   "projeto": "verya",
+   "publico": "todos",
+   "nota_minima": 70,
+   "ordem": 5,
+   "publicada": true,
+   "aulas": [
+    {
+     "id": 16,
+     "tipo": "leitura",
+     "ordem": 1,
+     "titulo": "O produto",
+     "conteudo": "Studios da MF7 com a Chaincorp na Av. Rebouças, 1.444, nos Jardins, em fase de pré-lançamento. A comunicação é segmentada por enquadramento: R2V para investidores (Modelo 1) e R2V, HMP e HIS-2 para moradia e locação de longo prazo (Modelo 2).\n\nUse o kit e o book do Verya na página do projeto, em Projetos.",
+     "video_url": null,
+     "duracao_min": 6,
+     "material_url": null
+    },
+    {
+     "id": 17,
+     "tipo": "roteiro",
+     "ordem": 2,
+     "titulo": "Participação via SCP: como explicar",
+     "conteudo": "O Verya é comercializado por participação em uma SCP (Sociedade em Conta de Participação) com unidade determinada.\n\nComo apresentar:\n1. Explique que o investidor participa de uma sociedade criada para o empreendimento, com a unidade definida desde o início.\n2. Mostre a documentação oficial do produto, disponível no book.\n3. Para perguntas jurídicas ou tributárias específicas, envolva o seu coordenador. Não improvise respostas técnicas.\n\nRevise este conteúdo com o material oficial da Chaincorp antes de usar com clientes.",
+     "video_url": null,
+     "duracao_min": 8,
+     "material_url": null
+    }
+   ],
+   "quiz": [
+    {
+     "id": 14,
+     "ordem": 1,
+     "opcoes": [
+      "Av. Paulista",
+      "Av. Rebouças, 1.444",
+      "Rua Apinajés",
+      "Vila Prudente"
+     ],
+     "correta": 1,
+     "enunciado": "Onde fica o Verya Jardins?",
+     "explicacao": "O Verya fica na Av. Rebouças, 1.444, nos Jardins."
+    },
+    {
+     "id": 15,
+     "ordem": 2,
+     "opcoes": [
+      "Responder do jeito que achar",
+      "Envolver o coordenador e usar a documentação oficial",
+      "Dizer que não importa",
+      "Encerrar a conversa"
+     ],
+     "correta": 1,
+     "enunciado": "Diante de uma pergunta jurídica específica sobre a SCP, o corretor deve:",
+     "explicacao": "Questões técnicas são respondidas com a documentação oficial e o apoio do coordenador."
+    }
+   ]
+  }
+ ],
+ "argumentos": [
+  {
+   "etapa": "abordagem",
+   "titulo": "Primeira mensagem para cliente investidor",
+   "texto": "Oi, [nome]! Tudo bem? Separei uma oportunidade em São Paulo que tem tudo a ver com o seu perfil de investimento: compactos em bairro central, com demanda forte de locação. Posso te mandar o material?",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "abordagem",
+   "titulo": "Primeira mensagem para pais de estudantes",
+   "texto": "Oi, [nome]! Muitas famílias daqui estão comprando um compacto em São Paulo para os filhos que vão estudar ou trabalhar lá, e depois alugam. Quer ver as opções perto de metrô e faculdades?",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Abertura da apresentação por vídeo",
+   "texto": "Antes de te mostrar as plantas, deixa eu te contar em dois minutos por que essa região é tão procurada para locação. Depois a gente escolhe juntos as unidades que fazem sentido para você.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Vici: tese em uma frase",
+   "texto": "“Você compra hoje um studio a 4 minutos da Faria Lima pagando cerca de 40% menos que o mercado livre, recebe aluguel durante a restrição e, quando a unidade é liberada, captura a valorização da região.”",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Verya: rentabilidade em short stay",
+   "texto": "Com diária base de R$ 460 e gestão da 360 Suítes, os cenários projetados vão de R$ 5.540/mês (60% de ocupação) a R$ 9.050/mês (90%). A ocupação média da região fica entre 75% e 85%. Sempre apresente como projeção, não como garantia.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Full: para quem quer receber logo",
+   "texto": "O Full Jardim São Paulo tem entrega prevista para dezembro/2026, a mais próxima do portfólio. Para o investidor que quer começar a receber aluguel cedo, é o argumento principal.",
+   "projeto": "full",
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Blue Park: para a família",
+   "texto": "Três dormitórios em frente a um parque e a 2 minutos do metrô, com gardens de até 87 m² e a possibilidade de unir unidades. Use com famílias que querem espaço sem sair de um bairro tradicional.",
+   "projeto": "blue",
+   "status": "publicada"
+  },
+  {
+   "etapa": "apresentacao",
+   "titulo": "Pina 1875: renda com gestão profissional",
+   "texto": "Studio a 3 quadras do Metrô Vila Madalena com gestão da 360 Suítes. No cenário realista, cerca de R$ 4.180/mês e 17,4% ao ano. A microrregião tem ocupação média de 92%.",
+   "projeto": "pina",
+   "status": "publicada"
+  },
+  {
+   "etapa": "fechamento",
+   "titulo": "Pedido de documentos em uma mensagem",
+   "texto": "Perfeito, [nome]! Para garantir a sua unidade preciso de: RG e CPF, comprovante de residência atualizado, comprovante de renda e o comprovante do sinal. Pode me mandar por aqui mesmo que eu já preencho a ficha.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "\"Por que comprar em São Paulo morando em Ribeirão?\"",
+   "texto": "Faz todo sentido perguntar. Quem investe aqui costuma buscar duas coisas em São Paulo: demanda de locação maior e diversificação do patrimônio fora da própria cidade. O imóvel é administrado de longe e a localização central é o que sustenta a procura.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "\"SCP é seguro?\"",
+   "texto": "Boa pergunta, e é importante entender bem. No Verya a participação é numa SCP com unidade determinada desde o início. Te envio a documentação oficial do produto e, se quiser, marcamos uma conversa com o coordenador da Chaincorp para tirar as dúvidas técnicas.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "\"Vou comprar direto com a construtora\"",
+   "texto": "Pode ficar tranquilo: o atendimento pela imobiliária parceira tem as mesmas condições da Chaincorp, e eu acompanho todo o processo até a assinatura. Seu atendimento fica registrado comigo para você ter um ponto de contato só.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "\"O studio é pequeno demais\"",
+   "texto": "Para morar, entendo a sensação. Para locação, é justamente o tamanho mais procurado por quem trabalha e estuda na região: aluguel acessível e localização privilegiada. Quer ver uma planta decorada para ter noção do espaço?",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “Posso morar no studio HIS-2?”",
+   "texto": "Se o cliente não está na faixa de renda HIS-2 (3 a 6 salários mínimos), ele compra como investidor e não pode morar. A unidade é destinada à locação tradicional para inquilino enquadrado durante 10 anos a partir do Habite-se. Depois disso, fica totalmente livre para venda e aluguel, inclusive por temporada.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “Posso usar FGTS ou colocar no Airbnb?”",
+   "texto": "Na compra como investidor HIS-2, o FGTS não pode ser usado e a locação por temporada fica proibida durante os 10 anos de restrição. O ganho está no preço: o m² com HIS sai por volta de R$ 13.200 contra R$ 22.000 no mercado livre da região, e essa diferença se realiza na liberação.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Verya: “Já posso fechar?”",
+   "texto": "O Verya está em pré-lançamento. O material é para estudo de mercado e a venda só acontece após o alvará e o registro do memorial de incorporação. O que dá para fazer agora é registrar o interesse do cliente para ele ter prioridade na escolha da unidade.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Rooftop: “Qual o preço?”",
+   "texto": "O Rooftop Perdizes ainda está em aprovação e não tem tabela divulgada. Registre o interesse do cliente e o perfil (família ou investidor) para avisá-lo assim que o lançamento for liberado.",
+   "projeto": "rooftop",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Verya: “O que é essa tal de SCP?”",
+   "texto": "Na fase de pré-lançamento, antes do alvará e do registro do memorial de incorporação, a lei não permite o contrato tradicional de compra e venda. A entrada acontece por participação em Sociedade em Conta de Participação, já vinculada a uma unidade determinada (metragem, tipologia e posição no edifício). Com o registro do memorial, o contrato se converte em compromisso de compra e venda da mesma unidade. Oriente o cliente a validar o contrato com sua assessoria jurídica.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Verya: “E se o studio não alugar tanto?”",
+   "texto": "Mostre os três cenários com transparência. Mesmo no pessimista, com 60% de ocupação, a estimativa é de R$ 5.540 líquidos por mês, cerca de 13,7% ao ano. Reforce que são estimativas de mercado, sem garantia de rentabilidade.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Verya: “Posso usar quando eu for a São Paulo?”",
+   "texto": "Sim. O produto permite uso misto: hospedagem própria quando o cliente estiver na capital e locação nos demais períodos.",
+   "projeto": "verya",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “O que é HIS-2? É habitação popular?”",
+   "texto": "HIS-2 é uma categoria urbanística da Prefeitura de São Paulo que permite construir mais em regiões centrais em troca de unidades destinadas a famílias de renda média. Na prática, é o que viabiliza um studio na Faria Lima por cerca de R$ 13.200 o m². O padrão construtivo e o lazer são os mesmos de um empreendimento de mercado.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “Posso colocar no Airbnb?”",
+   "texto": "Não nos 10 primeiros anos a partir do Habite-se. Nesse período, a locação é tradicional, para inquilinos dentro da faixa de renda da categoria. Depois disso, a unidade fica totalmente livre. Para quem quer renda de curta temporada desde já, apresente o Verya Jardins.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “10 anos não é tempo demais?”",
+   "texto": "É exatamente o que gera o desconto de entrada. O investidor recebe aluguel durante o período e, na liberação, a unidade passa a valer como imóvel de mercado livre no eixo Faria Lima. A projeção da MF7 aponta TIR combinada de 15,5% a 20,9% ao ano em 13 anos. São estimativas, sem garantia.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Vici: “Posso usar o FGTS?”",
+   "texto": "Não para amortizar ou quitar o saldo devedor dessa unidade. Oriente o cliente a planejar o financiamento sem contar com o FGTS.",
+   "projeto": "vici",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Pina 1875: “Posso colocar no Airbnb?”",
+   "texto": "Depende do enquadramento da unidade. Os cenários de renda foram elaborados pela 360 Suítes, mas unidades HIS-2 e HMP seguem regras específicas de locação. Confirme com a coordenação antes de responder.",
+   "projeto": "pina",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Pina 1875: “O que significa incorporação registrada?”",
+   "texto": "Significa que o memorial de incorporação já está registrado em cartório (matrícula 130.152, desde 08/04/2026). É o que dá segurança jurídica para a venda na planta.",
+   "projeto": "pina",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Pina 1875: “E se não alugar tanto?”",
+   "texto": "Mostre os três cenários com transparência. Mesmo no pessimista, com 60% de ocupação, a estimativa para o studio é de R$ 2.800 por mês, cerca de 11,6% ao ano. São estimativas, sem garantia.",
+   "projeto": "pina",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Rooftop: “Quanto custa?”",
+   "texto": "Os valores ainda não foram divulgados. O projeto está em aprovação e a tabela sai após a emissão do Registro de Incorporação. Quem está na lista recebe primeiro.",
+   "projeto": "rooftop",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Rooftop: “Posso reservar uma unidade?”",
+   "texto": "Ainda não. A lista de interesse não é reserva nem compromisso de compra. Ela garante que você seja avisado antes da abertura das vendas.",
+   "projeto": "rooftop",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Rooftop: “Todas as unidades são liberadas para Airbnb?”",
+   "texto": "Não. As unidades R2V são aprovadas para temporada. O projeto também terá unidades HIS-2 e HMP, com regras próprias que serão detalhadas na aprovação final.",
+   "projeto": "rooftop",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Rooftop: “Quando fica pronto?”",
+   "texto": "O prazo de entrega ainda não foi definido, porque o projeto está em aprovação.",
+   "projeto": "rooftop",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Blue Park: “Dá para unir dois apartamentos?”",
+   "texto": "Sim, o projeto permite unir unidades, retirando o caixilho entre living e terraço, com piso nivelado. Confirme com a coordenação quais unidades permitem.",
+   "projeto": "blue",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Blue Park: “O que é unidade HMP?”",
+   "texto": "HMP é Habitação de Mercado Popular, uma categoria para famílias com renda de até 10 salários mínimos. As unidades NR não têm essa exigência.",
+   "projeto": "blue",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Blue Park: “As áreas comuns vêm prontas?”",
+   "texto": "Sim, as áreas comuns são entregues equipadas e decoradas.",
+   "projeto": "blue",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Full: “Quanto custa?”",
+   "texto": "Solicite a tabela vigente à coordenação antes de responder valores.",
+   "projeto": "full",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Full: “Quais as plantas?”",
+   "texto": "14 studios de 16 m², 12 studios de 21 m², 11 gardens de 32 m² e 44 apartamentos tipo de 40 m², ambos de 2 dormitórios.",
+   "projeto": "full",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "Full: “O projeto está aprovado?”",
+   "texto": "Sim, tem o Alvará nº 26014-23-SP-ALV. A comercialização acontece após a emissão do Registro de Incorporação.",
+   "projeto": "full",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "VIP: “Como o 2 dormitórios pode ser mais barato que o 1 dormitório?”",
+   "texto": "O preço por m² do 2 dormitórios de 37 m² é o menor do projeto, R$ 9.475. Por isso ele sai a R$ 350.570, abaixo do 1 dormitório de 29 m² (R$ 362.101).",
+   "projeto": "vip",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "VIP: “Posso alugar por temporada?”",
+   "texto": "Depende do enquadramento da unidade. O VIP tem unidades NR e R2V; consulte a coordenação para cada unidade.",
+   "projeto": "vip",
+   "status": "publicada"
+  },
+  {
+   "etapa": "objecao",
+   "titulo": "“Não conheço a construtora.”",
+   "texto": "Os projetos são realizados pela Chaincorp e pela MF7, incorporadoras com projetos em Pinheiros, Jardins, Perdizes, Vila Prudente e Jardim São Paulo, entre outros endereços centrais. Ofereça o material institucional e, se necessário, uma conversa com a coordenação de parcerias.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "pos_venda",
+   "titulo": "Pedido de indicação depois da assinatura",
+   "texto": "[nome], parabéns pela aquisição! Se alguém da sua família ou do seu círculo também estiver pensando em investir em São Paulo, vou ficar feliz em atender com o mesmo cuidado.",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "qualificacao",
+   "titulo": "Quatro perguntas de qualificação",
+   "texto": "1. É para investir, morar ou para um filho?\n2. Qual a renda familiar bruta aproximada?\n3. Já tem imóvel próprio?\n4. Recursos próprios, financiamento ou os dois?",
+   "projeto": null,
+   "status": "publicada"
+  },
+  {
+   "etapa": "qualificacao",
+   "titulo": "Qual projeto para qual cliente",
+   "texto": "Investidor que quer renda logo: Full Jardim São Paulo. Investidor de longo prazo com desconto de entrada: Vici Faria Lima (HIS-2). Renda com short stay: Pina 1875 e Verya. Família: Blue Park e Rooftop. Primeiro imóvel com bom custo: VIP Vila Prudente.",
+   "projeto": null,
+   "status": "publicada"
+  }
+ ]
+}
