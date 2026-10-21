@@ -534,6 +534,30 @@ begin
   reset role; perform pg_temp.chk('A4 pc_meu_acesso é vazio para o dono, mesmo com linha antiga', t is null);
   delete from pc_acessos where user_id = m;
 
+
+  -- ----------------------------------------------------------------
+  -- A5  Avisos (primeira entrega: Visão geral, Corretores, Minha equipe, Avisos)
+  -- ----------------------------------------------------------------
+  reset role; perform pg_temp.login(m);
+  insert into pc_avisos (titulo, texto, publico) values ('Teste A5 aviso', 'texto', 'corretores');
+  get diagnostics n = row_count;
+  update pc_avisos set ativo = false where titulo = 'Teste A5 aviso';
+  get diagnostics n2 = row_count;
+  reset role; perform pg_temp.chk('A5 dono publica e desliga aviso', n = 1 and n2 = 1);
+  reset role; perform pg_temp.login(ua);
+  select count(*) into n from pc_avisos where titulo = 'Teste A5 aviso';
+  begin insert into pc_avisos (titulo, texto) values ('invasor', 'x'); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A5 aviso desligado some do corretor, e corretor não publica aviso', n = 0 and err is not null);
+  reset role; perform pg_temp.login(m); update pc_avisos set ativo = true where titulo = 'Teste A5 aviso';
+  reset role; perform pg_temp.login(ua); select count(*) into n from pc_avisos where titulo = 'Teste A5 aviso';
+  reset role; perform pg_temp.login(ug); select count(*) into n2 from pc_avisos where titulo = 'Teste A5 aviso';
+  reset role; perform pg_temp.chk('A5 aviso ligado chega só ao público dele (corretores sim, gestores não)', n = 1 and n2 = 0);
+  reset role; perform pg_temp.login(m); select count(*) into n from pc_linha_do_tempo(null, 12);
+  reset role; perform pg_temp.chk('A5 "Acontecendo agora" devolve a atividade para o dono', n >= 1);
+  reset role; perform pg_temp.login(ug); select count(*) into n from pc_resumo_corretores() where user_id in (ua, ug) and status = 'liberado';
+  select count(*) into n2 from pc_resumo_corretores() where user_id = ub;
+  reset role; perform pg_temp.chk('A5 Minha equipe: gestor vê a própria equipe e ninguém de outra imobiliária', n = 2 and n2 = 0);
+
   -- ----------------------------------------------------------------
   -- Resultado: a exceção desfaz tudo, e a mensagem traz o relatório.
   -- ----------------------------------------------------------------

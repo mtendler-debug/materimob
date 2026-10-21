@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { useAcessoCanal } from "../../lib/AcessoCanal";
 import { semAcento } from "../../lib/treino";
@@ -20,7 +20,8 @@ const campo =
 // o registro conflitante.
 export default function Clientes() {
   const { acesso } = useAcessoCanal();
-  const [escopo, setEscopo] = useState("meus");
+  const { state } = useLocation();
+  const [escopo, setEscopo] = useState(state?.escopo === "equipe" ? "equipe" : "meus");
   const [lista, setLista] = useState(null);
   const [filtro, setFiltro] = useState("todos");
   const [busca, setBusca] = useState("");

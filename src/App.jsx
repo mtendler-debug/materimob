@@ -29,6 +29,10 @@ import Clientes from "./pages/academia/Clientes";
 import RegistrarCliente from "./pages/academia/RegistrarCliente";
 import RegistroDetalhe from "./pages/academia/RegistroDetalhe";
 import AdminAcademia from "./pages/admin/AdminAcademia";
+import VisaoGeralAcademia from "./pages/admin/VisaoGeralAcademia";
+import CorretoresAcademia from "./pages/admin/CorretoresAcademia";
+import AvisosAcademia from "./pages/admin/AvisosAcademia";
+import Equipe from "./pages/academia/Equipe";
 import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
 import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
 import PublicProjeto from "./pages/PublicProjeto";
@@ -97,6 +101,7 @@ export default function App() {
         <Route path="/app/academia/treinamento/:id" element={<TrilhaDetalhe />} />
         <Route path="/app/academia/argumentos" element={<Argumentos />} />
         <Route path="/app/academia/clientes" element={<Clientes />} />
+        <Route path="/app/academia/equipe" element={<Equipe />} />
         <Route path="/app/academia/clientes/novo" element={<RegistrarCliente />} />
         <Route path="/app/academia/clientes/:id" element={<RegistroDetalhe />} />
         <Route path="/app/academia/projetos/:codigo" element={<ProjetoDetalhe />} />
@@ -155,8 +160,11 @@ export default function App() {
           <Route path="organizacoes" element={<AdminOrganizations />} />
           <Route path="contas" element={<AdminAccounts />} />
           <Route path="academia" element={<AdminAcademia />}>
-            <Route index element={<Acessos />} />
+            <Route index element={<VisaoGeralAcademia />} />
+            <Route path="corretores" element={<CorretoresAcademia />} />
+            <Route path="acessos" element={<Acessos />} />
             <Route path="sugestoes" element={<SugestoesArgumentos />} />
+            <Route path="avisos" element={<AvisosAcademia />} />
           </Route>
         </Route>
       </Route>

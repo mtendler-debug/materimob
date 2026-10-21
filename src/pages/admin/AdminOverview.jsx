@@ -82,7 +82,7 @@ export default function AdminOverview() {
             </b>
             <p className="text-[12.5px] text-graytext">Corretores de imobiliárias parceiras pediram para entrar.</p>
           </div>
-          <Link to="/admin/academia" className="rounded-[8px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white">
+          <Link to="/admin/academia/acessos" className="rounded-[8px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white">
             Ver pedidos
           </Link>
         </div>

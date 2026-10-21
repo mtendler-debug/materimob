@@ -133,7 +133,7 @@ antigo, só para consulta de comportamento e texto.
 `academia` (`projetos/<codigo>/...`); a pasta local foi removida.
 
 `supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
-(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 114 verificações".
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 119 verificações".
 Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
 no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
 
@@ -152,8 +152,12 @@ passa por `pc_registrar_cliente` (validade, conflito por dígitos do telefone, e
 do kit), a leitura só por `pc_meus_registros` e `pc_eventos_do_registro` (sem anotações internas nem o
 registro conflitante; `pc_registros_cliente` segue fechada a parceiros). Mudança de situação vira
 atividade (`pc_registro_vira_atividade`, nunca derruba a gravação). Corretor autônomo ganha cadastro
-"Autônomo · nome" (PF, não validado). O dono do canal nunca tem linha em `pc_acessos`. Faltam
-A5 (visão do gestor: Visão geral, Corretores, Minha equipe, Conteúdo, Avisos) e A6 (troca do app antigo). Itens sem tela aparecem no menu com
+"Autônomo · nome" (PF, não validado). O dono do canal nunca tem linha em `pc_acessos`. A5, primeira entrega pronta: em Administração > Academia, Visão geral (`pc_painel_canal` +
+`pc_linha_do_tempo`), Corretores (`pc_resumo_corretores`, ficha com editar papel/imobiliária e
+bloquear), Acessos, Sugestões e Avisos (`pc_avisos`); e Minha equipe para o gestor da imobiliária
+(`/app/academia/equipe`). Texto de cada atividade em `src/lib/atividades.js`. Falta a segunda entrega da
+A5, o editor de Conteúdo (projetos/kits, trilhas com quiz, argumentos), e a A6 (troca do app antigo);
+até o editor existir, mudanças de conteúdo são feitas direto no banco. Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---

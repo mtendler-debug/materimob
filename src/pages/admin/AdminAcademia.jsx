@@ -14,13 +14,18 @@ export default function AdminAcademia() {
 
   return (
     <div>
-      <nav className="flex gap-1.5" aria-label="Academia">
-        <Sub to="/admin/academia" end badge={pendentes}>
+      <nav className="flex flex-wrap gap-1.5" aria-label="Academia">
+        <Sub to="/admin/academia" end>
+          Visão geral
+        </Sub>
+        <Sub to="/admin/academia/corretores">Corretores</Sub>
+        <Sub to="/admin/academia/acessos" badge={pendentes}>
           Acessos
         </Sub>
         <Sub to="/admin/academia/sugestoes" badge={sugestoes}>
           Sugestões de argumentos
         </Sub>
+        <Sub to="/admin/academia/avisos">Avisos</Sub>
       </nav>
       <Outlet context={{ contarPendentes }} />
     </div>
