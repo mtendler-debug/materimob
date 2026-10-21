@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { TenantBrandingProvider } from "./lib/tenantBranding";
 import { FeedbackProvider } from "./lib/feedback";
 import { AcessoCanalProvider } from "./lib/AcessoCanal";
@@ -32,6 +32,12 @@ import AdminAcademia from "./pages/admin/AdminAcademia";
 import VisaoGeralAcademia from "./pages/admin/VisaoGeralAcademia";
 import CorretoresAcademia from "./pages/admin/CorretoresAcademia";
 import AvisosAcademia from "./pages/admin/AvisosAcademia";
+import ConteudoAcademia from "./pages/admin/ConteudoAcademia";
+import ProjetosConteudo from "./pages/admin/ProjetosConteudo";
+import ProjetoEditor from "./pages/admin/ProjetoEditor";
+import TrilhasConteudo from "./pages/admin/TrilhasConteudo";
+import TrilhaEditor from "./pages/admin/TrilhaEditor";
+import ArgumentosConteudo from "./pages/admin/ArgumentosConteudo";
 import Equipe from "./pages/academia/Equipe";
 import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
 import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
@@ -165,6 +171,14 @@ export default function App() {
             <Route path="acessos" element={<Acessos />} />
             <Route path="sugestoes" element={<SugestoesArgumentos />} />
             <Route path="avisos" element={<AvisosAcademia />} />
+            <Route path="conteudo" element={<ConteudoAcademia />}>
+              <Route index element={<Navigate to="projetos" replace />} />
+              <Route path="projetos" element={<ProjetosConteudo />} />
+              <Route path="projetos/:codigo" element={<ProjetoEditor />} />
+              <Route path="trilhas" element={<TrilhasConteudo />} />
+              <Route path="trilhas/:id" element={<TrilhaEditor />} />
+              <Route path="argumentos" element={<ArgumentosConteudo />} />
+            </Route>
           </Route>
         </Route>
       </Route>

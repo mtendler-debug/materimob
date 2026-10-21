@@ -133,7 +133,7 @@ antigo, só para consulta de comportamento e texto.
 `academia` (`projetos/<codigo>/...`); a pasta local foi removida.
 
 `supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
-(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 119 verificações".
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 127 verificações".
 Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
 no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
 
@@ -155,9 +155,12 @@ atividade (`pc_registro_vira_atividade`, nunca derruba a gravação). Corretor a
 "Autônomo · nome" (PF, não validado). O dono do canal nunca tem linha em `pc_acessos`. A5, primeira entrega pronta: em Administração > Academia, Visão geral (`pc_painel_canal` +
 `pc_linha_do_tempo`), Corretores (`pc_resumo_corretores`, ficha com editar papel/imobiliária e
 bloquear), Acessos, Sugestões e Avisos (`pc_avisos`); e Minha equipe para o gestor da imobiliária
-(`/app/academia/equipe`). Texto de cada atividade em `src/lib/atividades.js`. Falta a segunda entrega da
-A5, o editor de Conteúdo (projetos/kits, trilhas com quiz, argumentos), e a A6 (troca do app antigo);
-até o editor existir, mudanças de conteúdo são feitas direto no banco. Itens sem tela aparecem no menu com
+(`/app/academia/equipe`). Texto de cada atividade em `src/lib/atividades.js`. A5 segunda entrega pronta: editor de
+Conteúdo em Administração > Academia > Conteúdo (projetos/kits com mensagens de WhatsApp, perguntas e
+fotos no bucket `academia`; trilhas com aulas e quiz, gabarito em `pc_quiz_gabarito`; argumentos). Só o
+dono escreve (RLS). Remover aula apaga o progresso de quem a concluiu (a tela avisa); certificados ficam.
+O dono do canal vê no menu "Gestão da Academia" (`/admin/academia`), não o menu de parceiro. Falta a A6
+(troca do app antigo). Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---

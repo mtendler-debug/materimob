@@ -26,6 +26,7 @@ export default function AdminAcademia() {
           Sugestões de argumentos
         </Sub>
         <Sub to="/admin/academia/avisos">Avisos</Sub>
+        <Sub to="/admin/academia/conteudo">Conteúdo</Sub>
       </nav>
       <Outlet context={{ contarPendentes }} />
     </div>

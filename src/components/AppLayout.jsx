@@ -102,16 +102,21 @@ export default function AppLayout() {
   if (gerenteIncorporadora) itensOrg.push({ to: "/app/estoque", label: "Estoque" });
   if (gerenteImobiliaria) itensOrg.push({ to: "/app/time", label: "Seleção do time" });
   const grupoOrg = pertenceOrg ? { label: "Organização", itens: itensOrg } : null;
+  // O dono do canal não é parceiro (nunca tem linha em pc_acessos), então a Academia
+  // dele é a gestão: pedidos, corretores, avisos e conteúdo.
+  const grupoAcademiaDono = isPlatformAdmin
+    ? { label: "Academia", itens: [{ to: "/admin/academia", label: "Gestão da Academia" }] }
+    : null;
   const grupoAdmin = isPlatformAdmin
-    ? { label: "Administração", itens: [{ to: "/admin", label: "Administração" }] }
+    ? { label: "Administração", itens: [{ to: "/admin", label: "Administração", exceto: "/admin/academia" }] }
     : null;
 
   // Quando a casa é a organização, ela vem primeiro — mas "Meus clientes"
   // continua no menu, só desce dentro do grupo Avaliador. account_type
   // nunca esconde a carteira.
   const gruposBase = ehOrganizacao
-    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoConvite, grupoAdmin]
-    : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoConvite, grupoAdmin];
+    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoConvite, grupoAcademiaDono, grupoAdmin]
+    : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoConvite, grupoAcademiaDono, grupoAdmin];
   const grupos = grupoAcademia ? [grupoAcademia, ...gruposBase] : gruposBase;
 
   const { grupoLabel, itemLabel } = breadcrumbAtual(grupos, location.pathname);
@@ -201,13 +206,14 @@ export default function AppLayout() {
                     to={i.to}
                     end={i.end}
                     onClick={() => setMobileOpen(false)}
-                    className={({ isActive }) =>
-                      `block rounded-lg px-2.5 py-2.5 text-sm font-semibold transition-colors ${
+                    className={({ isActive: ativoBruto }) => {
+                      const isActive = ativoBruto && !(i.exceto && location.pathname.startsWith(i.exceto));
+                      return `block rounded-lg px-2.5 py-2.5 text-sm font-semibold transition-colors ${
                         isActive ? "bg-sky-700 text-white" : "text-slate-200 hover:bg-white/10 hover:text-white"
-                      }`
-                    }
+                      }`;
+                    }}
                     style={({ isActive }) =>
-                      isActive && corDestaque
+                      isActive && !(i.exceto && location.pathname.startsWith(i.exceto)) && corDestaque
                         ? { background: "rgba(255,255,255,.18)", boxShadow: `inset 3px 0 0 ${corDestaque}` }
                         : undefined
                     }

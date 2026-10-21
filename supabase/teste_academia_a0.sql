@@ -35,7 +35,7 @@ declare
   ug uuid := gen_random_uuid();  -- gestor da imobiliária p1
   uc uuid := gen_random_uuid();  -- pediu com nome de imobiliária que não está na lista
   ud uuid := gen_random_uuid();  -- ninguém: nunca pediu acesso
-  n bigint; n2 bigint; t text; j jsonb; err text; tok text;
+  n bigint; n2 bigint; n3 bigint; t text; j jsonb; err text; tok text;
   emp1 uuid; emp2 uuid; emp3 uuid;
   tr1 uuid; tr2 uuid; tr3 uuid; au1 uuid; au2 uuid; au3 uuid; q1 uuid; q2 uuid;
   arg_ok uuid; r record; v_log text;
@@ -557,6 +557,51 @@ begin
   reset role; perform pg_temp.login(ug); select count(*) into n from pc_resumo_corretores() where user_id in (ua, ug) and status = 'liberado';
   select count(*) into n2 from pc_resumo_corretores() where user_id = ub;
   reset role; perform pg_temp.chk('A5 Minha equipe: gestor vê a própria equipe e ninguém de outra imobiliária', n = 2 and n2 = 0);
+
+
+  -- ----------------------------------------------------------------
+  -- A5 (2a entrega)  Editor de conteúdo
+  -- ----------------------------------------------------------------
+  reset role; perform pg_temp.login(m);
+  update pc_kits set resumo = 'Resumo editado', textos_whatsapp = '{"investimento":"Novo texto [Nome do Cliente] {link}"}' where codigo = 'teste-kit-1';
+  get diagnostics n = row_count;
+  reset role; perform pg_temp.login(ua);
+  update pc_kits set resumo = 'invasor' where codigo = 'teste-kit-1';
+  get diagnostics n2 = row_count;
+  reset role; perform pg_temp.chk('A5 só o dono edita o kit de um projeto', n = 1 and n2 = 0);
+  select resumo into t from pc_kits where codigo = 'teste-kit-1';
+  perform pg_temp.chk('A5 a edição do dono fica gravada', t = 'Resumo editado');
+
+  reset role; perform pg_temp.login(m); update pc_kits set publicado = false where codigo = 'teste-kit-1';
+  reset role; perform pg_temp.login(ua); select count(*) into n from pc_kits where codigo = 'teste-kit-1';
+  reset role; perform pg_temp.chk('A5 despublicar esconde o projeto do corretor', n = 0);
+  update pc_kits set publicado = true where codigo = 'teste-kit-1';
+
+  reset role; perform pg_temp.login(m);
+  insert into pc_trilhas (titulo, publico, nota_minima) values ('Teste A5 trilha', 'todos', 60) returning id into tr3;
+  insert into pc_quiz_perguntas (trilha_id, ordem, enunciado, opcoes) values (tr3, 1, 'P?', '["a","b"]') returning id into q1;
+  insert into pc_quiz_gabarito (pergunta_id, correta, explicacao) values (q1, 1, 'porque b')
+    on conflict (pergunta_id) do update set correta = excluded.correta;
+  get diagnostics n = row_count;
+  reset role; perform pg_temp.chk('A5 dono cria trilha, pergunta e gabarito', n = 1);
+  reset role; perform pg_temp.login(ua);
+  select count(*) into n from pc_quiz_gabarito where pergunta_id = q1;
+  begin insert into pc_trilhas (titulo) values ('invasor'); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A5 corretor não lê gabarito novo nem cria trilha', n = 0 and err is not null);
+
+  select count(*) into n from pc_progresso_aulas where aula_id = au1 and user_id = ua;
+  reset role; perform pg_temp.login(m); delete from pc_aulas where id = au1; get diagnostics n2 = row_count;
+  reset role; select count(*) into n3 from pc_progresso_aulas where aula_id = au1;
+  perform pg_temp.chk('A5 remover aula apaga o progresso de quem a concluiu (a tela avisa antes)', n2 = 1 and n = 1 and n3 = 0);
+  select count(*) into n from pc_certificacoes where user_id = ua and trilha_id = tr1;
+  perform pg_temp.chk('A5 remover aula não apaga certificados já emitidos', n = 1);
+
+  reset role; perform pg_temp.login(m);
+  insert into storage.objects (bucket_id, name) values ('academia', 'teste-a5/foto.jpg');
+  get diagnostics n = row_count;
+  reset role; perform pg_temp.login(ua);
+  begin insert into storage.objects (bucket_id, name) values ('academia', 'teste-a5/invasor.jpg'); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A5 só o administrador envia arquivo para o armazenamento da Academia', n = 1 and err is not null);
 
   -- ----------------------------------------------------------------
   -- Resultado: a exceção desfaz tudo, e a mensagem traz o relatório.
