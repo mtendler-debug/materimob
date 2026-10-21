@@ -26,6 +26,7 @@ export default function RegistrarCliente() {
   const [erro, setErro] = useState("");
   const [busy, setBusy] = useState(false);
   const [resultado, setResultado] = useState(null);
+  const [autorizou, setAutorizou] = useState(false);
 
   useEffect(() => {
     supabase
@@ -47,6 +48,7 @@ export default function RegistrarCliente() {
     if (!f.nome.trim()) return setErro("Nome do cliente é obrigatório.");
     if (onlyDigits(f.zap).length < 10) return setErro("Informe o WhatsApp do cliente com DDD.");
     if (!f.projeto) return setErro("Escolha o projeto.");
+    if (!autorizou) return setErro("Confirme que o cliente autorizou o uso dos dados dele.");
     if (restrito && (!f.renda || !f.imovel)) {
       return setErro("Este projeto tem regra de renda: preencha a renda e se o cliente já possui imóvel.");
     }
@@ -216,6 +218,25 @@ export default function RegistrarCliente() {
       <Campo id="rc-obs" rotulo="Observações (opcional)">
         <textarea id="rc-obs" value={f.obs} onChange={set("obs")} rows={3} className={campo} />
       </Campo>
+
+      <label className="mt-4 flex items-start gap-2 text-[13px] text-graytext">
+        <input
+          type="checkbox"
+          checked={autorizou}
+          onChange={(e) => {
+            setAutorizou(e.target.checked);
+            setErro("");
+          }}
+          className="mt-0.5 h-4 w-4 shrink-0"
+        />
+        <span>
+          O cliente autorizou o uso dos dados dele para este registro e para o contato sobre o empreendimento (
+          <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline">
+            política de privacidade
+          </a>
+          ).
+        </span>
+      </label>
 
       {erro && (
         <p role="alert" className="mt-3 text-sm text-rose-700">

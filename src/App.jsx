@@ -39,6 +39,7 @@ import TrilhasConteudo from "./pages/admin/TrilhasConteudo";
 import TrilhaEditor from "./pages/admin/TrilhaEditor";
 import ArgumentosConteudo from "./pages/admin/ArgumentosConteudo";
 import Equipe from "./pages/academia/Equipe";
+import MeusDados from "./pages/academia/MeusDados";
 import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
 import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
 import PublicProjeto from "./pages/PublicProjeto";
@@ -108,6 +109,7 @@ export default function App() {
         <Route path="/app/academia/argumentos" element={<Argumentos />} />
         <Route path="/app/academia/clientes" element={<Clientes />} />
         <Route path="/app/academia/equipe" element={<Equipe />} />
+        <Route path="/app/academia/dados" element={<MeusDados />} />
         <Route path="/app/academia/clientes/novo" element={<RegistrarCliente />} />
         <Route path="/app/academia/clientes/:id" element={<RegistroDetalhe />} />
         <Route path="/app/academia/projetos/:codigo" element={<ProjetoDetalhe />} />

@@ -247,6 +247,13 @@ export default function AcademiaCadastro() {
       </form>
 
       <p className="mt-4 text-center text-[12.5px] text-graytext">
+        Ao pedir acesso, você concorda com o uso dos seus dados para liberar e acompanhar o seu acesso, conforme a{" "}
+        <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline">
+          política de privacidade
+        </a>
+        .
+      </p>
+      <p className="mt-2 text-center text-[12.5px] text-graytext">
         Depois do pedido, a coordenação de parcerias confere o seu cadastro e libera o acesso.
       </p>
       {!user && (

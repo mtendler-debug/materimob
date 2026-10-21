@@ -66,6 +66,9 @@ function StatusAcesso({ acesso }) {
         <Linha rotulo="Papel" valor={PAPEL_LABELS[acesso.papel] ?? acesso.papel} />
         <Linha rotulo="Imobiliária" valor={acesso.parceira || "Autônomo"} />
       </dl>
+      <Link to="/app/academia/dados" className="mt-4 block text-center text-sm text-graytext underline">
+        Corrigir meus dados
+      </Link>
     </div>
   );
 }
@@ -117,6 +120,9 @@ function Inicio({ acesso }) {
           {acesso.parceira || "Autônomo"}
         </span>
       </div>
+      <Link to="/app/academia/dados" className="mt-1 inline-block text-xs text-graytext underline">
+        Meus dados
+      </Link>
 
       {avisos?.length > 0 && (
         <section className="mt-5">

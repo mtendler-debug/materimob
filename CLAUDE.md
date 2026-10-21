@@ -129,11 +129,12 @@ antigo, só para consulta de comportamento e texto.
 
 `supabase/migrations_academia_a0_1..4_*.sql`, `migrations_academia_a1_cadastro.sql`,
 `migrations_academia_a2_projetos.sql`, `migrations_academia_a4_clientes.sql`,
+`migrations_academia_a6_blindagem.sql`, `migrations_academia_a6_agenda.sql` (pg_cron),
 `seed_academia_conteudo.sql` (idempotente). Arquivos de imagem/PDF estão no bucket público
 `academia` (`projetos/<codigo>/...`); a pasta local foi removida.
 
 `supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
-(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 127 verificações".
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 139 verificações".
 Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
 no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
 
@@ -159,8 +160,12 @@ bloquear), Acessos, Sugestões e Avisos (`pc_avisos`); e Minha equipe para o ges
 Conteúdo em Administração > Academia > Conteúdo (projetos/kits com mensagens de WhatsApp, perguntas e
 fotos no bucket `academia`; trilhas com aulas e quiz, gabarito em `pc_quiz_gabarito`; argumentos). Só o
 dono escreve (RLS). Remover aula apaga o progresso de quem a concluiu (a tela avisa); certificados ficam.
-O dono do canal vê no menu "Gestão da Academia" (`/admin/academia`), não o menu de parceiro. Falta a A6
-(troca do app antigo). Itens sem tela aparecem no menu com
+O dono do canal vê no menu "Gestão da Academia" (`/admin/academia`), não o menu de parceiro. A6.0 (blindagem) pronta e aplicada:
+políticas `Owner manages pc_*` agora exigem `pc_sou_dono_do_canal()` (usuário comum não cria parceira/registro,
+o que disparava o Leadlinks); views `pc_v_*` sem acesso para anon/authenticated; menu Parcerias só para o dono;
+`/app/academia/dados` (Meus dados, RPC `pc_atualizar_meus_dados`); job diário `pc-expirar-registros-vencidos`
+(03:15 UTC, pg_cron); aviso de privacidade no cadastro e caixa de autorização do cliente em RegistrarCliente.
+Falta o resto da A6 (piloto, onda geral, troca do app antigo). Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---

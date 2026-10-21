@@ -71,14 +71,17 @@ export default function AppLayout() {
     label: "CRM",
     itens: [{ to: "/app/crm", label: hasCrmAccess ? "CRM" : "CRM 🔒" }],
   };
-  const grupoParcerias = {
-    label: "Parcerias",
-    itens: [
-      { to: "/app/parcerias/kanban", label: "Kanban" },
-      { to: "/app/parcerias/parceiras", label: "Parceiras" },
-      { to: "/app/parcerias/registros", label: "Registros" },
-    ],
-  };
+  // Gestão do canal: só o dono (administrador da plataforma) enxerga.
+  const grupoParcerias = isPlatformAdmin
+    ? {
+        label: "Parcerias",
+        itens: [
+          { to: "/app/parcerias/kanban", label: "Kanban" },
+          { to: "/app/parcerias/parceiras", label: "Parceiras" },
+          { to: "/app/parcerias/registros", label: "Registros" },
+        ],
+      }
+    : null;
   // Quem pediu acesso à Academia (em qualquer situação) vê a Academia primeiro:
   // o parceiro continua sendo corretor, então o resto do menu segue logo abaixo.
   // Só o Início tem tela na A1; os demais aparecem como "em breve".

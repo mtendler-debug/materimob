@@ -40,7 +40,7 @@ declare
   tr1 uuid; tr2 uuid; tr3 uuid; au1 uuid; au2 uuid; au3 uuid; q1 uuid; q2 uuid;
   arg_ok uuid; r record; v_log text;
   ue uuid := gen_random_uuid();  -- corretor autônomo (A4)
-  emp_vici uuid; emp_blue uuid; reg1 uuid; b1 boolean; b2 boolean; b3 boolean;
+  emp_vici uuid; emp_blue uuid; reg1 uuid; reg2 uuid; ur uuid; b1 boolean; b2 boolean; b3 boolean;
 begin
   -- ----------------------------------------------------------------
   -- Preparação (como administrador do banco)
@@ -602,6 +602,66 @@ begin
   reset role; perform pg_temp.login(ua);
   begin insert into storage.objects (bucket_id, name) values ('academia', 'teste-a5/invasor.jpg'); err := null; exception when others then err := sqlerrm; end;
   reset role; perform pg_temp.chk('A5 só o administrador envia arquivo para o armazenamento da Academia', n = 1 and err is not null);
+
+
+  -- ----------------------------------------------------------------
+  -- A6.0  Blindagem antes de abrir o cadastro aos parceiros
+  -- ----------------------------------------------------------------
+  -- ur: usuário comum REAL (as chaves para auth.users das tabelas do módulo Parcerias continuam
+  -- valendo), assim só a política de segurança pode barrar a gravação. validado = false nas
+  -- tentativas, para o gatilho do Leadlinks nunca chamar a internet.
+  select id into ur from auth.users where email = 'marcos@vacinas.net';
+  reset role; perform pg_temp.login(ur);
+  begin insert into pc_parceiras (owner_id, nome_fantasia, validado) values (ur, 'Imobiliária Falsa', false); err := null;
+  exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 usuário comum não cria parceira própria', err like '%row-level security%');
+  reset role; perform pg_temp.login(ur);
+  begin insert into pc_registros_cliente (owner_id, parceira_id, cliente_nome, cliente_telefone) values (ur, p1, 'Cliente Falso', '16999990000'); err := null;
+  exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 usuário comum não cria registro de cliente próprio', err like '%row-level security%');
+  reset role; perform pg_temp.login(ur);
+  begin insert into pc_config (owner_id) values (ur); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 usuário comum não se declara dono do canal', err like '%row-level security%');
+  reset role; perform pg_temp.login(m);
+  insert into pc_parceiras (owner_id, nome_fantasia, validado) values (m, 'Teste A6 do dono', false);
+  get diagnostics n = row_count;
+  reset role; perform pg_temp.chk('A6 o dono continua criando parceira normalmente', n = 1);
+
+  reset role; set local role anon;
+  begin perform count(*) from pc_v_funil; err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 visitante sem login não lê as visões de ranking', err like '%permission denied%');
+  reset role; perform pg_temp.login(ua);
+  begin perform count(*) from pc_v_ranking_parceiras; err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 corretor logado também não lê as visões de ranking', err like '%permission denied%');
+
+  reset role; perform pg_temp.login(ua);
+  perform pc_atualizar_meus_dados('Ana Atualizada', '(16) 98888-7777', '999-F');
+  reset role;
+  select count(*) into n from pc_acessos a join pc_parceira_corretores c on c.id = a.corretor_id
+    where a.user_id = ua and a.nome = 'Ana Atualizada' and a.whatsapp = '(16) 98888-7777' and a.creci = '999-F'
+      and c.nome = 'Ana Atualizada' and c.telefone = '(16) 98888-7777' and c.creci = '999-F';
+  perform pg_temp.chk('A6 o parceiro corrige os próprios dados (acesso e cadastro de corretor)', n = 1);
+  select count(*) into n from pc_acessos where user_id = ub and nome = 'Ana Atualizada';
+  perform pg_temp.chk('A6 corrigir os próprios dados não mexe nos de ninguém', n = 0);
+  reset role; perform pg_temp.login(ua);
+  begin perform pc_atualizar_meus_dados('Ana', '123', null); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 WhatsApp sem DDD é recusado na correção de dados', err like '%WhatsApp%');
+  reset role; perform pg_temp.login(m);
+  begin perform pc_atualizar_meus_dados('Marcos', '(16) 99999-0000', null); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 quem não pediu acesso (o dono) não tem dados da Academia para corrigir', err like '%não pediu acesso%');
+
+  insert into pc_registros_cliente (owner_id, parceira_id, corretor_id, empreendimento_id, cliente_nome, cliente_telefone, status, valido_ate, origem_registro)
+    select m, a.parceira_id, a.corretor_id, emp_blue, 'Cliente Vencido', '16977770000', 'pendente', now() - interval '1 day', 'academia'
+    from pc_acessos a where a.user_id = ua
+    returning id into reg2;
+  perform pc_expirar_registros_vencidos();
+  select status::text into t from pc_registros_cliente where id = reg2;
+  select count(*) into n from pc_registro_eventos where registro_id = reg2 and tipo = 'expirado';
+  select count(*) into n2 from pc_atividades where user_id = ua and tipo = 'registro_expirado';
+  perform pg_temp.chk('A6 a rotina expira registro vencido, deixa o evento e vira atividade', t = 'expirado' and n = 1 and n2 = 1);
+  reset role; perform pg_temp.login(ua);
+  begin perform pc_expirar_registros_vencidos(); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A6 só o sistema roda a rotina de expirar registros', err like '%permission denied%');
 
   -- ----------------------------------------------------------------
   -- Resultado: a exceção desfaz tudo, e a mensagem traz o relatório.
