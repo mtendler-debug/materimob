@@ -40,7 +40,13 @@ export function AcessoCanalProvider({ children }) {
     }
 
     setAcesso(data ?? null);
-    if (data?.status === "liberado") supabase.rpc("pc_registrar_presenca");
+    // O cliente do Supabase só envia a chamada quando alguém "espera" por ela.
+    if (data?.status === "liberado") {
+      supabase.rpc("pc_registrar_presenca").then(
+        () => {},
+        () => {},
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
