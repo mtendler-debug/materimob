@@ -21,6 +21,9 @@ import PublicPartnerForm from "./pages/PublicPartnerForm";
 import PublicPartnerSignup from "./pages/PublicPartnerSignup";
 import AcademiaCadastro from "./pages/AcademiaCadastro";
 import AcademiaInicio from "./pages/academia/AcademiaInicio";
+import Projetos from "./pages/academia/Projetos";
+import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
+import PublicProjeto from "./pages/PublicProjeto";
 import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
 import Parceiras from "./pages/parcerias/Parceiras";
 import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
@@ -81,6 +84,8 @@ export default function App() {
           <Route path="oportunidades" element={<Opportunities />} />
         </Route>
         <Route path="/app/academia" element={<AcademiaInicio />} />
+        <Route path="/app/academia/projetos" element={<Projetos />} />
+        <Route path="/app/academia/projetos/:codigo" element={<ProjetoDetalhe />} />
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/parcerias" element={<ParceriasLayout />}>
           <Route index element={<Kanban />} />
@@ -142,6 +147,7 @@ export default function App() {
       <Route path="/convite/:token" element={<AcceptInvite />} />
       <Route path="/c/:token" element={<PublicForm />} />
       <Route path="/r/:token" element={<PublicPanel />} />
+      <Route path="/p/:token" element={<PublicProjeto />} />
       <Route path="/cliente/:token" element={<ClientHome />} />
       <Route path="/registrar/:token" element={<PublicPartnerForm />} />
       <Route path="/parceria/cadastro" element={<PublicPartnerSignup />} />

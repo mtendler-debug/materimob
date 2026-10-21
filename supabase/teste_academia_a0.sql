@@ -196,8 +196,8 @@ begin
     raise exception 'Preparação falhou: preciso de 3 empreendimentos sem kit';
   end if;
 
-  insert into pc_kits (owner_id, empreendimento_id, codigo, textos_whatsapp, resumo, comissao_texto, preco_desde, publicado, drive_url, local_texto)
-  values (m, emp1, 'teste-kit-1', '{"investimento":"Olá [Nome do Cliente]"}', 'Resumo teste', 'PF 2%', 'a partir de R$ 1', true, 'https://exemplo.test/book', 'Local teste');
+  insert into pc_kits (owner_id, empreendimento_id, codigo, nome, textos_whatsapp, resumo, comissao_texto, preco_desde, publicado, drive_url, local_texto)
+  values (m, emp1, 'teste-kit-1', 'Nome Kit Teste', '{"investimento":"Olá [Nome do Cliente]"}', 'Resumo teste', 'PF 2%', 'a partir de R$ 1', true, 'https://exemplo.test/book', 'Local teste');
   insert into pc_kits (owner_id, empreendimento_id, codigo, textos_whatsapp, publicado)
   values (m, emp2, 'teste-kit-2', '{"investimento":"x"}', false);
 
@@ -307,6 +307,7 @@ begin
   select pc_abrir_envio(tok, 'Aparelho 1') into j;
   reset role;
   perform pg_temp.chk('A0.3 cliente abre o link sem login e vê o projeto', j->'projeto'->>'resumo' = 'Resumo teste' and j->'corretor'->>'nome' = 'Ana');
+  perform pg_temp.chk('A2 página do cliente usa o nome do kit, não o do empreendimento', j->'projeto'->>'nome' = 'Nome Kit Teste');
   perform pg_temp.chk('A0.3 página do cliente mostra o WhatsApp do corretor', j->'corretor'->>'whatsapp' = '11 99999-0001');
   perform pg_temp.chk('A0.3 página do cliente NÃO traz comissão nem preço', not (j->'projeto' ? 'comissao_texto') and not (j->'projeto' ? 'preco_desde') and not (j ? 'comissao'));
   reset role; set local role anon;

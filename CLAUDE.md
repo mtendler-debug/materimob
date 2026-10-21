@@ -128,18 +128,22 @@ antigo, só para consulta de comportamento e texto.
 ## Migrações e teste
 
 `supabase/migrations_academia_a0_1..4_*.sql`, `migrations_academia_a1_cadastro.sql`,
+`migrations_academia_a2_projetos.sql`,
 `seed_academia_conteudo.sql` (idempotente). Arquivos de imagem/PDF estão no bucket público
 `academia` (`projetos/<codigo>/...`); a pasta local foi removida.
 
 `supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
-(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 90 verificações".
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 91 verificações".
 Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
 no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
 
 ## Fases
 
-A0 banco, A1 acesso (cadastro, fila, menu): prontas. Faltam A2 Projetos e kit com envio
-por WhatsApp e página pública do cliente, A3 Treinamento e Argumentos, A4 Meus clientes
+A0 banco, A1 acesso (cadastro, fila, menu) e A2 (catálogo `/app/academia/projetos`, kit de
+venda com 4 seções, envio pelo WhatsApp com link rastreado, página pública do cliente em
+`/p/<código>`): prontas. O nome do projeto que o parceiro e o cliente veem é `pc_kits.nome`
+(parceiro não lê `pc_empreendimentos`). Liberar acesso: Administração > Academia ou
+Parcerias > Acessos (mesma tela). Faltam A3 Treinamento e Argumentos, A4 Meus clientes
 (+ políticas de leitura de `pc_registros_cliente` com caminho que esconda observações
 internas), A5 visão do gestor, A6 troca do app antigo. Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
