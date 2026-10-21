@@ -91,6 +91,12 @@ export default function AppLayout() {
         ),
       }
     : null;
+  // Quem já tem conta e ainda não pediu acesso encontra a porta no menu. O dono
+  // do canal (administrador da plataforma) não pede acesso à própria Academia.
+  const grupoConvite =
+    !acesso && !isPlatformAdmin
+      ? { label: "Academia", itens: [{ to: "/app/academia", label: "Academia de Vendas" }] }
+      : null;
   const itensOrg = [];
   if (pertenceOrg) itensOrg.push({ to: "/app/organizacao", label: "Minha organização" });
   if (gerenteIncorporadora) itensOrg.push({ to: "/app/estoque", label: "Estoque" });
@@ -104,8 +110,8 @@ export default function AppLayout() {
   // continua no menu, só desce dentro do grupo Avaliador. account_type
   // nunca esconde a carteira.
   const gruposBase = ehOrganizacao
-    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoAdmin]
-    : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoAdmin];
+    ? [grupoOrg, grupoAvaliador, grupoCrm, grupoParcerias, grupoConvite, grupoAdmin]
+    : [grupoAvaliador, grupoCrm, grupoOrg, grupoParcerias, grupoConvite, grupoAdmin];
   const grupos = grupoAcademia ? [grupoAcademia, ...gruposBase] : gruposBase;
 
   const { grupoLabel, itemLabel } = breadcrumbAtual(grupos, location.pathname);

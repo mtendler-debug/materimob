@@ -102,7 +102,8 @@ antigo, só para consulta de comportamento e texto.
 - O corretor parceiro é um corretor (`profiles.account_type` não muda). O acesso ao canal
   vive em `pc_acessos` (status pendente/liberado/recusado/bloqueado, papel corretor/gestor,
   `parceira_id`). Cadastro público em `/academia`; o Marcos libera em
-  Parcerias → Acessos. Quem tem linha em `pc_acessos` entra por `/app/academia`.
+  Parcerias → Acessos. Quem tem linha em `pc_acessos` entra por `/app/academia`. Quem já tem conta e ainda não pediu acesso vê o item "Academia de Vendas" no menu
+  (leva a uma explicação e ao pedido em `/academia`, já com nome, WhatsApp e CRECI do perfil).
 - **`pc_acessos` não tem política de INSERT, de propósito.** O padrão "for all using
   (auth.uid() = owner_id)" deixaria qualquer usuário criar a própria linha já liberada e
   como gestor. Linhas só nascem em `pc_solicitar_acesso`. Pelo mesmo motivo, "dono do canal"

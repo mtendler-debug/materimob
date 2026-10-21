@@ -39,7 +39,10 @@ function SemPedido() {
   return (
     <div className="mx-auto max-w-md px-4 py-10 text-center">
       <h1 className="text-xl font-bold text-charcoal">Academia de Vendas</h1>
-      <p className="mt-2 text-sm text-graytext">Você ainda não pediu acesso à Academia.</p>
+      <p className="mt-2 text-sm text-graytext">
+        Materiais prontos, treinamento e argumentos para vender os empreendimentos da Chaincorp. É para corretores de
+        imobiliárias parceiras. Peça acesso e a coordenação de parcerias libera.
+      </p>
       <Link to="/academia" className="mt-5 inline-block rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white">
         Pedir acesso
       </Link>

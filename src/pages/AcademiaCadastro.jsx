@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useAcessoCanal } from "../lib/AcessoCanal";
+import { useProfile } from "../lib/useProfile";
 import { traduzErro } from "./Login";
 
 const AUTONOMO = "__autonomo";
@@ -17,6 +18,7 @@ const inputCls =
 export default function AcademiaCadastro() {
   const { user, loading: loadingAuth } = useAuth();
   const { acesso, reload } = useAcessoCanal();
+  const { profile } = useProfile();
   const navigate = useNavigate();
 
   const [imobs, setImobs] = useState(null);
@@ -36,10 +38,13 @@ export default function AcademiaCadastro() {
     supabase.rpc("pc_parceiras_para_vinculo").then(({ data }) => setImobs(data ?? []));
   }, []);
 
+  // Quem já tem conta chega com o que o perfil já sabe: só confere e envia.
   useEffect(() => {
-    if (user && !nome) setNome(user.user_metadata?.full_name ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id]);
+    if (!user) return;
+    setNome((v) => v || profile?.full_name || user.user_metadata?.full_name || "");
+    setWhatsapp((v) => v || profile?.phone || "");
+    setCreci((v) => v || profile?.creci || "");
+  }, [user, profile]);
 
   if (loadingAuth || (user && acesso === undefined)) {
     return (
