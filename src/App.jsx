@@ -22,6 +22,11 @@ import PublicPartnerSignup from "./pages/PublicPartnerSignup";
 import AcademiaCadastro from "./pages/AcademiaCadastro";
 import AcademiaInicio from "./pages/academia/AcademiaInicio";
 import Projetos from "./pages/academia/Projetos";
+import Treinamento from "./pages/academia/Treinamento";
+import TrilhaDetalhe from "./pages/academia/TrilhaDetalhe";
+import Argumentos from "./pages/academia/Argumentos";
+import AdminAcademia from "./pages/admin/AdminAcademia";
+import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
 import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
 import PublicProjeto from "./pages/PublicProjeto";
 import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
@@ -85,6 +90,9 @@ export default function App() {
         </Route>
         <Route path="/app/academia" element={<AcademiaInicio />} />
         <Route path="/app/academia/projetos" element={<Projetos />} />
+        <Route path="/app/academia/treinamento" element={<Treinamento />} />
+        <Route path="/app/academia/treinamento/:id" element={<TrilhaDetalhe />} />
+        <Route path="/app/academia/argumentos" element={<Argumentos />} />
         <Route path="/app/academia/projetos/:codigo" element={<ProjetoDetalhe />} />
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/parcerias" element={<ParceriasLayout />}>
@@ -140,7 +148,10 @@ export default function App() {
           <Route index element={<AdminOverview />} />
           <Route path="organizacoes" element={<AdminOrganizations />} />
           <Route path="contas" element={<AdminAccounts />} />
-          <Route path="academia" element={<Acessos />} />
+          <Route path="academia" element={<AdminAcademia />}>
+            <Route index element={<Acessos />} />
+            <Route path="sugestoes" element={<SugestoesArgumentos />} />
+          </Route>
         </Route>
       </Route>
 

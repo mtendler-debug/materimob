@@ -143,7 +143,11 @@ A0 banco, A1 acesso (cadastro, fila, menu) e A2 (catálogo `/app/academia/projet
 venda com 4 seções, envio pelo WhatsApp com link rastreado, página pública do cliente em
 `/p/<código>`): prontas. O nome do projeto que o parceiro e o cliente veem é `pc_kits.nome`
 (parceiro não lê `pc_empreendimentos`). Liberar acesso: Administração > Academia ou
-Parcerias > Acessos (mesma tela). Faltam A3 Treinamento e Argumentos, A4 Meus clientes
+Parcerias > Acessos (mesma tela). A3 pronta: Treinamento (`/app/academia/treinamento`, trilha com
+aulas, quiz corrigido no servidor e certificado) e Argumentos (`/app/academia/argumentos`, busca,
+filtros, copiar conta uso, sugerir). Sugestões de corretores chegam em Administração > Academia >
+Sugestões de argumentos, onde o dono publica, edita ou arquiva (só o dono escreve em `pc_argumentos`).
+Faltam A4 Meus clientes
 (+ políticas de leitura de `pc_registros_cliente` com caminho que esconda observações
 internas), A5 visão do gestor, A6 troca do app antigo. Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).

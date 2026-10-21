@@ -145,6 +145,11 @@ function Inicio({ acesso }) {
       <section className="mt-5">
         <Titulo>Continue seu treinamento</Titulo>
         <div className="rounded-[12px] border border-rule bg-white px-3.5 py-3">
+          {trilha !== undefined && trilha !== null && (
+            <Link to={`/app/academia/treinamento/${trilha.id}`} className="float-right text-xs font-semibold text-sky-800 underline">
+              Continuar
+            </Link>
+          )}
           {trilha === undefined && <p className="text-sm text-graytext">As trilhas de treinamento aparecem aqui.</p>}
           {trilha === null && <p className="text-sm text-graytext">Você concluiu todas as trilhas disponíveis.</p>}
           {trilha && (

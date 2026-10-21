@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { useFeedback } from "../../lib/feedback";
+import { haQuanto } from "../../lib/academiaUtil";
 
 const FILTROS = [
   ["pendente", "Pendentes"],
@@ -18,15 +19,6 @@ const VAZIO = {
 };
 
 const AUTONOMO = "__autonomo";
-
-function haQuanto(iso) {
-  const min = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
-  if (min < 60) return "agora há pouco";
-  const h = Math.round(min / 60);
-  if (h < 24) return `há ${h} ${h === 1 ? "hora" : "horas"}`;
-  const d = Math.round(h / 24);
-  return d === 1 ? "ontem" : `há ${d} dias`;
-}
 
 function linkWhatsapp(tel) {
   const d = (tel ?? "").replace(/\D/g, "");

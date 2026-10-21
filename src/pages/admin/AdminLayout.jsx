@@ -2,7 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { usePendentesAcesso } from "../../lib/usePendentesAcesso";
 
 export default function AdminLayout() {
-  const { pendentes, recarregar: contarPendentes } = usePendentesAcesso();
+  const { pendentes, sugestoes, recarregar: contarPendentes } = usePendentesAcesso();
 
   return (
     <div className="min-h-screen bg-bg p-6">
@@ -18,7 +18,7 @@ export default function AdminLayout() {
           </Tab>
           <Tab to="/admin/organizacoes">Organizações</Tab>
           <Tab to="/admin/contas">Contas</Tab>
-          <Tab to="/admin/academia" badge={pendentes}>
+          <Tab to="/admin/academia" badge={pendentes + sugestoes}>
             Academia
           </Tab>
         </nav>
