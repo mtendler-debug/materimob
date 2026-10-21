@@ -175,9 +175,16 @@ function RegistroCard({ registro: r, todos, onChange }) {
           </p>
           <p className="text-xs text-graytext">{r.cliente_telefone}</p>
         </div>
-        <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-          {STATUS_REGISTRO_LABELS[r.status] ?? r.status}
-        </span>
+        <div className="flex items-center gap-1.5">
+          {r.origem_registro === "academia" && (
+            <span className="rounded-full border border-purple-300 bg-purple-100 px-[8px] py-px text-[10.5px] font-bold text-purple-800">
+              Academia
+            </span>
+          )}
+          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
+            {STATUS_REGISTRO_LABELS[r.status] ?? r.status}
+          </span>
+        </div>
       </div>
 
       <p className="mt-2 text-xs text-graytext">

@@ -128,12 +128,12 @@ antigo, só para consulta de comportamento e texto.
 ## Migrações e teste
 
 `supabase/migrations_academia_a0_1..4_*.sql`, `migrations_academia_a1_cadastro.sql`,
-`migrations_academia_a2_projetos.sql`,
+`migrations_academia_a2_projetos.sql`, `migrations_academia_a4_clientes.sql`,
 `seed_academia_conteudo.sql` (idempotente). Arquivos de imagem/PDF estão no bucket público
 `academia` (`projetos/<codigo>/...`); a pasta local foi removida.
 
 `supabase/teste_academia_a0.sql` roda como cada papel e SEMPRE termina com exceção
-(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 91 verificações".
+(desfaz tudo; o relatório vem na mensagem). Esperado: "0 falha(s) em 114 verificações".
 Rodar depois de qualquer mudança em políticas ou funções da Academia. Ensaiar migração nova
 no mesmo formato (begin; migração; bloco que dá raise exception) antes de aplicar.
 
@@ -147,9 +147,13 @@ Parcerias > Acessos (mesma tela). A3 pronta: Treinamento (`/app/academia/treinam
 aulas, quiz corrigido no servidor e certificado) e Argumentos (`/app/academia/argumentos`, busca,
 filtros, copiar conta uso, sugerir). Sugestões de corretores chegam em Administração > Academia >
 Sugestões de argumentos, onde o dono publica, edita ou arquiva (só o dono escreve em `pc_argumentos`).
-Faltam A4 Meus clientes
-(+ políticas de leitura de `pc_registros_cliente` com caminho que esconda observações
-internas), A5 visão do gestor, A6 troca do app antigo. Itens sem tela aparecem no menu com
+A4 pronta: Clientes registrados (`/app/academia/clientes`: lista, registrar, acompanhar). O registro
+passa por `pc_registrar_cliente` (validade, conflito por dígitos do telefone, elegibilidade pelas tags
+do kit), a leitura só por `pc_meus_registros` e `pc_eventos_do_registro` (sem anotações internas nem o
+registro conflitante; `pc_registros_cliente` segue fechada a parceiros). Mudança de situação vira
+atividade (`pc_registro_vira_atividade`, nunca derruba a gravação). Corretor autônomo ganha cadastro
+"Autônomo · nome" (PF, não validado). O dono do canal nunca tem linha em `pc_acessos`. Faltam
+A5 (visão do gestor: Visão geral, Corretores, Minha equipe, Conteúdo, Avisos) e A6 (troca do app antigo). Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---

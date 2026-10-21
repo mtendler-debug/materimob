@@ -39,6 +39,8 @@ declare
   emp1 uuid; emp2 uuid; emp3 uuid;
   tr1 uuid; tr2 uuid; tr3 uuid; au1 uuid; au2 uuid; au3 uuid; q1 uuid; q2 uuid;
   arg_ok uuid; r record; v_log text;
+  ue uuid := gen_random_uuid();  -- corretor autônomo (A4)
+  emp_vici uuid; emp_blue uuid; reg1 uuid; b1 boolean; b2 boolean; b3 boolean;
 begin
   -- ----------------------------------------------------------------
   -- Preparação (como administrador do banco)
@@ -426,6 +428,111 @@ begin
   reset role; perform pg_temp.login(ug);
   begin perform pc_painel_canal(); err := null; exception when others then err := sqlerrm; end;
   reset role; perform pg_temp.chk('A0.4 painel do canal é só do dono', err like '%Sem permissão%');
+
+
+  -- ----------------------------------------------------------------
+  -- A4  Meus clientes
+  -- ----------------------------------------------------------------
+  -- A sincronização com o Leadlinks é pg_net (assíncrona); mesmo assim, no teste ela fica desligada.
+  alter table pc_registros_cliente disable trigger pc_registros_cliente_sync_leadlinks;
+  select empreendimento_id into emp_vici from pc_kits where codigo = 'vici';
+  select empreendimento_id into emp_blue from pc_kits where codigo = 'blue';
+  if emp_vici is null or emp_blue is null then
+    raise exception 'Preparação falhou: faltam os kits vici e blue (rode a importação da Academia)';
+  end if;
+
+  reset role; perform pg_temp.login(ue);
+  perform pc_solicitar_acesso('Eva Autônoma', '16 99999-0007', null, 'corretor', null, null);
+  reset role; perform pg_temp.login(m); perform pc_decidir_acesso(ue, 'liberado');
+  reset role;
+  select count(*) into n from pc_acessos a join pc_parceiras p on p.id = a.parceira_id
+    where a.user_id = ue and p.tipo_pessoa = 'PF' and p.validado = false and p.origem = 'autonomo_academia' and a.corretor_id is not null;
+  perform pg_temp.chk('A4 autônomo liberado ganha cadastro PF não validado e é ligado a ele', n = 1);
+
+  reset role; perform pg_temp.login(ua);
+  select pc_registrar_cliente('Roberto Almeida', '(16) 99111-2200', emp_blue, 'investidor', null, null, null, 'Ribeirão Preto', 'sp', null, null, null) into j;
+  reset role;
+  reg1 := (j->>'id')::uuid;
+  perform pg_temp.chk('A4 registro nasce pendente, com validade de 90 dias',
+    j->>'status' = 'pendente' and (j->>'valido_ate')::timestamptz between now() + interval '89 days' and now() + interval '91 days');
+  select count(*) into n from pc_registros_cliente rg join pc_acessos a on a.user_id = ua
+    where rg.id = reg1 and rg.owner_id = m and rg.parceira_id = a.parceira_id and rg.corretor_id = a.corretor_id
+      and rg.origem_registro = 'academia' and rg.uf_origem = 'SP';
+  perform pg_temp.chk('A4 registro fica com o dono do canal, a imobiliária e o corretor certos', n = 1);
+  select count(*) into n from pc_atividades where user_id = ua and tipo = 'registro_criado';
+  perform pg_temp.chk('A4 registro gera a atividade registro_criado', n = 1);
+
+  reset role; perform pg_temp.login(ua);
+  begin perform pc_registrar_cliente('Maria Souza', '(16) 99222-3300', emp_vici, 'moradia', null, null, null, null, null, null, null, null); err := null;
+  exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 projeto com regra de renda exige renda e se tem imóvel', err like '%regra de renda%');
+  reset role; perform pg_temp.login(ua);
+  select pc_registrar_cliente('Maria Souza', '(16) 99222-3300', emp_vici, 'moradia', null, null, null, null, null, 5000, true, null) into j;
+  reset role; perform pg_temp.chk('A4 cliente com imóvel em projeto HIS-2 gera alerta de elegibilidade', j->>'status' = 'pendente' and (j->>'alerta') like '%possuir imóvel%');
+  reset role; perform pg_temp.login(ua);
+  select pc_registrar_cliente('Ivo Prado', '(16) 99333-4400', emp_vici, 'moradia', null, null, null, null, null, 5000, false, null) into j;
+  reset role; perform pg_temp.chk('A4 cliente sem imóvel em projeto HIS-2 não gera alerta', j->>'status' = 'pendente' and (j->>'alerta') is null);
+  reset role; perform pg_temp.login(ua);
+  begin perform pc_registrar_cliente('Sem Zap', '123', emp_blue, null, null, null, null, null, null, null, null, null); err := null;
+  exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 telefone sem DDD é recusado', err like '%WhatsApp%');
+
+  update pc_registros_cliente set status = 'registrado' where id = reg1;
+  reset role; perform pg_temp.login(ub);
+  select pc_registrar_cliente('Roberto A.', '16991112200', emp_blue, null, null, null, null, null, null, null, null, null) into j;
+  reset role;
+  perform pg_temp.chk('A4 mesmo cliente, telefone digitado de outro jeito, dá conflito', j->>'status' = 'conflito');
+
+  reset role; perform pg_temp.login(ud);
+  begin perform pc_registrar_cliente('Fulano', '(16) 99999-9999', emp_blue, null, null, null, null, null, null, null, null, null); err := null;
+  exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 quem não tem acesso não registra cliente', err like '%Acesso não liberado%');
+
+  reset role; perform pg_temp.login(ua); select count(*) into n from pc_meus_registros();
+  reset role; perform pg_temp.chk('A4 corretor vê os próprios registros', n = 3);
+  reset role; perform pg_temp.login(ua);
+  begin perform pc_meus_registros('equipe'); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 corretor não pede os registros da equipe', err like '%gestor%');
+  reset role; perform pg_temp.login(ug); select count(*) into n from pc_meus_registros('equipe');
+  select count(*) into n2 from pc_meus_registros('equipe') where cliente_nome = 'Roberto A.';
+  reset role; perform pg_temp.chk('A4 gestor vê os registros da imobiliária e nenhum de outra', n = 3 and n2 = 0);
+  reset role; perform pg_temp.login(ug); select count(*) into n from pc_meus_registros();
+  reset role; perform pg_temp.chk('A4 gestor sem registros próprios vê lista vazia em "meus"', n = 0);
+  reset role; perform pg_temp.login(ub); select status::text into t from pc_meus_registros() limit 1;
+  select count(*) into n from pc_meus_registros();
+  reset role; perform pg_temp.chk('A4 corretor em conflito vê só o próprio registro, como "conflito"', n = 1 and t = 'conflito');
+
+  reset role; perform pg_temp.login(ua);
+  select count(*) into n from pc_registros_cliente;
+  update pc_registros_cliente set status = 'venda'; get diagnostics n2 = row_count;
+  reset role; perform pg_temp.chk('A4 corretor não lê nem altera a tabela de registros direto', n = 0 and n2 = 0);
+
+  insert into pc_registro_eventos (owner_id, registro_id, tipo, descricao, criado_por)
+    values (m, reg1, 'nota', 'anotação interna secreta', 'marcos'), (m, reg1, 'validado', 'texto escrito pelo Marcos', 'marcos');
+  reset role; perform pg_temp.login(ua);
+  select count(*), bool_or(descricao like '%secreta%' or descricao like '%Marcos%'), bool_or(tipo = 'nota'), bool_or(tipo = 'criado')
+    into n, b1, b2, b3 from pc_eventos_do_registro(reg1);
+  reset role; perform pg_temp.chk('A4 linha do tempo não traz anotações nem o texto da coordenação', n >= 2 and b1 is not true and b2 is not true and b3);
+  reset role; perform pg_temp.login(ub);
+  begin perform pc_eventos_do_registro(reg1); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 corretor de outra imobiliária não vê a linha do tempo alheia', err like '%não encontrado%');
+  reset role; perform pg_temp.login(ug); select count(*) into n from pc_eventos_do_registro(reg1);
+  reset role; perform pg_temp.chk('A4 gestor vê a linha do tempo dos registros da equipe', n >= 2);
+
+  select count(*) into n from pc_atividades where user_id = ua and tipo = 'registro_registrado';
+  update pc_registros_cliente set status = 'visita' where id = reg1;
+  select count(*) into n2 from pc_atividades where user_id = ua and tipo = 'registro_visita';
+  perform pg_temp.chk('A4 mudança de situação vira atividade do corretor', n = 1 and n2 = 1);
+  select count(*) into n from pc_atividades where user_id = ub and tipo = 'registro_criado';
+  perform pg_temp.chk('A4 registro em conflito também gera atividade para quem registrou', n = 1);
+
+  reset role; perform pg_temp.login(m);
+  begin perform pc_solicitar_acesso('Marcos', '16 99999-0000', null, 'corretor', null, null); err := null; exception when others then err := sqlerrm; end;
+  reset role; perform pg_temp.chk('A4 o dono do canal não pede acesso à Academia', err like '%administrador do canal%');
+  insert into pc_acessos (user_id, owner_id, nome, papel, status) values (m, m, 'Marcos', 'corretor', 'pendente');
+  reset role; perform pg_temp.login(m); select pc_meu_acesso()::text into t;
+  reset role; perform pg_temp.chk('A4 pc_meu_acesso é vazio para o dono, mesmo com linha antiga', t is null);
+  delete from pc_acessos where user_id = m;
 
   -- ----------------------------------------------------------------
   -- Resultado: a exceção desfaz tudo, e a mensagem traz o relatório.

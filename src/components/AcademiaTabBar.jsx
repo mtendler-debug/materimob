@@ -8,7 +8,7 @@ export const MENU_ACADEMIA = [
   { label: "Projetos", curto: "Projetos", to: "/app/academia/projetos", icone: "M4 21V8l8-4 8 4v13M9 21v-5h6v5M8 11h2M14 11h2" },
   { label: "Treinamento", curto: "Treino", to: "/app/academia/treinamento", icone: "M3 9l9-4 9 4-9 4zM7 11v5c0 1 2.2 2.5 5 2.5s5-1.5 5-2.5v-5" },
   { label: "Argumentos", curto: "Argumentos", to: "/app/academia/argumentos", icone: "M4 5h16v11H9l-5 4z" },
-  { label: "Meus clientes", curto: "Clientes", icone: "M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c1.8.8 3 2.6 3 5M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" },
+  { label: "Clientes registrados", curto: "Clientes", to: "/app/academia/clientes", icone: "M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M18 14c1.8.8 3 2.6 3 5M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" },
   { label: "Minha equipe", soGestor: true, icone: "" },
 ];
 

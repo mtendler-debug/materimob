@@ -25,6 +25,9 @@ import Projetos from "./pages/academia/Projetos";
 import Treinamento from "./pages/academia/Treinamento";
 import TrilhaDetalhe from "./pages/academia/TrilhaDetalhe";
 import Argumentos from "./pages/academia/Argumentos";
+import Clientes from "./pages/academia/Clientes";
+import RegistrarCliente from "./pages/academia/RegistrarCliente";
+import RegistroDetalhe from "./pages/academia/RegistroDetalhe";
 import AdminAcademia from "./pages/admin/AdminAcademia";
 import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
 import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
@@ -93,6 +96,9 @@ export default function App() {
         <Route path="/app/academia/treinamento" element={<Treinamento />} />
         <Route path="/app/academia/treinamento/:id" element={<TrilhaDetalhe />} />
         <Route path="/app/academia/argumentos" element={<Argumentos />} />
+        <Route path="/app/academia/clientes" element={<Clientes />} />
+        <Route path="/app/academia/clientes/novo" element={<RegistrarCliente />} />
+        <Route path="/app/academia/clientes/:id" element={<RegistroDetalhe />} />
         <Route path="/app/academia/projetos/:codigo" element={<ProjetoDetalhe />} />
         <Route path="/app/organizacao" element={<Organization />} />
         <Route path="/app/parcerias" element={<ParceriasLayout />}>
