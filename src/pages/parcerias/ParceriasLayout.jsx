@@ -1,23 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+import { usePendentesAcesso } from "../../lib/usePendentesAcesso";
 
 export default function ParceriasLayout() {
-  const [pendentes, setPendentes] = useState(0);
-
-  // Pedidos de acesso à Academia esperando liberação (só o dono do canal
-  // enxerga linhas de pc_acessos; para os demais a contagem é 0).
-  const contarPendentes = useCallback(async () => {
-    const { count } = await supabase
-      .from("pc_acessos")
-      .select("user_id", { count: "exact", head: true })
-      .eq("status", "pendente");
-    setPendentes(count ?? 0);
-  }, []);
-
-  useEffect(() => {
-    contarPendentes();
-  }, [contarPendentes]);
+  const { pendentes, recarregar: contarPendentes } = usePendentesAcesso();
 
   return (
     <div className="min-h-screen bg-bg">

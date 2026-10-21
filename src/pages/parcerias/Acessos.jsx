@@ -114,7 +114,13 @@ export default function Acessos() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-rule bg-white p-3">
+      <div className="mt-4 grid grid-cols-3 gap-2.5">
+        <Numero valor={contagem.liberado} rotulo="Corretores liberados" />
+        <Numero valor={contagem.pendente} rotulo="Aguardando liberação" />
+        <Numero valor={ativas.length} rotulo="Imobiliárias ativas na Academia" />
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-rule bg-white p-3">
         <div>
           <div className="text-xs text-graytext">Link de cadastro para divulgar aos parceiros</div>
           <div className="break-all text-[13.5px] font-semibold text-charcoal">{url}</div>
@@ -282,6 +288,15 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
           </Botao>
         </div>
       )}
+    </div>
+  );
+}
+
+function Numero({ valor, rotulo }) {
+  return (
+    <div className="rounded-[12px] border border-rule bg-white px-3 py-2.5">
+      <b className="block text-[22px] leading-tight text-charcoal tabular-nums">{valor}</b>
+      <span className="text-xs text-graytext">{rotulo}</span>
     </div>
   );
 }

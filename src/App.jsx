@@ -135,6 +135,7 @@ export default function App() {
           <Route index element={<AdminOverview />} />
           <Route path="organizacoes" element={<AdminOrganizations />} />
           <Route path="contas" element={<AdminAccounts />} />
+          <Route path="academia" element={<Acessos />} />
         </Route>
       </Route>
 

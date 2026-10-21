@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
+import { usePendentesAcesso } from "../../lib/usePendentesAcesso";
 import { Map } from "../../components/Map";
 
 const TIPO_LABELS = { corretor: "Corretor", imobiliaria: "Imobiliária", incorporadora: "Incorporadora" };
@@ -35,6 +37,7 @@ function ActivityBars({ data }) {
 }
 
 export default function AdminOverview() {
+  const { pendentes } = usePendentesAcesso();
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
   const [backfilling, setBackfilling] = useState(false);
@@ -71,6 +74,19 @@ export default function AdminOverview() {
 
   return (
     <div>
+      {pendentes > 0 && (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border-[1.5px] border-amber-300 bg-amber-50 px-4 py-3">
+          <div>
+            <b className="text-sm text-charcoal">
+              {pendentes} {pendentes === 1 ? "pedido de acesso" : "pedidos de acesso"} à Academia de Vendas aguardando liberação
+            </b>
+            <p className="text-[12.5px] text-graytext">Corretores de imobiliárias parceiras pediram para entrar.</p>
+          </div>
+          <Link to="/admin/academia" className="rounded-[8px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white">
+            Ver pedidos
+          </Link>
+        </div>
+      )}
       <SectionTitle>Plataforma</SectionTitle>
       <div className="mb-3 flex items-center gap-3">
         <button
