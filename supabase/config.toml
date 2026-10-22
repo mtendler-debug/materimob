@@ -422,6 +422,11 @@ verify_jwt = false
 [functions.pc-parceira-cadastro]
 verify_jwt = false
 
+# Confere o login no próprio código; com verify_jwt ligado o gateway barra o
+# preflight (OPTIONS) do navegador antes da função rodar.
+[functions.extract-book]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

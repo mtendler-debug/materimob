@@ -11,6 +11,21 @@ import { storageKeyFor } from "../lib/storage";
 // valor de tabela — ou criando unidade nova se não achar correspondência).
 // O imóvel/lançamento já é salvo ao final da etapa 1; as etapas seguintes
 // vão fazendo update incremental nesse mesmo registro.
+
+// Quando a função responde com erro (limite do dia, arquivo grande demais…),
+// o supabase.functions.invoke devolve só "non-2xx status code" — a mensagem
+// de verdade vem no corpo da resposta.
+async function mensagemDeErro(fnError, result) {
+  if (result?.error) return result.error;
+  try {
+    const corpo = await fnError?.context?.json();
+    if (corpo?.error) return corpo.error;
+  } catch {
+    // corpo não era JSON; cai na mensagem genérica
+  }
+  return "Não consegui ler o material agora. Tente de novo ou preencha manualmente.";
+}
+
 export function BookImporter({ kind, ownerFields, onImported }) {
   const { user } = useAuth();
   const [show, setShow] = useState(false);
@@ -80,7 +95,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
         body: { file_urls: urls },
       });
       if (fnError || result?.error) {
-        setError(result?.error || fnError.message);
+        setError(await mensagemDeErro(fnError, result));
         setDraft({ name: "", address: "", summary: "", payment_terms: "", condo_value: "", iptu_value: "", units: [] });
         setStep("review");
         return;
@@ -203,7 +218,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
         body: { file_urls: urls },
       });
       if (fnError || result?.error) {
-        setError(result?.error || fnError.message);
+        setError(await mensagemDeErro(fnError, result));
         setStep("ask-table");
         return;
       }

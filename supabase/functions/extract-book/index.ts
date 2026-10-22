@@ -3,10 +3,20 @@
 // "books", manda o material pra API da Claude e devolve um rascunho
 // estruturado (nome, endereço, resumo, condições, unidades) pro
 // frontend pré-preencher o cadastro de lançamento/imóvel — quem decide
-// o que salvar é sempre a pessoa, revisando antes de confirmar. Esta
-// função não toca o banco: não precisa de service_role, só confirma
-// que quem chamou está autenticado.
+// o que salvar é sempre a pessoa, revisando antes de confirmar. Não
+// precisa de service_role: o limite diário de uso (cada chamada custa na
+// API da Claude) é reservado por extract_book_reservar_uso() com o token de
+// quem chamou. Só baixa arquivos da pasta da própria pessoa no bucket
+// "books" — nunca uma URL qualquer vinda do navegador.
 import { createClient } from "npm:@supabase/supabase-js@2";
+
+// A API da Claude aceita até 32 MB por pedido, já contando o base64.
+const MAX_BYTES_TOTAL = 20 * 1024 * 1024;
+
+const MENSAGEM_LIMITE: Record<string, string> = {
+  limite_pessoa: "Você atingiu o limite de importações com IA de hoje. Amanhã ele volta; até lá, dá para cadastrar manualmente.",
+  limite_plataforma: "A importação com IA atingiu o limite de hoje da plataforma. Tente amanhã ou cadastre manualmente.",
+};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -107,13 +117,28 @@ Deno.serve(async (req) => {
   if (file_urls.length > 6) {
     return json({ error: "Envie no máximo 6 arquivos por vez." }, 400);
   }
+  const prefixoPermitido = `${supabaseUrl}/storage/v1/object/public/books/${caller.id}/`;
+  if (!file_urls.every((u) => typeof u === "string" && u.startsWith(prefixoPermitido) && !u.includes(".."))) {
+    return json({ error: "Arquivo inválido. Envie o material de novo pela tela de importação." }, 400);
+  }
+
+  const { data: reserva, error: reservaError } = await callerClient.rpc("extract_book_reservar_uso");
+  if (reservaError) return json({ error: "Não consegui verificar o limite de uso. Tente de novo." }, 500);
+  if (!reserva?.ok) {
+    return json({ error: MENSAGEM_LIMITE[reserva?.motivo] ?? "Importação com IA indisponível agora." }, 429);
+  }
 
   const blocks = [];
+  let totalBytes = 0;
   for (const url of file_urls) {
     const fileRes = await fetch(url);
     if (!fileRes.ok) return json({ error: `Não consegui baixar um dos arquivos enviados.` }, 400);
     const mediaType = fileRes.headers.get("content-type") || "application/octet-stream";
     const bytes = new Uint8Array(await fileRes.arrayBuffer());
+    totalBytes += bytes.length;
+    if (totalBytes > MAX_BYTES_TOTAL) {
+      return json({ error: "Os arquivos passam de 20 MB juntos. Envie menos páginas ou um PDF mais leve." }, 400);
+    }
     const base64 = bytesToBase64(bytes);
     const block = toContentBlock(mediaType, base64);
     if (!block) return json({ error: `Tipo de arquivo não suportado: ${mediaType}.` }, 400);
