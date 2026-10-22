@@ -20,6 +20,17 @@ Dois módulos hoje em produção (`materimob.com.br`), mais dois em construção
   imobiliária parceira, com login próprio. Fases A0 (banco) e A1 (acesso) no ar. Ver
   seção própria abaixo.
 
+## CRM liberado para todos (2026-10-21)
+
+Decisão do Marcos: até começar a cobrança, todo usuário logado usa o CRM. Interruptor único:
+`platform_settings` (chave `crm_liberado_para_todos`, `ativo = true`), lido por `has_crm_access()`
+(`supabase/migrations_crm_liberado.sql`). Para voltar a cobrar:
+`update platform_settings set ativo = false, atualizado_em = now() where chave = 'crm_liberado_para_todos';`
+A regra de plano (`profiles.crm_included`, `organizations.crm_included`) continua por baixo. Ao desligar, quem criou conta
+na liberação perde o acesso, a menos que se decida antes dar a eles o mesmo tratamento dos antigos.
+Sugestão do Marcos, ainda sem protótipo: ligar/desligar cada módulo (Avaliador, CRM, Parcerias, Academia) por usuário,
+com esta chave como padrão e exceção por usuário por cima.
+
 ## Stack atual — isto é o que vale, não o que documentos antigos descrevem
 
 - **Frontend:** Vite + React + React Router. Tailwind via `@tailwindcss/vite`.
