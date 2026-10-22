@@ -3,6 +3,7 @@ import { TenantBrandingProvider } from "./lib/tenantBranding";
 import { FeedbackProvider } from "./lib/feedback";
 import { AcessoCanalProvider } from "./lib/AcessoCanal";
 import Login from "./pages/Login";
+import NovaSenha from "./pages/NovaSenha";
 import Entry from "./pages/Entry";
 import ModuloRoute from "./components/ModuloRoute";
 import Dashboard from "./pages/Dashboard";
@@ -77,6 +78,7 @@ export default function App() {
       <Routes>
       <Route path="/" element={<Entry />} />
       <Route path="/entrar" element={<Login />} />
+      <Route path="/nova-senha" element={<NovaSenha />} />
       <Route path="/academia" element={<AcademiaCadastro />} />
       {/* Portal com marca própria, ex. materimob.com.br/chaincorp — o
           slug em si só decide a cor/logo (via TenantBrandingProvider,

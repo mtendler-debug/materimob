@@ -7,13 +7,14 @@ import { useTenantBranding } from "../lib/tenantBranding";
 export default function Login() {
   const { user, loading } = useAuth();
   const marca = useTenantBranding();
-  const [mode, setMode] = useState("entrar"); // "entrar" | "cadastrar"
+  const [mode, setMode] = useState("entrar"); // "entrar" | "cadastrar" | "recuperar"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [confirmEmailSent, setConfirmEmailSent] = useState(false);
+  const [recuperacaoEnviada, setRecuperacaoEnviada] = useState(false);
 
   if (!loading && user) {
     return <Navigate to="/" replace />;
@@ -23,6 +24,20 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setBusy(true);
+
+    if (mode === "recuperar") {
+      // A resposta é a mesma exista a conta ou não, para a tela não revelar quem tem cadastro.
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/nova-senha`,
+      });
+      setBusy(false);
+      if (resetError) {
+        setError(traduzErro(resetError.message));
+        return;
+      }
+      setRecuperacaoEnviada(true);
+      return;
+    }
 
     // account_type sempre 'corretor' no cadastro público — é a fase 1 do
     // produto, simples e direto pro corretor. Organizações (imobiliária/
@@ -62,6 +77,28 @@ export default function Login() {
     );
   }
 
+  if (recuperacaoEnviada) {
+    return (
+      <Card marca={marca}>
+        <h1 className="text-center text-xl font-bold text-charcoal">Confira o seu e-mail</h1>
+        <p className="mt-2 text-center text-sm text-graytext">
+          Se <strong>{email}</strong> tiver uma conta, enviamos um link para criar a nova senha. Ele vale por pouco
+          tempo. Se não encontrar, olhe também o spam.
+        </p>
+        <button
+          onClick={() => {
+            setRecuperacaoEnviada(false);
+            setMode("entrar");
+            setError("");
+          }}
+          className="mt-5 w-full text-center text-sm text-graytext underline"
+        >
+          Voltar para entrar
+        </button>
+      </Card>
+    );
+  }
+
   return (
     <Card marca={marca}>
       {marca?.logo_url && (
@@ -75,7 +112,9 @@ export default function Login() {
           ? marca
             ? "Portal de parcerias"
             : "Entrar na sua conta"
-          : "Criar uma conta"}
+          : mode === "recuperar"
+            ? "Informe o seu e-mail e enviamos um link para criar uma nova senha"
+            : "Criar uma conta"}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-3 text-left">
@@ -100,17 +139,31 @@ export default function Login() {
             className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
           />
         </div>
-        <div>
-          <label className="block text-xs font-medium text-graytext">Senha</label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
-          />
-        </div>
+        {mode !== "recuperar" && (
+          <div>
+            <label className="block text-xs font-medium text-graytext">Senha</label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
+            />
+            {mode === "entrar" && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("recuperar");
+                  setError("");
+                }}
+                className="mt-1.5 text-xs text-graytext underline"
+              >
+                Esqueci minha senha
+              </button>
+            )}
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
@@ -124,7 +177,7 @@ export default function Login() {
               : { background: "#1c1c1c", color: "#fff" }
           }
         >
-          {busy ? "Aguarde…" : mode === "entrar" ? "Entrar" : "Criar conta"}
+          {busy ? "Aguarde…" : mode === "entrar" ? "Entrar" : mode === "recuperar" ? "Enviar link" : "Criar conta"}
         </button>
       </form>
 
@@ -137,7 +190,9 @@ export default function Login() {
       >
         {mode === "entrar"
           ? "Ainda não tem conta? Criar uma"
-          : "Já tem conta? Entrar"}
+          : mode === "recuperar"
+            ? "Voltar para entrar"
+            : "Já tem conta? Entrar"}
       </button>
 
       {marca && <p className="mt-5 text-center text-[10.5px] text-muted">gerenciado por MaterImob</p>}
@@ -165,6 +220,12 @@ export function traduzErro(message) {
   }
   if (message.includes("Password should be at least")) {
     return "A senha precisa ter pelo menos 6 caracteres.";
+  }
+  if (message.includes("same as the old password") || message.includes("different from the old password")) {
+    return "Escolha uma senha diferente da atual.";
+  }
+  if (message.includes("security purposes") || message.includes("rate limit")) {
+    return "Muitos pedidos seguidos. Aguarde um minuto e tente de novo.";
   }
   return message;
 }
