@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useTenantBranding } from "../lib/tenantBranding";
@@ -7,7 +7,9 @@ import { useTenantBranding } from "../lib/tenantBranding";
 export default function Login() {
   const { user, loading } = useAuth();
   const marca = useTenantBranding();
-  const [mode, setMode] = useState("entrar"); // "entrar" | "cadastrar" | "recuperar"
+  const [params] = useSearchParams();
+  // A página de entrada manda quem quer criar conta direto para o cadastro (?modo=criar).
+  const [mode, setMode] = useState(params.get("modo") === "criar" ? "cadastrar" : "entrar"); // "entrar" | "cadastrar" | "recuperar"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
@@ -194,6 +196,31 @@ export default function Login() {
             ? "Voltar para entrar"
             : "Já tem conta? Entrar"}
       </button>
+
+      {!marca && mode !== "recuperar" && (
+        <p className="mt-5 border-t border-rule pt-4 text-center text-xs leading-relaxed text-graytext">
+          A plataforma do corretor: Avaliador, CRM e Academia de Vendas.
+          {mode === "entrar" && (
+            <>
+              <br />
+              <Link to="/academia" className="underline">
+                Pedir acesso à Academia
+              </Link>
+              {" · "}
+              <Link to="/parceria/cadastro" className="underline">
+                Cadastrar minha imobiliária
+              </Link>
+            </>
+          )}
+        </p>
+      )}
+      <p className="mt-3 text-center text-[11px] text-muted">
+        {mode === "cadastrar" ? "Ao criar a conta, você concorda com a " : "Veja a "}
+        <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline">
+          política de privacidade
+        </a>
+        .
+      </p>
 
       {marca && <p className="mt-5 text-center text-[10.5px] text-muted">gerenciado por MaterImob</p>}
     </Card>

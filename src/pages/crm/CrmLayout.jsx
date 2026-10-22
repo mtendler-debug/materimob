@@ -1,3 +1,4 @@
+import { whatsappUrl } from "../../lib/contato";
 import { NavLink, Outlet } from "react-router-dom";
 import { useProfile } from "../../lib/useProfile";
 import { useOrganization } from "../../lib/useOrganization";
@@ -62,7 +63,7 @@ function CrmPaywall({ temOrganizacao }) {
         ) : (
           <>
             Assinatura individual chega em breve.{" "}
-            <a href="mailto:contato@materimob.com.br" className="font-bold text-charcoal underline">
+            <a href={whatsappUrl("Olá! Quero saber mais sobre o CRM do MaterImob.")} target="_blank" rel="noreferrer" className="font-bold text-charcoal underline">
               Fale com a gente
             </a>{" "}
             se quiser começar antes.

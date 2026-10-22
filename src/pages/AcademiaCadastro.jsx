@@ -126,7 +126,7 @@ export default function AcademiaCadastro() {
       <div className="text-[10.5px] font-bold uppercase tracking-[.18em] text-gold">Materimob</div>
       <h1 className="mt-2 text-xl font-bold leading-tight text-charcoal">Crie seu acesso à Academia de Vendas</h1>
       <p className="mt-1 text-sm text-graytext">
-        Materiais prontos, treinamento e argumentos para vender os empreendimentos da Chaincorp.
+        Materiais prontos, treinamento e argumentos de venda, para o corretor apresentar cada projeto com segurança.
       </p>
 
       <form onSubmit={enviar} noValidate className="mt-5 space-y-3">
