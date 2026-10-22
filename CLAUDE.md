@@ -47,7 +47,8 @@ O administrador não desliga módulo da própria conta. Migrações: `migrations
 Visitante vê a Landing; quem tem sessão vai direto ao painel pelo `Entry`. CTAs: `/entrar?modo=criar`, `/academia`,
 `/parceria/cadastro` e WhatsApp. Contato oficial em `src/lib/contato.js` ((11) 94313-2008). A Academia é do MaterImob,
 não é condicionada à Chaincorp (acesso por aprovação). `/nova-senha` recebe o link de "Esqueci minha senha"; modelos de e-mail
-em português em `supabase/email-templates/` (colar em Authentication > Emails > Templates).
+em português em `supabase/email-templates/`, já colados no Supabase em 2026-10-21 (Reset password e Confirm sign up;
+Invite, Magic link e Change email seguem no padrão em inglês).
 Contato por e-mail `contato@materimob.com.br` NÃO tem registro MX (verificado 2026-10-21): não usar como canal até testar.
 
 ## Stack atual — isto é o que vale, não o que documentos antigos descrevem
