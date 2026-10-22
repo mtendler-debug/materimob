@@ -165,7 +165,8 @@ políticas `Owner manages pc_*` agora exigem `pc_sou_dono_do_canal()` (usuário 
 o que disparava o Leadlinks); views `pc_v_*` sem acesso para anon/authenticated; menu Parcerias só para o dono;
 `/app/academia/dados` (Meus dados, RPC `pc_atualizar_meus_dados`); job diário `pc-expirar-registros-vencidos`
 (03:15 UTC, pg_cron); aviso de privacidade no cadastro e caixa de autorização do cliente em RegistrarCliente.
-Falta o resto da A6 (piloto, onda geral, troca do app antigo). Itens sem tela aparecem no menu com
+Falta o resto da A6 (piloto e onda geral). O app antigo (chaincorp-hub.netlify.app) continua no ar por decisão do Marcos; o
+redirecionamento ficou guardado em `academia-import/redirecionamento-antigo/`, sem publicar. Itens sem tela aparecem no menu com
 a etiqueta "em breve" (`MENU_ACADEMIA` em `src/components/AcademiaTabBar.jsx`).
 
 ---
