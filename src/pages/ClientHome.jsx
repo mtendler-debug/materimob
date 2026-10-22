@@ -40,7 +40,9 @@ export default function ClientHome() {
     );
   }
 
-  const { client, selections } = data;
+  // corretor vem só no link por corretor; o link antigo (compartilhado)
+  // continua reunindo os roteiros de todos.
+  const { client, corretor, selections } = data;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -51,7 +53,11 @@ export default function ClientHome() {
           </div>
           <h1 className="mt-[9px] mb-1 text-[22px] leading-tight font-bold">Olá, {client.name}</h1>
           <p className="m-0 text-[13.5px] text-[#C9C9C9]">
-            Aqui ficam reunidos todos os imóveis que separaram pra você — de qualquer corretor.
+            {corretor?.nome
+              ? `Os imóveis que ${corretor.nome} separou pra você.`
+              : corretor
+                ? "Os imóveis que seu corretor separou pra você."
+                : "Aqui ficam reunidos todos os imóveis que separaram pra você — de qualquer corretor."}
           </p>
         </div>
       </header>

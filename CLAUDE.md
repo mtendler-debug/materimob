@@ -71,7 +71,11 @@ neles conflitar com o schema/código atual, o schema/código atual vence.
 - Avaliador: `av_selections`, `av_properties`, `av_units`, `av_evaluations`,
   `av_proposals`, `av_clients` (cliente é compartilhado entre corretores — o mesmo
   telefone pode ter roteiros de mais de um corretor; "ativo/inativo" por corretor fica
-  em `av_client_relations`, nunca direto em `av_clients`).
+  em `av_client_relations`, nunca direto em `av_clients`). O link permanente do
+  cliente é por corretor: `av_client_relations.token` (gerado no banco, nunca
+  trocado) → `/cliente/<token>` mostra só os roteiros daquele corretor.
+  `av_clients.token` é o link antigo compartilhado: ainda abre, mas não pode ser
+  lido por corretor (privilégio por coluna) — nunca voltar a expô-lo no app.
   `av_criteria_presets`, `av_portfolio_properties`/`av_portfolio_units` (portfólio de
   imobiliária), `av_launches`/`av_launch_units` (lançamento de incorporadora).
   Toda tabela usa `user_id uuid references auth.users not null default auth.uid()` +

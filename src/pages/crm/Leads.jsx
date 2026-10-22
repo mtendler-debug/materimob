@@ -14,7 +14,9 @@ import {
 import { useFeedback } from "../../lib/feedback";
 
 // Best-effort: leva o lead também pro Leadlinks (CRM de WhatsApp em
-// paralelo que o Marcos já usa). Nunca bloqueia a criação do lead no
+// paralelo que o Marcos já usa). Só vale para o lead do próprio Marcos: a
+// função confere no servidor e ignora a chamada de qualquer outro corretor.
+// Nunca bloqueia a criação do lead no
 // MaterImob, que já aconteceu antes desta chamada — se o Leadlinks
 // estiver fora do ar ou faltar email/phone, só ignora.
 function syncLeadToLeadlinks({ name, phone, email, source }) {

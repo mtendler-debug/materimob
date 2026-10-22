@@ -27,7 +27,7 @@ export default function Dashboard() {
     const { data, error: loadError } = await supabase
       .from("av_selections")
       .select(
-        "id, title, client_name, archived, created_at, client_id, token_form, token_panel, av_clients(id, name, phone, email, token, av_client_relations(archived))",
+        "id, title, client_name, archived, created_at, client_id, token_form, token_panel, av_clients(id, name, phone, email, av_client_relations(archived, token))",
       )
       .order("created_at", { ascending: false });
     if (loadError) {
@@ -44,7 +44,15 @@ export default function Dashboard() {
       }
       if (!map.has(c.id)) {
         const { av_client_relations, ...rest } = c;
-        map.set(c.id, { ...rest, archived: av_client_relations?.[0]?.archived ?? false, selections: [] });
+        // A relação (RLS: só a do próprio corretor) guarda o link do cliente
+        // com este corretor — cada corretor tem o seu, ver
+        // migrations_link_cliente_por_corretor.sql.
+        map.set(c.id, {
+          ...rest,
+          archived: av_client_relations?.[0]?.archived ?? false,
+          token: av_client_relations?.[0]?.token ?? null,
+          selections: [],
+        });
       }
       map.get(c.id).selections.push(s);
     }
@@ -230,7 +238,7 @@ function ClientCard({ client, onChange }) {
   const { confirm, toast } = useFeedback();
   const [filtroRoteiros, setFiltroRoteiros] = useState("ativos"); // ativos|desativados|todos
   const [crmMsg, setCrmMsg] = useState("");
-  const homeUrl = `${window.location.origin}/cliente/${client.token}`;
+  const homeUrl = client.token ? `${window.location.origin}/cliente/${client.token}` : null;
   const roteirosDesativados = client.selections.filter((s) => s.archived);
   const roteirosVisiveis = client.selections.filter((s) => {
     if (filtroRoteiros === "todos") return true;
@@ -365,12 +373,14 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
       </div>
 
       <div className="mt-2 divide-y divide-rule overflow-hidden rounded-[10px] border border-rule">
-        <LinkLine
-          label="Permanente"
-          url={homeUrl}
-          copied={copiado === "perfil"}
-          onCopy={() => copiar(homeUrl, "perfil")}
-        />
+        {homeUrl && (
+          <LinkLine
+            label="Permanente"
+            url={homeUrl}
+            copied={copiado === "perfil"}
+            onCopy={() => copiar(homeUrl, "perfil")}
+          />
+        )}
         <LinkLine label="Avaliação" url={formUrl} copied={copiado === "form"} onCopy={() => copiar(formUrl, "form")} />
         <LinkLine
           label="Painel"

@@ -61,7 +61,7 @@ export default function SelectionDetail() {
       { data: evals },
       { data: props2 },
     ] = await Promise.all([
-      supabase.from("av_selections").select("*, av_clients(token, name)").eq("id", id).single(),
+      supabase.from("av_selections").select("*, av_clients(name, av_client_relations(token))").eq("id", id).single(),
       supabase
         .from("av_properties")
         .select(
@@ -131,10 +131,12 @@ export default function SelectionDetail() {
           <p className="text-[11px] font-bold uppercase tracking-[.08em] text-graytext">
             Links para o cliente
           </p>
-          {selection.av_clients && (
+          {/* Link do cliente com ESTE corretor (av_client_relations, RLS só
+              devolve a do próprio) — nunca o token compartilhado do cliente. */}
+          {selection.av_clients?.av_client_relations?.[0]?.token && (
             <LinkBox
-              label={`Link permanente de ${selection.av_clients.name || "cliente"} (reúne todos os roteiros dele)`}
-              url={`${window.location.origin}/cliente/${selection.av_clients.token}`}
+              label={`Link permanente de ${selection.av_clients.name || "cliente"} com você (reúne os roteiros que você montou)`}
+              url={`${window.location.origin}/cliente/${selection.av_clients.av_client_relations[0].token}`}
               highlight
             />
           )}
