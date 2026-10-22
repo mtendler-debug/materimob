@@ -20,6 +20,7 @@ export function useProfile() {
   const [profile, setProfile] = useState(undefined);
   const [isPlatformAdmin, setIsPlatformAdmin] = useState(false);
   const [hasCrmAccess, setHasCrmAccess] = useState(false);
+  const [modulos, setModulos] = useState({ avaliador: true, crm: false });
 
   async function load() {
     const {
@@ -29,6 +30,7 @@ export function useProfile() {
       setProfile(null);
       setIsPlatformAdmin(false);
       setHasCrmAccess(false);
+      setModulos({ avaliador: true, crm: false });
       return;
     }
 
@@ -38,14 +40,17 @@ export function useProfile() {
     // (baseado só em `profile`) vira false por um instante com os
     // outros dois ainda no valor antigo, e uma tela que ler o estado
     // nesse instante barra quem tinha acesso de verdade.
-    const [profileRow, { data: admin }, { data: crm }] = await Promise.all([
+    const [profileRow, { data: admin }, { data: crm }, { data: mods }] = await Promise.all([
       loadOrCreateProfile(user.id),
       supabase.rpc("is_platform_admin"),
       supabase.rpc("has_crm_access"),
+      supabase.rpc("meus_modulos"),
     ]);
     setProfile(profileRow);
     setIsPlatformAdmin(!!admin);
     setHasCrmAccess(!!crm);
+    // Sem resposta (ex.: erro de rede), o Avaliador segue ligado: não trancar ninguém por falha.
+    setModulos({ avaliador: mods?.avaliador ?? true, crm: mods?.crm ?? !!crm });
   }
 
   useEffect(() => {
@@ -59,6 +64,7 @@ export function useProfile() {
     accountType: profile?.account_type ?? null,
     isPlatformAdmin,
     hasCrmAccess,
+    modulos,
     loading,
     reload: load,
   };

@@ -18,6 +18,7 @@ export default function AdminLayout() {
           </Tab>
           <Tab to="/admin/organizacoes">Organizações</Tab>
           <Tab to="/admin/contas">Contas</Tab>
+          <Tab to="/admin/modulos">Módulos</Tab>
           <Tab to="/admin/academia" badge={pendentes + sugestoes}>
             Academia
           </Tab>

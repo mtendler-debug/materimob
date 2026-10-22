@@ -4,6 +4,7 @@ import { FeedbackProvider } from "./lib/feedback";
 import { AcessoCanalProvider } from "./lib/AcessoCanal";
 import Login from "./pages/Login";
 import Entry from "./pages/Entry";
+import ModuloRoute from "./components/ModuloRoute";
 import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
 import Selections from "./pages/Selections";
@@ -55,6 +56,7 @@ import AppLayout from "./components/AppLayout";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminOrganizations from "./pages/admin/AdminOrganizations";
+import ModulosUsuarios from "./pages/admin/ModulosUsuarios";
 import AdminAccounts from "./pages/admin/AdminAccounts";
 import Estoque from "./pages/Estoque";
 import TeamPicks from "./pages/TeamPicks";
@@ -89,12 +91,15 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/app" element={<Dashboard />} />
-        <Route path="/app/imoveis" element={<Properties />} />
-        <Route path="/app/selecoes" element={<Selections />} />
-        <Route path="/app/selections/:id" element={<SelectionDetail />} />
+        <Route element={<ModuloRoute modulo="avaliador" />}>
+          <Route path="/app" element={<Dashboard />} />
+          <Route path="/app/imoveis" element={<Properties />} />
+          <Route path="/app/selecoes" element={<Selections />} />
+          <Route path="/app/selections/:id" element={<SelectionDetail />} />
+          <Route path="/app/desempenho" element={<MyPerformance />} />
+          <Route path="/app/portfolio" element={<Portfolio />} />
+        </Route>
         <Route path="/app/perfil" element={<Profile />} />
-        <Route path="/app/desempenho" element={<MyPerformance />} />
         <Route path="/app/crm" element={<CrmLayout />}>
           <Route index element={<CrmDashboard />} />
           <Route path="pipeline" element={<Pipeline />} />
@@ -122,7 +127,6 @@ export default function App() {
           <Route path="registros" element={<Registros />} />
           <Route path="acessos" element={<Acessos />} />
         </Route>
-        <Route path="/app/portfolio" element={<Portfolio />} />
         <Route
           path="/app/lancamentos"
           element={
@@ -167,6 +171,7 @@ export default function App() {
           <Route index element={<AdminOverview />} />
           <Route path="organizacoes" element={<AdminOrganizations />} />
           <Route path="contas" element={<AdminAccounts />} />
+          <Route path="modulos" element={<ModulosUsuarios />} />
           <Route path="academia" element={<AdminAcademia />}>
             <Route index element={<VisaoGeralAcademia />} />
             <Route path="corretores" element={<CorretoresAcademia />} />

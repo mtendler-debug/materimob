@@ -28,8 +28,18 @@ Decisão do Marcos: até começar a cobrança, todo usuário logado usa o CRM. I
 `update platform_settings set ativo = false, atualizado_em = now() where chave = 'crm_liberado_para_todos';`
 A regra de plano (`profiles.crm_included`, `organizations.crm_included`) continua por baixo. Ao desligar, quem criou conta
 na liberação perde o acesso, a menos que se decida antes dar a eles o mesmo tratamento dos antigos.
-Sugestão do Marcos, ainda sem protótipo: ligar/desligar cada módulo (Avaliador, CRM, Parcerias, Academia) por usuário,
-com esta chave como padrão e exceção por usuário por cima.
+
+## Módulos por usuário (2026-10-21)
+
+Administração > Módulos (`/admin/modulos`, `ModulosUsuarios.jsx`). Padrão da plataforma em `platform_settings`
+(`avaliador_ligado_para_todos`, `crm_liberado_para_todos`, `academia_aberta`) e exceção por pessoa em `user_modulos`
+(só Avaliador e CRM; "Padrão" = sem linha). Checagem única: `tem_modulo('avaliador'|'crm')`; `has_crm_access()` a chama.
+`meus_modulos()` alimenta `useProfile().modulos`; `ModuloRoute` trava as rotas do Avaliador e o menu troca por "Conta".
+Avaliador desligado bloqueia só as TELAS (links públicos de cliente /c, /r, /cliente, /p seguem abrindo).
+Academia não usa `user_modulos`: "Liberar/Bloquear" chama `pc_decidir_acesso` (só vale para quem já pediu), e com
+`academia_aberta` ligada `pc_solicitar_acesso` já cria o pedido liberado. Parcerias fica fora (preso ao dono do canal).
+O administrador não desliga módulo da própria conta. Migrações: `migrations_crm_liberado.sql`, `migrations_modulos.sql`,
+`migrations_modulos_2.sql`. Teste: `supabase/teste_modulos.sql` (esperado "0 falha(s) em 33 verificações").
 
 ## Stack atual — isto é o que vale, não o que documentos antigos descrevem
 

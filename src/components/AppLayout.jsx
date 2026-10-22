@@ -11,7 +11,7 @@ import AcademiaTabBar, { MENU_ACADEMIA } from "./AcademiaTabBar";
 // de quem está logado, não de uma lista fixa repetida em cada página.
 export default function AppLayout() {
   const { user, signOut } = useAuth();
-  const { accountType, isPlatformAdmin, hasCrmAccess, loading: loadingProfile } = useProfile();
+  const { accountType, isPlatformAdmin, hasCrmAccess, modulos, loading: loadingProfile } = useProfile();
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading: loadingOrg } = useOrganization();
   const marcaPortal = useTenantBranding();
   const { acesso } = useAcessoCanal();
@@ -56,7 +56,10 @@ export default function AppLayout() {
   const gerenteImobiliaria = pertenceOrg && canManage(role) && org?.tipo === "imobiliaria";
   const ehOrganizacao = accountType === "imobiliaria" || accountType === "incorporadora";
 
-  const grupoAvaliador = {
+  // Avaliador desligado para esta conta: some o grupo, mas o perfil continua à mão.
+  const grupoAvaliador = !modulos.avaliador
+    ? { label: "Conta", itens: [{ to: "/app/perfil", label: "Meu perfil" }] }
+    : {
     label: "Avaliador",
     itens: [
       { to: "/app", label: "Meus clientes", end: true },
