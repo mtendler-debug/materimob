@@ -102,7 +102,7 @@ export default function PublicPanel() {
         <h1 className="text-lg font-bold text-charcoal">Painel indisponível</h1>
         <p className="mt-2 max-w-xs text-sm text-graytext">
           {error.status === 404
-            ? "Este link não é válido ou foi substituído. Peça um link novo à consultoria."
+            ? "Este link não é válido ou foi substituído. Peça um link novo ao seu corretor."
             : "Não consegui carregar os resultados agora. Tente recarregar a página."}
         </p>
       </Centered>
@@ -596,7 +596,7 @@ function ProposalForm({ token, properties, onCreated }) {
     <div className="rounded-[16px] border border-rule bg-white p-[20px]">
       <b className="font-serif text-[18px] font-semibold">Registrar uma proposta</b>
       <p className="mt-[6px] text-[13px] text-graytext">
-        Indique quanto você pagaria por um dos imóveis. A consultoria recebe e conduz a negociação a
+        Indique quanto você pagaria por um dos imóveis. O seu corretor recebe e conduz a negociação a
         partir daí.
       </p>
 
@@ -650,7 +650,7 @@ function ProposalForm({ token, properties, onCreated }) {
 
       {(unit?.launch_unit?.status === "vendida" || unit?.portfolio_unit?.status === "vendida") && (
         <div className="mt-[10px] rounded-[11px] p-3 text-[13px]" style={{ background: "#F1E4E0", color: "#B34A2E" }}>
-          Essa unidade já foi vendida — escolha outra, ou fale com a consultoria.
+          Essa unidade já foi vendida — escolha outra, ou fale com o seu corretor.
         </div>
       )}
 
@@ -718,7 +718,7 @@ function ProposalForm({ token, properties, onCreated }) {
           <span>Se esta proposta for aceita, tenho interesse em seguir com a compra.</span>
         </label>
         <div className="mt-2 ml-[33px] text-[11.5px] leading-relaxed text-muted">
-          Registra sua intenção para a consultoria conduzir a negociação. Não é uma proposta formal
+          Registra sua intenção para o seu corretor conduzir a negociação. Não é uma proposta formal
           nem um compromisso de compra — nada é assinado por aqui.
         </div>
       </div>

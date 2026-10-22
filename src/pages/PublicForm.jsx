@@ -82,7 +82,7 @@ export default function PublicForm() {
     const msg =
       error.status === 403
         ? "Esta avaliação foi encerrada. O formulário não está mais recebendo respostas."
-        : "Este link não é válido ou foi substituído. Peça um link novo à consultoria.";
+        : "Este link não é válido ou foi substituído. Peça um link novo ao seu corretor.";
     return (
       <Shell title="MaterImob" subtitle="">
         <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">{msg}</div>
@@ -185,7 +185,7 @@ export default function PublicForm() {
         Compartilhar este link
       </button>
       <p className="py-[22px] text-center text-[11px] text-muted">
-        Suas respostas vão direto para a consultoria. Nada é publicado.
+        Suas respostas vão direto para o seu corretor. Nada é publicado.
       </p>
     </Shell>
   );

@@ -98,7 +98,13 @@ export function CatalogBrowser({ renderAction }) {
       </div>
 
       <div className="mt-4 space-y-3">
-        {filtrados?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel encontrado com esses filtros.</p>}
+        {filtrados?.length === 0 && (
+          <p className="text-sm text-muted">
+            {items?.length === 0 && !texto && !valorMax && !orgFiltro && somente === "todos"
+              ? "Ainda não há imóveis publicados na plataforma. Cadastre os seus em Meu estoque."
+              : "Nenhum imóvel encontrado com esses filtros."}
+          </p>
+        )}
         {filtrados?.map((it) => (
           <CatalogCard key={`${it.kind}-${it.id}`} item={it} action={renderAction?.(it)} />
         ))}
