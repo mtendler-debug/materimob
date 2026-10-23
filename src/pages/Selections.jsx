@@ -21,7 +21,7 @@ export default function Selections() {
       )
       .order("created_at", { ascending: false });
     if (loadError) {
-      setError("Erro ao carregar seleções: " + loadError.message);
+      setError("Não foi possível carregar os roteiros: " + loadError.message);
       return;
     }
     setSelections(
@@ -71,7 +71,7 @@ export default function Selections() {
 
         <div className="mt-4 space-y-2">
           {selections === null && <p className="text-sm text-muted">Carregando…</p>}
-          {selections?.length === 0 && <p className="text-sm text-muted">Nenhuma seleção ainda.</p>}
+          {selections?.length === 0 && <p className="text-sm text-muted">Nenhum roteiro ainda. Crie um atendimento para começar.</p>}
           {visiveis.map((s) => (
             <SelectionRow key={s.id} selection={s} onChange={load} />
           ))}

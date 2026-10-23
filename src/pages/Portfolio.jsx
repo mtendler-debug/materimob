@@ -56,7 +56,7 @@ export default function Portfolio() {
         </h1>
         <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
           {dono.coluna === "organization_id"
-            ? "Imóveis cadastrados aqui ficam disponíveis para todo o time importar nas seleções dos clientes."
+            ? "Imóveis cadastrados aqui ficam disponíveis para todo o time importar nos roteiros dos clientes."
             : "Os imóveis que você mesmo representa — só você vê, e pode escolher quais mostrar em cada roteiro."}
         </p>
 

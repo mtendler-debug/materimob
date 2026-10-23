@@ -51,6 +51,16 @@ em português em `supabase/email-templates/`, já colados no Supabase em 2026-10
 Invite, Magic link e Change email seguem no padrão em inglês).
 Contato por e-mail `contato@materimob.com.br` NÃO tem registro MX (verificado 2026-10-21): não usar como canal até testar.
 
+## Primeiros passos do corretor (2026-10-22)
+
+`Meus clientes` (`Dashboard.jsx`) mostra o cartão `PrimeirosPassos.jsx` a quem não dispensou e ainda não fez os 3 passos
+(atendimento criado, imóvel no roteiro, link copiado), se a conta tem menos de 30 dias ou nenhum atendimento.
+Os passos 1 e 2 vêm dos dados; o 3 e o "dispensar" ficam em `profiles.primeiros_passos` (jsonb), gravados só por
+`marcar_primeiro_passo('link_copiado'|'dispensado')` (`migrations_primeiros_passos.sql`). Novo atendimento pede só nome do
+cliente e título do roteiro (resto em "Mais opções", critérios já preenchidos com um modelo) e leva direto ao roteiro
+(`state.novo` mostra os dois passos que faltam). Vocabulário: cliente, atendimento (trabalho com o cliente), roteiro
+(lista de imóveis; antes "seleção"), avaliação. "Seleção do time" (curadoria da imobiliária) continua com esse nome.
+
 ## Stack atual — isto é o que vale, não o que documentos antigos descrevem
 
 - **Frontend:** Vite + React + React Router. Tailwind via `@tailwindcss/vite`.

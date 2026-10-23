@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { generateToken } from "../lib/token";
 import { CriteriaPresets } from "../components/CriteriaPresets";
 import { addClientToCrm } from "../lib/crm";
 import { useFeedback } from "../lib/feedback";
+import { useProfile } from "../lib/useProfile";
+import { useAcessoCanal } from "../lib/AcessoCanal";
+import PrimeirosPassos from "../components/PrimeirosPassos";
+
+// Critérios que já vêm preenchidos num atendimento novo; o corretor apaga ou troca se quiser.
+const CRITERIOS_PADRAO = "Arquitetura e fachada\nLocalização\nAcabamento";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { profile, reload: recarregarPerfil } = useProfile();
+  const { acesso } = useAcessoCanal();
+  const [temImoveis, setTemImoveis] = useState(false);
   const [clients, setClients] = useState(null);
   const [orphanSelections, setOrphanSelections] = useState([]);
   const [filtro, setFiltro] = useState("ativos"); // ativos|inativos|todos
@@ -20,7 +31,7 @@ export default function Dashboard() {
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
-  const [criteria, setCriteria] = useState("");
+  const [criteria, setCriteria] = useState(CRITERIOS_PADRAO);
   const [unitCriteria, setUnitCriteria] = useState("");
 
   async function load() {
@@ -58,6 +69,8 @@ export default function Dashboard() {
     }
     setClients([...map.values()]);
     setOrphanSelections(orphans);
+    const { count } = await supabase.from("av_properties").select("id", { count: "exact", head: true });
+    setTemImoveis((count ?? 0) > 0);
   }
 
   useEffect(() => {
@@ -68,7 +81,7 @@ export default function Dashboard() {
     e.preventDefault();
     setError("");
     if (!title.trim() || !clientName.trim()) {
-      setError("Título e nome do cliente são obrigatórios.");
+      setError("Informe o nome do cliente e o título do roteiro.");
       return;
     }
     setSaving(true);
@@ -82,7 +95,7 @@ export default function Dashboard() {
       setError("Erro ao vincular cliente: " + clientError.message);
       return;
     }
-    const { error: insertError } = await supabase.from("av_selections").insert({
+    const { data: nova, error: insertError } = await supabase.from("av_selections").insert({
       title: title.trim(),
       subtitle: subtitle.trim() || null,
       client_name: clientName.trim(),
@@ -99,22 +112,33 @@ export default function Dashboard() {
         .filter(Boolean),
       token_form: generateToken(),
       token_panel: generateToken(),
-    });
+    }).select("id").single();
     setSaving(false);
     if (insertError) {
-      setError("Erro ao criar seleção: " + insertError.message);
+      setError("Não foi possível criar o atendimento: " + insertError.message);
       return;
     }
-    setTitle("");
-    setSubtitle("");
-    setClientName("");
-    setClientPhone("");
-    setClientEmail("");
-    setCriteria("");
-    setUnitCriteria("");
-    setShowForm(false);
-    load();
+    // Leva direto ao roteiro: é lá que se adicionam os imóveis e se copia o link do cliente.
+    navigate(`/app/selections/${nova.id}`, { state: { novo: true } });
   }
+
+  function marcarPasso(chave) {
+    supabase.rpc("marcar_primeiro_passo", { p_chave: chave }).then(
+      () => recarregarPerfil(),
+      () => {},
+    );
+  }
+
+  const passos = profile?.primeiros_passos ?? {};
+  const temAtendimento = (clients?.length ?? 0) + orphanSelections.length > 0;
+  const primeiraSelecao = clients?.[0]?.selections?.[0] ?? orphanSelections[0] ?? null;
+  const conta30Dias = user?.created_at && Date.now() - new Date(user.created_at).getTime() < 30 * 86400000;
+  const mostrarPassos =
+    clients !== null &&
+    !!profile &&
+    !passos.dispensado &&
+    !(temAtendimento && temImoveis && passos.link_copiado) &&
+    (conta30Dias || !temAtendimento);
 
   return (
     <div className="min-h-screen bg-bg p-6">
@@ -136,15 +160,40 @@ export default function Dashboard() {
           {showForm ? "Cancelar" : "+ Novo atendimento"}
         </button>
 
+        {mostrarPassos && !showForm && (
+          <PrimeirosPassos
+            nome={(profile?.full_name || user?.user_metadata?.full_name || "").trim().split(/\s+/)[0]}
+            selecaoId={primeiraSelecao?.id}
+            temAtendimento={temAtendimento}
+            temImoveis={temImoveis}
+            linkCopiado={!!passos.link_copiado}
+            onNovo={() => setShowForm(true)}
+            onDispensar={() => marcarPasso("dispensado")}
+            mostrarAcademia={acesso === null}
+          />
+        )}
+
         {showForm && (
           <form onSubmit={handleCreate} className="mt-4 rounded-[14px] border border-rule bg-white p-5">
             <h2 className="font-serif mb-4 text-[16px] font-semibold text-charcoal">Novo atendimento</h2>
             <div className="space-y-3">
-              <Field label="Título" value={title} onChange={setTitle} required />
-              <Field label="Subtítulo" value={subtitle} onChange={setSubtitle} />
-              <Field label="Nome do cliente" value={clientName} onChange={setClientName} required />
-              <Field label="Telefone do cliente" value={clientPhone} onChange={setClientPhone} />
-              <Field label="E-mail do cliente" value={clientEmail} onChange={setClientEmail} />
+              <Field label="Nome do cliente" value={clientName} onChange={setClientName} required placeholder="ex.: Casal Almeida" />
+              <Field
+                label="Título do primeiro roteiro"
+                value={title}
+                onChange={setTitle}
+                required
+                placeholder="ex.: Visitas de sábado"
+                hint="É o nome que o cliente vê no link. Dá para mudar depois."
+              />
+              <details className="rounded-[12px] border border-dashed border-rule px-3">
+                <summary className="cursor-pointer py-2 text-sm font-bold text-charcoal">
+                  Mais opções <span className="font-normal text-graytext">(telefone, e-mail, critérios)</span>
+                </summary>
+                <div className="space-y-3 pt-1 pb-3">
+              <Field label="Subtítulo (opcional)" value={subtitle} onChange={setSubtitle} />
+              <Field label="Telefone do cliente (opcional)" value={clientPhone} onChange={setClientPhone} />
+              <Field label="E-mail do cliente (opcional)" value={clientEmail} onChange={setClientEmail} />
               <div>
                 <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
                   Critérios (um por linha)
@@ -156,11 +205,12 @@ export default function Dashboard() {
                   placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
                   className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
                 />
+                <p className="mt-1 text-xs text-graytext">Já vêm com um modelo. Apague ou troque se quiser.</p>
                 <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
               </div>
               <div>
                 <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
-                  Critérios das unidades (um por linha)
+                  Critérios das unidades (um por linha, opcional)
                 </label>
                 <textarea
                   value={unitCriteria}
@@ -170,13 +220,15 @@ export default function Dashboard() {
                   className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
                 />
               </div>
+                </div>
+              </details>
               {error && <p className="text-sm text-[#B34A2E]">{error}</p>}
               <button
                 type="submit"
                 disabled={saving}
                 className="rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
               >
-                {saving ? "Salvando…" : "Criar seleção"}
+                {saving ? "Salvando…" : "Criar atendimento"}
               </button>
             </div>
           </form>
@@ -200,7 +252,7 @@ export default function Dashboard() {
         <div className="mt-4 space-y-3">
           {clients === null && <p className="text-sm text-muted">Carregando…</p>}
           {clients?.length === 0 && orphanSelections.length === 0 && (
-            <p className="text-sm text-muted">Nenhum cliente ainda. Crie um atendimento pra começar.</p>
+            <p className="text-sm text-muted">Nenhum atendimento ainda.</p>
           )}
           {clients
             ?.filter((c) => filtro === "todos" || (filtro === "inativos") === !!c.archived)
@@ -431,7 +483,7 @@ function LinkLine({ label, url, copied, onCopy, openable }) {
   );
 }
 
-function Field({ label, value, onChange, required }) {
+function Field({ label, value, onChange, required, hint, placeholder }) {
   return (
     <div>
       <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">{label}</label>
@@ -440,8 +492,10 @@ function Field({ label, value, onChange, required }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
+        placeholder={placeholder}
         className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
       />
+      {hint && <p className="mt-1 text-xs text-graytext">{hint}</p>}
     </div>
   );
 }

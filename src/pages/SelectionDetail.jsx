@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { Gantt } from "../components/Gantt";
@@ -47,6 +47,9 @@ function shade(hex, v) {
 
 export default function SelectionDetail() {
   const { id } = useParams();
+  const location = useLocation();
+  // Chega com state.novo logo depois de criar o atendimento: mostra os dois passos que faltam.
+  const [avisoNovo, setAvisoNovo] = useState(!!location.state?.novo);
   const { user } = useAuth();
   const [selection, setSelection] = useState(null);
   const [properties, setProperties] = useState(null);
@@ -72,7 +75,7 @@ export default function SelectionDetail() {
       supabase.from("av_evaluations").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
       supabase.from("av_proposals").select("*").eq("selection_id", id).order("created_at", { ascending: false }),
     ]);
-    if (selError) setError("Erro ao carregar seleção: " + selError.message);
+    if (selError) setError("Não foi possível carregar o roteiro: " + selError.message);
     else setSelection(sel);
     if (propError) setError("Erro ao carregar imóveis: " + propError.message);
     else setProperties((props ?? []).map((p) => ({ ...p, units: p.av_units })));
@@ -126,6 +129,29 @@ export default function SelectionDetail() {
             {selection.archived ? "Reativar" : "Arquivar"}
           </button>
         </div>
+
+        {avisoNovo && (
+          <div className="mt-4 rounded-[14px] border border-emerald-200 bg-emerald-50 p-4" role="status">
+            <p className="text-sm font-bold text-emerald-800">Atendimento criado. Faltam dois passos para o cliente avaliar.</p>
+            <ol className="mt-2 space-y-1 text-sm text-slate-700">
+              <li>
+                <b>1. Adicione os imóveis.</b> Cadastre um imóvel novo ou importe do seu estoque, na seção Imóveis.{" "}
+                <button
+                  onClick={() => document.getElementById("secao-imoveis")?.scrollIntoView({ behavior: "smooth" })}
+                  className="font-bold text-sky-700 underline"
+                >
+                  Ir para Imóveis
+                </button>
+              </li>
+              <li>
+                <b>2. Envie o link ao cliente.</b> Copie o link abaixo e mande pelo WhatsApp. Funciona no celular, sem senha.
+              </li>
+            </ol>
+            <button onClick={() => setAvisoNovo(false)} className="mt-2 text-xs text-graytext underline">
+              Fechar aviso
+            </button>
+          </div>
+        )}
 
         <div className="mt-4 space-y-3 rounded-[14px] border border-rule bg-white p-4">
           <p className="text-[11px] font-bold uppercase tracking-[.08em] text-graytext">
@@ -300,7 +326,7 @@ export default function SelectionDetail() {
         <SectionTitle>Etapas do processo (faixa de cima do cronograma)</SectionTitle>
         <MilestonesEditor selection={selection} onSaved={load} />
 
-        <SectionTitle>Imóveis</SectionTitle>
+        <SectionTitle id="secao-imoveis">Imóveis</SectionTitle>
         <div className="space-y-3">
           {properties.map((p) => (
             <PropertyCard
@@ -344,8 +370,12 @@ export default function SelectionDetail() {
   );
 }
 
-function SectionTitle({ children }) {
-  return <h2 className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+function SectionTitle({ children, id }) {
+  return (
+    <h2 id={id} className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+      {children}
+    </h2>
+  );
 }
 
 function Kpi({ label, value, foot }) {
@@ -372,6 +402,11 @@ function LinkBox({ label, url, highlight }) {
         <button
           onClick={() => {
             navigator.clipboard.writeText(url);
+            // Marca o passo "enviar o link" dos primeiros passos (o cliente só recebe se o link foi copiado).
+            supabase.rpc("marcar_primeiro_passo", { p_chave: "link_copiado" }).then(
+              () => {},
+              () => {},
+            );
             setCopied(true);
             setTimeout(() => setCopied(false), 1500);
           }}
