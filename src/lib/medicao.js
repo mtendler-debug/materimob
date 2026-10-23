@@ -65,6 +65,7 @@ export function carregar() {
       fbq.callMethod ? fbq.callMethod.apply(fbq, arguments) : fbq.queue.push(arguments);
     };
     fbq.queue = [];
+    fbq.push = fbq;
     fbq.loaded = true;
     fbq.version = "2.0";
     // Sem isto o Pixel registra sozinho toda troca de rota — inclusive para
