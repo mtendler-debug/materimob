@@ -1,241 +1,201 @@
 import { Link } from "react-router-dom";
 import { WHATSAPP_EXIBIDO, whatsappUrl } from "../lib/contato";
+import Button from "../components/ui/Button";
 
 const FERRAMENTAS = [
   {
-    selo: "Gratuito",
-    seloOk: true,
-    titulo: "Avaliador",
-    texto: "O cliente e a família avaliam cada imóvel visitado, pelo celular, sem senha e sem instalar nada.",
+    selo: "Avaliador · grátis",
+    titulo: "Sem senha. Sem app. Só um link.",
+    texto: "Cada pessoa da família dá as próprias notas durante a visita, mesmo sem sinal dentro do prédio.",
     itens: ["Ranking e comparativo por critério", "Propostas com deságio sobre a tabela", "Funil e cronograma até a assinatura"],
+    visual: "ranking",
   },
   {
-    selo: "Liberado agora",
-    seloOk: true,
-    titulo: "CRM",
-    texto: "Seus leads e oportunidades num funil simples, ligado aos clientes que já avaliam com você.",
-    itens: ["Pipeline de oportunidades", "Histórico de cada lead", "Aviso quando um lead pode virar dois negócios"],
+    selo: "CRM · liberado agora",
+    titulo: "Seus leads num funil simples.",
+    texto: "Ligado aos clientes que já avaliam com você, com aviso quando um lead pode virar dois negócios.",
+    itens: ["Pipeline de oportunidades", "Histórico de cada lead", "Aviso de lead com dois negócios"],
+    visual: "funil",
   },
   {
-    selo: "Acesso por aprovação",
-    titulo: "Academia de Vendas",
-    texto:
-      "Tudo para apresentar e vender cada projeto: materiais prontos, treinamento e argumentos, para qualquer corretor que peça acesso.",
-    itens: ["Materiais prontos e envio ao cliente pelo WhatsApp", "Treinamento e argumentos de venda", "Registro dos seus clientes, com prazo"],
+    selo: "Academia · por aprovação",
+    titulo: "Materiais e argumentos prontos.",
+    texto: "Treinamento, envio ao cliente pelo WhatsApp e registro dos seus clientes, com prazo.",
+    itens: ["Materiais prontos para cada projeto", "Treinamento e argumentos de venda", "Registro dos clientes, com prazo"],
+    visual: "academia",
   },
   {
-    selo: "Incorporadoras",
-    titulo: "Lançamentos e portfólio",
+    selo: "Lançamentos · incorporadoras",
+    titulo: "O estoque, sempre atualizado.",
     texto: "A incorporadora publica o empreendimento e qualquer corretor da plataforma monta o roteiro com ele.",
     itens: ["Reserva de unidade sem duplicidade", "Status atualizado na hora para o cliente", "Estoque em tempo real"],
+    visual: "estoque",
   },
 ];
 
-const PASSOS = [
-  { titulo: "Você monta o roteiro", texto: "Escolhe os imóveis, as unidades e os critérios que importam para aquele cliente." },
-  {
-    titulo: "O cliente avalia",
-    texto:
-      "Um link por cliente, no celular. Cada pessoa dá as próprias notas durante a visita, mesmo sem sinal dentro do prédio.",
-  },
-  {
-    titulo: "A decisão fica clara",
-    texto: "Ranking, comparativo e propostas. O cliente vê onde cada opção ganha e perde, e você conduz a negociação.",
-  },
+const RANKING = [
+  ["Vila Verde · 403", "Nota geral 9,0 · critérios 8,4", "8,7"],
+  ["Aurora · 101", "Nota geral 8,0 · critérios 8,1", "8,0"],
+  ["Parque Sul · casa 12", "Nota geral 7,5 · critérios 7,2", "7,3"],
 ];
 
 const PREMISSAS = [
   { titulo: "Sem curva de aprendizado", texto: "Pensado para quem vive de atender gente, não de operar sistema." },
   { titulo: "O corretor no centro", texto: "A ponte entre o mercado e o cliente continua sendo você." },
-  {
-    titulo: "Integrar, não competir",
-    texto: "Não disputamos anúncio. Ajudamos a decidir depois que você já conhece o mercado.",
-  },
+  { titulo: "Integrar, não competir", texto: "Não disputamos anúncio. Ajudamos a decidir depois que você já conhece o mercado." },
 ];
 
-const botao = {
-  escuro: "bg-charcoal text-white hover:opacity-90",
-  azul: "bg-sky-600 text-white hover:bg-sky-700",
-  linha: "border-[1.5px] border-rule bg-white text-charcoal hover:border-sky-600",
-};
+const rotulo = "text-body-sm font-semibold text-brand";
+const titulo = "font-bold tracking-[-0.035em] text-charcoal text-balance";
+const gutter = "mx-auto w-full max-w-[1080px] px-4";
 
 // Página de entrada pública (materimob.com.br/). Quem já está logado nunca chega aqui:
 // o Entry leva direto ao painel.
 export default function Landing() {
   return (
-    <div className="bg-bg text-slate-700">
-      <header className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-4">
-        <Link to="/" className="text-lg font-extrabold tracking-tight text-charcoal">
-          MaterImob
-        </Link>
-        <span className="flex-1" />
-        <Link to="/entrar" className={`rounded-[10px] px-3.5 py-2 text-sm font-bold ${botao.linha}`}>
-          Entrar
-        </Link>
-        <Link to="/entrar?modo=criar" className={`hidden rounded-[10px] px-3.5 py-2 text-sm font-bold sm:inline-block ${botao.escuro}`}>
-          Criar conta grátis
-        </Link>
+    <div className="bg-white text-slate-700">
+      <header className="sticky top-0 z-20 border-b border-slate-200/60 bg-white/75 backdrop-blur-xl">
+        <div className={`${gutter} flex min-h-16 items-center gap-2`}>
+          <Link to="/" className="mr-auto text-lg font-bold tracking-tight text-charcoal">
+            MaterImob
+          </Link>
+          <Button to="/entrar" variant="secondary">
+            Entrar
+          </Button>
+          <Button to="/entrar?modo=criar" variant="dark" className="hidden sm:inline-flex">
+            Criar conta
+          </Button>
+        </div>
       </header>
 
       <main>
-        <section className="mx-auto grid max-w-5xl items-center gap-10 px-5 pt-8 pb-16 md:grid-cols-[1.1fr_.9fr] md:pt-14 md:pb-20">
-          <div>
-            <p className="text-[11.5px] font-bold tracking-[.16em] text-sky-700 uppercase">A plataforma do corretor</p>
-            <h1 className="mt-3.5 text-[clamp(2rem,5.4vw,3.25rem)] leading-[1.08] font-extrabold tracking-tight text-balance text-charcoal">
-              Da primeira visita ao fechamento, num só lugar.
-            </h1>
-            <p className="mt-5 max-w-[52ch] text-[17px] leading-relaxed">
-              O MaterImob organiza o trabalho do corretor: o cliente avalia os imóveis pelo celular, você acompanha seus
-              leads e propostas, e ainda conta com materiais, treinamento e argumentos de venda prontos para usar.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/entrar?modo=criar" className={`rounded-[10px] px-5 py-3 text-[15px] font-bold ${botao.azul}`}>
-                Criar conta grátis
-              </Link>
-              <a href="#ferramentas" className={`rounded-[10px] px-5 py-3 text-[15px] font-bold ${botao.linha}`}>
-                Conhecer as ferramentas
-              </a>
-            </div>
-            <p className="mt-3.5 text-[13.5px] text-graytext">
-              Gratuito para o corretor. O CRM está liberado para todos neste momento.
-            </p>
+        <section className={`${gutter} pt-14 text-center sm:pt-24`}>
+          <h1 className="mx-auto max-w-[14ch] text-[clamp(2.6rem,8vw,5.2rem)] leading-none font-bold tracking-[-0.045em] text-balance text-charcoal">
+            O cliente avalia. <span className="text-brand">Você fecha.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-[46ch] text-[clamp(1.05rem,2.2vw,1.3rem)] text-graytext">
+            A plataforma do corretor: avaliação de imóveis pelo celular, CRM e Academia de Vendas numa só conta.
+          </p>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <Button to="/entrar?modo=criar" size="lg">
+              Criar conta grátis
+            </Button>
+            <Button href="#ferramentas" variant="secondary" size="lg">
+              Ver como funciona
+            </Button>
           </div>
+          <p className="mt-4 text-body-sm text-graytext">Gratuito para o corretor. O CRM está liberado para todos neste momento.</p>
 
-          <div aria-label="Exemplo de ranking de imóveis" className="rounded-[18px] border border-rule bg-white p-[18px] shadow-[0_12px_36px_rgba(15,23,42,.08)]">
-            <div className="flex items-baseline justify-between gap-2.5">
-              <b className="text-[15px] text-charcoal">Ranking dos imóveis visitados</b>
-              <span className="text-xs text-graytext">Casal Almeida</span>
+          <div className="mt-16 flex items-end justify-center gap-8 overflow-hidden rounded-t-[32px] bg-gradient-to-b from-light to-rule px-4 pt-12">
+            <div className="hidden w-64 pb-10 text-left lg:block">
+              <div className="rounded-card bg-white p-4 text-caption shadow-soft">
+                <span className="text-graytext">Ranking · Casal Almeida</span>
+                <b className="block text-body-sm text-charcoal">Vila Verde · apto 403</b>
+                nota 8,7
+              </div>
+              <div className="mt-3 rounded-card bg-white p-4 text-caption shadow-soft">
+                <b className="block text-body-sm text-charcoal">Proposta registrada</b>
+                R$ 612.000 · 4,8% abaixo da tabela
+              </div>
+              <p className="mt-3 text-caption text-muted">Exemplo ilustrativo</p>
             </div>
-            <ol className="mt-3.5 space-y-2.5">
-              {[
-                ["1", "Residencial Vila Verde · apto 403", "Nota geral 9,0 · critérios 8,4", "8,7"],
-                ["2", "Edifício Aurora · apto 101", "Nota geral 8,0 · critérios 8,1", "8,0"],
-                ["3", "Condomínio Parque Sul · casa 12", "Nota geral 7,5 · critérios 7,2", "7,3"],
-              ].map(([n, nome, nota, score]) => (
-                <li key={n} className="grid grid-cols-[26px_1fr_auto] items-center gap-2.5 rounded-[12px] border border-rule px-3 py-2.5">
-                  <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-sky-100 text-[13px] font-bold text-sky-800">
-                    {n}
-                  </span>
-                  <div className="min-w-0">
-                    <b className="block text-[14.5px] text-charcoal">{nome}</b>
-                    <small className="text-[12.5px] text-graytext">{nota}</small>
+            <div className="w-[min(300px,78vw)] rounded-t-[44px] bg-charcoal p-2.5 pb-0 shadow-float">
+              <div className="min-h-[340px] rounded-t-[34px] bg-white px-[18px] pt-[22px] pb-6 text-left">
+                <small className="text-caption text-graytext">Residencial Vila Verde · apto 403</small>
+                <h2 className="mt-0.5 mb-3.5 text-title font-bold tracking-tight text-charcoal">Como foi a visita?</h2>
+                {[
+                  ["Localização", 4],
+                  ["Acabamento", 3],
+                  ["Luz natural", 5],
+                ].map(([nome, n]) => (
+                  <div key={nome}>
+                    <small className="text-caption text-graytext">{nome}</small>
+                    <div className="mt-1.5 mb-3.5 flex gap-1">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <span key={i} className={`h-[22px] w-[22px] rounded-full ${i <= n ? "bg-brand" : "bg-rule"}`} />
+                      ))}
+                    </div>
                   </div>
-                  <span className="font-extrabold text-charcoal tabular-nums">{score}</span>
-                </li>
-              ))}
-            </ol>
-            <div className="mt-3 rounded-[10px] bg-emerald-100 px-3 py-2 text-[13px] text-emerald-800">
-              Proposta registrada: R$ 612.000 na unidade 403, 4,8% abaixo da tabela.
-            </div>
-            <p className="mt-2.5 text-[11.5px] text-graytext">Exemplo ilustrativo</p>
-          </div>
-        </section>
-
-        <section id="ferramentas" className="border-y border-rule bg-white py-16">
-          <div className="mx-auto max-w-5xl px-5">
-            <div className="max-w-[640px]">
-              <p className="text-[11.5px] font-bold tracking-[.16em] text-sky-700 uppercase">Quatro ferramentas, uma conta</p>
-              <h2 className="mt-2.5 text-[clamp(1.6rem,3.6vw,2.1rem)] leading-tight font-bold tracking-tight text-charcoal">
-                Use só o que o seu trabalho pede.
-              </h2>
-              <p className="mt-3 text-graytext">
-                Todas vivem no mesmo login. Você começa pelo Avaliador e liga as outras quando fizerem sentido.
-              </p>
-            </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {FERRAMENTAS.map((f) => (
-                <article key={f.titulo} className="flex flex-col gap-2.5 rounded-[16px] border border-rule bg-bg p-5">
-                  <span
-                    className={`self-start rounded-full px-2.5 py-0.5 text-[11.5px] font-bold ${
-                      f.seloOk ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"
-                    }`}
-                  >
-                    {f.selo}
-                  </span>
-                  <h3 className="text-lg font-bold text-charcoal">{f.titulo}</h3>
-                  <p className="text-[14.5px] leading-relaxed">{f.texto}</p>
-                  <ul className="list-disc space-y-0.5 pl-[18px] text-sm text-graytext">
-                    {f.itens.map((i) => (
-                      <li key={i}>{i}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="portas" className="mx-auto max-w-5xl px-5 py-16">
-          <p className="text-[11.5px] font-bold tracking-[.16em] text-sky-700 uppercase">Por onde começar</p>
-          <h2 className="mt-2.5 text-[clamp(1.6rem,3.6vw,2.1rem)] leading-tight font-bold tracking-tight text-charcoal">
-            Escolha o seu caminho.
-          </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <Porta
-              quem="Corretor"
-              titulo="Criar minha conta"
-              texto="Monte o primeiro atendimento em poucos minutos e mande o link de avaliação ao cliente. O Avaliador é grátis, e o CRM está liberado."
-              botaoLabel="Criar conta grátis"
-              botaoTipo="azul"
-              to="/entrar?modo=criar"
-              extra={<Link to="/entrar" className="text-center text-sm text-graytext hover:underline">Já tenho conta · Entrar</Link>}
-            />
-            <Porta
-              quem="Corretor ou gestor de imobiliária"
-              titulo="Pedir acesso à Academia"
-              texto="Faça o seu cadastro e peça acesso. A coordenação confere e libera, e você recebe o aviso. Gestores acompanham a equipe da imobiliária."
-              botaoLabel="Pedir acesso à Academia"
-              botaoTipo="escuro"
-              to="/academia"
-              extra={<Link to="/academia" className="text-center text-sm text-graytext hover:underline">Sou autônomo, sem imobiliária</Link>}
-            />
-            <Porta
-              quem="Incorporadora ou imobiliária"
-              titulo="Falar com a gente"
-              texto="Publique seu portfólio ou seus lançamentos e conecte o seu time ao ecossistema de corretores."
-              botaoLabel="Chamar no WhatsApp"
-              botaoTipo="linha"
-              href={whatsappUrl("Olá! Quero saber mais sobre o MaterImob para a minha empresa.")}
-              extra={
-                <>
-                  <p className="text-center text-sm text-graytext">{WHATSAPP_EXIBIDO}</p>
-                  <Link to="/parceria/cadastro" className="text-center text-sm text-graytext hover:underline">
-                    Cadastrar minha imobiliária na rede de parceiras
-                  </Link>
-                </>
-              }
-            />
-          </div>
-        </section>
-
-        <section className="border-y border-rule bg-white py-16">
-          <div className="mx-auto max-w-5xl px-5">
-            <p className="text-[11.5px] font-bold tracking-[.16em] text-sky-700 uppercase">Como funciona o Avaliador</p>
-            <h2 className="mt-2.5 text-[clamp(1.6rem,3.6vw,2.1rem)] leading-tight font-bold tracking-tight text-charcoal">
-              Três passos entre a visita e a decisão.
-            </h2>
-            <div className="mt-8 grid gap-7 sm:grid-cols-3">
-              {PASSOS.map((p, i) => (
-                <div key={p.titulo}>
-                  <div className="grid h-9 w-9 place-items-center rounded-full bg-sky-100 font-extrabold text-sky-800">{i + 1}</div>
-                  <h3 className="mt-3 text-[17px] font-bold text-charcoal">{p.titulo}</h3>
-                  <p className="mt-1.5 text-[14.5px] text-graytext">{p.texto}</p>
+                ))}
+                <div className="mt-5 grid min-h-11 place-items-center rounded-control bg-brand text-body-sm font-semibold text-white">
+                  Enviar avaliação
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="bg-charcoal text-slate-50">
-          <div className="mx-auto grid max-w-5xl gap-7 px-5 py-14">
-            <h2 className="max-w-[24ch] text-[clamp(1.5rem,3.4vw,2rem)] leading-tight font-bold tracking-tight text-balance">
+        <section id="ferramentas" className={`${gutter} grid gap-20 py-20 sm:gap-28 sm:py-32`}>
+          {FERRAMENTAS.map((f, i) => (
+            <div key={f.selo} className="grid items-center gap-10 md:grid-cols-2 md:gap-12">
+              <div className={`space-y-3.5 ${i % 2 ? "md:order-2" : ""}`}>
+                <p className={rotulo}>{f.selo}</p>
+                <h2 className={`text-[clamp(1.9rem,4vw,2.8rem)] leading-[1.05] ${titulo}`}>{f.titulo}</h2>
+                <p className="max-w-[42ch] text-lg text-graytext">{f.texto}</p>
+                <ul className="space-y-1 pt-1 text-body-sm text-graytext">
+                  {f.itens.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <Visual tipo={f.visual} />
+            </div>
+          ))}
+        </section>
+
+        <section id="portas" className="bg-bg py-20 sm:py-28">
+          <div className={gutter}>
+            <div className="mx-auto max-w-[16ch] text-center">
+              <h2 className={`text-[clamp(2rem,5vw,3.4rem)] leading-[1.05] ${titulo}`}>Comece pelo primeiro cliente.</h2>
+            </div>
+            <div className="mt-8 flex justify-center">
+              <Button to="/entrar?modo=criar" size="lg">
+                Criar conta grátis
+              </Button>
+            </div>
+            <p className="mt-3.5 text-center text-body-sm text-graytext">
+              Já tem conta?{" "}
+              <Link to="/entrar" className="font-semibold text-charcoal hover:underline">
+                Entrar
+              </Link>
+            </p>
+
+            <div className="mt-14 grid gap-3 md:grid-cols-3">
+              <Porta
+                quem="Corretor ou gestor de imobiliária"
+                titulo="Pedir acesso à Academia"
+                texto="Faça o cadastro e peça acesso. A coordenação confere e libera, e você recebe o aviso."
+                to="/academia"
+                label="Pedir acesso"
+              />
+              <Porta
+                quem="Incorporadora ou imobiliária"
+                titulo="Falar com a gente"
+                texto="Publique seu portfólio ou seus lançamentos e conecte o seu time ao ecossistema de corretores."
+                href={whatsappUrl("Olá! Quero saber mais sobre o MaterImob para a minha empresa.")}
+                label={`WhatsApp · ${WHATSAPP_EXIBIDO}`}
+              />
+              <Porta
+                quem="Imobiliária parceira"
+                titulo="Rede de parceiras"
+                texto="Cadastre a sua imobiliária na rede de parceiras do MaterImob."
+                to="/parceria/cadastro"
+                label="Cadastrar imobiliária"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-charcoal text-slate-200">
+          <div className={`${gutter} py-16`}>
+            <h2 className="max-w-[22ch] text-[clamp(1.5rem,3.4vw,2rem)] leading-tight font-bold tracking-tight text-balance text-white">
               Simples para o corretor, mais simples ainda para o cliente.
             </h2>
-            <div className="grid gap-6 sm:grid-cols-3">
+            <div className="mt-10 grid gap-8 sm:grid-cols-3">
               {PREMISSAS.map((p) => (
                 <div key={p.titulo}>
-                  <b className="block text-[15.5px]">{p.titulo}</b>
-                  <span className="text-sm text-slate-300">{p.texto}</span>
+                  <b className="mb-1 block font-semibold text-white">{p.titulo}</b>
+                  <span className="text-body-sm text-slate-400">{p.texto}</span>
                 </div>
               ))}
             </div>
@@ -243,18 +203,18 @@ export default function Landing() {
         </section>
       </main>
 
-      <footer>
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-7 gap-y-3 px-5 pt-9 pb-6 text-[13.5px] text-graytext">
+      <footer className={`${gutter} py-10 text-body-sm text-graytext`}>
+        <div className="flex flex-wrap items-center justify-between gap-x-7 gap-y-3">
           <span>© MaterImob</span>
           <nav aria-label="Rodapé" className="flex flex-wrap gap-5">
-            <a href="/privacidade.html" className="hover:underline">Política de privacidade</a>
-            <Link to="/entrar" className="hover:underline">Entrar</Link>
-            <a href={whatsappUrl()} target="_blank" rel="noreferrer" className="hover:underline">
+            <a href="/privacidade.html" className="hover:text-charcoal">Política de privacidade</a>
+            <Link to="/entrar" className="hover:text-charcoal">Entrar</Link>
+            <a href={whatsappUrl()} target="_blank" rel="noreferrer" className="hover:text-charcoal">
               Fale com a gente · {WHATSAPP_EXIBIDO}
             </a>
           </nav>
         </div>
-        <p className="mx-auto max-w-5xl px-5 pb-10 text-[12.5px] text-graytext">
+        <p className="mt-4 max-w-[70ch] text-caption text-muted">
           As avaliações e propostas registradas indicam preferência e intenção. Não constituem proposta formal nem
           compromisso de compra.
         </p>
@@ -263,23 +223,69 @@ export default function Landing() {
   );
 }
 
-function Porta({ quem, titulo, texto, botaoLabel, botaoTipo, to, href, extra }) {
-  const cls = `rounded-[10px] px-5 py-3 text-center text-[15px] font-bold ${botao[botaoTipo]}`;
+function Visual({ tipo }) {
+  const moldura = "grid min-h-[260px] place-items-center rounded-[28px] bg-bg p-7";
+  const cartao = "w-full max-w-[340px] rounded-[18px] bg-white p-[18px] text-caption shadow-soft";
+  const linha = "flex items-center gap-2.5 border-t border-slate-200/70 py-2.5 text-body-sm first:border-0";
   return (
-    <article className="flex flex-col gap-2.5 rounded-[16px] border border-rule bg-white p-6">
-      <span className="text-[12.5px] font-bold tracking-[.06em] text-graytext uppercase">{quem}</span>
-      <h3 className="text-[19px] font-bold text-charcoal">{titulo}</h3>
-      <p className="flex-1 text-[14.5px] leading-relaxed">{texto}</p>
-      {to ? (
-        <Link to={to} className={cls}>
-          {botaoLabel}
-        </Link>
-      ) : (
-        <a href={href} target="_blank" rel="noreferrer" className={cls}>
-          {botaoLabel}
-        </a>
-      )}
-      {extra}
+    <div className={moldura} aria-hidden="true">
+      <div className={cartao}>
+        {tipo === "ranking" &&
+          RANKING.map(([nome, nota, score]) => (
+            <div key={nome} className={linha}>
+              <span className="min-w-0">
+                <b className="block font-semibold text-charcoal">{nome}</b>
+                <i className="text-caption text-graytext not-italic">{nota}</i>
+              </span>
+              <b className="ml-auto font-bold text-charcoal tabular-nums">{score}</b>
+            </div>
+          ))}
+        {tipo === "funil" &&
+          [["Novo", 4], ["Visita marcada", 7], ["Proposta", 2]].map(([etapa, n]) => (
+            <div key={etapa} className={linha}>
+              <span>{etapa}</span>
+              <b className="ml-auto font-bold text-charcoal tabular-nums">{n}</b>
+            </div>
+          ))}
+        {tipo === "academia" && (
+          <>
+            <b className="text-body-sm text-charcoal">Residencial Vila Verde</b>
+            <p className="mt-1.5 text-body-sm text-graytext">Book, tabela de preços e 5 argumentos de venda</p>
+            <div className="mt-3.5 grid min-h-11 place-items-center rounded-control bg-brand text-body-sm font-semibold text-white">
+              Enviar pelo WhatsApp
+            </div>
+          </>
+        )}
+        {tipo === "estoque" &&
+          [["Unidade 403", "Reservada"], ["Unidade 501", "Disponível"], ["Unidade 702", "Disponível"]].map(([un, st]) => (
+            <div key={un} className={linha}>
+              <span>{un}</span>
+              <b className={`ml-auto rounded-full px-2.5 py-0.5 text-caption font-semibold ${st === "Reservada" ? "bg-warning-bg text-warning-text" : "bg-success-bg text-success-text"}`}>
+                {st}
+              </b>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function Porta({ quem, titulo, texto, to, href, label }) {
+  const botao = to ? (
+    <Button to={to} variant="secondary" block>
+      {label}
+    </Button>
+  ) : (
+    <Button href={href} target="_blank" rel="noreferrer" variant="secondary" block>
+      {label}
+    </Button>
+  );
+  return (
+    <article className="flex flex-col gap-3 rounded-card border border-slate-200/70 bg-white p-7 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft">
+      <span className="text-caption font-semibold tracking-[.06em] text-graytext uppercase">{quem}</span>
+      <h3 className="text-title font-semibold tracking-tight text-charcoal">{titulo}</h3>
+      <p className="flex-1 text-body-sm text-graytext">{texto}</p>
+      {botao}
     </article>
   );
 }

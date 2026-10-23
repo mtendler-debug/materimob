@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { traduzErro } from "./Login";
-
-const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none";
+import CartaoAcesso from "../components/ui/CartaoAcesso";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 // O link do e-mail de "Esqueci minha senha" cai aqui. O Supabase lê o código da
 // própria URL e abre uma sessão de recuperação; só com ela dá para trocar a senha.
@@ -56,8 +56,8 @@ export default function NovaSenha() {
   if (feito) {
     return (
       <Pagina>
-        <h1 className="text-center text-xl font-bold text-charcoal">Senha alterada</h1>
-        <p className="mt-2 text-center text-sm text-graytext">Pronto. Estamos levando você para a sua área.</p>
+        <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Senha alterada</h1>
+        <p className="mt-3 text-center text-body-sm text-graytext">Pronto. Estamos levando você para a sua área.</p>
       </Pagina>
     );
   }
@@ -65,17 +65,14 @@ export default function NovaSenha() {
   if (linkRecusado || (!pronto && semSessao)) {
     return (
       <Pagina>
-        <h1 className="text-center text-xl font-bold text-charcoal">Link vencido ou já usado</h1>
-        <p className="mt-2 text-center text-sm text-graytext">
+        <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Link vencido ou já usado</h1>
+        <p className="mt-3 text-center text-body-sm text-graytext">
           Por segurança, o link para criar a senha vale por pouco tempo e só funciona uma vez. Peça um novo na tela de
           entrada.
         </p>
-        <Link
-          to="/entrar"
-          className="mt-5 block w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-center text-sm font-bold text-white hover:opacity-90"
-        >
+        <Button to="/entrar" size="lg" block className="mt-6">
           Voltar para entrar
-        </Link>
+        </Button>
       </Pagina>
     );
   }
@@ -83,63 +80,45 @@ export default function NovaSenha() {
   if (!pronto) {
     return (
       <Pagina>
-        <p className="text-center text-sm text-muted">Confirmando o link…</p>
+        <p className="text-center text-body-sm text-muted">Confirmando o link…</p>
       </Pagina>
     );
   }
 
   return (
     <Pagina>
-      <h1 className="text-center text-xl font-bold text-charcoal">Criar nova senha</h1>
-      <p className="mt-1 text-center text-sm text-graytext">Escolha a senha que vai usar para entrar.</p>
-      <form onSubmit={salvar} noValidate className="mt-6 space-y-3 text-left">
-        <div>
-          <label htmlFor="ns-senha" className="block text-xs font-medium text-graytext">
-            Nova senha
-          </label>
-          <input
-            id="ns-senha"
-            type="password"
-            autoComplete="new-password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className={campo}
-          />
-        </div>
-        <div>
-          <label htmlFor="ns-repita" className="block text-xs font-medium text-graytext">
-            Repita a nova senha
-          </label>
-          <input
-            id="ns-repita"
-            type="password"
-            autoComplete="new-password"
-            value={repita}
-            onChange={(e) => setRepita(e.target.value)}
-            className={campo}
-          />
-        </div>
+      <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Criar nova senha</h1>
+      <p className="mt-2 mb-6 text-center text-base text-graytext">Escolha a senha que vai usar para entrar.</p>
+      <form onSubmit={salvar} noValidate className="space-y-4 text-left">
+        <Input
+          id="ns-senha"
+          label="Nova senha"
+          type="password"
+          autoComplete="new-password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+        <Input
+          id="ns-repita"
+          label="Repita a nova senha"
+          type="password"
+          autoComplete="new-password"
+          value={repita}
+          onChange={(e) => setRepita(e.target.value)}
+        />
         {error && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-body-sm text-danger-text">
             {error}
           </p>
         )}
-        <button
-          type="submit"
-          disabled={busy}
-          className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" size="lg" block disabled={busy}>
           {busy ? "Salvando…" : "Salvar nova senha"}
-        </button>
+        </Button>
       </form>
     </Pagina>
   );
 }
 
 function Pagina({ children }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-bg p-6">
-      <div className="w-full max-w-sm rounded-[20px] bg-white p-8 shadow-sm">{children}</div>
-    </div>
-  );
+  return <CartaoAcesso>{children}</CartaoAcesso>;
 }

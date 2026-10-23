@@ -4,6 +4,8 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useTenantBranding } from "../lib/tenantBranding";
 import { registrarCadastro } from "../lib/medicao";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 
 export default function Login() {
   const { user, loading } = useAuth();
@@ -77,9 +79,9 @@ export default function Login() {
   if (confirmEmailSent) {
     return (
       <Card marca={marca}>
-        <h1 className="text-center text-xl font-bold text-charcoal">Quase lá</h1>
-        <p className="mt-2 text-center text-sm text-graytext">
-          Enviamos um link de confirmação para <strong>{email}</strong>.
+        <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Quase lá</h1>
+        <p className="mt-3 text-center text-body-sm text-graytext">
+          Enviamos um link de confirmação para <strong className="text-charcoal">{email}</strong>.
           Confirme por lá para poder entrar.
         </p>
       </Card>
@@ -89,21 +91,23 @@ export default function Login() {
   if (recuperacaoEnviada) {
     return (
       <Card marca={marca}>
-        <h1 className="text-center text-xl font-bold text-charcoal">Confira o seu e-mail</h1>
-        <p className="mt-2 text-center text-sm text-graytext">
-          Se <strong>{email}</strong> tiver uma conta, enviamos um link para criar a nova senha. Ele vale por pouco
+        <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Confira o seu e-mail</h1>
+        <p className="mt-3 text-center text-body-sm text-graytext">
+          Se <strong className="text-charcoal">{email}</strong> tiver uma conta, enviamos um link para criar a nova senha. Ele vale por pouco
           tempo. Se não encontrar, olhe também o spam.
         </p>
-        <button
+        <Button
+          variant="ghost"
+          block
+          className="mt-6"
           onClick={() => {
             setRecuperacaoEnviada(false);
             setMode("entrar");
             setError("");
           }}
-          className="mt-5 w-full text-center text-sm text-graytext underline"
         >
           Voltar para entrar
-        </button>
+        </Button>
       </Card>
     );
   }
@@ -113,51 +117,43 @@ export default function Login() {
       {marca?.logo_url && (
         <img src={marca.logo_url} alt={marca.nome_exibicao || marca.name} className="mx-auto mb-4 max-h-10" />
       )}
-      <h1 className="text-center text-xl font-bold text-charcoal">
-        {marca?.nome_exibicao || marca?.name || "MaterImob"}
+      <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">
+        {marca?.nome_exibicao || marca?.name || (mode === "entrar" ? "Bem-vindo de volta" : mode === "recuperar" ? "Recuperar senha" : "Criar sua conta")}
       </h1>
-      <p className="mt-1 text-center text-sm text-graytext">
+      <p className="mt-2 mb-7 text-center text-base text-graytext">
         {mode === "entrar"
           ? marca
             ? "Portal de parcerias"
-            : "Entrar na sua conta"
+            : "Entre para continuar."
           : mode === "recuperar"
             ? "Informe o seu e-mail e enviamos um link para criar uma nova senha"
-            : "Criar uma conta"}
+            : "Criar uma conta grátis."}
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3 text-left">
+      <form onSubmit={handleSubmit} className="space-y-4 text-left">
         {mode === "cadastrar" && (
-          <div>
-            <label className="block text-xs font-medium text-graytext">Nome</label>
-            <input
-              required
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
-            />
-          </div>
+          <Input label="Nome" required value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" />
         )}
-        <div>
-          <label className="block text-xs font-medium text-graytext">E-mail</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
-          />
-        </div>
+        <Input
+          label="E-mail"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          placeholder="voce@exemplo.com.br"
+        />
         {mode !== "recuperar" && (
           <div>
-            <label className="block text-xs font-medium text-graytext">Senha</label>
-            <input
+            <Input
+              label="Senha"
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
+              autoComplete={mode === "entrar" ? "current-password" : "new-password"}
+              placeholder="Mínimo de 6 caracteres"
             />
             {mode === "entrar" && (
               <button
@@ -166,7 +162,7 @@ export default function Login() {
                   setMode("recuperar");
                   setError("");
                 }}
-                className="mt-1.5 text-xs text-graytext underline"
+                className="min-h-11 pt-1 text-caption text-graytext transition-colors duration-200 hover:text-charcoal"
               >
                 Esqueci minha senha
               </button>
@@ -174,73 +170,75 @@ export default function Login() {
           </div>
         )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-body-sm text-danger-text">{error}</p>}
 
-        <button
+        <Button
           type="submit"
+          size="lg"
+          block
           disabled={busy}
-          className="w-full rounded-[10px] px-4 py-[11px] text-sm font-bold hover:opacity-90 disabled:opacity-50"
-          style={
-            marca
-              ? { background: marca.cor_primaria || "#0284C7", color: marca.cor_secundaria || "#1c1c1c" }
-              : { background: "#1c1c1c", color: "#fff" }
-          }
+          style={marca ? { background: marca.cor_primaria || "#0284C7", color: marca.cor_secundaria || "#1c1c1c" } : undefined}
         >
           {busy ? "Aguarde…" : mode === "entrar" ? "Entrar" : mode === "recuperar" ? "Enviar link" : "Criar conta"}
-        </button>
+        </Button>
       </form>
 
-      <button
-        onClick={() => {
-          setMode(mode === "entrar" ? "cadastrar" : "entrar");
-          setError("");
-        }}
-        className="mt-4 w-full text-center text-sm text-graytext underline"
-      >
-        {mode === "entrar"
-          ? "Ainda não tem conta? Criar uma"
-          : mode === "recuperar"
-            ? "Voltar para entrar"
-            : "Já tem conta? Entrar"}
-      </button>
+      <p className="mt-5 text-center text-body-sm text-graytext">
+        {mode === "entrar" ? "Ainda não tem conta?" : mode === "recuperar" ? "Lembrou a senha?" : "Já tem conta?"}
+        <button
+          onClick={() => {
+            setMode(mode === "entrar" ? "cadastrar" : "entrar");
+            setError("");
+          }}
+          className="min-h-11 px-2 font-semibold text-charcoal hover:underline"
+        >
+          {mode === "entrar" ? "Criar uma" : "Entrar"}
+        </button>
+      </p>
 
-      {!marca && mode !== "recuperar" && (
-        <p className="mt-5 border-t border-rule pt-4 text-center text-xs leading-relaxed text-graytext">
-          A plataforma do corretor: Avaliador, CRM e Academia de Vendas.
-          {mode === "entrar" && (
-            <>
-              <br />
-              <Link to="/academia" className="underline">
-                Pedir acesso à Academia
-              </Link>
-              {" · "}
-              <Link to="/parceria/cadastro" className="underline">
-                Cadastrar minha imobiliária
-              </Link>
-            </>
-          )}
+      {!marca && mode === "entrar" && (
+        <p className="mt-4 border-t border-slate-200/70 pt-4 text-center text-caption leading-relaxed text-graytext">
+          <Link to="/academia" className="underline underline-offset-2">
+            Pedir acesso à Academia
+          </Link>
+          {" · "}
+          <Link to="/parceria/cadastro" className="underline underline-offset-2">
+            Cadastrar minha imobiliária
+          </Link>
         </p>
       )}
-      <p className="mt-3 text-center text-[11px] text-muted">
+      <p className="mt-4 text-center text-caption text-muted">
         {mode === "cadastrar" ? "Ao criar a conta, você concorda com a " : "Veja a "}
-        <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline">
+        <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline underline-offset-2">
           política de privacidade
         </a>
         .
       </p>
 
-      {marca && <p className="mt-5 text-center text-[10.5px] text-muted">gerenciado por MaterImob</p>}
+      {marca && <p className="mt-5 text-center text-caption text-muted">gerenciado por MaterImob</p>}
     </Card>
   );
 }
 
+// Moldura da tela de acesso: cartão translúcido sobre um brilho azul suave (sem marca) ou a cor do inquilino.
 function Card({ children, marca }) {
   return (
     <div
-      className="flex min-h-screen items-center justify-center p-6"
-      style={{ background: marca?.cor_secundaria || "var(--color-bg)" }}
+      className="flex min-h-screen items-center justify-center p-4"
+      style={{
+        background:
+          marca?.cor_secundaria ||
+          "radial-gradient(900px 480px at 50% -10%, var(--color-brand-soft), transparent 70%), var(--color-bg)",
+      }}
     >
-      <div className="w-full max-w-sm rounded-[20px] bg-white p-8 shadow-sm">{children}</div>
+      <div className="w-full max-w-[400px] rounded-sheet border border-white/80 bg-white/90 p-7 shadow-float backdrop-blur-xl ring-1 ring-slate-200/60 sm:p-9">
+        {!marca && (
+          <Link to="/" className="mb-7 block text-center text-lg font-bold tracking-tight text-charcoal">
+            MaterImob
+          </Link>
+        )}
+        {children}
+      </div>
     </div>
   );
 }

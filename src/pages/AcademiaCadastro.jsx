@@ -6,12 +6,14 @@ import { useAcessoCanal } from "../lib/AcessoCanal";
 import { useProfile } from "../lib/useProfile";
 import { traduzErro } from "./Login";
 import { registrarCadastro } from "../lib/medicao";
+import CartaoAcesso from "../components/ui/CartaoAcesso";
+import Button from "../components/ui/Button";
+import { classesCampo } from "../components/ui/Input";
 
 const AUTONOMO = "__autonomo";
 const OUTRA = "__outra";
 
-const inputCls =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none";
+const inputCls = classesCampo;
 
 // Cadastro público do corretor parceiro (materimob.com.br/academia). Uma tela
 // só: conta + pedido de acesso. Quem já tem conta no MaterImob e está logado
@@ -50,7 +52,7 @@ export default function AcademiaCadastro() {
   if (loadingAuth || (user && acesso === undefined)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-bg">
-        <p className="text-sm text-muted">Carregando…</p>
+        <p className="text-body-sm text-muted">Carregando…</p>
       </div>
     );
   }
@@ -115,27 +117,27 @@ export default function AcademiaCadastro() {
   if (confirmarEmail) {
     return (
       <Pagina>
-        <h1 className="text-center text-xl font-bold text-charcoal">Quase lá</h1>
-        <p className="mt-2 text-center text-sm text-graytext">
+        <h1 className="text-center text-headline font-bold tracking-[-0.035em] text-charcoal">Quase lá</h1>
+        <p className="mt-3 text-center text-body-sm text-graytext">
           Enviamos um link de confirmação para <strong>{email}</strong>. Confirme por lá e entre. Seu pedido de
           acesso à Academia é enviado automaticamente na primeira entrada.
         </p>
-        <Link to="/entrar" className="mt-5 block text-center text-sm text-graytext underline">
+        <Button to="/entrar" variant="ghost" block className="mt-5">
           Ir para a entrada
-        </Link>
+        </Button>
       </Pagina>
     );
   }
 
   return (
     <Pagina>
-      <div className="text-[10.5px] font-bold uppercase tracking-[.18em] text-gold">Materimob</div>
-      <h1 className="mt-2 text-xl font-bold leading-tight text-charcoal">Crie seu acesso à Academia de Vendas</h1>
-      <p className="mt-1 text-sm text-graytext">
+      <div className="text-caption font-semibold tracking-[.06em] text-brand uppercase">MaterImob</div>
+      <h1 className="mt-1.5 text-headline leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">Crie seu acesso à Academia de Vendas</h1>
+      <p className="mt-2 text-body-sm text-graytext">
         Materiais prontos, treinamento e argumentos de venda, para o corretor apresentar cada projeto com segurança.
       </p>
 
-      <form onSubmit={enviar} noValidate className="mt-5 space-y-3">
+      <form onSubmit={enviar} noValidate className="mt-6 space-y-4">
         <Campo label="Nome completo" id="ac-nome">
           <input id="ac-nome" value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={inputCls} />
         </Campo>
@@ -179,10 +181,10 @@ export default function AcademiaCadastro() {
         )}
 
         <div>
-          <span className="block text-xs font-medium text-graytext" id="ac-papel-l">
+          <span className="mb-1.5 block text-caption font-medium text-graytext" id="ac-papel-l">
             Você é
           </span>
-          <div className="mt-1 grid grid-cols-2 gap-2" role="group" aria-labelledby="ac-papel-l">
+          <div className="grid grid-cols-2 gap-2" role="group" aria-labelledby="ac-papel-l">
             {[
               ["corretor", "Corretor"],
               ["gestor", "Gestor da imobiliária"],
@@ -195,8 +197,8 @@ export default function AcademiaCadastro() {
                   setPapel(valor);
                   setError("");
                 }}
-                className={`rounded-[9px] border-[1.5px] px-2 py-[10px] text-[13px] font-semibold ${
-                  papel === valor ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-700"
+                className={`min-h-11 rounded-control border px-2 text-[13px] font-semibold transition-all duration-200 ${
+                  papel === valor ? "border-brand bg-[#f5fbff] text-sky-800 ring-[3px] ring-brand/10" : "border-slate-200 bg-white text-slate-700"
                 }`}
               >
                 {rotulo}
@@ -238,51 +240,43 @@ export default function AcademiaCadastro() {
         )}
 
         {error && (
-          <p role="alert" className="text-sm text-rose-700">
+          <p role="alert" className="text-body-sm text-danger-text">
             {error}
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={busy}
-          className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" size="lg" block disabled={busy}>
           {busy ? "Enviando…" : "Pedir acesso"}
-        </button>
+        </Button>
       </form>
 
-      <p className="mt-4 text-center text-[12.5px] text-graytext">
+      <p className="mt-5 text-center text-caption text-graytext">
         Ao pedir acesso, você concorda com o uso dos seus dados para liberar e acompanhar o seu acesso, conforme a{" "}
         <a href="/privacidade.html" target="_blank" rel="noreferrer" className="underline">
           política de privacidade
         </a>
         .
       </p>
-      <p className="mt-2 text-center text-[12.5px] text-graytext">
+      <p className="mt-2 text-center text-caption text-graytext">
         Depois do pedido, a coordenação de parcerias confere o seu cadastro e libera o acesso.
       </p>
       {!user && (
-        <Link to="/entrar" className="mt-3 block text-center text-sm text-graytext underline">
+        <Button to="/entrar" variant="ghost" block className="mt-2">
           Já tem conta? Entrar
-        </Link>
+        </Button>
       )}
     </Pagina>
   );
 }
 
 function Pagina({ children }) {
-  return (
-    <div className="min-h-screen bg-bg px-4 py-8">
-      <div className="mx-auto w-full max-w-md rounded-[20px] border border-rule bg-white p-6 sm:p-8">{children}</div>
-    </div>
-  );
+  return <CartaoAcesso largo>{children}</CartaoAcesso>;
 }
 
 function Campo({ label, id, children }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-medium text-graytext">
+      <label htmlFor={id} className="mb-1.5 block text-caption font-medium text-graytext">
         {label}
       </label>
       {children}
