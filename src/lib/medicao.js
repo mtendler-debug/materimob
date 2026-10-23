@@ -19,6 +19,11 @@ export function medicaoConfigurada() {
   return Boolean(GA4_ID || META_PIXEL_ID);
 }
 
+// Para o aviso de cookies citar só quem de fato recebe os dados.
+export function ferramentasDeMedicao() {
+  return [GA4_ID && "o Google", META_PIXEL_ID && "a Meta"].filter(Boolean).join(" e ");
+}
+
 export function paginaDoFunil(pathname) {
   return PAGINAS_DO_FUNIL.includes(pathname);
 }

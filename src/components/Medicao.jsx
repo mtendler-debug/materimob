@@ -4,6 +4,7 @@ import {
   carregar,
   consentimento,
   definirConsentimento,
+  ferramentasDeMedicao,
   medicaoConfigurada,
   paginaDoFunil,
   registrarVisita,
@@ -43,8 +44,9 @@ export function Medicao() {
     >
       <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-3 rounded-[14px] bg-charcoal px-4 py-3.5 text-white">
         <p className="min-w-0 flex-[1_1_320px] text-[13px] leading-relaxed text-slate-300">
-          <b className="font-semibold text-white">Cookies para medir nossos anúncios.</b> Com sua permissão, o Google e a
-          Meta registram que você veio de um anúncio e se criou conta. Nada disso é carregado se você recusar.{" "}
+          <b className="font-semibold text-white">Cookies para medir nossos anúncios.</b> Com sua permissão,{" "}
+          {ferramentasDeMedicao()} {ferramentasDeMedicao().includes(" e ") ? "registram" : "registra"} que você veio de
+          um anúncio e se criou conta. Nada disso é carregado se você recusar.{" "}
           <a href="/privacidade.html" target="_blank" rel="noreferrer" className="text-white underline">
             Política de privacidade
           </a>
