@@ -7,6 +7,9 @@ import { parseCsv, downloadCsv } from "../lib/csv";
 import { importarLancamento } from "../lib/importar";
 import { ImageUploader } from "../components/ImageUploader";
 import { useFeedback } from "../lib/feedback";
+import Button from "../components/ui/Button";
+import Input, { classesCampo } from "../components/ui/Input";
+import Modal from "../components/ui/Modal";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -16,10 +19,10 @@ function n1(v) {
 }
 
 const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
-const STATUS_COLORS = {
-  disponivel: { bg: "#D1FAE5", color: "#065F46" },
-  reservada: { bg: "#FEF3C7", color: "#92400E" },
-  vendida: { bg: "#FFE4E6", color: "#9F1239" },
+const STATUS_CLASSES = {
+  disponivel: "bg-success-bg text-success-text",
+  reservada: "bg-warning-bg text-warning-text",
+  vendida: "bg-danger-bg text-danger-text",
 };
 const STAGE_LABELS = { "a-visitar": "A visitar", visitado: "Visitado", negociacao: "Em negociação", descartado: "Descartado" };
 
@@ -30,6 +33,7 @@ export default function LaunchDetail() {
   const [dashboard, setDashboard] = useState(null);
   const [partners, setPartners] = useState(null);
   const [error, setError] = useState("");
+  const [gerarAberto, setGerarAberto] = useState(false);
 
   const manage = org && launch && org.id === launch.organization_id && canManage(role);
   const isOwnerOrg = org && launch && org.id === launch.organization_id;
@@ -71,61 +75,111 @@ export default function LaunchDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manage]);
 
-  if (error) return <div className="p-6 text-sm text-red-600">{error}</div>;
+  if (error) return <div className="p-6 text-sm text-danger-text">{error}</div>;
   if (!launch) return <div className="p-6 text-sm text-muted">Carregando…</div>;
 
+  const cor = launch.color || "#0284C7";
+  const capa = launch.photo_urls?.[0];
+  const disponiveis = launch.units.filter((u) => u.status === "disponivel");
+  const reservadas = launch.units.filter((u) => u.status === "reservada");
+  const valores = launch.units.filter((u) => u.status !== "vendida" && u.table_value != null).map((u) => u.table_value);
+  const menor = valores.length ? Math.min(...valores) : null;
+
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-3xl">
-        <Link to="/app/lancamentos" className="text-sm text-graytext underline">
-          ← Lançamentos
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto max-w-[900px] px-4 pt-5 pb-32 md:px-7">
+        <Link to="/app/lancamentos" className="-ml-1 inline-flex min-h-9 items-center gap-0.5 px-1 text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+          Lançamentos
         </Link>
 
-        <div className="mt-3" style={{ borderLeft: `5px solid ${launch.color || "#0284C7"}`, paddingLeft: 14 }}>
-          <h1 className="font-serif text-[24px] font-semibold text-charcoal">{launch.name}</h1>
-          {launch.organizations?.name && (
-            <p className="text-xs text-graytext">
-              Publicado por{" "}
-              <Link to={`/app/organizacoes/${launch.organization_id}`} className="underline">
-                {launch.organizations.name}
-              </Link>
+        <div
+          className="relative mt-2 flex h-[180px] items-end overflow-hidden rounded-[20px] p-5 sm:h-[220px]"
+          style={{
+            background: capa ? `center/cover url(${capa})` : `linear-gradient(135deg, ${cor}, ${cor}cc 60%, #0f172a)`,
+          }}
+        >
+          <span className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/60" />
+          <div className="relative text-white">
+            <span className="mb-2.5 inline-block rounded-full bg-white/20 px-2.5 py-0.5 text-caption font-semibold backdrop-blur-md">Lançamento</span>
+            <h1 className="text-[clamp(1.5rem,4vw,1.75rem)] leading-[1.12] font-bold tracking-[-0.035em]">{launch.name}</h1>
+            <p className="mt-1 text-body-sm text-slate-200">
+              {launch.organizations?.name && (
+                <Link to={`/app/organizacoes/${launch.organization_id}`} className="font-semibold hover:underline">
+                  {launch.organizations.name}
+                </Link>
+              )}
+              {launch.organizations?.name && launch.address ? " · " : ""}
+              {launch.address}
             </p>
+          </div>
+        </div>
+        {launch.summary && <p className="mt-3 text-body-sm text-graytext">{launch.summary}</p>}
+
+        <div className="mt-5 flex flex-wrap gap-7 border-b border-slate-200/70 pb-5">
+          <div>
+            <b className="block text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal tabular-nums">{disponiveis.length}</b>
+            <small className="text-body-sm text-graytext">unidades disponíveis</small>
+          </div>
+          {menor != null && (
+            <div>
+              <b className="block text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal tabular-nums">{brl(menor)}</b>
+              <small className="text-body-sm text-graytext">a partir de</small>
+            </div>
           )}
-          {launch.address && <p className="text-sm text-graytext">{launch.address}</p>}
-          {launch.summary && <p className="text-xs text-graytext">{launch.summary}</p>}
+          <div>
+            <b className="block text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal tabular-nums">{reservadas.length}</b>
+            <small className="text-body-sm text-graytext">reservadas</small>
+          </div>
         </div>
 
-        {manage && <EditLaunchMedia launch={launch} onChange={load} />}
+        {manage && (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-sky-200 bg-[#f5fbff] px-4 py-3.5">
+            <span className="text-body-sm font-semibold text-sky-800">Você é a incorporadora deste lançamento</span>
+            <div className="flex flex-wrap gap-2">
+              <EditarMidia launch={launch} onChange={load} />
+              <ImportLaunchUnitsSpreadsheet launchId={launch.id} onImported={load} />
+              <NewLaunchUnit launchId={launch.id} onCreated={load} />
+            </div>
+          </div>
+        )}
 
         {org && canManage(role) && !isOwnerOrg && (
           <PartnerToggle launchId={launch.id} org={org} partners={partners} onChange={loadPartners} />
         )}
 
         {partners?.length > 0 && (
-          <p className="mt-2 text-xs text-graytext">
+          <p className="mt-3 text-caption text-graytext">
             Imobiliárias trabalhando este lançamento: {partners.map((p) => p.organizations?.name).filter(Boolean).join(", ")}
           </p>
         )}
 
-        {manage && (
-          <>
-            <SectionTitle>Painel do lançamento</SectionTitle>
-            {dashboard ? <LaunchDashboard dashboard={dashboard} /> : <p className="text-sm text-muted">Carregando painel…</p>}
-          </>
-        )}
-
-        <SectionTitle>Unidades</SectionTitle>
-        <div className="space-y-1 rounded-[14px] border border-rule bg-white p-4">
+        <SectionTitle first>Unidades</SectionTitle>
+        {launch.units.length === 0 && <p className="text-body-sm text-muted">Nenhuma unidade cadastrada ainda.</p>}
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {launch.units.map((u) => (
             <UnitRow key={u.id} unit={u} manage={manage} onChange={() => { load(); if (manage) loadDashboard(); }} />
           ))}
-          {manage && <NewLaunchUnit launchId={launch.id} onCreated={load} />}
         </div>
-        {manage && <ImportLaunchUnitsSpreadsheet launchId={launch.id} onImported={load} />}
 
-        <SectionTitle>Roteiro para cliente</SectionTitle>
-        <CreateRoteiro launch={launch} />
+        {manage && (
+          <>
+            <SectionTitle>Painel do lançamento</SectionTitle>
+            {dashboard ? <LaunchDashboard dashboard={dashboard} /> : <p className="text-body-sm text-muted">Carregando painel…</p>}
+          </>
+        )}
       </div>
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex justify-center px-4 md:bottom-0 md:left-64 md:pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <div className="pointer-events-auto w-full max-w-[420px]">
+          <Button size="lg" block className="!min-h-[52px] !rounded-2xl shadow-[0_14px_34px_-10px_rgba(2,132,199,.6)]" onClick={() => setGerarAberto(true)}>
+            Gerar link para o cliente
+          </Button>
+        </div>
+      </div>
+      <CreateRoteiro launch={launch} open={gerarAberto} onClose={() => setGerarAberto(false)} />
     </div>
   );
 }
@@ -150,10 +204,14 @@ function PartnerToggle({ launchId, org, partners, onChange }) {
   }
 
   return (
-    <label className="mt-3 flex items-center gap-2 text-sm text-charcoal">
-      <input type="checkbox" checked={checked} disabled={busy} onChange={toggle} className="h-4 w-4" />
-      {org.name} está trabalhando este lançamento
-    </label>
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-3.5">
+      <span className="text-body-sm font-semibold text-charcoal">
+        {checked ? `${org.name} está trabalhando este lançamento.` : `${org.name} quer trabalhar este lançamento?`}
+      </span>
+      <Button variant="secondary" size="sm" disabled={busy} onClick={toggle}>
+        {checked ? "Deixar de trabalhar" : "Trabalhar este lançamento"}
+      </Button>
+    </div>
   );
 }
 
@@ -188,65 +246,61 @@ function EditLaunchMedia({ launch, onChange }) {
   }
 
   return (
-    <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
+    <div className="space-y-3.5">
       <div className="flex flex-wrap gap-4">
         <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
         <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
       </div>
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
-      <textarea
-        value={paymentTerms}
-        onChange={(e) => setPaymentTerms(e.target.value)}
-        rows={2}
-        placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-      />
-      <div className="mt-3 flex flex-wrap gap-4">
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Condomínio</label>
-          <input
-            type="number"
-            value={condoValue}
-            onChange={(e) => setCondoValue(e.target.value)}
-            placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">IPTU</label>
-          <input
-            type="number"
-            value={iptuValue}
-            onChange={(e) => setIptuValue(e.target.value)}
-            placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-        </div>
+      <div>
+        <label className="mb-1.5 block text-caption font-medium text-graytext">Condições de pagamento</label>
+        <textarea
+          value={paymentTerms}
+          onChange={(e) => setPaymentTerms(e.target.value)}
+          rows={2}
+          placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
+          className={`${classesCampo} min-h-[84px] py-3`}
+        />
       </div>
-      <div className="mt-3 flex items-center gap-3">
-        <button
-          onClick={save}
-          disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-        >
+      <div className="grid gap-3.5 sm:grid-cols-2">
+        <Input label="Condomínio" type="number" value={condoValue} onChange={(e) => setCondoValue(e.target.value)} placeholder="Valor mensal" />
+        <Input label="IPTU" type="number" value={iptuValue} onChange={(e) => setIptuValue(e.target.value)} placeholder="Valor mensal" />
+      </div>
+      <div className="flex items-center gap-3 pt-1">
+        <Button onClick={save} disabled={saving}>
           {saving ? "Salvando…" : "Salvar"}
-        </button>
-        {msg && <span className="text-sm text-graytext">{msg}</span>}
+        </Button>
+        {msg && <span className="text-body-sm text-graytext">{msg}</span>}
       </div>
     </div>
   );
 }
 
-function SectionTitle({ children }) {
-  return <h2 className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+function EditarMidia({ launch, onChange }) {
+  const [aberto, setAberto] = useState(false);
+  return (
+    <>
+      <Button variant="secondary" size="sm" onClick={() => setAberto(true)}>
+        Editar mídia
+      </Button>
+      <Modal open={aberto} onClose={() => setAberto(false)} title="Mídia do lançamento" className="sm:max-w-xl">
+        <EditLaunchMedia launch={launch} onChange={onChange} />
+      </Modal>
+    </>
+  );
+}
+
+function SectionTitle({ children, first = false }) {
+  return (
+    <h2 className={`mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase ${first ? "mt-7" : "mt-9"}`}>{children}</h2>
+  );
 }
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="bg-white p-[15px]">
-      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
-      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+    <div className="bg-white p-4">
+      <div className="text-[11px] font-semibold tracking-[.06em] text-muted uppercase">{label}</div>
+      <div className="mt-1 text-2xl leading-[1.15] font-bold tracking-[-0.03em] tabular-nums">{value}</div>
+      <div className="mt-0.5 text-caption text-graytext">{foot}</div>
     </div>
   );
 }
@@ -257,11 +311,11 @@ function LaunchDashboard({ dashboard }) {
 
   return (
     <div>
-      <p className="text-xs text-graytext">
+      <p className="text-caption text-graytext">
         Números agregados de todos os roteiros feitos a partir deste lançamento — sem nome de
         cliente nem identidade do corretor.
       </p>
-      <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
         <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
         <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot="recebidas" />
         <Kpi label="Nota média" value={n1(dashboard.nota_media)} foot="escala de 1 a 10" />
@@ -269,11 +323,11 @@ function LaunchDashboard({ dashboard }) {
       </div>
 
       {funilEntries.length > 0 && (
-        <div className="mt-3 rounded-[14px] border border-rule bg-white p-4">
-          <p className="text-[11.5px] font-bold uppercase tracking-[.08em] text-graytext">Funil</p>
+        <div className="mt-3 rounded-card border border-slate-200/70 bg-white p-4">
+          <p className="text-caption font-semibold uppercase tracking-[.08em] text-muted">Funil</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {funilEntries.map(([stage, n]) => (
-              <span key={stage} className="rounded-full bg-light px-[10px] py-1 text-[11.5px] font-bold text-graytext">
+              <span key={stage} className="rounded-full bg-light px-2.5 py-1 text-caption font-semibold text-graytext">
                 {n} {(STAGE_LABELS[stage] || stage).toLowerCase()}
               </span>
             ))}
@@ -282,8 +336,8 @@ function LaunchDashboard({ dashboard }) {
       )}
 
       {porUnidade.length > 0 && (
-        <div className="mt-3 rounded-[14px] border border-rule bg-white p-4">
-          <p className="text-[11.5px] font-bold uppercase tracking-[.08em] text-graytext">Nota por unidade</p>
+        <div className="mt-3 rounded-card border border-slate-200/70 bg-white p-4">
+          <p className="text-caption font-semibold uppercase tracking-[.08em] text-muted">Nota por unidade</p>
           <div className="mt-2 space-y-1">
             {porUnidade.map((u) => (
               <div key={u.launch_unit_id} className="flex items-center justify-between text-sm">
@@ -359,93 +413,84 @@ function UnitRow({ unit, manage, onChange }) {
 
   if (editing) {
     return (
-      <div className="border-b border-rule py-2 text-sm last:border-0">
+      <div className="col-span-full rounded-2xl border border-slate-200/70 bg-white p-4">
         <div className="flex flex-wrap items-end gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
-          />
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Valor de tabela"
-            className="w-32 rounded border border-rule px-2 py-1 text-sm"
-          />
+          <div className="min-w-[160px] flex-1">
+            <Input value={name} onChange={(e) => setName(e.target.value)} aria-label="Nome da unidade" />
+          </div>
+          <div className="w-40">
+            <Input type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Valor de tabela" aria-label="Valor de tabela" />
+          </div>
         </div>
-        <div className="mt-2">
+        <div className="mt-3">
           <ImageUploader label="Fotos desta unidade" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
         </div>
-        <label className="mt-2 block text-[11.5px] font-bold text-graytext uppercase">
-          Condições de pagamento desta unidade
-        </label>
+        <label className="mt-3 mb-1.5 block text-caption font-medium text-graytext">Condições de pagamento desta unidade</label>
         <textarea
           value={paymentTerms}
           onChange={(e) => setPaymentTerms(e.target.value)}
           rows={2}
           placeholder="Deixe em branco pra usar a condição geral do lançamento"
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-2 py-1 text-sm"
+          className={`${classesCampo} min-h-[72px] py-2.5`}
         />
-        <div className="mt-2 flex items-center gap-2">
-          <button
-            onClick={salvar}
-            disabled={saving}
-            className="rounded bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
-          >
-            {saving ? "Salvando…" : "salvar"}
-          </button>
-          <button onClick={cancelar} className="text-xs font-bold text-graytext underline">
-            cancelar
-          </button>
+        <div className="mt-3 flex items-center gap-2">
+          <Button size="sm" onClick={salvar} disabled={saving}>
+            {saving ? "Salvando…" : "Salvar"}
+          </Button>
+          <Button size="sm" variant="ghost" onClick={cancelar}>
+            Cancelar
+          </Button>
         </div>
       </div>
     );
   }
 
+  const [titulo, ...resto] = unit.name.split(" · ");
   return (
-    <div className="flex flex-wrap items-center gap-2 border-b border-rule py-2 text-sm last:border-0">
-      <span className="flex-1 text-charcoal">
-        {unit.name}
+    <div className="flex min-w-0 flex-col gap-1.5 rounded-2xl border border-slate-200/70 bg-white p-3.5">
+      <b className="font-semibold text-charcoal">
+        {titulo}
         {(unit.photo_urls?.length > 0 || unit.payment_terms) && (
-          <span className="ml-1 text-xs" title="Tem fotos ou condições de pagamento próprias">
+          <span className="ml-1 text-xs text-muted" title="Tem fotos ou condições de pagamento próprias">
             •
           </span>
         )}
-      </span>
-      <span className="text-graytext">{brl(unit.table_value)}</span>
-      <span
-        className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
-        style={{ background: STATUS_COLORS[unit.status].bg, color: STATUS_COLORS[unit.status].color }}
-      >
+      </b>
+      {resto.length > 0 && <small className="text-caption text-graytext">{resto.join(" · ")}</small>}
+      <span className="font-bold tracking-tight text-charcoal tabular-nums">{brl(unit.table_value)}</span>
+      <span className={`self-start rounded-full px-2.5 py-0.5 text-caption font-semibold ${STATUS_CLASSES[unit.status]}`}>
         {STATUS_LABELS[unit.status]}
         {unit.reserved_for ? ` · ${unit.reserved_for}` : ""}
       </span>
       {manage && (
-        <>
-          <button onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
-            editar
+        <div className="-mx-1 mt-1 flex flex-wrap">
+          <button onClick={() => setEditing(true)} className={acaoUnidade}>
+            Editar
           </button>
-          <button onClick={remover} className="text-xs font-bold text-[#B34A2E]">
-            ×
+          <button onClick={remover} className={acaoUnidadePerigo}>
+            Remover
           </button>
-        </>
-      )}
-      {manage && unit.status === "reservada" && (
-        <>
-          <button onClick={markSold} className="text-xs font-bold text-[#2E7D32]">
-            confirmar venda
-          </button>
-          <button onClick={release} className="text-xs font-bold text-[#B34A2E]">
-            desfazer reserva
-          </button>
-        </>
+          {unit.status === "reservada" && (
+            <>
+              <button onClick={markSold} className={`${acaoUnidade} !text-success-text`}>
+                Confirmar venda
+              </button>
+              <button onClick={release} className={acaoUnidadePerigo}>
+                Desfazer reserva
+              </button>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
 }
 
+const acaoUnidade = "min-h-9 rounded-[9px] px-2 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal";
+const acaoUnidadePerigo = "min-h-9 rounded-[9px] px-2 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text";
+
 function NewLaunchUnit({ launchId, onCreated }) {
+  const [aberto, setAberto] = useState(false);
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
 
@@ -459,28 +504,36 @@ function NewLaunchUnit({ launchId, onCreated }) {
     });
     setName("");
     setValue("");
+    setAberto(false);
     onCreated();
   }
 
   return (
-    <form onSubmit={submit} className="mt-2 flex flex-wrap items-end gap-2">
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="403 · Sereine · 216 m²"
-        className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
-      />
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Valor de tabela"
-        className="w-32 rounded border border-rule px-2 py-1 text-sm"
-      />
-      <button type="submit" className="rounded bg-charcoal px-2 py-1 text-sm font-bold text-white">
-        + unidade
-      </button>
-    </form>
+    <>
+      <Button variant="secondary" size="sm" onClick={() => setAberto(true)}>
+        + Unidade
+      </Button>
+      <Modal
+        open={aberto}
+        onClose={() => setAberto(false)}
+        title="Nova unidade"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setAberto(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" form="nova-unidade" disabled={!name.trim()}>
+              Adicionar
+            </Button>
+          </>
+        }
+      >
+        <form id="nova-unidade" onSubmit={submit} className="space-y-3.5">
+          <Input label="Nome da unidade" value={name} onChange={(e) => setName(e.target.value)} placeholder="403 · Sereine · 216 m²" autoFocus />
+          <Input label="Valor de tabela" type="number" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Opcional" />
+        </form>
+      </Modal>
+    </>
   );
 }
 
@@ -538,47 +591,36 @@ function ImportLaunchUnitsSpreadsheet({ launchId, onImported }) {
   }
 
   return (
-    <div className="mt-3">
-      <button
-        type="button"
-        onClick={() => setShow((v) => !v)}
-        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
-      >
-        {show ? "Fechar" : "Importar unidades por planilha"}
-      </button>
-      {show && (
-        <div className="mt-2 rounded-[14px] border border-rule bg-white p-4">
-          <p className="text-sm text-graytext">
-            Baixe o modelo, preencha uma linha por unidade deste lançamento, e envie o arquivo de volta.
-          </p>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={baixarModelo}
-              className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
-            >
-              Baixar modelo
-            </button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".csv,text/csv"
-              disabled={busy}
-              onChange={handleFile}
-              className="text-sm text-graytext"
-            />
-          </div>
-          {busy && <p className="mt-2 text-sm text-muted">Importando…</p>}
-          {msg && (
-            <p className={`mt-2 text-sm ${msg.type === "ok" ? "text-[#2E7D32]" : "text-red-600"}`}>{msg.text}</p>
-          )}
+    <>
+      <Button variant="secondary" size="sm" onClick={() => setShow(true)}>
+        Importar planilha
+      </Button>
+      <Modal open={show} onClose={() => setShow(false)} title="Importar unidades">
+        <p className="text-body-sm text-graytext">
+          Baixe o modelo, preencha uma linha por unidade deste lançamento, e envie o arquivo de volta.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Button type="button" variant="secondary" size="sm" onClick={baixarModelo}>
+            Baixar modelo
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            disabled={busy}
+            onChange={handleFile}
+            aria-label="Arquivo da planilha"
+            className="min-w-0 text-body-sm text-graytext"
+          />
         </div>
-      )}
-    </div>
+        {busy && <p className="mt-3 text-body-sm text-muted">Importando…</p>}
+        {msg && <p className={`mt-3 text-body-sm font-semibold ${msg.type === "ok" ? "text-success-text" : "text-danger-text"}`}>{msg.text}</p>}
+      </Modal>
+    </>
   );
 }
 
-function CreateRoteiro({ launch }) {
+function CreateRoteiro({ launch, open, onClose }) {
   const navigate = useNavigate();
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
@@ -639,32 +681,29 @@ function CreateRoteiro({ launch }) {
   }
 
   return (
-    <form onSubmit={create} className="flex flex-wrap items-end gap-2 rounded-[14px] border border-rule bg-white p-4">
-      <div className="min-w-[160px] flex-1">
-        <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome do cliente</label>
-        <input
-          value={clientName}
-          onChange={(e) => setClientName(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-        />
-      </div>
-      <div className="min-w-[140px] flex-1">
-        <label className="block text-[11.5px] font-bold text-graytext uppercase">Telefone (opcional)</label>
-        <input
-          value={clientPhone}
-          onChange={(e) => setClientPhone(e.target.value)}
-          placeholder="reúne outros roteiros dele"
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={busy}
-        className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-      >
-        {busy ? "Criando…" : "Gerar link"}
-      </button>
-      {error && <p className="w-full text-sm text-red-600">{error}</p>}
-    </form>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Gerar link para o cliente"
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit" form="gerar-link" disabled={busy || !clientName.trim()}>
+            {busy ? "Criando…" : "Gerar link"}
+          </Button>
+        </>
+      }
+    >
+      <form id="gerar-link" onSubmit={create} className="space-y-3.5">
+        <p className="text-body-sm text-graytext">
+          Cria um roteiro com as {disponiveis.length} unidades disponíveis e leva você até ele.
+        </p>
+        <Input label="Nome do cliente" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Ex.: Casal Almeida" autoFocus />
+        <Input label="Telefone (opcional)" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="reúne outros roteiros dele" />
+        {error && <p className="text-body-sm text-danger-text">{error}</p>}
+      </form>
+    </Modal>
   );
 }
