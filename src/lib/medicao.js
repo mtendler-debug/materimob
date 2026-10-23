@@ -62,6 +62,9 @@ export function carregar() {
     fbq.queue = [];
     fbq.loaded = true;
     fbq.version = "2.0";
+    // Sem isto o Pixel registra sozinho toda troca de rota — inclusive para
+    // dentro do app, fora do funil. PageView só sai por registrarVisita.
+    fbq.disablePushState = true;
     window.fbq = window._fbq = fbq;
     window.fbq("init", META_PIXEL_ID);
     adicionarScript("https://connect.facebook.net/en_US/fbevents.js");
