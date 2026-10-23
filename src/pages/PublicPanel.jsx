@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
 import { Gantt } from "../components/Gantt";
 import { PropertyMedia } from "../components/PropertyMedia";
-import { Map } from "../components/Map";
+import { Map } from "../components/MapaSobDemanda";
 import { useFeedback } from "../lib/feedback";
 
 function n1(v) {

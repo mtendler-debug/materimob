@@ -1,80 +1,87 @@
+import { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { lazyPagina } from "./lib/lazyPagina";
+import { CarregandoPagina } from "./components/CarregandoPagina";
 import { TenantBrandingProvider } from "./lib/tenantBranding";
 import { FeedbackProvider } from "./lib/feedback";
 import { AcessoCanalProvider } from "./lib/AcessoCanal";
 import Login from "./pages/Login";
-import NovaSenha from "./pages/NovaSenha";
+const NovaSenha = lazyPagina(() => import("./pages/NovaSenha"));
 import Entry from "./pages/Entry";
 import ModuloRoute from "./components/ModuloRoute";
-import Dashboard from "./pages/Dashboard";
-import Properties from "./pages/Properties";
-import Selections from "./pages/Selections";
-import SelectionDetail from "./pages/SelectionDetail";
-import PublicForm from "./pages/PublicForm";
-import PublicPanel from "./pages/PublicPanel";
-import Organization from "./pages/Organization";
-import Portfolio from "./pages/Portfolio";
-import Launches from "./pages/Launches";
-import LaunchDetail from "./pages/LaunchDetail";
-import Showcase from "./pages/Showcase";
-import AcceptInvite from "./pages/AcceptInvite";
-import ClientHome from "./pages/ClientHome";
-import PublicPartnerForm from "./pages/PublicPartnerForm";
-import PublicPartnerSignup from "./pages/PublicPartnerSignup";
-import AcademiaCadastro from "./pages/AcademiaCadastro";
-import AcademiaInicio from "./pages/academia/AcademiaInicio";
-import Projetos from "./pages/academia/Projetos";
-import Treinamento from "./pages/academia/Treinamento";
-import TrilhaDetalhe from "./pages/academia/TrilhaDetalhe";
-import Argumentos from "./pages/academia/Argumentos";
-import Clientes from "./pages/academia/Clientes";
-import RegistrarCliente from "./pages/academia/RegistrarCliente";
-import RegistroDetalhe from "./pages/academia/RegistroDetalhe";
-import AdminAcademia from "./pages/admin/AdminAcademia";
-import VisaoGeralAcademia from "./pages/admin/VisaoGeralAcademia";
-import CorretoresAcademia from "./pages/admin/CorretoresAcademia";
-import AvisosAcademia from "./pages/admin/AvisosAcademia";
-import ConteudoAcademia from "./pages/admin/ConteudoAcademia";
-import ProjetosConteudo from "./pages/admin/ProjetosConteudo";
-import ProjetoEditor from "./pages/admin/ProjetoEditor";
-import TrilhasConteudo from "./pages/admin/TrilhasConteudo";
-import TrilhaEditor from "./pages/admin/TrilhaEditor";
-import ArgumentosConteudo from "./pages/admin/ArgumentosConteudo";
-import Equipe from "./pages/academia/Equipe";
-import MeusDados from "./pages/academia/MeusDados";
-import SugestoesArgumentos from "./pages/admin/SugestoesArgumentos";
-import ProjetoDetalhe from "./pages/academia/ProjetoDetalhe";
-import PublicProjeto from "./pages/PublicProjeto";
-import ParceriasLayout from "./pages/parcerias/ParceriasLayout";
-import Parceiras from "./pages/parcerias/Parceiras";
-import ParceiraDetail from "./pages/parcerias/ParceiraDetail";
-import Registros from "./pages/parcerias/Registros";
-import Acessos from "./pages/parcerias/Acessos";
-import Kanban from "./pages/parcerias/Kanban";
+const Dashboard = lazyPagina(() => import("./pages/Dashboard"));
+const Properties = lazyPagina(() => import("./pages/Properties"));
+const Selections = lazyPagina(() => import("./pages/Selections"));
+const SelectionDetail = lazyPagina(() => import("./pages/SelectionDetail"));
+const PublicForm = lazyPagina(() => import("./pages/PublicForm"));
+const PublicPanel = lazyPagina(() => import("./pages/PublicPanel"));
+const Organization = lazyPagina(() => import("./pages/Organization"));
+const Portfolio = lazyPagina(() => import("./pages/Portfolio"));
+const Launches = lazyPagina(() => import("./pages/Launches"));
+const LaunchDetail = lazyPagina(() => import("./pages/LaunchDetail"));
+const Showcase = lazyPagina(() => import("./pages/Showcase"));
+const AcceptInvite = lazyPagina(() => import("./pages/AcceptInvite"));
+const ClientHome = lazyPagina(() => import("./pages/ClientHome"));
+const PublicPartnerForm = lazyPagina(() => import("./pages/PublicPartnerForm"));
+const PublicPartnerSignup = lazyPagina(() => import("./pages/PublicPartnerSignup"));
+const AcademiaCadastro = lazyPagina(() => import("./pages/AcademiaCadastro"));
+const AcademiaInicio = lazyPagina(() => import("./pages/academia/AcademiaInicio"));
+const Projetos = lazyPagina(() => import("./pages/academia/Projetos"));
+const Treinamento = lazyPagina(() => import("./pages/academia/Treinamento"));
+const TrilhaDetalhe = lazyPagina(() => import("./pages/academia/TrilhaDetalhe"));
+const Argumentos = lazyPagina(() => import("./pages/academia/Argumentos"));
+const Clientes = lazyPagina(() => import("./pages/academia/Clientes"));
+const RegistrarCliente = lazyPagina(() => import("./pages/academia/RegistrarCliente"));
+const RegistroDetalhe = lazyPagina(() => import("./pages/academia/RegistroDetalhe"));
+const AdminAcademia = lazyPagina(() => import("./pages/admin/AdminAcademia"));
+const VisaoGeralAcademia = lazyPagina(() => import("./pages/admin/VisaoGeralAcademia"));
+const CorretoresAcademia = lazyPagina(() => import("./pages/admin/CorretoresAcademia"));
+const AvisosAcademia = lazyPagina(() => import("./pages/admin/AvisosAcademia"));
+const ConteudoAcademia = lazyPagina(() => import("./pages/admin/ConteudoAcademia"));
+const ProjetosConteudo = lazyPagina(() => import("./pages/admin/ProjetosConteudo"));
+const ProjetoEditor = lazyPagina(() => import("./pages/admin/ProjetoEditor"));
+const TrilhasConteudo = lazyPagina(() => import("./pages/admin/TrilhasConteudo"));
+const TrilhaEditor = lazyPagina(() => import("./pages/admin/TrilhaEditor"));
+const ArgumentosConteudo = lazyPagina(() => import("./pages/admin/ArgumentosConteudo"));
+const Equipe = lazyPagina(() => import("./pages/academia/Equipe"));
+const MeusDados = lazyPagina(() => import("./pages/academia/MeusDados"));
+const SugestoesArgumentos = lazyPagina(() => import("./pages/admin/SugestoesArgumentos"));
+const ProjetoDetalhe = lazyPagina(() => import("./pages/academia/ProjetoDetalhe"));
+const PublicProjeto = lazyPagina(() => import("./pages/PublicProjeto"));
+const ParceriasLayout = lazyPagina(() => import("./pages/parcerias/ParceriasLayout"));
+const Parceiras = lazyPagina(() => import("./pages/parcerias/Parceiras"));
+const ParceiraDetail = lazyPagina(() => import("./pages/parcerias/ParceiraDetail"));
+const Registros = lazyPagina(() => import("./pages/parcerias/Registros"));
+const Acessos = lazyPagina(() => import("./pages/parcerias/Acessos"));
+const Kanban = lazyPagina(() => import("./pages/parcerias/Kanban"));
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { RoleRoute } from "./components/RoleRoute";
 import AppLayout from "./components/AppLayout";
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminOverview from "./pages/admin/AdminOverview";
-import AdminOrganizations from "./pages/admin/AdminOrganizations";
-import ModulosUsuarios from "./pages/admin/ModulosUsuarios";
-import AdminAccounts from "./pages/admin/AdminAccounts";
-import Estoque from "./pages/Estoque";
-import TeamPicks from "./pages/TeamPicks";
-import Profile from "./pages/Profile";
-import MyPerformance from "./pages/MyPerformance";
-import CrmLayout from "./pages/crm/CrmLayout";
-import CrmDashboard from "./pages/crm/CrmDashboard";
-import Pipeline from "./pages/crm/Pipeline";
-import Leads from "./pages/crm/Leads";
-import LeadDetail from "./pages/crm/LeadDetail";
-import Opportunities from "./pages/crm/Opportunities";
+
+// Daqui para baixo, cada página é carregada só quando aberta (lib/lazyPagina).
+// Ficam no arquivo principal só a entrada, o login e a moldura do app.
+const AdminLayout = lazyPagina(() => import("./pages/admin/AdminLayout"));
+const AdminOverview = lazyPagina(() => import("./pages/admin/AdminOverview"));
+const AdminOrganizations = lazyPagina(() => import("./pages/admin/AdminOrganizations"));
+const ModulosUsuarios = lazyPagina(() => import("./pages/admin/ModulosUsuarios"));
+const AdminAccounts = lazyPagina(() => import("./pages/admin/AdminAccounts"));
+const Estoque = lazyPagina(() => import("./pages/Estoque"));
+const TeamPicks = lazyPagina(() => import("./pages/TeamPicks"));
+const Profile = lazyPagina(() => import("./pages/Profile"));
+const MyPerformance = lazyPagina(() => import("./pages/MyPerformance"));
+const CrmLayout = lazyPagina(() => import("./pages/crm/CrmLayout"));
+const CrmDashboard = lazyPagina(() => import("./pages/crm/CrmDashboard"));
+const Pipeline = lazyPagina(() => import("./pages/crm/Pipeline"));
+const Leads = lazyPagina(() => import("./pages/crm/Leads"));
+const LeadDetail = lazyPagina(() => import("./pages/crm/LeadDetail"));
+const Opportunities = lazyPagina(() => import("./pages/crm/Opportunities"));
 
 export default function App() {
   return (
     <FeedbackProvider>
     <TenantBrandingProvider>
     <AcessoCanalProvider>
+      <Suspense fallback={<CarregandoPagina />}>
       <Routes>
       <Route path="/" element={<Entry />} />
       <Route path="/entrar" element={<Login />} />
@@ -200,6 +207,7 @@ export default function App() {
       <Route path="/registrar/:token" element={<PublicPartnerForm />} />
       <Route path="/parceria/cadastro" element={<PublicPartnerSignup />} />
     </Routes>
+      </Suspense>
     </AcessoCanalProvider>
     </TenantBrandingProvider>
     </FeedbackProvider>

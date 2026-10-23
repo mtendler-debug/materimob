@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import { useProfile } from "../lib/useProfile";
@@ -6,6 +6,7 @@ import { useOrganization, canManage } from "../lib/useOrganization";
 import { useTenantBranding } from "../lib/tenantBranding";
 import { useAcessoCanal } from "../lib/AcessoCanal";
 import AcademiaTabBar, { MENU_ACADEMIA } from "./AcademiaTabBar";
+import { CarregandoPagina } from "./CarregandoPagina";
 
 // Único componente que monta o menu de /app e /admin — a partir do papel
 // de quem está logado, não de uma lista fixa repetida em cada página.
@@ -270,7 +271,9 @@ export default function AppLayout() {
             </button>
           </div>
         )}
-        <Outlet />
+        <Suspense fallback={<CarregandoPagina telaCheia={false} />}>
+          <Outlet />
+        </Suspense>
       </div>
       {liberado && location.pathname.startsWith("/app/academia") && <AcademiaTabBar />}
     </div>
