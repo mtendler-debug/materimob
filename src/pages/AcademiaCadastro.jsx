@@ -5,6 +5,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useAcessoCanal } from "../lib/AcessoCanal";
 import { useProfile } from "../lib/useProfile";
 import { traduzErro } from "./Login";
+import { registrarCadastro } from "../lib/medicao";
 
 const AUTONOMO = "__autonomo";
 const OUTRA = "__outra";
@@ -102,6 +103,7 @@ export default function AcademiaCadastro() {
     });
     setBusy(false);
     if (authError) return setError(traduzErro(authError.message));
+    registrarCadastro("academia");
     if (data.session) navigate("/app/academia", { replace: true });
     else setConfirmarEmail(true);
   }

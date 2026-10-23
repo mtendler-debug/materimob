@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import { AuthProvider } from "./lib/AuthContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { Medicao } from "./components/Medicao";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")).render(
         <AuthProvider>
           <App />
         </AuthProvider>
+        <Medicao />
       </ErrorBoundary>
     </BrowserRouter>
   </StrictMode>,

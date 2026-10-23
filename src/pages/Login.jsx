@@ -3,6 +3,7 @@ import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../lib/AuthContext";
 import { useTenantBranding } from "../lib/tenantBranding";
+import { registrarCadastro } from "../lib/medicao";
 
 export default function Login() {
   const { user, loading } = useAuth();
@@ -62,6 +63,7 @@ export default function Login() {
       return;
     }
 
+    if (mode === "cadastrar") registrarCadastro("corretor");
     if (mode === "cadastrar" && !data.session) {
       setConfirmEmailSent(true);
     }
