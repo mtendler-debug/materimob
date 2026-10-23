@@ -128,11 +128,27 @@ neles conflitar com o schema/código atual, o schema/código atual vence.
 - **Marcos não é desenvolvedor.** Evitar jargão, preferir caminho gráfico a terminal,
   testar tudo antes de pedir uma ação manual dele, avisar com clareza quando uma decisão
   tiver risco escondido.
-- **Design:** Fraunces (serif) + IBM Plex Sans, tokens
-  `--color-bg:#f7f5f2 --color-charcoal:#1c1c1c --color-gold:#a68a5b
-  --color-graytext:#5c5c5c --color-light:#edeae4 --color-rule:#e2ded6
-  --color-muted:#9a9a9a`. Borda, não sombra. Prototipar mudança de layout como Artifact e
-  aprovar antes de tocar em componente React.
+- **Design:** Inter, base clara (slate) com um único acento azul (`brand`). Os tokens estão
+  em `src/index.css` (`@theme`): cores (`bg`, `charcoal`, `graytext`, `light`, `rule`,
+  `muted`, `brand`, `brand-hover`, `brand-soft` e os semânticos success, warning, danger,
+  secondary), raios (`rounded-control` 12px, `rounded-card` 16px, `rounded-sheet` 24px),
+  sombras (`shadow-soft`, `shadow-float`) e escala de texto (`text-caption`, `body-sm`,
+  `body`, `title`, `headline`, `display`). `gold` ainda vale o mesmo azul, só por legado:
+  em código novo usar `brand`. Não há modo escuro.
+- **Componentes de UI** em `src/components/ui/`: `Button` (primary, dark, secondary, ghost,
+  danger; altura mínima de 44px; aceita `to` ou `href`), `Input` (rótulo, ajuda e erro;
+  `classesCampo` para select e textarea), `Card`, `Modal` (folha no celular, centralizado
+  no computador) e `CartaoAcesso` (moldura de login e cadastros). Não reescrever botão,
+  campo ou modal à mão: usar estes. O `useFeedback` (toast e `confirm`) usa o `Modal`.
+- **Capas de imóvel:** `estiloCapa()` em `src/lib/capa.js`: primeira foto, depois a capa do
+  projeto da Academia com o mesmo nome (`useCapasAcademia`, `src/lib/capasAcademia.js`) e,
+  por fim, um degradê na cor do imóvel.
+- **Padrões de tela já usados:** abas (painel do cliente, roteiro, CRM), gaveta lateral que
+  vira folha no celular (Meu estoque, imóvel do roteiro), coluna fixa com índice
+  (Organização), lista ordenada, cartões com capa (Imóveis, Lançamentos).
+- **Como fazer o redesign de uma tela:** prototipar 3 opções distintas como Artifact,
+  escolher com o Marcos e só então portar para o componente React, sem mexer em dados,
+  rotas nem chamadas de API. Borda translúcida de 1px e sombra suave, nunca sombra dura.
 
 ---
 

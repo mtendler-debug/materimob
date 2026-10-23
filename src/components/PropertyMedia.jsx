@@ -24,24 +24,24 @@ export function PropertyMedia({ property }) {
               key={url}
               src={url}
               alt="Foto do imóvel"
-              className="h-24 w-32 shrink-0 rounded-[9px] border border-rule object-cover"
+              className="h-24 w-32 shrink-0 rounded-xl border border-slate-200/70 object-cover"
             />
           ))}
         </div>
       )}
       {property.floor_plan_url && (
         <div>
-          <p className="mb-1 text-[10.5px] font-bold uppercase tracking-[.06em] text-graytext">Planta</p>
+          <p className="mb-1.5 text-caption font-semibold tracking-[.06em] text-muted uppercase">Planta</p>
           <img
             src={property.floor_plan_url}
             alt="Planta do imóvel"
-            className="max-h-64 w-auto rounded-[9px] border border-rule object-contain"
+            className="max-h-64 w-auto rounded-xl border border-slate-200/70 object-contain"
           />
         </div>
       )}
       {property.payment_terms && (
-        <div className="rounded-[9px] bg-light p-3 text-[13px] whitespace-pre-line text-graytext">
-          <p className="mb-1 text-[10.5px] font-bold uppercase tracking-[.06em] text-graytext">
+        <div className="rounded-xl bg-light p-3.5 text-[13px] whitespace-pre-line text-graytext">
+          <p className="mb-1 text-caption font-semibold tracking-[.06em] text-muted uppercase">
             Condições de pagamento
           </p>
           {property.payment_terms}
