@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { callFunction } from "../lib/edgeFunctions";
+import Button from "../components/ui/Button";
 
 function Centered({ children }) {
   return (
@@ -43,65 +44,74 @@ export default function ClientHome() {
   // corretor vem só no link por corretor; o link antigo (compartilhado)
   // continua reunindo os roteiros de todos.
   const { client, corretor, selections } = data;
+  const primeiroNome = (client.name || "").trim().split(/\s+/)[0];
+  const proximo = selections.find((s) => !s.archived);
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="bg-charcoal px-[18px] pt-[26px] pb-6 text-white">
-        <div className="mx-auto max-w-[700px]">
-          <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">
-            MaterImob
-          </div>
-          <h1 className="mt-[9px] mb-1 text-[22px] leading-tight font-bold">Olá, {client.name}</h1>
-          <p className="m-0 text-[13.5px] text-[#C9C9C9]">
-            {corretor?.nome
-              ? `Os imóveis que ${corretor.nome} separou pra você.`
-              : corretor
-                ? "Os imóveis que seu corretor separou pra você."
-                : "Aqui ficam reunidos todos os imóveis que separaram pra você — de qualquer corretor."}
-          </p>
-        </div>
+      <header className="mx-auto max-w-[700px] px-5 pt-[calc(1.5rem+env(safe-area-inset-top))]">
+        <div className="text-caption font-semibold tracking-[.06em] text-brand uppercase">MaterImob</div>
+        <h1 className="mt-1 text-headline font-bold tracking-[-0.035em] text-charcoal">Olá, {primeiroNome}</h1>
+        <p className="mt-1 text-base text-graytext">
+          {corretor?.nome
+            ? `Os imóveis que ${corretor.nome} separou para você.`
+            : corretor
+              ? "Os imóveis que seu corretor separou para você."
+              : "Aqui ficam reunidos todos os imóveis que separaram para você, de qualquer corretor."}
+        </p>
       </header>
 
-      <div className="mx-auto max-w-[700px] px-[18px] py-8">
+      <div className="mx-auto max-w-[700px] px-5 pt-5 pb-12">
         {selections.length === 0 && (
-          <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">
+          <div className="rounded-card border border-slate-200/70 bg-white p-6 text-center text-body-sm text-muted">
             Nenhum atendimento por aqui ainda.
           </div>
         )}
-        <div className="space-y-3">
+
+        {proximo && (
+          <div className="grid gap-1.5 rounded-3xl bg-gradient-to-br from-sky-600 to-sky-800 p-[22px] text-white shadow-[0_18px_40px_-20px_rgba(2,132,199,.7)]">
+            <small className="text-body-sm text-sky-100">Próximo passo · {proximo.title}</small>
+            <h2 className="text-title leading-[1.2] font-bold tracking-[-0.03em]">Avalie os imóveis que você visitou</h2>
+            <small className="text-body-sm text-sky-100">Leva poucos minutos e fica salvo neste celular.</small>
+            <a
+              href={`/c/${proximo.token_form}`}
+              className="mt-3 inline-flex min-h-12 items-center justify-center rounded-control bg-white text-[15px] font-semibold text-sky-800 transition-all duration-200 active:scale-[0.98]"
+            >
+              Continuar avaliando
+            </a>
+          </div>
+        )}
+
+        {selections.length > 0 && (
+          <p className="mt-7 mb-2.5 text-caption font-semibold tracking-[.08em] text-muted uppercase">Seus atendimentos</p>
+        )}
+        <div className="space-y-2.5">
           {selections.map((s) => (
-            <div key={s.id} className="rounded-[14px] bg-white p-[18px] shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <b className="text-[16px] text-charcoal">{s.title}</b>
-                {s.archived && (
-                  <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-                    encerrado
-                  </span>
-                )}
+            <article key={s.id} className="rounded-[22px] border border-slate-200/70 bg-white p-3.5">
+              <div className="flex items-center gap-3.5">
+                <span className="h-[52px] w-[52px] flex-none rounded-2xl bg-gradient-to-br from-sky-600 to-sky-800" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <b className="text-base tracking-tight text-charcoal">{s.title}</b>
+                    {s.archived && <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">encerrado</span>}
+                  </div>
+                  {s.subtitle && <p className="text-body-sm text-graytext">{s.subtitle}</p>}
+                  {(s.corretor_org || s.corretor_nome) && (
+                    <p className="text-caption text-muted">Atendimento por {s.corretor_org || s.corretor_nome}</p>
+                  )}
+                </div>
               </div>
-              {s.subtitle && <p className="mt-1 text-[13px] text-graytext">{s.subtitle}</p>}
-              {(s.corretor_org || s.corretor_nome) && (
-                <p className="mt-1 text-[12px] text-muted">
-                  Atendimento por {s.corretor_org || s.corretor_nome}
-                </p>
-              )}
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {!s.archived && (
-                  <a
-                    href={`/c/${s.token_form}`}
-                    className="rounded-[10px] bg-charcoal px-4 py-2 text-[13px] font-bold text-white hover:opacity-90"
-                  >
+                  <Button href={`/c/${s.token_form}`} size="sm">
                     Avaliar imóveis
-                  </a>
+                  </Button>
                 )}
-                <a
-                  href={`/r/${s.token_panel}`}
-                  className="rounded-[10px] border-[1.5px] border-rule px-4 py-2 text-[13px] font-bold text-charcoal hover:border-gold"
-                >
+                <Button href={`/r/${s.token_panel}`} variant="secondary" size="sm" className={s.archived ? "sm:col-span-2" : ""}>
                   Ver resultados e propostas
-                </a>
+                </Button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

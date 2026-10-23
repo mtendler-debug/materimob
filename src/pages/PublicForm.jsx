@@ -4,23 +4,27 @@ import { callFunction } from "../lib/edgeFunctions";
 import { loadDraft, saveDraft, evalKey } from "../lib/draftStore";
 import { PropertyMedia } from "../components/PropertyMedia";
 import { useFeedback } from "../lib/feedback";
+import Button from "../components/ui/Button";
+import Input, { classesCampo } from "../components/ui/Input";
 
 const STAGES = [
-  { key: "a-visitar", label: "A visitar", chipBg: "#FFF3E0", chipColor: "#B26A00" },
-  { key: "visitado", label: "Visitado", chipBg: "#E3F0E4", chipColor: "#2E7D32" },
-  { key: "negociacao", label: "Em negociação", chipBg: "#E3EDF8", chipColor: "#1565C0" },
-  { key: "descartado", label: "Descartado", chipBg: "#F1E4E0", chipColor: "#B34A2E" },
+  { key: "a-visitar", label: "A visitar" },
+  { key: "visitado", label: "Visitado" },
+  { key: "negociacao", label: "Em negociação" },
+  { key: "descartado", label: "Descartado" },
 ];
 
-function Chip({ children, bg, color }) {
-  return (
-    <span
-      className="rounded-full px-[11px] py-[5px] text-[11px] font-bold"
-      style={{ background: bg ?? "#EDEAE4", color: color ?? "#5C5C5C" }}
-    >
-      {children}
-    </span>
-  );
+const NOTAS_1A5 = [
+  [1, "Não atendeu"],
+  [2, "Abaixo do esperado"],
+  [3, "Dentro do esperado"],
+  [4, "Muito bom"],
+  [5, "Superou"],
+];
+
+function capa(color) {
+  const cor = color || "#0284C7";
+  return { background: `linear-gradient(135deg, ${cor}, ${cor}bb)` };
 }
 
 function share(token) {
@@ -84,182 +88,185 @@ export default function PublicForm() {
         ? "Esta avaliação foi encerrada. O formulário não está mais recebendo respostas."
         : "Este link não é válido ou foi substituído. Peça um link novo ao seu corretor.";
     return (
-      <Shell title="MaterImob" subtitle="">
-        <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">{msg}</div>
-      </Shell>
+      <Pagina titulo="MaterImob">
+        <div className="mt-5 rounded-card bg-light p-4 text-body-sm text-graytext">{msg}</div>
+      </Pagina>
     );
   }
 
   if (view === "done") {
     return (
-      <Shell title={data.title} subtitle={data.subtitle}>
-        <div className="mt-6 text-center">
-          <div className="mx-auto my-6 flex h-[66px] w-[66px] items-center justify-center rounded-full bg-light text-[28px] text-gold">✓</div>
-          <h2 className="font-serif text-[21px] font-semibold text-charcoal">Avaliação enviada</h2>
-          <p className="mx-auto mt-2 mb-6 max-w-xs text-[14.5px] text-graytext">{doneMsg}</p>
-          <button
-            onClick={() => setView("funnel")}
-            className="w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white"
-          >
+      <Pagina titulo={data.title} subtitulo={data.subtitle}>
+        <div className="mt-8 text-center">
+          <div className="mx-auto mb-6 grid h-[72px] w-[72px] place-items-center rounded-full bg-brand text-white">
+            <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12.5l4.5 4.5L19 7.5" />
+            </svg>
+          </div>
+          <h2 className="text-headline font-bold tracking-[-0.035em] text-charcoal">Pronto!</h2>
+          <p className="mx-auto mt-2.5 mb-7 max-w-[30ch] text-base text-graytext">{doneMsg}</p>
+          <Button size="lg" block onClick={() => setView("funnel")}>
             Avaliar outro imóvel
-          </button>
-          <div className="h-[10px]" />
-          <button
-            onClick={() => share(token)}
-            className="w-full rounded-[11px] border-[1.5px] border-rule bg-white px-[18px] py-[13px] text-[15px] font-bold text-charcoal"
-          >
+          </Button>
+          <div className="h-2.5" />
+          <Button size="lg" block variant="secondary" onClick={() => share(token)}>
             Compartilhar com outra pessoa
-          </button>
-          <p className="mt-6 text-[11px] text-muted">
-            Obrigado! Suas impressões ajudam a afinar a busca.
-          </p>
+          </Button>
+          <p className="mt-6 text-caption text-muted">Obrigado! Suas impressões ajudam a afinar a busca.</p>
         </div>
-      </Shell>
+      </Pagina>
     );
   }
 
   if (view === "choose-unit" && current) {
     return (
-      <Shell title={data.title} subtitle={data.subtitle}>
-        <ChooseUnit
-          property={current.property}
-          draft={draft}
-          onBack={() => setView("funnel")}
-          onChoose={(unitId) => {
-            setCurrent({ property: current.property, unitId });
-            setView("form");
-          }}
-        />
-      </Shell>
+      <ChooseUnit
+        property={current.property}
+        draft={draft}
+        onBack={() => setView("funnel")}
+        onChoose={(unitId) => {
+          setCurrent({ property: current.property, unitId });
+          setView("form");
+        }}
+      />
     );
   }
 
   if (view === "form" && current) {
     return (
-      <Shell title={data.title} subtitle={data.subtitle}>
-        <EvaluationForm
-          token={token}
-          property={current.property}
-          unitId={current.unitId}
-          criteria={data.criteria}
-          unitCriteria={data.unit_criteria}
-          draft={draft}
-          onPersist={persist}
-          onBack={() => setView(current.property.units?.length > 0 ? "choose-unit" : "funnel")}
-          onDone={(msg) => {
-            setDoneMsg(msg);
-            setView("done");
-          }}
-        />
-      </Shell>
+      <EvaluationForm
+        key={`${current.property.id}-${current.unitId ?? ""}`}
+        token={token}
+        property={current.property}
+        unitId={current.unitId}
+        criteria={data.criteria}
+        unitCriteria={data.unit_criteria}
+        draft={draft}
+        onPersist={persist}
+        onBack={() => setView(current.property.units?.length > 0 ? "choose-unit" : "funnel")}
+        onDone={(msg) => {
+          setDoneMsg(msg);
+          setView("done");
+        }}
+      />
     );
   }
 
   return (
-    <Shell title={data.title} subtitle={data.subtitle}>
-      <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
-        <b className="text-charcoal">Como funciona.</b> Você escolhe o que avaliar: o
-        empreendimento em geral, uma unidade específica, ou os dois — são notas diferentes,
-        porque gostar do prédio e gostar de uma unidade específica não é a mesma coisa. Leva
-        poucos minutos por imóvel e o que escrever fica salvo neste celular, mesmo sem internet.
-      </div>
-
-      <Funnel
-        properties={data.properties}
-        draft={draft}
-        onOpen={(property) => {
-          if (property.units?.length > 0) {
-            setCurrent({ property, unitId: null });
-            setView("choose-unit");
-          } else {
-            setCurrent({ property, unitId: "" });
-            setView("form");
-          }
-        }}
-      />
-
-      <button
-        onClick={() => share(token)}
-        className="mt-3 w-full rounded-[11px] border-[1.5px] border-rule bg-white px-[18px] py-[13px] text-[15px] font-bold text-charcoal"
-      >
-        Compartilhar este link
-      </button>
-      <p className="py-[22px] text-center text-[11px] text-muted">
-        Suas respostas vão direto para o seu corretor. Nada é publicado.
-      </p>
-    </Shell>
+    <Funnel
+      title={data.title}
+      subtitle={data.subtitle}
+      properties={data.properties}
+      draft={draft}
+      onShare={() => share(token)}
+      onOpen={(property) => {
+        if (property.units?.length > 0) {
+          setCurrent({ property, unitId: null });
+          setView("choose-unit");
+        } else {
+          setCurrent({ property, unitId: "" });
+          setView("form");
+        }
+      }}
+    />
   );
 }
 
-function Funnel({ properties, draft, onOpen }) {
+function Funnel({ title, subtitle, properties, draft, onOpen, onShare }) {
   const groups = STAGES.map((st) => ({
     ...st,
     items: properties.filter((p) => (p.stage || "a-visitar") === st.key),
   })).filter((g) => g.items.length);
-
-  if (!groups.length) {
-    return (
-      <div className="mt-5 rounded-xl bg-light p-[14px] text-[12.5px] text-graytext">
-        Nenhum imóvel cadastrado ainda.
-      </div>
-    );
-  }
+  const [aba, setAba] = useState(groups.find((g) => g.key === "visitado")?.key ?? groups[0]?.key);
+  const atual = groups.find((g) => g.key === aba) ?? groups[0];
 
   return (
-    <>
-      {groups.map((g) => (
-        <div key={g.key}>
-          <h2 className="mt-[26px] mb-[10px] flex items-center gap-[7px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-            <span className="inline-block h-[7px] w-[7px] rounded-full" style={{ background: g.chipColor }} />
-            {g.label} · {g.items.length}
-          </h2>
-          {g.items.map((p) => {
-            const feitas = [];
-            const geral = draft.ans?.[evalKey(p.id, "")];
-            if (geral?.sent) feitas.push({ nome: "empreendimento", nota: geral.nota });
-            (p.units ?? []).forEach((u) => {
-              const a = draft.ans?.[evalKey(p.id, u.id)];
-              if (a?.sent) feitas.push({ nome: u.name, nota: a.nota });
-            });
-
-            let botaoLabel = p.units?.length > 0 ? "Avaliar" : "Avaliar o empreendimento";
-            if (feitas.length > 0) {
-              botaoLabel = p.units?.length > 0 ? "Avaliar mais" : "Avaliar de novo";
-            }
-
-            return (
-              <div
-                key={p.id}
-                className="mb-3 rounded-[14px] border border-rule border-l-4 bg-white p-4"
-                style={{ borderLeftColor: p.color || "#0284C7" }}
-              >
-                <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{p.name}</h3>
-                {p.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{p.address}</p>}
-                {p.summary && <p className="m-0 mb-3 text-xs text-graytext">{p.summary}</p>}
-                <PropertyMedia property={p} />
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Chip bg={g.chipBg} color={g.chipColor}>
-                    {g.label}
-                  </Chip>
-                  {p.units?.length > 0 && <Chip>{p.units.length} unidade(s)</Chip>}
-                  <button
-                    onClick={() => onOpen(p)}
-                    className="flex-1 rounded-[11px] border-[1.5px] border-rule bg-white px-[14px] py-[9px] text-[13.5px] font-bold text-charcoal"
-                  >
-                    {botaoLabel}
-                  </button>
-                </div>
-                {feitas.length > 0 && (
-                  <span className="mt-[10px] block text-xs font-bold text-[#2E7D32]">
-                    ✓ {feitas.map((f) => `${f.nome} · ${f.nota}/10`).join("  ·  ")}
-                  </span>
-                )}
-              </div>
-            );
-          })}
+    <div className="min-h-screen bg-bg">
+      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto max-w-[640px] px-5 pt-[calc(0.875rem+env(safe-area-inset-top))]">
+          <div className="text-caption font-semibold tracking-[.06em] text-brand uppercase">MaterImob</div>
+          <h1 className="text-title font-bold tracking-tight text-charcoal">{title}</h1>
+          {subtitle && <p className="text-body-sm text-graytext">{subtitle}</p>}
+          {groups.length > 0 && (
+            <div role="tablist" className="-mx-3 mt-2.5 flex gap-0.5 overflow-x-auto px-3">
+              {groups.map((g) => (
+                <button
+                  key={g.key}
+                  role="tab"
+                  aria-selected={atual?.key === g.key}
+                  onClick={() => setAba(g.key)}
+                  className={`relative min-h-[46px] flex-none px-3.5 text-body-sm font-semibold whitespace-nowrap transition-colors duration-200 ${
+                    atual?.key === g.key ? "text-charcoal" : "text-graytext"
+                  }`}
+                >
+                  {g.label}
+                  <em className="ml-1.5 rounded-full bg-light px-1.5 text-[11px] text-graytext not-italic">{g.items.length}</em>
+                  {atual?.key === g.key && <span className="absolute inset-x-3 bottom-0 h-[3px] rounded-t-full bg-brand" />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
-    </>
+      </header>
+
+      <div className="mx-auto max-w-[640px] px-5 pt-[18px] pb-10">
+        <div className="mb-4 rounded-card bg-brand-soft p-4 text-body-sm text-sky-900">
+          <b>Como funciona.</b> Você escolhe o que avaliar: o empreendimento em geral, uma unidade específica, ou os dois.
+          São notas diferentes, porque gostar do prédio e gostar de uma unidade específica não é a mesma coisa. Leva poucos
+          minutos por imóvel e o que escrever fica salvo neste celular, mesmo sem internet.
+        </div>
+
+        {!atual && <div className="rounded-card bg-light p-4 text-body-sm text-graytext">Nenhum imóvel cadastrado ainda.</div>}
+
+        {atual?.items.map((p) => {
+          const feitas = [];
+          const geral = draft.ans?.[evalKey(p.id, "")];
+          if (geral?.sent) feitas.push({ nome: "empreendimento", nota: geral.nota });
+          (p.units ?? []).forEach((u) => {
+            const a = draft.ans?.[evalKey(p.id, u.id)];
+            if (a?.sent) feitas.push({ nome: u.name, nota: a.nota });
+          });
+          const rotulo = feitas.length > 0 ? (p.units?.length > 0 ? "Avaliar mais" : "Avaliar de novo") : "Avaliar";
+
+          return (
+            <button
+              key={p.id}
+              onClick={() => onOpen(p)}
+              className="mb-2.5 flex min-h-[76px] w-full items-center gap-3.5 rounded-[22px] border border-slate-200/70 bg-white p-3.5 text-left transition-all duration-200 hover:shadow-soft"
+            >
+              <span className="h-[52px] w-[52px] flex-none rounded-2xl" style={capa(p.color)} />
+              <span className="min-w-0 flex-1">
+                <b className="block text-base tracking-tight text-charcoal">{p.name}</b>
+                {p.address && <small className="block text-body-sm text-graytext">{p.address}</small>}
+                {p.units?.length > 0 && <small className="block text-caption text-muted">{p.units.length} unidade(s)</small>}
+                {feitas.length > 0 && (
+                  <small className="mt-0.5 block text-caption font-semibold text-success-text">
+                    ✓ {feitas.map((f) => `${f.nome} · ${f.nota}/10`).join("  ·  ")}
+                  </small>
+                )}
+              </span>
+              <span className="flex-none rounded-full bg-brand-soft px-3 py-1 text-caption font-semibold text-sky-800">{rotulo}</span>
+            </button>
+          );
+        })}
+
+        <Button block variant="secondary" size="lg" className="mt-5" onClick={onShare}>
+          Compartilhar este link
+        </Button>
+        <p className="py-6 text-center text-caption text-muted">Suas respostas vão direto para o seu corretor. Nada é publicado.</p>
+      </div>
+    </div>
+  );
+}
+
+function Voltar({ onClick, rotulo = "Voltar" }) {
+  return (
+    <button onClick={onClick} className="-ml-1 inline-flex min-h-11 items-center gap-1 px-1 text-body-sm font-semibold text-graytext">
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M15 6l-6 6 6 6" />
+      </svg>
+      {rotulo}
+    </button>
   );
 }
 
@@ -272,52 +279,48 @@ function ChooseUnit({ property, draft, onBack, onChoose }) {
   const geralDone = draft.ans?.[evalKey(property.id, "")]?.sent;
 
   return (
-    <div className="mt-5 pb-10">
-      <button onClick={onBack} className="p-0 py-[6px] text-sm text-graytext">
-        ← voltar
-      </button>
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto max-w-[640px] px-5 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-10">
+        <Voltar onClick={onBack} />
+        <p className="mt-7 mb-1 text-body-sm font-semibold text-brand">{property.name}</p>
+        <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">
+          O que você quer avaliar agora?
+        </h2>
+        <PropertyMedia property={property} />
 
-      <div
-        className="mt-[10px] rounded-[14px] border border-rule border-l-4 bg-white p-4"
-        style={{ borderLeftColor: property.color || "#1C1C1C" }}
-      >
-        <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{property.name}</h3>
-        <p className="m-0 text-[12.5px] text-graytext">
-          Escolha o que quer avaliar. Pode fazer o empreendimento, uma ou mais unidades, ou tudo.
-        </p>
-      </div>
-
-      <div className="mt-3 space-y-2">
-        <button
-          onClick={() => onChoose("")}
-          className="flex w-full items-center justify-between rounded-[12px] border-[1.5px] border-rule bg-white p-3 text-left hover:border-gold"
-        >
-          <span className="block text-[14.5px] font-bold text-charcoal">O empreendimento em geral</span>
-          {geralDone && <span className="shrink-0 text-xs font-bold text-[#2E7D32]">✓ avaliado</span>}
-        </button>
-
-        {(property.units ?? []).map((u) => {
-          const done = draft.ans?.[evalKey(property.id, u.id)]?.sent;
-          return (
-            <button
+        <div className="mt-7 grid gap-2.5">
+          <Opcao marca="★" titulo="O empreendimento em geral" detalhe="Projeto, localização e lazer" feito={geralDone} onClick={() => onChoose("")} />
+          {(property.units ?? []).map((u) => (
+            <Opcao
               key={u.id}
+              marca={u.name.split(" ").slice(-1)[0].slice(0, 3)}
+              titulo={u.name}
+              detalhe={u.table_value != null ? `R$ ${Math.round(u.table_value).toLocaleString("pt-BR")}` : null}
+              feito={draft.ans?.[evalKey(property.id, u.id)]?.sent}
               onClick={() => onChoose(u.id)}
-              className="flex w-full items-center justify-between rounded-[12px] border-[1.5px] border-rule bg-white p-3 text-left hover:border-gold"
-            >
-              <span>
-                <span className="block text-[14.5px] font-bold text-charcoal">{u.name}</span>
-                {u.table_value != null && (
-                  <span className="block text-[12.5px] text-graytext">
-                    R$ {Math.round(u.table_value).toLocaleString("pt-BR")}
-                  </span>
-                )}
-              </span>
-              {done && <span className="shrink-0 text-xs font-bold text-[#2E7D32]">✓ avaliada</span>}
-            </button>
-          );
-        })}
+            />
+          ))}
+        </div>
       </div>
     </div>
+  );
+}
+
+function Opcao({ marca, titulo, detalhe, feito, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex min-h-16 w-full items-center gap-3.5 rounded-[18px] border border-slate-200 bg-white px-[18px] py-2.5 text-left transition-all duration-200 hover:border-slate-300"
+    >
+      <span className={`grid h-9 min-w-9 flex-none place-items-center rounded-full px-1 text-[14px] font-bold ${feito ? "bg-success-bg text-success-text" : "bg-light text-graytext"}`}>
+        {feito ? "✓" : marca}
+      </span>
+      <span className="min-w-0 flex-1">
+        <b className="block text-base leading-tight text-charcoal">{titulo}</b>
+        {detalhe && <small className="text-body-sm text-graytext">{detalhe}</small>}
+      </span>
+      {feito && <span className="shrink-0 text-caption font-semibold text-success-text">avaliado</span>}
+    </button>
   );
 }
 
@@ -343,9 +346,15 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
   const [perguntasMarcadas, setPerguntasMarcadas] = useState(existing.perguntas ?? []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [passo, setPasso] = useState(0);
 
   const unit = (property.units ?? []).find((u) => u.id === unitId) || null;
-  const accent = property.color || "#1C1C1C";
+  const nCrit = allCriteria.length;
+  // passos: um por critério, depois comentários, nota geral (com perguntas) e, por último, quem avalia
+  const total = nCrit + 3;
+  const iComentarios = nCrit;
+  const iGeral = nCrit + 1;
+  const iQuem = nCrit + 2;
 
   useEffect(() => {
     const d = {
@@ -377,15 +386,25 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
     setPerguntasMarcadas((qs) => (qs.includes(q) ? qs.filter((x) => x !== q) : [...qs, q]));
   }
 
-  const base = isGeral ? criteria.length : (unitCriteria ?? []).length;
-  const progressTotal = allCriteria.length + 2;
-  const progressDone = Object.keys(notas).length + (nome ? 1 : 0) + (nota ? 1 : 0);
-  const progressPct = Math.round((progressDone / progressTotal) * 100);
+  function anterior() {
+    setError("");
+    if (passo === 0) onBack();
+    else setPasso((p) => p - 1);
+  }
+
+  function escolher(crit, n) {
+    setNotas((s) => ({ ...s, [crit]: n }));
+    const daqui = passo;
+    setTimeout(() => setPasso((p) => (p === daqui ? p + 1 : p)), 220);
+  }
 
   async function handleSubmit() {
     setError("");
     if (!nome.trim()) return setError("Escreva seu nome para identificarmos a avaliação.");
-    if (!nota) return setError("Falta a nota geral.");
+    if (!nota) {
+      setPasso(iGeral);
+      return setError("Falta a nota geral.");
+    }
 
     if (existing.sent) {
       const ok = await confirm(
@@ -426,205 +445,185 @@ function EvaluationForm({ token, property, unitId, criteria, unitCriteria, draft
     }
   }
 
+  const ultimo = passo === total - 1;
+  const rotuloPasso = ultimo ? "Última etapa" : `Passo ${passo + 1} de ${total}`;
+  const crit = passo < nCrit ? allCriteria[passo] : null;
+  const base = isGeral ? criteria.length : (unitCriteria ?? []).length;
+  const especifico = crit && base > 0 && passo >= base;
+
   return (
-    <div className="mt-5 pb-10">
-      <button onClick={onBack} className="p-0 py-[6px] text-sm text-graytext">
-        ← voltar
-      </button>
-
-      <div
-        className="mt-[10px] rounded-[14px] border border-rule border-l-4 bg-white p-4"
-        style={{ borderLeftColor: accent }}
-      >
-        <h3 className="font-serif m-0 mb-[3px] text-[17px] font-semibold text-charcoal">{property.name}</h3>
-        {property.address && <p className="m-0 mb-2 text-[12.5px] text-graytext">{property.address}</p>}
-        {property.summary && <p className="m-0 text-xs text-graytext">{property.summary}</p>}
-        <PropertyMedia property={property} />
-      </div>
-
-      {isGeral ? (
-        <div className="mt-3 rounded-[11px] bg-light p-3 text-[13px] text-graytext">
-          Você está avaliando <b className="text-charcoal">o empreendimento em geral</b> — o
-          projeto, a localização, o lazer. As unidades específicas têm sua própria avaliação depois.
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto flex min-h-screen max-w-[640px] flex-col px-5 pt-[calc(0.5rem+env(safe-area-inset-top))] pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
+        <div className="flex items-center justify-between gap-3">
+          <Voltar onClick={anterior} rotulo={passo === 0 ? "Sair" : "Anterior"} />
+          <span className="truncate text-body-sm font-semibold text-graytext">{unit ? `${property.name} · ${unit.name}` : property.name}</span>
         </div>
-      ) : (
-        <div className="mt-3 rounded-[14px] border-[1.5px] border-rule bg-white p-4">
-          <p className="m-0 text-[10.5px] font-bold tracking-[.14em] text-gold uppercase">
-            Avaliando a unidade
-          </p>
-          <h4 className="font-serif mt-1 mb-0 text-[15px] font-semibold text-charcoal">{unit?.name}</h4>
-          {unit?.table_value != null && (
-            <div className="mt-[10px] rounded-[11px] bg-light p-3 text-[13px] text-graytext">
-              Valor de tabela desta unidade:{" "}
-              <b className="text-charcoal">R$ {Math.round(unit.table_value).toLocaleString("pt-BR")}</b>
-            </div>
-          )}
-          {unit && <PropertyMedia property={unit} />}
-        </div>
-      )}
-
-      <SectionLabel>Quem está avaliando</SectionLabel>
-      <Field label="Seu nome" value={nome} onChange={setNome} placeholder="Ex.: Pedro Machado" />
-      <Field
-        label="Relação com a decisão (opcional)"
-        value={relacao}
-        onChange={setRelacao}
-        placeholder="Ex.: esposa, filho, arquiteta, consultor"
-      />
-
-      <SectionLabel>Dê sua nota de 1 a 5</SectionLabel>
-      <div>
-        {allCriteria.map((c, i) => (
-          <div key={c} className="border-b border-rule py-[13px] last:border-0">
-            {i === base && (
-              <span className="mb-[6px] inline-block text-[10.5px] font-bold uppercase tracking-[.08em] text-gold">
-                Específico deste imóvel
-              </span>
-            )}
-            <label className="mb-[9px] block text-sm text-charcoal">{c}</label>
-            <div className="flex gap-[6px]">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setNotas((s) => ({ ...s, [c]: n }))}
-                  className="h-[46px] flex-1 rounded-[10px] border-[1.5px] text-[15px] font-bold"
-                  style={
-                    notas[c] === n
-                      ? { background: accent, borderColor: accent, color: "#fff" }
-                      : { background: "#fff", borderColor: "#E2DED6", color: "#5C5C5C" }
-                  }
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            {i === 0 && (
-              <div className="mt-[7px] flex justify-between text-[11px] text-muted">
-                <span>1 · não atendeu</span>
-                <span>5 · superou</span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <SectionLabel>O que mais me agradou</SectionLabel>
-      <TextArea value={bom} onChange={setBom} placeholder="O que te marcou positivamente?" />
-
-      <SectionLabel>Ressalvas e pontos de atenção</SectionLabel>
-      <TextArea value={ruim} onChange={setRuim} placeholder="O que te incomodou ou ficou em dúvida?" />
-
-      {property.questions?.length > 0 && (
-        <div>
-          <SectionLabel>Perguntas para o corretor</SectionLabel>
-          {property.questions.map((q) => (
-            <label
-              key={q}
-              className="flex items-start gap-[10px] border-b border-rule py-[10px] text-[13.5px] text-graytext last:border-0"
-            >
-              <input
-                type="checkbox"
-                checked={perguntasMarcadas.includes(q)}
-                onChange={() => toggleQuestion(q)}
-                className="mt-[1px] h-5 w-5 flex-none accent-gold"
-              />
-              <span>{q}</span>
-            </label>
+        <div className="mt-1.5 flex gap-[5px]" aria-hidden="true">
+          {Array.from({ length: total }, (_, i) => (
+            <i key={i} className={`h-1 flex-1 rounded-full transition-colors duration-200 ${i <= passo ? "bg-brand" : "bg-rule"}`} />
           ))}
         </div>
-      )}
 
-      <SectionLabel>Nota geral deste imóvel</SectionLabel>
-      <div className="flex flex-wrap gap-[6px]">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => setNota(n)}
-            className="h-10 flex-1 basis-[calc(20%-5px)] rounded-lg border-[1.5px] text-[13.5px] font-bold"
-            style={
-              nota === n
-                ? { background: accent, borderColor: accent, color: "#fff" }
-                : { background: "#fff", borderColor: "#E2DED6", color: "#5C5C5C" }
-            }
-          >
-            {n}
-          </button>
-        ))}
-      </div>
-      <div className="mt-[7px] flex justify-between text-[11px] text-muted">
-        <span>1 · não me serve</span>
-        <span>10 · é este</span>
-      </div>
+        <div className="flex-1">
+          <p className="mt-9 mb-1 text-body-sm font-semibold text-brand">
+            {rotuloPasso}
+            {especifico && " · específico deste imóvel"}
+          </p>
 
-      <div className="sticky bottom-0 mt-2 bg-gradient-to-t from-bg from-[26%] to-transparent pt-4 pb-[calc(14px+env(safe-area-inset-bottom))]">
-        <div className="mb-[11px] h-[5px] overflow-hidden rounded-full bg-rule">
-          <div
-            className="h-full bg-gold transition-[width]"
-            style={{ width: `${progressPct}%` }}
-          />
+          {crit && (
+            <>
+              <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">{crit}</h2>
+              <div className="mt-7 grid gap-2.5">
+                {NOTAS_1A5.map(([n, rotulo]) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => escolher(crit, n)}
+                    aria-pressed={notas[crit] === n}
+                    className={`flex min-h-16 items-center gap-3.5 rounded-[18px] border px-[18px] text-left text-base font-semibold transition-all duration-200 ${
+                      notas[crit] === n ? "border-brand bg-[#f5fbff] text-charcoal" : "border-slate-200 bg-white text-slate-700"
+                    }`}
+                  >
+                    <span
+                      className={`grid h-9 w-9 flex-none place-items-center rounded-full text-[15px] transition-all duration-200 ${
+                        notas[crit] === n ? "bg-brand text-white" : "bg-light text-graytext"
+                      }`}
+                    >
+                      {n}
+                    </span>
+                    {rotulo}
+                  </button>
+                ))}
+              </div>
+              {passo === 0 && (
+                <>
+                  {!isGeral && unit?.table_value != null && (
+                    <div className="mt-5 rounded-xl bg-light p-3 text-[13px] text-graytext">
+                      Valor de tabela desta unidade:{" "}
+                      <b className="text-charcoal">R$ {Math.round(unit.table_value).toLocaleString("pt-BR")}</b>
+                    </div>
+                  )}
+                  <PropertyMedia property={unit ?? property} />
+                </>
+              )}
+            </>
+          )}
+
+          {passo === iComentarios && (
+            <>
+              <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">
+                O que você achou, em poucas palavras?
+              </h2>
+              <div className="mt-7 space-y-3.5">
+                <div>
+                  <label className="mb-1.5 block text-caption font-medium text-graytext">O que mais me agradou</label>
+                  <textarea
+                    value={bom}
+                    onChange={(e) => setBom(e.target.value)}
+                    placeholder="O que te marcou positivamente?"
+                    className={`${classesCampo} min-h-[92px] py-3 text-base`}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-caption font-medium text-graytext">Ressalvas e pontos de atenção</label>
+                  <textarea
+                    value={ruim}
+                    onChange={(e) => setRuim(e.target.value)}
+                    placeholder="O que te incomodou ou ficou em dúvida?"
+                    className={`${classesCampo} min-h-[92px] py-3 text-base`}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {passo === iGeral && (
+            <>
+              <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">
+                Qual a sua nota geral para este imóvel?
+              </h2>
+              <div className="mt-7">
+                <div className="grid grid-cols-5 gap-1.5">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setNota(n)}
+                      aria-pressed={nota === n}
+                      className={`h-[52px] rounded-xl border text-base font-bold transition-all duration-200 ${
+                        nota === n ? "border-charcoal bg-charcoal text-white" : "border-slate-200 bg-white text-graytext"
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-1.5 flex justify-between text-[11.5px] text-muted">
+                  <span>1 · não me serve</span>
+                  <span>10 · é este</span>
+                </div>
+              </div>
+              {property.questions?.length > 0 && (
+                <div className="mt-6">
+                  <span className="mb-1 block text-caption font-semibold tracking-[.08em] text-muted uppercase">Perguntas para o corretor</span>
+                  {property.questions.map((q) => (
+                    <label key={q} className="flex min-h-12 cursor-pointer items-start gap-3 border-t border-slate-100 py-2.5 text-body-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={perguntasMarcadas.includes(q)}
+                        onChange={() => toggleQuestion(q)}
+                        className="mt-0.5 h-[22px] w-[22px] flex-none accent-brand"
+                      />
+                      <span>{q}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {passo === iQuem && (
+            <>
+              <h2 className="text-[28px] leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">Quem está avaliando?</h2>
+              <div className="mt-7 space-y-3.5">
+                <Input label="Seu nome" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Pedro Machado" />
+                <Input
+                  label="Relação com a decisão (opcional)"
+                  value={relacao}
+                  onChange={(e) => setRelacao(e.target.value)}
+                  placeholder="Ex.: esposa, filho, arquiteta, consultor"
+                />
+              </div>
+            </>
+          )}
         </div>
-        <button
-          onClick={handleSubmit}
-          disabled={busy}
-          className="w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white disabled:opacity-45"
-        >
-          {busy ? "Enviando…" : "Enviar avaliação"}
-        </button>
-        {error && <p className="mt-2 text-[13px] text-[#B34A2E]">{error}</p>}
+
+        <div className="mt-8 grid gap-2.5">
+          {ultimo ? (
+            <Button size="lg" block onClick={handleSubmit} disabled={busy}>
+              {busy ? "Enviando…" : "Enviar avaliação"}
+            </Button>
+          ) : (
+            <Button size="lg" block variant={crit && !notas[crit] ? "secondary" : "primary"} onClick={() => setPasso((p) => p + 1)}>
+              {crit && !notas[crit] ? "Pular" : "Continuar"}
+            </Button>
+          )}
+          {error && <p className="text-center text-[13px] text-danger-text">{error}</p>}
+        </div>
       </div>
     </div>
   );
 }
 
-function SectionLabel({ children }) {
-  return (
-    <h2 className="mt-[26px] mb-[10px] text-[11px] font-bold uppercase tracking-[.14em] text-graytext first:mt-[6px]">
-      {children}
-    </h2>
-  );
-}
-
-function Field({ label, value, onChange, placeholder }) {
-  return (
-    <>
-      <label className="mt-[14px] mb-[6px] block text-[13px] font-semibold text-charcoal">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
-      />
-    </>
-  );
-}
-
-function TextArea({ value, onChange, placeholder }) {
-  return (
-    <textarea
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="min-h-[86px] w-full resize-y rounded-[11px] border-[1.5px] border-rule bg-white p-3 text-base text-charcoal"
-    />
-  );
-}
-
-function Shell({ title, subtitle, children }) {
+function Pagina({ titulo, subtitulo, children }) {
   return (
     <div className="min-h-screen bg-bg">
-      <header className="bg-charcoal px-4 pt-[22px] pb-5 text-white">
-        <div className="mx-auto max-w-[640px]">
-          <div className="text-[11px] font-bold uppercase tracking-[.18em] text-gold">
-            MaterImob
-          </div>
-          <h1 className="font-serif mt-2 mb-1 text-[23px] font-semibold leading-tight">{title}</h1>
-          {subtitle && <p className="m-0 text-[13px] text-[#C9C9C9]">{subtitle}</p>}
-        </div>
+      <header className="mx-auto max-w-[640px] px-5 pt-[calc(1.5rem+env(safe-area-inset-top))]">
+        <div className="text-caption font-semibold tracking-[.06em] text-brand uppercase">MaterImob</div>
+        <h1 className="mt-1 text-headline leading-[1.1] font-bold tracking-[-0.035em] text-balance text-charcoal">{titulo}</h1>
+        {subtitulo && <p className="mt-2 text-base text-graytext">{subtitulo}</p>}
       </header>
-      <div className="mx-auto max-w-[640px] px-4 pb-10">{children}</div>
+      <div className="mx-auto max-w-[640px] px-5 pb-10">{children}</div>
     </div>
   );
 }
