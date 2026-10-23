@@ -14,6 +14,9 @@ import { Map } from "../components/Map";
 import { useFeedback } from "../lib/feedback";
 import { useProfile } from "../lib/useProfile";
 import Button from "../components/ui/Button";
+import Input, { classesCampo } from "../components/ui/Input";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -663,6 +666,8 @@ function MilestonesEditor({ selection, onSaved }) {
 
 function PropertyCard({ property, onChange, currentUserId, clientId }) {
   const { confirm, toast } = useFeedback();
+  const [aberto, setAberto] = useState(false);
+  const capaAcademia = useCapasAcademia();
   const [showUnitForm, setShowUnitForm] = useState(false);
   const [unitName, setUnitName] = useState("");
   const [unitValue, setUnitValue] = useState("");
@@ -838,239 +843,227 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
     toast(erro ? "Erro: " + erro.message : `Venda de "${unit.name}" confirmada.`, erro ? "danger" : "success");
   }
 
+  const unidades = property.units ?? [];
+  const statusDe = (u) => u.launch_unit?.status ?? u.portfolio_unit?.status ?? (u.sold ? "vendida" : undefined);
+  const visitadas = unidades.filter((u) => u.visited).length;
+  const reservaSua = unidades.some((u) => {
+    const r = u.launch_unit?.status === "reservada" && u.launch_unit?.reserved_by === currentUserId;
+    const p = u.portfolio_unit?.status === "reservada" && u.portfolio_unit?.reserved_by === currentUserId;
+    return r || p;
+  });
+  const vendidas = unidades.filter((u) => statusDe(u) === "vendida").length;
+  const etapa = STAGES.find((s) => s.value === property.stage)?.label ?? "A visitar";
+  const area = `${classesCampo} min-h-[84px] py-3`;
+  const chip = "rounded-full px-2.5 py-0.5 text-caption font-semibold";
+
   return (
-    <div className="rounded-card border border-slate-200/70 bg-white p-4">
-      <div className="flex flex-wrap items-end gap-[10px]">
-        <div className="min-w-[160px] flex-[2]">
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome do imóvel</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Cor</label>
-          <input
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="mt-1 h-[38px] w-[52px] rounded-[9px] border border-slate-200 p-1"
-          />
-        </div>
-        <div className="min-w-[150px]">
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Etapa no funil</label>
-          <select
-            value={property.stage}
-            onChange={(e) => updateStage(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          >
-            {STAGES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
-      <input
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
-        Resumo (construtora, arquitetura, metragem, vagas)
-      </label>
-      <input
-        value={summary}
-        onChange={(e) => setSummary(e.target.value)}
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <div className="mt-3 flex flex-wrap gap-4">
-        <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
-        <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
-      </div>
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
-      <textarea
-        value={paymentTerms}
-        onChange={(e) => setPaymentTerms(e.target.value)}
-        rows={2}
-        placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <div className="mt-3 flex flex-wrap gap-4">
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Condomínio</label>
-          <input
-            type="number"
-            value={condoValue}
-            onChange={(e) => setCondoValue(e.target.value)}
-            placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">IPTU</label>
-          <input
-            type="number"
-            value={iptuValue}
-            onChange={(e) => setIptuValue(e.target.value)}
-            placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          />
-        </div>
-      </div>
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
-        Critérios extras só deste imóvel (um por linha)
-      </label>
-      <textarea
-        value={extraCriteria}
-        onChange={(e) => setExtraCriteria(e.target.value)}
-        rows={2}
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
-        Critérios extras das unidades, só deste imóvel (um por linha)
-      </label>
-      <textarea
-        value={extraUnitCriteria}
-        onChange={(e) => setExtraUnitCriteria(e.target.value)}
-        rows={2}
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
-        Perguntas para o corretor (uma por linha)
-      </label>
-      <textarea
-        value={questions}
-        onChange={(e) => setQuestions(e.target.value)}
-        rows={2}
-        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-      />
-
-      <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Fases no cronograma</label>
-      {phases.map((f, i) => (
-        <div key={i} className="mt-2 flex flex-wrap items-end gap-[8px]">
-          <div className="min-w-[120px] flex-[2]">
-            <input
-              value={f.nome}
-              onChange={(e) => updatePhase(i, "nome", e.target.value)}
-              placeholder="Fase"
-              className="w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-            />
-          </div>
-          <input
-            type="date"
-            value={f.inicio}
-            onChange={(e) => updatePhase(i, "inicio", e.target.value)}
-            className="rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          />
-          <input
-            type="date"
-            value={f.fim}
-            onChange={(e) => updatePhase(i, "fim", e.target.value)}
-            className="rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
-          />
-          <button
-            onClick={() => removePhase(i)}
-            className="rounded-lg border-[1.5px] border-[#E8D3CD] px-3 py-2 text-xs font-bold text-danger-text"
-          >
-            ×
-          </button>
-        </div>
-      ))}
-      <button onClick={addPhase} className="mt-2 text-xs font-bold text-graytext underline">
-        + fase
+    <>
+      <button
+        onClick={() => setAberto(true)}
+        className="flex min-h-24 w-full items-center gap-3.5 rounded-[22px] border border-slate-200/70 bg-white p-3.5 text-left transition-all duration-200 ease-out hover:border-slate-300 hover:shadow-soft"
+      >
+        <span className="h-[84px] w-[84px] flex-none rounded-[14px] max-sm:h-16 max-sm:w-16" style={estiloCapa(property.color, property.photo_urls, capaAcademia(property.name))} />
+        <span className="grid min-w-0 flex-1 gap-1">
+          <b className="text-base tracking-tight text-charcoal">{property.name}</b>
+          {property.address && <small className="truncate text-body-sm text-graytext">{property.address}</small>}
+          <span className="flex flex-wrap gap-1.5">
+            <span className={`${chip} ${property.stage === "negociacao" ? "bg-brand-soft text-sky-800" : property.stage === "visitado" ? "bg-success-bg text-success-text" : "bg-light text-graytext"}`}>{etapa}</span>
+            <span className={`${chip} bg-light text-graytext`}>{unidades.length ? `${visitadas}/${unidades.length} visitadas` : "Sem unidades"}</span>
+            {reservaSua && <span className={`${chip} bg-warning-bg text-warning-text`}>Reserva sua</span>}
+            {vendidas > 0 && <span className={`${chip} bg-danger-bg text-danger-text`}>{vendidas} vendida(s)</span>}
+          </span>
+        </span>
       </button>
 
-      <label className="mt-4 block text-[11.5px] font-bold text-graytext uppercase">
-        Unidades visitadas e valor de tabela
-      </label>
-      <div className="mt-1 space-y-1">
-        {(property.units ?? []).map((u) => {
-          const status = u.launch_unit?.status ?? u.portfolio_unit?.status ?? (u.sold ? "vendida" : undefined);
-          const reservedFor = u.launch_unit?.reserved_for ?? u.portfolio_unit?.reserved_for;
-          const canConfirmSale = u.launch_unit_id
-            ? u.launch_unit?.status === "reservada" && u.launch_unit?.reserved_by === currentUserId
-            : u.portfolio_unit_id
-              ? u.portfolio_unit?.status === "reservada" && u.portfolio_unit?.reserved_by === currentUserId
-              : !u.sold;
-          return (
-            <UnitEditRow
-              key={u.id}
-              unit={{ ...u, status, reserved_for: reservedFor }}
-              onSave={saveUnit}
-              onRemove={removeUnit}
-              onToggleVisited={toggleVisited}
-              onMarkSold={() => confirmSale(u)}
-              canConfirmSale={canConfirmSale}
-            />
-          );
-        })}
-      </div>
+      {aberto && (
+        <div className="fixed inset-0 z-[60]">
+          <div className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onClick={() => setAberto(false)} />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label={property.name}
+            className="absolute inset-x-0 top-[8%] bottom-0 flex flex-col rounded-t-sheet bg-white shadow-float md:inset-y-0 md:right-0 md:left-auto md:w-[540px] md:rounded-none"
+          >
+            <div className="flex items-center gap-3 border-b border-slate-200/70 px-6 py-4">
+              <span className="h-9 w-9 flex-none rounded-[11px]" style={estiloCapa(color, photoUrls, capaAcademia(name))} />
+              <h2 className="min-w-0 flex-1 truncate text-title font-semibold tracking-tight text-charcoal">{property.name}</h2>
+              <Button variant="ghost" size="sm" onClick={() => setAberto(false)} aria-label="Fechar">
+                ✕
+              </Button>
+            </div>
 
-      {showUnitForm ? (
-        <form onSubmit={addUnit} className="mt-3 flex flex-wrap items-end gap-2">
-          <div className="min-w-[160px] flex-1">
-            <label className="block text-xs text-graytext">Unidade</label>
-            <input
-              value={unitName}
-              onChange={(e) => setUnitName(e.target.value)}
-              className="mt-1 w-full rounded border border-rule px-2 py-1 text-sm"
-              placeholder="403 · Sereine · 216 m²"
-            />
-          </div>
-          <div className="w-32">
-            <label className="block text-xs text-graytext">Valor tabela</label>
-            <input
-              type="number"
-              value={unitValue}
-              onChange={(e) => setUnitValue(e.target.value)}
-              className="mt-1 w-full rounded border border-rule px-2 py-1 text-sm"
-            />
-          </div>
-          <button type="submit" className="rounded bg-brand px-2 py-1 text-sm font-bold text-white hover:bg-brand-hover">
-            Adicionar
-          </button>
-        </form>
-      ) : (
-        <button onClick={() => setShowUnitForm(true)} className="mt-3 text-xs font-bold text-graytext underline">
-          + unidade
-        </button>
+            <div className="flex-1 overflow-y-auto px-6 pt-5">
+              <div className="space-y-7 pb-2">
+                <Bloco titulo="Funil">
+                  <div className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-control bg-light p-[3px]" role="group" aria-label="Etapa no funil">
+                    {STAGES.map((st) => (
+                      <button
+                        key={st.value}
+                        onClick={() => updateStage(st.value)}
+                        aria-pressed={property.stage === st.value}
+                        className={`min-h-9 rounded-[9px] px-3 text-[13px] font-semibold whitespace-nowrap transition-all duration-200 ${
+                          property.stage === st.value ? "bg-white text-charcoal shadow-sm" : "text-graytext hover:text-charcoal"
+                        }`}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+                </Bloco>
+
+                <Bloco titulo="Unidades visitadas e valor de tabela">
+                  <div className="space-y-1">
+                    {unidades.map((u) => {
+                      const status = statusDe(u);
+                      const reservedFor = u.launch_unit?.reserved_for ?? u.portfolio_unit?.reserved_for;
+                      const canConfirmSale = u.launch_unit_id
+                        ? u.launch_unit?.status === "reservada" && u.launch_unit?.reserved_by === currentUserId
+                        : u.portfolio_unit_id
+                          ? u.portfolio_unit?.status === "reservada" && u.portfolio_unit?.reserved_by === currentUserId
+                          : !u.sold;
+                      return (
+                        <UnitEditRow
+                          key={u.id}
+                          unit={{ ...u, status, reserved_for: reservedFor }}
+                          onSave={saveUnit}
+                          onRemove={removeUnit}
+                          onToggleVisited={toggleVisited}
+                          onMarkSold={() => confirmSale(u)}
+                          canConfirmSale={canConfirmSale}
+                        />
+                      );
+                    })}
+                  </div>
+                  {showUnitForm ? (
+                    <form onSubmit={addUnit} className="flex flex-wrap items-end gap-2">
+                      <div className="min-w-[160px] flex-1">
+                        <Input value={unitName} onChange={(e) => setUnitName(e.target.value)} placeholder="403 · Sereine · 216 m²" aria-label="Unidade" />
+                      </div>
+                      <div className="w-36">
+                        <Input type="number" value={unitValue} onChange={(e) => setUnitValue(e.target.value)} placeholder="Valor de tabela" aria-label="Valor de tabela" />
+                      </div>
+                      <Button type="submit">Adicionar</Button>
+                    </form>
+                  ) : (
+                    <div>
+                      <Button variant="secondary" size="sm" onClick={() => setShowUnitForm(true)}>
+                        + Unidade
+                      </Button>
+                    </div>
+                  )}
+                </Bloco>
+
+                <Bloco titulo="Dados">
+                  <div className="grid grid-cols-[1fr_auto] items-end gap-3.5">
+                    <Input label="Nome do imóvel" value={name} onChange={(e) => setName(e.target.value)} />
+                    <div>
+                      <span className="mb-1.5 block text-caption font-medium text-graytext">Cor</span>
+                      <input
+                        type="color"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        aria-label="Cor do imóvel"
+                        className="h-11 w-14 cursor-pointer rounded-control border border-slate-200 bg-white p-1"
+                      />
+                    </div>
+                  </div>
+                  <Input label="Endereço" value={address} onChange={(e) => setAddress(e.target.value)} />
+                  <Input label="Resumo (construtora, arquitetura, metragem, vagas)" value={summary} onChange={(e) => setSummary(e.target.value)} />
+                </Bloco>
+
+                <Bloco titulo="Planta, fotos e condições">
+                  <div className="flex flex-wrap gap-4">
+                    <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
+                    <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-caption font-medium text-graytext">Condições de pagamento</label>
+                    <textarea
+                      value={paymentTerms}
+                      onChange={(e) => setPaymentTerms(e.target.value)}
+                      rows={2}
+                      placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
+                      className={area}
+                    />
+                  </div>
+                  <div className="grid gap-3.5 sm:grid-cols-2">
+                    <Input label="Condomínio" type="number" value={condoValue} onChange={(e) => setCondoValue(e.target.value)} placeholder="Valor mensal" />
+                    <Input label="IPTU" type="number" value={iptuValue} onChange={(e) => setIptuValue(e.target.value)} placeholder="Valor mensal" />
+                  </div>
+                </Bloco>
+
+                <Bloco titulo="Critérios e perguntas">
+                  <div>
+                    <label className="mb-1.5 block text-caption font-medium text-graytext">Critérios extras só deste imóvel (um por linha)</label>
+                    <textarea value={extraCriteria} onChange={(e) => setExtraCriteria(e.target.value)} rows={2} className={area} />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-caption font-medium text-graytext">Critérios extras das unidades, só deste imóvel (um por linha)</label>
+                    <textarea value={extraUnitCriteria} onChange={(e) => setExtraUnitCriteria(e.target.value)} rows={2} className={area} />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-caption font-medium text-graytext">Perguntas para o corretor (uma por linha)</label>
+                    <textarea value={questions} onChange={(e) => setQuestions(e.target.value)} rows={2} className={area} />
+                  </div>
+                </Bloco>
+
+                <Bloco titulo="Fases no cronograma">
+                  {phases.map((f, i) => (
+                    <div key={i} className="grid grid-cols-2 items-center gap-2 sm:grid-cols-[1fr_140px_140px_auto]">
+                      <div className="col-span-2 sm:col-span-1">
+                        <Input value={f.nome} onChange={(e) => updatePhase(i, "nome", e.target.value)} placeholder="Fase" aria-label="Fase" />
+                      </div>
+                      <Input type="date" value={f.inicio} onChange={(e) => updatePhase(i, "inicio", e.target.value)} aria-label="Início" />
+                      <Input type="date" value={f.fim} onChange={(e) => updatePhase(i, "fim", e.target.value)} aria-label="Fim" />
+                      <Button variant="ghost" size="sm" onClick={() => removePhase(i)} aria-label="Remover fase" className="col-span-2 sm:col-span-1">
+                        ✕
+                      </Button>
+                    </div>
+                  ))}
+                  <div>
+                    <Button variant="secondary" size="sm" onClick={addPhase}>
+                      + Fase
+                    </Button>
+                  </div>
+                </Bloco>
+              </div>
+
+              <div className="sticky bottom-0 -mx-6 flex flex-wrap items-center gap-3 border-t border-slate-200/70 bg-white/90 px-6 py-3.5 backdrop-blur-xl">
+                <Button onClick={save} disabled={saving}>
+                  {saving ? "Salvando…" : "Salvar imóvel"}
+                </Button>
+                {msg && <span className="text-body-sm text-graytext">{msg}</span>}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={adicionarAoCRM}
+                  disabled={!clientId}
+                  title={clientId ? "" : "Roteiro sem cliente vinculado"}
+                >
+                  Adicionar ao CRM
+                </Button>
+                {crmMsg && <span className="text-body-sm text-graytext">{crmMsg}</span>}
+                <button
+                  onClick={removeProperty}
+                  className="ml-auto min-h-9 rounded-[10px] px-3 text-caption font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text"
+                >
+                  Remover imóvel
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
       )}
+    </>
+  );
+}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-rule pt-3">
-        <button
-          onClick={save}
-          disabled={saving}
-          className="rounded-[10px] bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
-        >
-          {saving ? "Salvando…" : "Salvar imóvel"}
-        </button>
-        {msg && <span className="text-sm text-graytext">{msg}</span>}
-        <button
-          onClick={adicionarAoCRM}
-          disabled={!clientId}
-          title={clientId ? "" : "Roteiro sem cliente vinculado"}
-          className="text-xs font-bold text-graytext underline disabled:opacity-40 disabled:no-underline"
-        >
-          Adicionar ao CRM
-        </button>
-        {crmMsg && <span className="text-sm text-graytext">{crmMsg}</span>}
-        <button onClick={removeProperty} className="ml-auto text-xs font-bold text-danger-text">
-          remover imóvel
-        </button>
-      </div>
-    </div>
+function Bloco({ titulo, children }) {
+  return (
+    <section className="space-y-3.5">
+      <h3 className="text-caption font-semibold tracking-[.08em] text-muted uppercase">{titulo}</h3>
+      {children}
+    </section>
   );
 }
 
