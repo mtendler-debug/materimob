@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
@@ -12,11 +14,6 @@ const STATUS_CLASSES = {
   reservada: "bg-warning-bg text-warning-text",
   vendida: "bg-danger-bg text-danger-text",
 };
-
-function capa(cor) {
-  const c = cor || "#0284C7";
-  return { background: `linear-gradient(135deg, ${c}, ${c}bb)` };
-}
 
 export default function Showcase() {
   const { id } = useParams();
@@ -96,13 +93,14 @@ export default function Showcase() {
 }
 
 function LaunchCard({ launch }) {
+  const capaAcademia = useCapasAcademia();
   const counts = launch.units.reduce((acc, u) => ({ ...acc, [u.status]: (acc[u.status] ?? 0) + 1 }), {});
   return (
     <Link
       to={`/app/lancamentos/${launch.id}`}
       className="flex min-w-0 flex-col gap-3 rounded-[20px] border border-slate-200/70 bg-white p-2.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft"
     >
-      <div className="h-[96px] rounded-[14px]" style={capa(launch.color)} />
+      <div className="h-[96px] rounded-[14px]" style={estiloCapa(launch.color, launch.photo_urls, capaAcademia(launch.name))} />
       <div className="grid gap-1 px-2 pb-1.5">
         <p className="text-base font-semibold tracking-tight text-charcoal">{launch.name}</p>
         {launch.address && <p className="text-body-sm text-graytext">{launch.address}</p>}
@@ -120,9 +118,10 @@ function LaunchCard({ launch }) {
 }
 
 function PropertyCard({ property }) {
+  const capaAcademia = useCapasAcademia();
   return (
     <div className="flex min-w-0 flex-col gap-3 rounded-[20px] border border-slate-200/70 bg-white p-2.5">
-      <div className="h-[96px] rounded-[14px]" style={capa(property.color)} />
+      <div className="h-[96px] rounded-[14px]" style={estiloCapa(property.color, property.photo_urls, capaAcademia(property.name))} />
       <div className="grid gap-1 px-2 pb-1.5">
         <p className="text-base font-semibold tracking-tight text-charcoal">{property.name}</p>
         {property.address && <p className="text-body-sm text-graytext">{property.address}</p>}

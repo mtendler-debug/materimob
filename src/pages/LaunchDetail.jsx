@@ -7,6 +7,7 @@ import { parseCsv, downloadCsv } from "../lib/csv";
 import { importarLancamento } from "../lib/importar";
 import { ImageUploader } from "../components/ImageUploader";
 import { useFeedback } from "../lib/feedback";
+import { useCapasAcademia } from "../lib/capasAcademia";
 import Button from "../components/ui/Button";
 import Input, { classesCampo } from "../components/ui/Input";
 import Modal from "../components/ui/Modal";
@@ -34,6 +35,7 @@ export default function LaunchDetail() {
   const [partners, setPartners] = useState(null);
   const [error, setError] = useState("");
   const [gerarAberto, setGerarAberto] = useState(false);
+  const capaAcademia = useCapasAcademia();
 
   const manage = org && launch && org.id === launch.organization_id && canManage(role);
   const isOwnerOrg = org && launch && org.id === launch.organization_id;
@@ -79,7 +81,7 @@ export default function LaunchDetail() {
   if (!launch) return <div className="p-6 text-sm text-muted">Carregando…</div>;
 
   const cor = launch.color || "#0284C7";
-  const capa = launch.photo_urls?.[0];
+  const capa = launch.photo_urls?.[0] ?? capaAcademia(launch.name);
   const disponiveis = launch.units.filter((u) => u.status === "disponivel");
   const reservadas = launch.units.filter((u) => u.status === "reservada");
   const valores = launch.units.filter((u) => u.status !== "vendida" && u.table_value != null).map((u) => u.table_value);

@@ -6,6 +6,8 @@ import { CatalogBrowser } from "../components/CatalogBrowser";
 import { useFeedback } from "../lib/feedback";
 import Button from "../components/ui/Button";
 import Modal from "../components/ui/Modal";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 // A curadoria de verdade da imobiliária: escolhe, de qualquer origem da
 // plataforma, o que o time dela deve estar oferecendo. Mecanismo puro —
@@ -17,6 +19,7 @@ export default function TeamPicks() {
   const [picks, setPicks] = useState(null);
   const [items, setItems] = useState(null);
   const [catalogoAberto, setCatalogoAberto] = useState(false);
+  const capaAcademia = useCapasAcademia();
   const [notaEmEdicao, setNotaEmEdicao] = useState(null);
 
   async function loadPicks() {
@@ -127,7 +130,7 @@ export default function TeamPicks() {
             return (
               <div key={pick.id} className="grid grid-cols-[30px_minmax(0,1fr)] items-start gap-3.5 rounded-[20px] border border-slate-200/70 bg-white p-3.5 transition-shadow duration-200 hover:shadow-soft sm:grid-cols-[34px_52px_minmax(0,1fr)_auto]">
                 <span className="mt-2 grid h-[30px] w-[30px] place-items-center rounded-full bg-light text-body-sm font-bold text-graytext sm:h-[34px] sm:w-[34px]">{i + 1}</span>
-                <span className="mt-0.5 hidden h-[52px] w-[52px] rounded-[14px] sm:block" style={{ background: `linear-gradient(135deg, ${cor}, ${cor}bb)` }} />
+                <span className="mt-0.5 hidden h-[52px] w-[52px] rounded-[14px] sm:block" style={estiloCapa(item.color, item.raw?.photo_urls, capaAcademia(item.name))} />
                 <div className="grid min-w-0 gap-2">
                   <div>
                     <b className="block text-[15px] tracking-tight text-charcoal">{item.name}</b>

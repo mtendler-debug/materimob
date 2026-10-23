@@ -9,6 +9,8 @@ import { CatalogBrowser } from "../components/CatalogBrowser";
 import Button from "../components/ui/Button";
 import Input, { classesCampo } from "../components/ui/Input";
 import Modal from "../components/ui/Modal";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 // Uma busca só sobre tudo que existe na plataforma — o corretor não
 // precisa entender a diferença entre "catálogo" e "empreendimento", ele
@@ -16,6 +18,7 @@ import Modal from "../components/ui/Modal";
 export default function Properties() {
   const { org, loading: loadingOrg } = useOrganization();
   const [picksResolvidos, setPicksResolvidos] = useState([]);
+  const capaAcademia = useCapasAcademia();
 
   useEffect(() => {
     if (!org || org.tipo !== "imobiliaria") {
@@ -62,7 +65,7 @@ export default function Properties() {
                   <div className="flex items-center gap-3.5">
                     <span
                       className="h-16 w-16 flex-none rounded-xl"
-                      style={{ background: `linear-gradient(135deg, ${it.color || "#0284C7"}, ${it.color || "#0284C7"}cc)` }}
+                      style={estiloCapa(it.color, it.raw?.photo_urls, capaAcademia(it.name))}
                     />
                     <div className="min-w-0">
                       <p className="font-semibold text-charcoal">{it.name}</p>

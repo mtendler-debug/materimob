@@ -11,6 +11,8 @@ import { useFeedback } from "../lib/feedback";
 import Button from "../components/ui/Button";
 import Input, { classesCampo } from "../components/ui/Input";
 import Modal from "../components/ui/Modal";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 function linesToArray(text) {
   return text
@@ -24,6 +26,7 @@ export default function Portfolio() {
   const { org, role, loading: loadingOrg } = useOrganization();
   const [properties, setProperties] = useState(null);
   const [selId, setSelId] = useState(null);
+  const capaAcademia = useCapasAcademia();
   const [novoAberto, setNovoAberto] = useState(false);
 
   // Quem é gerente+ de uma organização gerencia o estoque dela (uso via
@@ -89,7 +92,7 @@ export default function Portfolio() {
 
         <div className="mt-7 grid gap-4 sm:grid-cols-2">
           {properties?.map((p) => (
-            <CartaoImovel key={p.id} property={p} onOpen={() => setSelId(p.id)} />
+            <CartaoImovel key={p.id} property={p} capaAlt={capaAcademia(p.name)} onOpen={() => setSelId(p.id)} />
           ))}
         </div>
       </div>
@@ -106,7 +109,7 @@ export default function Portfolio() {
             <div className="flex items-center gap-3 border-b border-slate-200/70 px-6 py-4">
               <span
                 className="h-9 w-9 flex-none rounded-[11px]"
-                style={{ background: `linear-gradient(135deg, ${selecionado.color || "#5C5C5C"}, ${selecionado.color || "#5C5C5C"}bb)` }}
+                style={estiloCapa(selecionado.color || "#5C5C5C", selecionado.photo_urls, capaAcademia(selecionado.name))}
               />
               <h2 className="min-w-0 flex-1 truncate text-title font-semibold tracking-tight text-charcoal">{selecionado.name}</h2>
               <Button variant="ghost" size="sm" onClick={() => setSelId(null)} aria-label="Fechar">
@@ -136,7 +139,7 @@ export default function Portfolio() {
 
 const STATUS_VAZIO = "disponivel";
 
-function CartaoImovel({ property: p, onOpen }) {
+function CartaoImovel({ property: p, onOpen, capaAlt }) {
   const unidades = p.units ?? [];
   const disp = unidades.filter((u) => (u.status ?? STATUS_VAZIO) === "disponivel").length;
   const res = unidades.filter((u) => u.status === "reservada").length;
@@ -150,7 +153,7 @@ function CartaoImovel({ property: p, onOpen }) {
       onClick={onOpen}
       className="flex min-w-0 flex-col gap-3 rounded-[22px] border border-slate-200/70 bg-white p-3 text-left transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft"
     >
-      <div className="h-[104px] rounded-[14px]" style={{ background: `linear-gradient(135deg, ${cor}, ${cor}bb)` }} />
+      <div className="h-[104px] rounded-[14px]" style={estiloCapa(p.color, p.photo_urls, capaAlt)} />
       <div className="grid gap-1 px-2 pb-1.5">
         <h3 className="text-[17px] font-semibold tracking-tight text-charcoal">{p.name}</h3>
         {p.address && <p className="text-body-sm text-graytext">{p.address}</p>}

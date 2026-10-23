@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { loadCatalogItems } from "../lib/catalogo";
+import { estiloCapa } from "../lib/capa";
+import { useCapasAcademia } from "../lib/capasAcademia";
 
 function minValue(item) {
   const valores = item.units.map((u) => u.table_value).filter((v) => v != null);
@@ -13,6 +15,7 @@ function minValue(item) {
 // os filtros são os mesmos nos dois lugares.
 export function CatalogBrowser({ renderAction, gridClass = "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" }) {
   const [items, setItems] = useState(null);
+  const capaAcademia = useCapasAcademia();
   const [texto, setTexto] = useState("");
   const [valorMax, setValorMax] = useState("");
   const [orgFiltro, setOrgFiltro] = useState("");
@@ -130,7 +133,7 @@ export function CatalogBrowser({ renderAction, gridClass = "grid gap-4 sm:grid-c
       )}
       <div className={gridClass}>
         {filtrados?.map((it) => (
-          <CatalogCard key={`${it.kind}-${it.id}`} item={it} action={renderAction?.(it)} />
+          <CatalogCard key={`${it.kind}-${it.id}`} item={it} capaAlt={capaAcademia(it.name)} action={renderAction?.(it)} />
         ))}
       </div>
     </div>
@@ -139,7 +142,7 @@ export function CatalogBrowser({ renderAction, gridClass = "grid gap-4 sm:grid-c
 
 const brl = (v) => "R$ " + Number(v).toLocaleString("pt-BR");
 
-export function CatalogCard({ item, action }) {
+export function CatalogCard({ item, action, capaAlt }) {
   const total = item.units.length;
   const disponiveis = item.kind === "lancamento" ? item.units.filter((u) => u.status === "disponivel").length : total;
   const menor = minValue(item);
@@ -149,7 +152,7 @@ export function CatalogCard({ item, action }) {
     <article className="flex min-w-0 flex-row gap-3 rounded-[20px] border border-slate-200/70 bg-white p-2.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft sm:flex-col">
       <div
         className="relative flex w-24 flex-none items-end overflow-hidden rounded-[14px] p-2.5 sm:h-[132px] sm:w-auto"
-        style={{ background: `linear-gradient(135deg, ${cor}, ${cor}cc)` }}
+        style={estiloCapa(cor, item.raw?.photo_urls, capaAlt)}
       >
         <span className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/35" />
         <span className="relative hidden rounded-full bg-slate-900/35 px-2.5 py-0.5 text-caption font-semibold text-white backdrop-blur-md sm:inline">

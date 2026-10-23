@@ -4,6 +4,7 @@ import { callFunction } from "../lib/edgeFunctions";
 import { loadDraft, saveDraft, evalKey } from "../lib/draftStore";
 import { PropertyMedia } from "../components/PropertyMedia";
 import { useFeedback } from "../lib/feedback";
+import { estiloCapa } from "../lib/capa";
 import Button from "../components/ui/Button";
 import Input, { classesCampo } from "../components/ui/Input";
 
@@ -21,11 +22,6 @@ const NOTAS_1A5 = [
   [4, "Muito bom"],
   [5, "Superou"],
 ];
-
-function capa(color) {
-  const cor = color || "#0284C7";
-  return { background: `linear-gradient(135deg, ${cor}, ${cor}bb)` };
-}
 
 function share(token) {
   const url = `${window.location.origin}${token ? "/c/" + token : "/"}`;
@@ -234,7 +230,7 @@ function Funnel({ title, subtitle, properties, draft, onOpen, onShare }) {
               onClick={() => onOpen(p)}
               className="mb-2.5 flex min-h-[76px] w-full items-center gap-3.5 rounded-[22px] border border-slate-200/70 bg-white p-3.5 text-left transition-all duration-200 hover:shadow-soft"
             >
-              <span className="h-[52px] w-[52px] flex-none rounded-2xl" style={capa(p.color)} />
+              <span className="h-[52px] w-[52px] flex-none rounded-2xl" style={estiloCapa(p.color, p.photo_urls)} />
               <span className="min-w-0 flex-1">
                 <b className="block text-base tracking-tight text-charcoal">{p.name}</b>
                 {p.address && <small className="block text-body-sm text-graytext">{p.address}</small>}

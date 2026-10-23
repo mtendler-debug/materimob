@@ -4,6 +4,8 @@ import { supabase } from "../lib/supabase";
 import { useOrganization, canManage } from "../lib/useOrganization";
 import { geocodeAddress } from "../lib/geocode";
 import { BookImporter } from "../components/BookImporter";
+import { useCapasAcademia } from "../lib/capasAcademia";
+import { estiloCapa } from "../lib/capa";
 import Button from "../components/ui/Button";
 import Input, { classesCampo } from "../components/ui/Input";
 import Modal from "../components/ui/Modal";
@@ -24,11 +26,8 @@ function menorValor(launch) {
   return valores.length ? Math.min(...valores) : null;
 }
 
-function capa(launch) {
-  const cor = launch.color || "#0284C7";
-  return launch.photo_urls?.[0]
-    ? { background: `center/cover url(${launch.photo_urls[0]})` }
-    : { background: `linear-gradient(135deg, ${cor}, ${cor}bb)` };
+function capa(launch, alternativa) {
+  return estiloCapa(launch.color, launch.photo_urls, alternativa);
 }
 
 export default function Launches() {
@@ -167,6 +166,7 @@ function contagens(launch) {
 }
 
 function LaunchDestaque({ launch }) {
+  const capaAcademia = useCapasAcademia();
   const counts = contagens(launch);
   const menor = menorValor(launch);
 
@@ -175,7 +175,7 @@ function LaunchDestaque({ launch }) {
       to={`/app/lancamentos/${launch.id}`}
       className="mt-6 grid overflow-hidden rounded-[26px] border border-slate-200/70 bg-white shadow-soft transition-all duration-200 ease-out hover:shadow-float md:grid-cols-[1.15fr_1fr]"
     >
-      <div className="relative flex min-h-[170px] items-end p-[18px] md:min-h-[250px]" style={capa(launch)}>
+      <div className="relative flex min-h-[170px] items-end p-[18px] md:min-h-[250px]" style={capa(launch, capaAcademia(launch.name))}>
         <span className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/50" />
         <span className="relative rounded-full bg-white/25 px-2.5 py-0.5 text-caption font-semibold text-white backdrop-blur-md">Mais recente</span>
       </div>
@@ -201,6 +201,7 @@ function LaunchDestaque({ launch }) {
 }
 
 function LaunchCard({ launch }) {
+  const capaAcademia = useCapasAcademia();
   const counts = contagens(launch);
   const menor = menorValor(launch);
 
@@ -209,7 +210,7 @@ function LaunchCard({ launch }) {
       to={`/app/lancamentos/${launch.id}`}
       className="flex min-w-0 flex-row gap-3 rounded-[20px] border border-slate-200/70 bg-white p-2.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft sm:flex-col"
     >
-      <div className="w-[92px] flex-none rounded-[14px] sm:h-[108px] sm:w-auto" style={capa(launch)} />
+      <div className="w-[92px] flex-none rounded-[14px] sm:h-[108px] sm:w-auto" style={capa(launch, capaAcademia(launch.name))} />
       <div className="grid min-w-0 flex-1 content-start gap-0.5 sm:px-2 sm:pb-1.5">
         <h3 className="text-base font-semibold tracking-tight text-charcoal">{launch.name}</h3>
         {launch.organizations?.name && <p className="text-body-sm text-graytext">{launch.organizations.name}</p>}
