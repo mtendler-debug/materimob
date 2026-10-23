@@ -6,3 +6,26 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Cabeçalhos de segurança (auditoria pré-lançamento, 2026-10-22).
+# - Referrer-Policy: os links de cliente levam o token no caminho (/c/…, /r/…,
+#   /cliente/…, /p/…). Para fora do site vai só o domínio, nunca o caminho.
+#   Não usar "no-referrer": o OpenStreetMap exige o Referer para servir o mapa.
+# - X-Frame-Options + frame-ancestors: ninguém embute o MaterImob em outra
+#   página (golpe de clique por cima de tela legítima).
+# - Permissions-Policy: o app não usa câmera, microfone nem localização.
+# HSTS o Netlify já envia sozinho no domínio próprio.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+    Content-Security-Policy = "frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+# Arquivos do build têm o hash no nome: podem ficar em cache para sempre.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
