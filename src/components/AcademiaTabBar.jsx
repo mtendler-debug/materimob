@@ -25,7 +25,7 @@ export default function AcademiaTabBar() {
   return (
     <nav
       aria-label="Academia"
-      className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-slate-300 bg-white px-1 pt-1.5 pb-2.5 md:hidden"
+      className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-slate-200/70 bg-white/90 px-1 pt-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden"
     >
       {MENU_ACADEMIA.filter((i) => !i.soGestor).map((i) =>
         i.to ? (
@@ -34,7 +34,7 @@ export default function AcademiaTabBar() {
             to={i.to}
             end={i.end}
             className={({ isActive }) =>
-              `grid justify-items-center gap-0.5 text-[10.5px] font-semibold ${isActive ? "text-sky-700" : "text-slate-500"}`
+              `grid min-h-12 content-center justify-items-center gap-0.5 text-[11px] font-semibold transition-colors duration-200 ${isActive ? "text-brand" : "text-muted"}`
             }
           >
             <Icone d={i.icone} />
@@ -45,7 +45,7 @@ export default function AcademiaTabBar() {
             key={i.label}
             aria-disabled="true"
             title="em breve"
-            className="grid justify-items-center gap-0.5 text-[10.5px] font-semibold text-slate-400 opacity-70"
+            className="grid min-h-12 content-center justify-items-center gap-0.5 text-[11px] font-semibold text-slate-300"
           >
             <Icone d={i.icone} />
             {i.curto}

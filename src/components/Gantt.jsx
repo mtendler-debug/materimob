@@ -14,10 +14,8 @@ export function Gantt({ milestones, properties }) {
 
   if (!all.length) {
     return (
-      <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-        <div className="rounded-[14px] bg-white p-6 text-center text-[13.5px] text-muted">
-          Cronograma ainda não definido.
-        </div>
+      <div className="rounded-card border border-slate-200/70 bg-white p-6 text-center text-body-sm text-muted">
+        Cronograma ainda não definido.
       </div>
     );
   }
@@ -48,7 +46,7 @@ export function Gantt({ milestones, properties }) {
     const b = pct(d2n(fim) + 86400000);
     return (
       <div
-        className="absolute top-[2px] h-4 overflow-hidden rounded-[5px] px-[6px] text-[10px] leading-4 font-semibold whitespace-nowrap text-white"
+        className="absolute top-[2px] h-4 overflow-hidden rounded-md px-[6px] text-[10px] leading-4 font-semibold whitespace-nowrap text-white"
         style={{ left: `${a}%`, width: `${Math.max(b - a, 1.2)}%`, background: cor }}
         title={label}
       >
@@ -60,10 +58,10 @@ export function Gantt({ milestones, properties }) {
   function Lane({ label, children }) {
     return (
       <div className="flex min-h-8 items-center">
-        <div className="w-[190px] flex-none pr-3 text-xs font-semibold">{label}</div>
+        <div className="w-[190px] flex-none pr-3 text-xs font-semibold text-slate-700">{label}</div>
         <div className="relative h-5 flex-1">
           {todayPct != null && (
-            <div className="absolute -top-[6px] -bottom-[6px] z-[3] w-[2px] bg-[#B34A2E]" style={{ left: `${todayPct}%` }} />
+            <div className="absolute -top-[6px] -bottom-[6px] z-[3] w-[2px] bg-rose-600" style={{ left: `${todayPct}%` }} />
           )}
           {children}
         </div>
@@ -72,8 +70,9 @@ export function Gantt({ milestones, properties }) {
   }
 
   return (
-    <div className="rounded-[14px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-      <div className="min-w-[660px] overflow-x-auto">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
+      <div className="overflow-x-auto">
+       <div className="min-w-[660px]">
         <div className="flex items-center">
           <div className="w-[190px] flex-none" />
           <div className="relative h-4 flex-1 text-[10px] text-muted">
@@ -86,7 +85,7 @@ export function Gantt({ milestones, properties }) {
         </div>
         {marcos.length > 0 && (
           <>
-            <div className="mt-4 mb-2 text-[10px] font-bold uppercase tracking-[.12em] text-muted">Etapas do processo</div>
+            <div className="mt-4 mb-2 text-caption font-semibold uppercase tracking-[.08em] text-muted">Etapas do processo</div>
             {marcos.map((m) => (
               <Lane key={m.nome} label={m.nome}>
                 <Bar inicio={m.inicio} fim={m.fim} cor="#0284C7" label="" />
@@ -94,7 +93,7 @@ export function Gantt({ milestones, properties }) {
             ))}
           </>
         )}
-        <div className="mt-4 mb-2 text-[10px] font-bold uppercase tracking-[.12em] text-muted">Imóveis</div>
+        <div className="mt-4 mb-2 text-caption font-semibold uppercase tracking-[.08em] text-muted">Imóveis</div>
         {properties.map((p) => (
           <Lane key={p.id} label={p.name}>
             {(p.phases ?? [])
@@ -104,6 +103,7 @@ export function Gantt({ milestones, properties }) {
               ))}
           </Lane>
         ))}
+       </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-[14px] text-[11.5px] text-graytext">
         {marcos.length > 0 && (
@@ -119,7 +119,7 @@ export function Gantt({ milestones, properties }) {
           </span>
         ))}
         <span>
-          <i className="mr-[5px] inline-block h-[10px] w-[3px] align-[-1px]" style={{ background: "#B34A2E" }} />
+          <i className="mr-[5px] inline-block h-[10px] w-[3px] align-[-1px]" style={{ background: "#e11d48" }} />
           hoje
         </span>
       </div>

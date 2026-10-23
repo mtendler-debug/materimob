@@ -9,6 +9,9 @@ import { useFeedback } from "../lib/feedback";
 import { useProfile } from "../lib/useProfile";
 import { useAcessoCanal } from "../lib/AcessoCanal";
 import PrimeirosPassos from "../components/PrimeirosPassos";
+import Button from "../components/ui/Button";
+import Input, { classesCampo } from "../components/ui/Input";
+import Modal from "../components/ui/Modal";
 
 // Critérios que já vêm preenchidos num atendimento novo; o corretor apaga ou troca se quiser.
 const CRITERIOS_PADRAO = "Arquitetura e fachada\nLocalização\nAcabamento";
@@ -25,6 +28,9 @@ export default function Dashboard() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [busca, setBusca] = useState("");
+  const [selId, setSelId] = useState(null);
+  const [detalheAberto, setDetalheAberto] = useState(false); // celular: lista ou detalhe
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -140,27 +146,18 @@ export default function Dashboard() {
     !(temAtendimento && temImoveis && passos.link_copiado) &&
     (conta30Dias || !temAtendimento);
 
+  const visiveis = (clients ?? []).filter(
+    (c) =>
+      (filtro === "todos" || (filtro === "inativos") === !!c.archived) &&
+      (c.name || "").toLowerCase().includes(busca.trim().toLowerCase()),
+  );
+  const selecionado = visiveis.find((c) => c.id === selId) ?? visiveis[0] ?? null;
+  const nenhumCliente = clients !== null && clients.length === 0 && orphanSelections.length === 0;
+
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meus clientes</h1>
-        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
-          Cada cliente ganha um link permanente que reúne todos os roteiros que você já criou pra
-          ele. Precisa de imóveis pra apresentar? Veja{" "}
-          <Link to="/app/imoveis" className="underline">
-            Imóveis
-          </Link>
-          .
-        </p>
-
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="mt-5 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90"
-        >
-          {showForm ? "Cancelar" : "+ Novo atendimento"}
-        </button>
-
-        {mostrarPassos && !showForm && (
+    <div className="min-h-[calc(100vh-3.5rem)] bg-bg">
+      {mostrarPassos && !showForm && (
+        <div className="mx-auto max-w-3xl px-4 pt-5 md:px-8">
           <PrimeirosPassos
             nome={(profile?.full_name || user?.user_metadata?.full_name || "").trim().split(/\s+/)[0]}
             selecaoId={primeiraSelecao?.id}
@@ -171,121 +168,216 @@ export default function Dashboard() {
             onDispensar={() => marcarPasso("dispensado")}
             mostrarAcademia={acesso === null}
           />
-        )}
+        </div>
+      )}
 
-        {showForm && (
-          <form onSubmit={handleCreate} className="mt-4 rounded-[14px] border border-rule bg-white p-5">
-            <h2 className="font-serif mb-4 text-[16px] font-semibold text-charcoal">Novo atendimento</h2>
-            <div className="space-y-3">
-              <Field label="Nome do cliente" value={clientName} onChange={setClientName} required placeholder="ex.: Casal Almeida" />
-              <Field
-                label="Título do primeiro roteiro"
-                value={title}
-                onChange={setTitle}
-                required
-                placeholder="ex.: Visitas de sábado"
-                hint="É o nome que o cliente vê no link. Dá para mudar depois."
-              />
-              <details className="rounded-[12px] border border-dashed border-rule px-3">
-                <summary className="cursor-pointer py-2 text-sm font-bold text-charcoal">
-                  Mais opções <span className="font-normal text-graytext">(telefone, e-mail, critérios)</span>
-                </summary>
-                <div className="space-y-3 pt-1 pb-3">
-              <Field label="Subtítulo (opcional)" value={subtitle} onChange={setSubtitle} />
-              <Field label="Telefone do cliente (opcional)" value={clientPhone} onChange={setClientPhone} />
-              <Field label="E-mail do cliente (opcional)" value={clientEmail} onChange={setClientEmail} />
+      <div className="md:grid md:grid-cols-[320px_1fr]">
+        {/* Lista de clientes */}
+        <aside
+          className={`border-slate-200/70 bg-white md:sticky md:top-[60px] md:max-h-[calc(100vh-60px)] md:overflow-y-auto md:border-r ${
+            detalheAberto ? "hidden md:block" : ""
+          }`}
+        >
+          <div className="space-y-3 px-4 pt-5 pb-3">
+            <div className="flex items-center justify-between gap-2">
+              <h1 className="text-title font-bold tracking-tight text-charcoal">Clientes</h1>
+              <Button size="sm" onClick={() => setShowForm(true)}>
+                + Novo atendimento
+              </Button>
+            </div>
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar cliente"
+              aria-label="Buscar cliente"
+              className={classesCampo}
+            />
+            <div className="inline-flex gap-0.5 rounded-control bg-light p-[3px]">
+              {[
+                ["ativos", "Ativos"],
+                ["inativos", "Inativos"],
+                ["todos", "Todos"],
+              ].map(([v, rotulo]) => (
+                <button
+                  key={v}
+                  onClick={() => setFiltro(v)}
+                  aria-pressed={filtro === v}
+                  className={`min-h-9 rounded-[9px] px-3.5 text-caption font-semibold transition-all duration-200 ${
+                    filtro === v ? "bg-white text-charcoal shadow-sm" : "text-graytext hover:text-charcoal"
+                  }`}
+                >
+                  {rotulo}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="px-2 pb-24 md:pb-6">
+            {clients === null && <p className="px-3 py-4 text-body-sm text-muted">Carregando…</p>}
+            {nenhumCliente && (
+              <div className="px-4 py-10 text-center">
+                <b className="block text-body text-charcoal">Nenhum atendimento ainda</b>
+                <p className="mt-1 text-body-sm text-graytext">Crie o primeiro e mande o link de avaliação ao cliente.</p>
+                <Button className="mt-5" onClick={() => setShowForm(true)}>
+                  + Novo atendimento
+                </Button>
+              </div>
+            )}
+            {clients !== null && !nenhumCliente && visiveis.length === 0 && (
+              <p className="px-3 py-6 text-center text-body-sm text-muted">Nenhum cliente encontrado.</p>
+            )}
+            {visiveis.map((c) => {
+              const ativo = selecionado?.id === c.id;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => {
+                    setSelId(c.id);
+                    setDetalheAberto(true);
+                  }}
+                  aria-current={ativo}
+                  className={`flex min-h-[60px] w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 ease-out ${
+                    ativo ? "md:bg-brand-soft" : "hover:bg-bg"
+                  }`}
+                >
+                  <Avatar nome={c.name} />
+                  <span className="min-w-0 flex-1">
+                    <b className="block truncate font-semibold text-charcoal">{c.name || "Sem nome"}</b>
+                    <small className={ativo ? "text-sky-800" : "text-graytext"}>{c.selections.length} roteiro(s)</small>
+                  </span>
+                  {c.archived && <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">inativo</span>}
+                </button>
+              );
+            })}
+
+            {orphanSelections.length > 0 && (
+              <div className="mt-5 px-3">
+                <h2 className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">Seleções sem cliente</h2>
+                {orphanSelections.map((o) => (
+                  <Link
+                    key={o.id}
+                    to={`/app/selections/${o.id}`}
+                    className="block min-h-11 rounded-xl py-2 transition-colors duration-200 hover:bg-bg"
+                  >
+                    <p className="text-body-sm font-semibold text-charcoal">{o.title}</p>
+                    <p className="text-caption text-graytext">{o.client_name}</p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* Detalhe do cliente */}
+        <section className={`min-w-0 ${detalheAberto ? "" : "hidden md:block"}`}>
+          {selecionado ? (
+            <>
+              <button
+                onClick={() => setDetalheAberto(false)}
+                className="mx-2 mt-2 inline-flex min-h-11 items-center gap-1 rounded-control px-3 text-body-sm font-semibold text-graytext transition-colors hover:bg-light md:hidden"
+              >
+                ← Clientes
+              </button>
+              <ClienteDetalhe key={selecionado.id} client={selecionado} onChange={load} />
+            </>
+          ) : (
+            clients !== null && (
+              <p className="px-8 py-24 text-center text-body-sm text-muted">
+                {nenhumCliente ? "Seu primeiro cliente aparece aqui." : "Selecione um cliente."}
+              </p>
+            )
+          )}
+        </section>
+      </div>
+
+      <Modal
+        open={showForm}
+        onClose={() => setShowForm(false)}
+        title="Novo atendimento"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowForm(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" form="novo-atendimento" disabled={saving}>
+              {saving ? "Salvando…" : "Criar atendimento"}
+            </Button>
+          </>
+        }
+      >
+        <form id="novo-atendimento" onSubmit={handleCreate} className="space-y-3.5">
+          <p className="text-body-sm text-graytext">Você adiciona os imóveis e copia o link do cliente na próxima tela.</p>
+          <Input label="Nome do cliente" value={clientName} onChange={(e) => setClientName(e.target.value)} required placeholder="ex.: Casal Almeida" />
+          <Input
+            label="Título do primeiro roteiro"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            placeholder="ex.: Visitas de sábado"
+            hint="É o nome que o cliente vê no link. Dá para mudar depois."
+          />
+          <details className="rounded-control border border-dashed border-slate-200 px-3.5">
+            <summary className="flex min-h-11 cursor-pointer items-center text-body-sm font-semibold text-charcoal">
+              Mais opções <span className="ml-1.5 font-normal text-graytext">(telefone, e-mail, critérios)</span>
+            </summary>
+            <div className="space-y-3.5 pt-1 pb-3.5">
+              <Input label="Subtítulo (opcional)" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} />
+              <Input label="Telefone do cliente (opcional)" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} />
+              <Input label="E-mail do cliente (opcional)" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
               <div>
-                <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
-                  Critérios (um por linha)
-                </label>
+                <label className="mb-1.5 block text-caption font-medium text-graytext">Critérios (um por linha)</label>
                 <textarea
                   value={criteria}
                   onChange={(e) => setCriteria(e.target.value)}
                   rows={4}
                   placeholder={"Arquitetura e fachada\nLocalização\nAcabamento"}
-                  className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                  className={`${classesCampo} py-2.5`}
                 />
-                <p className="mt-1 text-xs text-graytext">Já vêm com um modelo. Apague ou troque se quiser.</p>
+                <p className="mt-1.5 text-caption text-graytext">Já vêm com um modelo. Apague ou troque se quiser.</p>
                 <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
               </div>
               <div>
-                <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">
-                  Critérios das unidades (um por linha, opcional)
-                </label>
+                <label className="mb-1.5 block text-caption font-medium text-graytext">Critérios das unidades (um por linha, opcional)</label>
                 <textarea
                   value={unitCriteria}
                   onChange={(e) => setUnitCriteria(e.target.value)}
                   rows={4}
                   placeholder={"Planta e distribuição\nVista\nRuído"}
-                  className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
+                  className={`${classesCampo} py-2.5`}
                 />
               </div>
-                </div>
-              </details>
-              {error && <p className="text-sm text-[#B34A2E]">{error}</p>}
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-              >
-                {saving ? "Salvando…" : "Criar atendimento"}
-              </button>
             </div>
-          </form>
-        )}
-
-        {clients !== null && clients.length > 0 && (
-          <div className="mt-5 flex items-center gap-2">
-            <label className="text-[11.5px] font-bold uppercase tracking-[.06em] text-graytext">Mostrar</label>
-            <select
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-              className="rounded-[8px] border border-rule bg-white px-2 py-1 text-sm"
-            >
-              <option value="ativos">Clientes ativos</option>
-              <option value="inativos">Clientes inativos</option>
-              <option value="todos">Todos os clientes</option>
-            </select>
-          </div>
-        )}
-
-        <div className="mt-4 space-y-3">
-          {clients === null && <p className="text-sm text-muted">Carregando…</p>}
-          {clients?.length === 0 && orphanSelections.length === 0 && (
-            <p className="text-sm text-muted">Nenhum atendimento ainda.</p>
-          )}
-          {clients
-            ?.filter((c) => filtro === "todos" || (filtro === "inativos") === !!c.archived)
-            .map((c) => (
-              <ClientCard key={c.id} client={c} onChange={load} />
-            ))}
-        </div>
-
-        {orphanSelections.length > 0 && (
-          <div className="mt-6">
-            <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-              Seleções sem cliente vinculado
-            </h2>
-            <div className="space-y-2">
-              {orphanSelections.map((s) => (
-                <Link
-                  key={s.id}
-                  to={`/app/selections/${s.id}`}
-                  className="block rounded-[12px] border border-rule bg-white p-4 hover:border-gold"
-                >
-                  <p className="font-serif font-semibold text-charcoal">{s.title}</p>
-                  <p className="text-sm text-graytext">{s.client_name}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+          </details>
+          {error && <p className="text-body-sm text-danger-text">{error}</p>}
+        </form>
+      </Modal>
     </div>
   );
 }
 
-function ClientCard({ client, onChange }) {
+function Avatar({ nome, grande }) {
+  const iniciais = (nome || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+  return (
+    <span
+      className={`grid flex-none place-items-center rounded-full bg-brand-soft font-semibold text-sky-800 ${
+        grande ? "h-14 w-14 text-title" : "h-10 w-10 text-caption"
+      }`}
+    >
+      {iniciais}
+    </span>
+  );
+}
+
+const textoAcao = "min-h-9 rounded-[9px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal";
+const textoAcaoPerigo = "min-h-9 rounded-[9px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text";
+
+function ClienteDetalhe({ client, onChange }) {
   const { user } = useAuth();
   const { confirm, toast } = useFeedback();
   const [filtroRoteiros, setFiltroRoteiros] = useState("ativos"); // ativos|desativados|todos
@@ -315,52 +407,51 @@ function ClientCard({ client, onChange }) {
   }
 
   return (
-    <div className="rounded-[16px] border border-rule bg-white p-5">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <b className="font-serif text-[18px] font-semibold text-charcoal">{client.name || "Sem nome"}</b>
-        <span className="text-[11.5px] text-muted">{client.selections.length} roteiro(s)</span>
+    <div className="max-w-[720px] px-4 py-6 md:px-9 md:py-8">
+      <div className="flex flex-wrap items-center gap-4">
+        <Avatar nome={client.name} grande />
+        <div className="min-w-0 flex-1">
+          <h2 className="text-headline font-bold tracking-[-0.03em] text-charcoal">{client.name || "Sem nome"}</h2>
+          <p className="text-body-sm text-graytext">
+            {[client.phone, client.email].filter(Boolean).join(" · ") || "Sem contato"}
+          </p>
+        </div>
+        <div className="flex w-full flex-wrap items-center gap-2 md:w-auto">
+          <Button variant="secondary" size="sm" onClick={adicionarAoCRM}>
+            Adicionar ao CRM
+          </Button>
+          <Button variant="secondary" size="sm" onClick={alternarClienteArquivado}>
+            {client.archived ? "Reativar" : "Desativar"}
+          </Button>
+        </div>
       </div>
-      {(client.phone || client.email) && (
-        <p className="mt-1 text-sm text-graytext">{[client.phone, client.email].filter(Boolean).join(" · ")}</p>
+      {(crmMsg || client.archived) && (
+        <p className="mt-3 flex flex-wrap items-center gap-2 text-caption text-graytext">
+          {client.archived && <span className="rounded-full bg-light px-2.5 py-0.5 font-semibold">cliente desativado</span>}
+          {crmMsg}
+        </p>
       )}
 
-      <div className="mt-2 flex items-center gap-3">
-        {client.archived && (
-          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-            cliente desativado
-          </span>
-        )}
-        <button onClick={alternarClienteArquivado} className="text-xs font-bold text-[#B34A2E] underline">
-          {client.archived ? "reativar cliente" : "desativar cliente"}
-        </button>
-        <button onClick={adicionarAoCRM} className="text-xs font-bold text-graytext underline">
-          adicionar ao CRM
-        </button>
-        {crmMsg && <span className="text-xs text-graytext">{crmMsg}</span>}
-      </div>
-
-      {(client.selections.length > 1 || roteirosDesativados.length > 0) && (
-        <div className="mt-3 flex items-center gap-2 border-t border-rule pt-3">
-          <label className="text-[11px] font-bold uppercase tracking-[.06em] text-graytext">Roteiros</label>
+      <div className="mt-8 flex items-center justify-between gap-2">
+        <h3 className="text-caption font-semibold tracking-[.08em] text-muted uppercase">Roteiros</h3>
+        {(client.selections.length > 1 || roteirosDesativados.length > 0) && (
           <select
             value={filtroRoteiros}
             onChange={(e) => setFiltroRoteiros(e.target.value)}
-            className="rounded-[8px] border border-rule bg-white px-2 py-1 text-xs"
+            aria-label="Filtrar roteiros"
+            className="min-h-9 rounded-[10px] border border-slate-200 bg-white px-2.5 text-caption text-slate-700"
           >
             <option value="ativos">Ativos</option>
             <option value="desativados">Desativados ({roteirosDesativados.length})</option>
             <option value="todos">Todos</option>
           </select>
-        </div>
-      )}
+        )}
+      </div>
 
-      <div
-        className={`mt-2 divide-y divide-rule ${
-          client.selections.length > 1 || roteirosDesativados.length > 0 ? "" : "border-t border-rule"
-        }`}
-      >
+      <div className="mt-3 space-y-3">
+        {roteirosVisiveis.length === 0 && <p className="text-body-sm text-muted">Nenhum roteiro neste filtro.</p>}
         {roteirosVisiveis.map((s) => (
-          <div key={s.id} className="py-3">
+          <div key={s.id} className="rounded-card border border-slate-200/70 bg-white p-5 shadow-soft">
             <RoteiroRow selection={s} homeUrl={homeUrl} onChange={onChange} />
           </div>
         ))}
@@ -413,48 +504,35 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <Link to={`/app/selections/${selection.id}`} className="font-serif text-[15px] font-semibold text-charcoal hover:underline">
+      <div className="flex flex-wrap items-center gap-2">
+        <Link to={`/app/selections/${selection.id}`} className="text-body font-semibold tracking-tight text-charcoal hover:underline">
           {selection.title}
         </Link>
         {selection.archived && (
-          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-            desativado
-          </span>
+          <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">desativado</span>
         )}
       </div>
 
-      <div className="mt-2 divide-y divide-rule overflow-hidden rounded-[10px] border border-rule">
+      <div className="mt-3 divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200/70">
         {homeUrl && (
-          <LinkLine
-            label="Permanente"
-            url={homeUrl}
-            copied={copiado === "perfil"}
-            onCopy={() => copiar(homeUrl, "perfil")}
-          />
+          <LinkLine label="Permanente" url={homeUrl} copied={copiado === "perfil"} onCopy={() => copiar(homeUrl, "perfil")} />
         )}
         <LinkLine label="Avaliação" url={formUrl} copied={copiado === "form"} onCopy={() => copiar(formUrl, "form")} />
-        <LinkLine
-          label="Painel"
-          url={panelUrl}
-          copied={copiado === "painel"}
-          onCopy={() => copiar(panelUrl, "painel")}
-          openable
-        />
+        <LinkLine label="Painel" url={panelUrl} copied={copiado === "painel"} onCopy={() => copiar(panelUrl, "painel")} openable />
       </div>
 
-      <div className="mt-2 flex flex-wrap gap-3">
-        <Link to={`/app/selections/${selection.id}`} className="text-xs font-bold text-graytext underline">
-          editar este roteiro
+      <div className="mt-2 flex flex-wrap gap-x-1">
+        <Link to={`/app/selections/${selection.id}`} className={`${textoAcao} inline-flex items-center`}>
+          Editar roteiro
         </Link>
-        <button onClick={renomear} className="text-xs font-bold text-graytext underline">
-          renomear
+        <button onClick={renomear} className={textoAcao}>
+          Renomear
         </button>
-        <button onClick={gerarNovosLinks} className="text-xs font-bold text-[#B34A2E] underline">
-          gerar novos links
+        <button onClick={gerarNovosLinks} className={textoAcaoPerigo}>
+          Gerar novos links
         </button>
-        <button onClick={alternarArquivado} className="text-xs font-bold text-[#B34A2E] underline">
-          {selection.archived ? "reativar" : "desativar"}
+        <button onClick={alternarArquivado} className={textoAcaoPerigo}>
+          {selection.archived ? "Reativar" : "Desativar"}
         </button>
       </div>
     </div>
@@ -463,39 +541,20 @@ function RoteiroRow({ selection, homeUrl, onChange }) {
 
 function LinkLine({ label, url, copied, onCopy, openable }) {
   return (
-    <div className="flex items-center gap-[10px] px-[10px] py-[7px] text-xs">
-      <span className="w-[70px] shrink-0 text-[9.5px] font-bold tracking-[.06em] text-muted uppercase">{label}</span>
-      <span className="min-w-0 flex-1 truncate text-graytext">{url}</span>
-      <button onClick={onCopy} className="shrink-0 rounded-[6px] bg-charcoal px-[9px] py-1 text-[10.5px] font-bold text-white">
-        {copied ? "Copiado!" : "copiar"}
-      </button>
+    <div className="flex items-center gap-2.5 py-2 pr-2 pl-3 text-body-sm">
+      <span className="hidden w-[76px] shrink-0 text-caption font-semibold tracking-[.06em] text-muted uppercase sm:block">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-graytext">
+        <span className="font-semibold text-slate-700 sm:hidden">{label} · </span>
+        {url}
+      </span>
+      <Button size="sm" variant="secondary" onClick={onCopy} className="shrink-0">
+        {copied ? "Copiado!" : "Copiar"}
+      </Button>
       {openable && (
-        <a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="ml-1 shrink-0 rounded-[6px] border border-rule px-[9px] py-1 text-[10.5px] font-bold text-charcoal"
-        >
-          abrir
-        </a>
+        <Button size="sm" variant="secondary" href={url} target="_blank" rel="noreferrer" className="shrink-0">
+          Abrir
+        </Button>
       )}
-    </div>
-  );
-}
-
-function Field({ label, value, onChange, required, hint, placeholder }) {
-  return (
-    <div>
-      <label className="block text-[11px] font-bold tracking-[.04em] text-graytext uppercase">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        required={required}
-        placeholder={placeholder}
-        className="mt-[6px] w-full rounded-[9px] border border-rule px-3 py-2 text-sm focus:border-gold focus:outline-none"
-      />
-      {hint && <p className="mt-1 text-xs text-graytext">{hint}</p>}
     </div>
   );
 }
