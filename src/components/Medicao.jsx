@@ -18,11 +18,11 @@ export function Medicao() {
   const { pathname } = useLocation();
   const [escolha, setEscolha] = useState(consentimento);
 
+  // Só nas páginas de captação: quem aceitou na página inicial e depois abre
+  // um link de cliente (ou o app) não leva Google/Meta junto para lá.
   useEffect(() => {
+    if (!paginaDoFunil(pathname)) return;
     carregar();
-  }, []);
-
-  useEffect(() => {
     registrarVisita(pathname);
   }, [pathname]);
 
