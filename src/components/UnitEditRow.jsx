@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { ImageUploader } from "./ImageUploader";
+import { classesCampo } from "./ui/Input";
+import Button from "./ui/Button";
 
 function brl(n) {
   return n == null ? "—" : "R$ " + Math.round(n).toLocaleString("pt-BR");
 }
 
 const STATUS_LABELS = { reservada: "Reservada", vendida: "Vendida" };
-const STATUS_COLORS = {
-  reservada: { bg: "#FEF3C7", color: "#92400E" },
-  vendida: { bg: "#FFE4E6", color: "#9F1239" },
+const STATUS_CLASSES = {
+  reservada: "bg-warning-bg text-warning-text",
+  vendida: "bg-danger-bg text-danger-text",
 };
 
 // Linha de unidade que abre pra edição — antes disso, nome e valor eram
@@ -55,25 +57,25 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, can
 
   if (editing) {
     return (
-      <div className="rounded-[9px] border border-rule p-2">
+      <div className="rounded-xl border border-slate-200/70 p-3">
         <div className="flex flex-wrap items-end gap-2">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="min-w-[160px] flex-1 rounded border border-rule px-2 py-1 text-sm"
+            className={`${classesCampo} min-w-[160px] flex-1`}
           />
           <input
             type="number"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Valor de tabela"
-            className="w-32 rounded border border-rule px-2 py-1 text-sm"
+            className={`${classesCampo} w-36`}
           />
         </div>
         <div className="mt-2">
           <ImageUploader label="Fotos desta unidade" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
         </div>
-        <label className="mt-2 block text-[11.5px] font-bold text-graytext uppercase">
+        <label className="mt-3 mb-1.5 block text-caption font-medium text-graytext">
           Condições de pagamento desta unidade
         </label>
         <textarea
@@ -81,20 +83,15 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, can
           onChange={(e) => setPaymentTerms(e.target.value)}
           rows={2}
           placeholder="Deixe em branco pra usar a condição geral do empreendimento"
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-2 py-1 text-sm"
+          className={`${classesCampo} min-h-[72px] py-2.5`}
         />
         <div className="mt-2 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={salvar}
-            disabled={saving}
-            className="rounded bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
-          >
-            {saving ? "Salvando…" : "salvar"}
-          </button>
-          <button type="button" onClick={cancelar} className="text-xs font-bold text-graytext underline">
-            cancelar
-          </button>
+          <Button size="sm" onClick={salvar} disabled={saving}>
+            {saving ? "Salvando…" : "Salvar"}
+          </Button>
+          <Button size="sm" variant="ghost" onClick={cancelar}>
+            Cancelar
+          </Button>
         </div>
       </div>
     );
@@ -103,7 +100,7 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, can
   const podeConfirmar = onMarkSold && (canConfirmSale ?? unit.status === "reservada");
 
   return (
-    <div className="flex items-center justify-between text-sm text-graytext">
+    <div className="flex min-h-11 items-center justify-between gap-2 border-t border-slate-100 text-sm text-graytext first:border-0">
       <span className="flex min-w-0 items-center gap-2">
         {onToggleVisited && (
           <input
@@ -127,28 +124,27 @@ export function UnitEditRow({ unit, onSave, onRemove, onMarkSold, onRelease, can
         {unit.table_value != null && <span>{brl(unit.table_value)}</span>}
         {unit.status && unit.status !== "disponivel" && (
           <span
-            className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
-            style={{ background: STATUS_COLORS[unit.status].bg, color: STATUS_COLORS[unit.status].color }}
+            className={`rounded-full px-2.5 py-0.5 text-caption font-semibold ${STATUS_CLASSES[unit.status]}`}
           >
             {STATUS_LABELS[unit.status]}
             {unit.reserved_for ? ` · ${unit.reserved_for}` : ""}
           </span>
         )}
-        <button type="button" onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
+        <button type="button" onClick={() => setEditing(true)} className="min-h-9 rounded-[9px] px-2 text-xs font-medium text-graytext hover:bg-light hover:text-charcoal">
           editar
         </button>
         {onRemove && (
-          <button type="button" onClick={() => onRemove(unit.id)} className="text-xs font-bold text-[#B34A2E]">
+          <button type="button" onClick={() => onRemove(unit.id)} className="min-h-9 rounded-[9px] px-2 text-xs font-medium text-graytext hover:bg-danger-bg hover:text-danger-text">
             ×
           </button>
         )}
         {podeConfirmar && (
-          <button type="button" onClick={() => onMarkSold(unit.id)} className="text-xs font-bold text-[#2E7D32]">
+          <button type="button" onClick={() => onMarkSold(unit.id)} className="min-h-9 rounded-[9px] px-2 text-xs font-medium text-success-text hover:bg-success-bg">
             confirmar venda
           </button>
         )}
         {podeConfirmar && onRelease && (
-          <button type="button" onClick={() => onRelease(unit.id)} className="text-xs font-bold text-[#B34A2E]">
+          <button type="button" onClick={() => onRelease(unit.id)} className="min-h-9 rounded-[9px] px-2 text-xs font-medium text-graytext hover:bg-danger-bg hover:text-danger-text">
             desfazer reserva
           </button>
         )}

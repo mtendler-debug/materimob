@@ -4,6 +4,7 @@ import { useOrganization } from "../lib/useOrganization";
 import { loadCatalogItems } from "../lib/catalogo";
 import { CatalogBrowser } from "../components/CatalogBrowser";
 import { useFeedback } from "../lib/feedback";
+import Button from "../components/ui/Button";
 
 // A curadoria de verdade da imobiliária: escolhe, de qualquer origem da
 // plataforma, o que o time dela deve estar oferecendo. Mecanismo puro —
@@ -142,12 +143,12 @@ export default function TeamPicks() {
           renderAction={(item) => {
             const key = `${item.kind}-${item.id}`;
             if (pickedKeys.has(key)) {
-              return <span className="text-xs font-bold text-muted">já está na seleção</span>;
+              return <span className="text-caption font-semibold text-success-text">✓ já está na seleção</span>;
             }
             return (
-              <button onClick={() => adicionar(item)} className="text-xs font-bold text-graytext underline">
-                Adicionar à seleção do time
-              </button>
+              <Button size="sm" onClick={() => adicionar(item)}>
+                + Adicionar à seleção do time
+              </Button>
             );
           }}
         />

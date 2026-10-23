@@ -12,6 +12,8 @@ import { ImageUploader } from "../components/ImageUploader";
 import { UnitEditRow } from "../components/UnitEditRow";
 import { Map } from "../components/Map";
 import { useFeedback } from "../lib/feedback";
+import { useProfile } from "../lib/useProfile";
+import Button from "../components/ui/Button";
 
 const STAGES = [
   { value: "a-visitar", label: "A visitar" },
@@ -49,8 +51,11 @@ export default function SelectionDetail() {
   const { id } = useParams();
   const location = useLocation();
   // Chega com state.novo logo depois de criar o atendimento: mostra os dois passos que faltam.
-  const [avisoNovo, setAvisoNovo] = useState(!!location.state?.novo);
+  const avisoNovo = !!location.state?.novo;
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const [linkCopiado, setLinkCopiado] = useState(false);
+  const [passoEscolhido, setPassoEscolhido] = useState(null);
   const [selection, setSelection] = useState(null);
   const [properties, setProperties] = useState(null);
   const [evaluations, setEvaluations] = useState(null);
@@ -110,269 +115,340 @@ export default function SelectionDetail() {
   const lider = dash.ranking[0];
   const mediaGeral = avg(dash.ranking.map((r) => r.notaMedia));
 
+  // Caminho do atendimento: montar, enviar o link, acompanhar as respostas, fechar. O estado de cada etapa
+  // sai do que já existe (imóveis, link copiado, respostas, propostas), sem dado novo.
+  const enviado = linkCopiado || !!profile?.primeiros_passos?.link_copiado || evaluations.length > 0;
+  const etapas = [
+    { nome: "Montar", resumo: `${properties.length} imóve${properties.length === 1 ? "l" : "is"}`, feita: properties.length > 0 },
+    { nome: "Enviar", resumo: enviado ? "Link enviado" : "Link ainda não copiado", feita: enviado },
+    { nome: "Acompanhar", resumo: `${evaluations.length} resposta${evaluations.length === 1 ? "" : "s"}`, feita: evaluations.length > 0 },
+    { nome: "Fechar", resumo: `${proposals.length} proposta${proposals.length === 1 ? "" : "s"}`, feita: proposals.length > 0 },
+  ];
+  const passoAuto = proposals.length > 0 ? 3 : evaluations.length > 0 ? 2 : properties.length === 0 || avisoNovo ? 0 : enviado ? 2 : 1;
+  const passo = passoEscolhido ?? passoAuto;
+  const linkPermanente = selection.av_clients?.av_client_relations?.[0]?.token
+    ? `${window.location.origin}/cliente/${selection.av_clients.av_client_relations[0].token}`
+    : null;
+
+  function copiarLink(url) {
+    navigator.clipboard.writeText(url);
+    // Marca o passo "enviar o link" dos primeiros passos (o cliente só recebe se o link foi copiado).
+    supabase.rpc("marcar_primeiro_passo", { p_chave: "link_copiado" }).then(
+      () => {},
+      () => {},
+    );
+    setLinkCopiado(true);
+  }
+
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-3xl">
-        <Link to="/app" className="text-sm text-graytext underline">
-          ← Meus clientes
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto max-w-[880px] px-4 pt-5 md:px-7">
+        <Link to="/app" className="-ml-1 inline-flex min-h-9 items-center gap-0.5 px-1 text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+          Meus clientes
         </Link>
 
-        <div className="mt-3 flex items-start justify-between">
-          <div>
-            <h1 className="font-serif text-[24px] font-semibold text-charcoal">{selection.title}</h1>
-            <p className="text-sm text-graytext">{selection.client_name}</p>
+        <div className="mt-1 flex items-start gap-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-[clamp(1.4rem,3vw,1.6rem)] leading-[1.15] font-bold tracking-[-0.03em] text-charcoal">{selection.title}</h1>
+            <p className="mt-0.5 text-body-sm text-graytext">{selection.client_name}</p>
           </div>
-          <button
-            onClick={toggleArchived}
-            className="rounded-[10px] border-[1.5px] border-rule px-3 py-1.5 text-sm text-graytext hover:bg-light"
-          >
+          <Button variant="ghost" size="sm" onClick={toggleArchived}>
             {selection.archived ? "Reativar" : "Arquivar"}
-          </button>
+          </Button>
         </div>
 
-        {avisoNovo && (
-          <div className="mt-4 rounded-[14px] border border-emerald-200 bg-emerald-50 p-4" role="status">
-            <p className="text-sm font-bold text-emerald-800">Atendimento criado. Faltam dois passos para o cliente avaliar.</p>
-            <ol className="mt-2 space-y-1 text-sm text-slate-700">
-              <li>
-                <b>1. Adicione os imóveis.</b> Cadastre um imóvel novo ou importe do seu estoque, na seção Imóveis.{" "}
-                <button
-                  onClick={() => document.getElementById("secao-imoveis")?.scrollIntoView({ behavior: "smooth" })}
-                  className="font-bold text-sky-700 underline"
-                >
-                  Ir para Imóveis
-                </button>
-              </li>
-              <li>
-                <b>2. Envie o link ao cliente.</b> Copie o link abaixo e mande pelo WhatsApp. Funciona no celular, sem senha.
-              </li>
-            </ol>
-            <button onClick={() => setAvisoNovo(false)} className="mt-2 text-xs text-graytext underline">
-              Fechar aviso
-            </button>
-          </div>
-        )}
-
-        <div className="mt-4 space-y-3 rounded-[14px] border border-rule bg-white p-4">
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-graytext">
-            Links para o cliente
-          </p>
-          {/* Link do cliente com ESTE corretor (av_client_relations, RLS só
-              devolve a do próprio) — nunca o token compartilhado do cliente. */}
-          {selection.av_clients?.av_client_relations?.[0]?.token && (
-            <LinkBox
-              label={`Link permanente de ${selection.av_clients.name || "cliente"} com você (reúne os roteiros que você montou)`}
-              url={`${window.location.origin}/cliente/${selection.av_clients.av_client_relations[0].token}`}
-              highlight
-            />
-          )}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <LinkBox label="Link do formulário (cliente avalia)" url={formLink} />
-            <LinkBox label="Link do painel (resultados)" url={panelLink} />
-          </div>
-        </div>
-
-        <SectionTitle>Dashboard</SectionTitle>
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
-          <Kpi label="Avaliações" value={dash.totalAvaliacoes} foot={`${dash.totalAvaliadores} pessoa(s)`} />
-          <Kpi label="Líder do ranking" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
-          <Kpi label="Nota média geral" value={n1(mediaGeral)} foot="escala de 1 a 10" />
-          <Kpi label="Imóveis no funil" value={properties.length} foot={`${dash.unrated.length} sem avaliação`} />
-        </div>
-
-        {properties.some((p) => p.latitude != null && p.longitude != null) && (
-          <div className="mt-3 overflow-hidden rounded-[14px] border border-rule">
-            <Map
-              pins={properties
-                .filter((p) => p.latitude != null && p.longitude != null)
-                .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#0284C7" }))}
-              height={220}
-            />
-          </div>
-        )}
-
-        {properties.length > 0 && (
-          <div className="mt-3 space-y-2">
-            {properties.map((p) => {
-              const r = dash.ranking.find((x) => x.property_id === p.id);
-              return (
-                <div key={p.id} className="rounded-[14px] border border-rule bg-white p-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <b className="font-serif font-semibold text-charcoal">{p.name}</b>
-                    <span className="text-graytext">
-                      {n1(r?.notaMedia)}/10 · {r?.avaliacoes ?? 0} aval.
-                    </span>
-                  </div>
-                  <div className="mt-2 h-[7px] overflow-hidden rounded-full bg-light">
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${((r?.notaMedia ?? 0) / 10) * 100}%`, background: p.color || "#0284C7" }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {selection.criteria?.length > 0 && (
-          <div className="mt-3 overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
-            <table className="w-full min-w-[460px] border-collapse text-[13px]">
-              <thead>
-                <tr>
-                  <th className="bg-charcoal p-[9px] text-left text-[11px] font-bold text-white">Critério</th>
-                  {dash.comparativo.map((c) => (
-                    <th key={c.property_id} className="bg-charcoal p-[9px] text-center text-[11px] font-bold text-white">
-                      {c.name.split(" ")[0]}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {selection.criteria.map((crit) => (
-                  <tr key={crit}>
-                    <td className="border-b border-rule p-[9px] font-semibold text-charcoal">{crit}</td>
-                    {dash.comparativo.map((c) => {
-                      const m = (c.medias ?? []).find((x) => x.criterio === crit);
-                      const v = m ? m.media : null;
-                      return (
-                        <td
-                          key={c.property_id}
-                          className="border-b border-rule p-[9px] text-center text-graytext"
-                          style={v == null ? {} : { background: shade(c.color || "#0284C7", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
-                        >
-                          {n1(v)}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {dash.comentarios.length > 0 && (
-          <div className="mt-3 space-y-2">
-            {dash.comentarios.map((c) => (
-              <div key={c.property_id} className="rounded-[14px] border border-rule bg-white p-4">
-                <b className="font-serif font-semibold" style={{ color: c.color || "#0284C7" }}>{c.name}</b>
-                {c.comentarios.map((cm, i) => (
-                  <div key={i} className="my-2 border-l-[3px] border-rule pl-3 text-[13px]">
-                    <div className="text-xs font-bold text-charcoal">
-                      {cm.evaluator_name}{" "}
-                      <span className="font-normal text-muted">
-                        {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}· nota {cm.overall_score}/10
-                      </span>
-                    </div>
-                    {cm.strengths && <p className="my-1 text-graytext"><b>+</b> {cm.strengths}</p>}
-                    {cm.concerns && <p className="my-1 text-graytext"><b>−</b> {cm.concerns}</p>}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <SectionTitle>Ranking</SectionTitle>
-        {dash.ranking.length === 0 ? (
-          <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">
-            O ranking aparece assim que a primeira avaliação for enviada.
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {dash.ranking.map((r, i) => (
-              <div
-                key={r.property_id}
-                className={`flex items-center gap-3 rounded-[13px] border border-rule bg-white p-[15px] ${i === 0 ? "border-l-4" : "border-l-[3px]"}`}
-                style={{ borderLeftColor: r.color || "#0284C7" }}
+        <div role="tablist" className="mt-[18px] grid grid-cols-2 gap-2 md:grid-cols-4">
+          {etapas.map((e, i) => {
+            const ativo = passo === i;
+            return (
+              <button
+                key={e.nome}
+                role="tab"
+                aria-selected={ativo}
+                onClick={() => setPassoEscolhido(i)}
+                className={`grid min-h-[72px] content-start gap-0.5 rounded-2xl border p-3 text-left transition-all duration-200 ease-out ${
+                  ativo ? "border-brand bg-[#f5fbff] ring-[3px] ring-brand/10" : "border-slate-200/70 bg-white hover:border-slate-300"
+                }`}
               >
-                <div
-                  className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
-                  style={{ background: r.color || "#0284C7" }}
+                <span
+                  className={`grid h-[22px] w-[22px] place-items-center rounded-full text-xs font-bold ${
+                    ativo ? "bg-brand text-white" : e.feita ? "bg-success-bg text-success-text" : "bg-light text-graytext"
+                  }`}
                 >
-                  {r.posicao}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-serif text-[15.5px] leading-tight font-semibold text-charcoal">{r.name}</div>
-                  <div className="mt-[1px] text-xs text-graytext">
-                    nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
-                  </div>
-                </div>
-                <div className="pl-2 text-right">
-                  <b className="font-serif block text-[21px] leading-[1.1] font-semibold">{n1(r.score)}</b>
-                  <span className="text-[10.5px] text-muted">score</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {dash.unrated.length > 0 && (
-          <div className="mt-2 rounded-[14px] border border-rule bg-white p-4">
-            <b className="text-charcoal">Ainda sem avaliação:</b>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {dash.unrated.map((u) => (
-                <span key={u.property_id} className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-                  {u.name}
+                  {e.feita && !ativo ? "✓" : i + 1}
                 </span>
+                <b className="mt-1.5 block text-body-sm text-charcoal">{e.nome}</b>
+                <small className="text-caption text-graytext">{e.resumo}</small>
+              </button>
+            );
+          })}
+        </div>
+
+        {passo === 0 && properties.length === 0 && (
+          <ProximoPasso titulo="Adicione os imóveis do roteiro" texto="Cadastre um imóvel novo ou importe do seu estoque, mais abaixo.">
+            <Button variant="secondary" onClick={() => document.getElementById("secao-imoveis")?.scrollIntoView({ behavior: "smooth" })}>
+              Ir para Imóveis
+            </Button>
+          </ProximoPasso>
+        )}
+        {passo === 0 && properties.length > 0 && (
+          <ProximoPasso titulo="Imóveis prontos? Mande o link ao cliente" texto="Quando terminar de montar, vá para Enviar.">
+            <Button variant="secondary" onClick={() => setPassoEscolhido(1)}>
+              Ir para Enviar
+            </Button>
+          </ProximoPasso>
+        )}
+        {passo === 1 && !enviado && (
+          <ProximoPasso titulo="Copie o link e mande ao cliente" texto="Funciona no celular, sem senha.">
+            <Button variant="secondary" onClick={() => copiarLink(linkPermanente ?? formLink)}>
+              {linkCopiado ? "Copiado!" : "Copiar link do cliente"}
+            </Button>
+          </ProximoPasso>
+        )}
+      </div>
+
+      <div className="mx-auto max-w-[880px] px-4 pt-5 pb-24 md:px-7">
+        {passo === 0 && (
+          <>
+            <SectionTitle id="secao-imoveis" first>Imóveis</SectionTitle>
+            <div className="space-y-3">
+              {properties.map((p) => (
+                <PropertyCard key={p.id} property={p} onChange={load} currentUserId={user?.id} clientId={selection.client_id} />
               ))}
             </div>
-          </div>
+            <NewPropertyForm selectionId={id} existingCount={properties.length} onCreated={load} />
+            <ImportFromPortfolio selectionId={id} existingCount={properties.length} onImported={load} />
+
+            <SectionTitle>Questionário</SectionTitle>
+            <Questionnaire selection={selection} onSaved={load} />
+
+            <SectionTitle>Etapas do processo (faixa de cima do cronograma)</SectionTitle>
+            <MilestonesEditor selection={selection} onSaved={load} />
+
+            <SectionTitle>Cronograma</SectionTitle>
+            <Gantt milestones={selection.milestones} properties={properties} />
+          </>
         )}
 
-        <SectionTitle>Questionário</SectionTitle>
-        <Questionnaire selection={selection} onSaved={load} />
-
-        <SectionTitle>Etapas do processo (faixa de cima do cronograma)</SectionTitle>
-        <MilestonesEditor selection={selection} onSaved={load} />
-
-        <SectionTitle id="secao-imoveis">Imóveis</SectionTitle>
-        <div className="space-y-3">
-          {properties.map((p) => (
-            <PropertyCard
-              key={p.id}
-              property={p}
-              onChange={load}
-              currentUserId={user?.id}
-              clientId={selection.client_id}
-            />
-          ))}
-        </div>
-        <NewPropertyForm selectionId={id} existingCount={properties.length} onCreated={load} />
-        <ImportFromPortfolio selectionId={id} existingCount={properties.length} onImported={load} />
-
-        <SectionTitle>Cronograma</SectionTitle>
-        <Gantt milestones={selection.milestones} properties={properties} />
-
-        <SectionTitle>Respostas ({evaluations.length})</SectionTitle>
-        {evaluations.length > 0 && (
-          <button
-            onClick={() => downloadEvaluationsCsv(selection, evaluations, properties)}
-            className="mb-3 rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
-          >
-            Baixar CSV
-          </button>
+        {passo === 1 && (
+          <>
+            <SectionTitle first>Links para o cliente</SectionTitle>
+            <div className="space-y-3 rounded-card border border-slate-200/70 bg-white p-4">
+              {/* Link do cliente com ESTE corretor (av_client_relations, RLS só
+                  devolve a do próprio) — nunca o token compartilhado do cliente. */}
+              {linkPermanente && (
+                <LinkBox
+                  label={`Link permanente de ${selection.av_clients.name || "cliente"} com você (reúne os roteiros que você montou)`}
+                  url={linkPermanente}
+                  onCopy={copiarLink}
+                  highlight
+                />
+              )}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <LinkBox label="Link do formulário (cliente avalia)" url={formLink} onCopy={copiarLink} />
+                <LinkBox label="Link do painel (resultados)" url={panelLink} onCopy={copiarLink} />
+              </div>
+            </div>
+          </>
         )}
-        <EvaluationsTable evaluations={evaluations} properties={properties} onChange={load} />
 
-        <SectionTitle>Propostas ({proposals.length})</SectionTitle>
-        {proposals.length > 0 && (
-          <div className="mb-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
-            <Kpi label="Propostas recebidas" value={propKpis.total} foot="" />
-            <Kpi label="Confirmaram interesse" value={propKpis.comInteresse} foot="topo do funil de fechamento" />
-            <Kpi label="Maior proposta" value={brl(propKpis.maiorValor)} foot="" />
-            <Kpi label="Deságio médio" value={propKpis.mediaDesagio == null ? "—" : `${n1(propKpis.mediaDesagio)}%`} foot="sobre o valor de tabela" />
-          </div>
+        {passo === 2 && (
+          <>
+            <SectionTitle first>Dashboard</SectionTitle>
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
+              <Kpi label="Avaliações" value={dash.totalAvaliacoes} foot={`${dash.totalAvaliadores} pessoa(s)`} />
+              <Kpi label="Líder do ranking" value={lider ? lider.name : "—"} foot={lider ? `score ${n1(lider.score)}` : "aguardando respostas"} />
+              <Kpi label="Nota média geral" value={n1(mediaGeral)} foot="escala de 1 a 10" />
+              <Kpi label="Imóveis no funil" value={properties.length} foot={`${dash.unrated.length} sem avaliação`} />
+            </div>
+
+            {properties.some((p) => p.latitude != null && p.longitude != null) && (
+              <div className="mt-3 overflow-hidden rounded-card border border-slate-200/70">
+                <Map
+                  pins={properties
+                    .filter((p) => p.latitude != null && p.longitude != null)
+                    .map((p) => ({ lat: p.latitude, lng: p.longitude, label: p.name, color: p.color || "#0284C7" }))}
+                  height={220}
+                />
+              </div>
+            )}
+
+            {properties.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {properties.map((p) => {
+                  const r = dash.ranking.find((x) => x.property_id === p.id);
+                  return (
+                    <div key={p.id} className="rounded-card border border-slate-200/70 bg-white p-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <b className="font-semibold text-charcoal">{p.name}</b>
+                        <span className="text-graytext">
+                          {n1(r?.notaMedia)}/10 · {r?.avaliacoes ?? 0} aval.
+                        </span>
+                      </div>
+                      <div className="mt-2 h-[7px] overflow-hidden rounded-full bg-light">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${((r?.notaMedia ?? 0) / 10) * 100}%`, background: p.color || "#0284C7" }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {selection.criteria?.length > 0 && (
+              <div className="mt-3 overflow-x-auto rounded-card border border-slate-200/70">
+                <table className="w-full min-w-[460px] border-collapse text-[13px]">
+                  <thead>
+                    <tr>
+                      <th className="bg-bg p-[10px] text-left text-[11px] font-semibold tracking-[.04em] text-graytext uppercase">Critério</th>
+                      {dash.comparativo.map((c) => (
+                        <th key={c.property_id} className="bg-bg p-[10px] text-center text-[11px] font-semibold tracking-[.04em] text-graytext uppercase">
+                          {c.name.split(" ")[0]}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selection.criteria.map((crit) => (
+                      <tr key={crit}>
+                        <td className="border-t border-slate-100 bg-white p-[10px] font-semibold text-charcoal">{crit}</td>
+                        {dash.comparativo.map((c) => {
+                          const m = (c.medias ?? []).find((x) => x.criterio === crit);
+                          const v = m ? m.media : null;
+                          return (
+                            <td
+                              key={c.property_id}
+                              className="border-t border-slate-100 p-[10px] text-center tabular-nums text-graytext"
+                              style={v == null ? {} : { background: shade(c.color || "#0284C7", v), color: v >= 4 ? "#fff" : "#5C5C5C" }}
+                            >
+                              {n1(v)}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {dash.comentarios.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {dash.comentarios.map((c) => (
+                  <div key={c.property_id} className="rounded-card border border-slate-200/70 bg-white p-4">
+                    <b className="font-semibold" style={{ color: c.color || "#0284C7" }}>{c.name}</b>
+                    {c.comentarios.map((cm, i) => (
+                      <div key={i} className="my-2 border-l-[3px] border-slate-200 pl-3 text-[13px]">
+                        <div className="text-xs font-semibold text-charcoal">
+                          {cm.evaluator_name}{" "}
+                          <span className="font-normal text-muted">
+                            {cm.evaluator_role ? `· ${cm.evaluator_role} ` : ""}· nota {cm.overall_score}/10
+                          </span>
+                        </div>
+                        {cm.strengths && <p className="my-1 text-graytext"><b>+</b> {cm.strengths}</p>}
+                        {cm.concerns && <p className="my-1 text-graytext"><b>−</b> {cm.concerns}</p>}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <SectionTitle>Ranking</SectionTitle>
+            {dash.ranking.length === 0 ? (
+              <div className="rounded-card border border-slate-200/70 bg-white p-6 text-center text-body-sm text-muted">
+                O ranking aparece assim que a primeira avaliação for enviada.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {dash.ranking.map((r, i) => (
+                  <div
+                    key={r.property_id}
+                    className={`flex items-center gap-3 rounded-card border border-slate-200/70 bg-white p-[15px] ${i === 0 ? "shadow-soft" : ""}`}
+                  >
+                    <div
+                      className="flex h-9 w-9 flex-none items-center justify-center rounded-full text-[15px] font-bold text-white"
+                      style={{ background: r.color || "#0284C7" }}
+                    >
+                      {r.posicao}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[15.5px] leading-tight font-semibold text-charcoal">{r.name}</div>
+                      <div className="mt-[1px] text-xs text-graytext">
+                        nota {n1(r.notaMedia)}/10 · critérios {n1(r.mediaCriterios)}/5 · {r.avaliacoes} avaliação(ões)
+                      </div>
+                    </div>
+                    <div className="pl-2 text-right">
+                      <b className="block text-[22px] leading-[1.1] font-bold tracking-[-0.03em] tabular-nums">{n1(r.score)}</b>
+                      <span className="text-[10.5px] text-muted">score</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {dash.unrated.length > 0 && (
+              <div className="mt-2 rounded-card border border-slate-200/70 bg-white p-4">
+                <b className="text-charcoal">Ainda sem avaliação:</b>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {dash.unrated.map((u) => (
+                    <span key={u.property_id} className="rounded-full bg-light px-2.5 py-1 text-caption font-semibold text-graytext">
+                      {u.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <SectionTitle>Respostas ({evaluations.length})</SectionTitle>
+            {evaluations.length > 0 && (
+              <Button variant="secondary" size="sm" className="mb-3" onClick={() => downloadEvaluationsCsv(selection, evaluations, properties)}>
+                Baixar CSV
+              </Button>
+            )}
+            <EvaluationsTable evaluations={evaluations} properties={properties} onChange={load} />
+          </>
         )}
-        <ProposalsTable proposals={proposals} properties={properties} />
+
+        {passo === 3 && (
+          <>
+            <SectionTitle first>Propostas ({proposals.length})</SectionTitle>
+            {proposals.length > 0 && (
+              <div className="mb-3 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
+                <Kpi label="Propostas recebidas" value={propKpis.total} foot="" />
+                <Kpi label="Confirmaram interesse" value={propKpis.comInteresse} foot="topo do funil de fechamento" />
+                <Kpi label="Maior proposta" value={brl(propKpis.maiorValor)} foot="" />
+                <Kpi label="Deságio médio" value={propKpis.mediaDesagio == null ? "—" : `${n1(propKpis.mediaDesagio)}%`} foot="sobre o valor de tabela" />
+              </div>
+            )}
+            <ProposalsTable proposals={proposals} properties={properties} />
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-function SectionTitle({ children, id }) {
+function ProximoPasso({ titulo, texto, children }) {
   return (
-    <h2 id={id} className="mt-8 mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+    <div className="mt-4 flex flex-wrap items-center gap-3.5 rounded-[20px] bg-gradient-to-br from-sky-600 to-sky-800 px-5 py-[18px] text-white shadow-[0_18px_40px_-24px_rgba(2,132,199,.7)]">
+      <div className="min-w-[200px] flex-1">
+        <small className="text-caption text-sky-100">Próximo passo</small>
+        <b className="block text-[17px] tracking-tight">{titulo}</b>
+        <small className="text-body-sm text-sky-100">{texto}</small>
+      </div>
+      <div className="[&_a]:!bg-white [&_a]:!text-sky-800 [&_button]:!border-transparent [&_button]:!bg-white [&_button]:!text-sky-800">{children}</div>
+    </div>
+  );
+}
+
+function SectionTitle({ children, id, first = false }) {
+  return (
+    <h2 id={id} className={`mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase ${first ? "" : "mt-9"}`}>
       {children}
     </h2>
   );
@@ -380,40 +456,38 @@ function SectionTitle({ children, id }) {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="bg-white p-[15px]">
-      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="font-serif mt-[5px] truncate text-2xl leading-[1.15] font-semibold">{value}</div>
-      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+    <div className="bg-white p-4">
+      <div className="text-[11px] font-semibold tracking-[.06em] text-muted uppercase">{label}</div>
+      <div className="mt-1 truncate text-2xl leading-[1.15] font-bold tracking-[-0.03em] tabular-nums">{value}</div>
+      <div className="mt-0.5 text-caption text-graytext">{foot}</div>
     </div>
   );
 }
 
-function LinkBox({ label, url, highlight }) {
+function LinkBox({ label, url, highlight, onCopy }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div className={`rounded-[11px] border bg-white p-3 ${highlight ? "border-gold" : "border-rule"}`}>
+    <div className={`rounded-xl border bg-white p-3 ${highlight ? "border-brand/40 bg-[#f5fbff]" : "border-slate-200/70"}`}>
       <p className="text-xs font-medium text-graytext">{label}</p>
-      <div className="mt-1 flex items-center gap-2">
+      <div className="mt-1.5 flex items-center gap-2">
         <input
           readOnly
           value={url}
-          className="w-full truncate rounded border border-rule bg-bg px-2 py-1 text-xs text-graytext"
+          aria-label={label}
+          className="min-h-9 w-full min-w-0 truncate rounded-[10px] border border-slate-200 bg-bg px-2.5 text-xs text-graytext"
         />
-        <button
+        <Button
+          size="sm"
+          variant="secondary"
+          className="shrink-0"
           onClick={() => {
-            navigator.clipboard.writeText(url);
-            // Marca o passo "enviar o link" dos primeiros passos (o cliente só recebe se o link foi copiado).
-            supabase.rpc("marcar_primeiro_passo", { p_chave: "link_copiado" }).then(
-              () => {},
-              () => {},
-            );
+            onCopy(url);
             setCopied(true);
             setTimeout(() => setCopied(false), 1500);
           }}
-          className="shrink-0 rounded-[9px] bg-charcoal px-2 py-1 text-xs font-bold text-white hover:opacity-90"
         >
           {copied ? "Copiado!" : "Copiar"}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -448,7 +522,7 @@ function Questionnaire({ selection, onSaved }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-bold tracking-[.04em] text-graytext uppercase">
@@ -457,7 +531,7 @@ function Questionnaire({ selection, onSaved }) {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -465,7 +539,7 @@ function Questionnaire({ selection, onSaved }) {
           <input
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
         </div>
       </div>
@@ -476,7 +550,7 @@ function Questionnaire({ selection, onSaved }) {
         value={criteria}
         onChange={(e) => setCriteria(e.target.value)}
         rows={5}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
       <CriteriaPresets criteriaText={criteria} onApply={setCriteria} />
 
@@ -488,14 +562,14 @@ function Questionnaire({ selection, onSaved }) {
         onChange={(e) => setUnitCriteria(e.target.value)}
         rows={5}
         placeholder="Ex.: Planta e distribuição, vista, ruído daquela unidade"
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <div className="mt-3 flex items-center gap-3">
         <button
           onClick={save}
           disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-[10px] bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Salvando…" : "Salvar questionário"}
         </button>
@@ -533,7 +607,7 @@ function MilestonesEditor({ selection, onSaved }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
       {rows.map((m, i) => (
         <div key={i} className="mb-[10px] flex flex-wrap items-end gap-[10px]">
           <div className="min-w-[130px] flex-[2]">
@@ -541,7 +615,7 @@ function MilestonesEditor({ selection, onSaved }) {
             <input
               value={m.nome}
               onChange={(e) => update(i, "nome", e.target.value)}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
             />
           </div>
           <div className="min-w-[130px] flex-1">
@@ -550,7 +624,7 @@ function MilestonesEditor({ selection, onSaved }) {
               type="date"
               value={m.inicio}
               onChange={(e) => update(i, "inicio", e.target.value)}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
             />
           </div>
           <div className="min-w-[130px] flex-1">
@@ -559,25 +633,25 @@ function MilestonesEditor({ selection, onSaved }) {
               type="date"
               value={m.fim}
               onChange={(e) => update(i, "fim", e.target.value)}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
             />
           </div>
           <button
             onClick={() => remove(i)}
-            className="rounded-lg border-[1.5px] border-[#E8D3CD] px-3 py-2 text-xs font-bold text-[#B34A2E]"
+            className="rounded-lg border-[1.5px] border-[#E8D3CD] px-3 py-2 text-xs font-bold text-danger-text"
           >
             remover
           </button>
         </div>
       ))}
       <div className="flex flex-wrap items-center gap-3">
-        <button onClick={add} className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal">
+        <button onClick={add} className="rounded-[9px] border border-slate-200 px-3 py-1.5 text-sm font-bold text-charcoal">
           + Adicionar etapa
         </button>
         <button
           onClick={save}
           disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-[10px] bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Salvando…" : "Salvar etapas"}
         </button>
@@ -765,14 +839,14 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
       <div className="flex flex-wrap items-end gap-[10px]">
         <div className="min-w-[160px] flex-[2]">
           <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome do imóvel</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -781,7 +855,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="mt-1 h-[38px] w-[52px] rounded-[9px] border-[1.5px] border-rule p-1"
+            className="mt-1 h-[38px] w-[52px] rounded-[9px] border border-slate-200 p-1"
           />
         </div>
         <div className="min-w-[150px]">
@@ -789,7 +863,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
           <select
             value={property.stage}
             onChange={(e) => updateStage(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           >
             {STAGES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -804,7 +878,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
       <input
         value={address}
         onChange={(e) => setAddress(e.target.value)}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
@@ -813,7 +887,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
       <input
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <div className="mt-3 flex flex-wrap gap-4">
@@ -827,7 +901,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
         onChange={(e) => setPaymentTerms(e.target.value)}
         rows={2}
         placeholder="Ex.: 10% entrada + 30% obra + 60% financiamento"
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <div className="mt-3 flex flex-wrap gap-4">
@@ -838,7 +912,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
             value={condoValue}
             onChange={(e) => setCondoValue(e.target.value)}
             placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-40 rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -848,7 +922,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
             value={iptuValue}
             onChange={(e) => setIptuValue(e.target.value)}
             placeholder="Valor mensal"
-            className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-40 rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
         </div>
       </div>
@@ -860,7 +934,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
         value={extraCriteria}
         onChange={(e) => setExtraCriteria(e.target.value)}
         rows={2}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
@@ -870,7 +944,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
         value={extraUnitCriteria}
         onChange={(e) => setExtraUnitCriteria(e.target.value)}
         rows={2}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">
@@ -880,7 +954,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
         value={questions}
         onChange={(e) => setQuestions(e.target.value)}
         rows={2}
-        className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="mt-1 w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
 
       <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Fases no cronograma</label>
@@ -891,24 +965,24 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
               value={f.nome}
               onChange={(e) => updatePhase(i, "nome", e.target.value)}
               placeholder="Fase"
-              className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="w-full rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
             />
           </div>
           <input
             type="date"
             value={f.inicio}
             onChange={(e) => updatePhase(i, "inicio", e.target.value)}
-            className="rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
           <input
             type="date"
             value={f.fim}
             onChange={(e) => updatePhase(i, "fim", e.target.value)}
-            className="rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
           />
           <button
             onClick={() => removePhase(i)}
-            className="rounded-lg border-[1.5px] border-[#E8D3CD] px-3 py-2 text-xs font-bold text-[#B34A2E]"
+            className="rounded-lg border-[1.5px] border-[#E8D3CD] px-3 py-2 text-xs font-bold text-danger-text"
           >
             ×
           </button>
@@ -964,7 +1038,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
               className="mt-1 w-full rounded border border-rule px-2 py-1 text-sm"
             />
           </div>
-          <button type="submit" className="rounded bg-charcoal px-2 py-1 text-sm font-bold text-white hover:opacity-90">
+          <button type="submit" className="rounded bg-brand px-2 py-1 text-sm font-bold text-white hover:bg-brand-hover">
             Adicionar
           </button>
         </form>
@@ -978,7 +1052,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
         <button
           onClick={save}
           disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-[10px] bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Salvando…" : "Salvar imóvel"}
         </button>
@@ -992,7 +1066,7 @@ function PropertyCard({ property, onChange, currentUserId, clientId }) {
           Adicionar ao CRM
         </button>
         {crmMsg && <span className="text-sm text-graytext">{crmMsg}</span>}
-        <button onClick={removeProperty} className="ml-auto text-xs font-bold text-[#B34A2E]">
+        <button onClick={removeProperty} className="ml-auto text-xs font-bold text-danger-text">
           remover imóvel
         </button>
       </div>
@@ -1028,12 +1102,12 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
       <button
         type="button"
         onClick={() => setShow((v) => !v)}
-        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal"
+        className="rounded-[9px] border border-slate-200 px-3 py-1.5 text-sm font-bold text-charcoal"
       >
         {show ? "Fechar" : "Importar do portfólio"}
       </button>
       {show && (
-        <div className="mt-2 rounded-[14px] border border-rule bg-white p-3">
+        <div className="mt-2 rounded-card border border-slate-200/70 bg-white p-3">
           {items === null && <p className="text-sm text-muted">Carregando…</p>}
           {items?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio da plataforma ainda.</p>}
           {items?.map((item) => (
@@ -1056,7 +1130,7 @@ function ImportFromPortfolio({ selectionId, existingCount, onImported }) {
               <button
                 disabled={importingId === item.id}
                 onClick={() => importItem(item)}
-                className="rounded-[9px] bg-charcoal px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
+                className="rounded-[9px] bg-brand px-2 py-1 text-xs font-bold text-white disabled:opacity-50"
               >
                 {importingId === item.id ? "Importando…" : "Importar"}
               </button>
@@ -1094,12 +1168,12 @@ function NewPropertyForm({ selectionId, existingCount, onCreated }) {
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Nome do novo imóvel"
-        className="flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="flex-1 rounded-[9px] border border-slate-200 px-3 py-2 text-sm"
       />
       <button
         type="submit"
         disabled={saving}
-        className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+        className="rounded-[10px] bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
       >
         + Novo imóvel
       </button>
@@ -1140,7 +1214,7 @@ function EvaluationsTable({ evaluations, properties, onChange }) {
   }
 
   if (!evaluations.length) {
-    return <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma resposta ainda.</div>;
+    return <div className="rounded-card border border-slate-200/70 bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma resposta ainda.</div>;
   }
 
   return (
@@ -1149,7 +1223,7 @@ function EvaluationsTable({ evaluations, properties, onChange }) {
         <thead>
           <tr>
             {["Quando", "Quem", "Imóvel", "Nota", "Comentários", ""].map((h) => (
-              <th key={h} className="bg-charcoal p-[10px] text-left text-[11.5px] font-bold text-white">
+              <th key={h} className="bg-bg p-[10px] text-left text-[11px] font-semibold tracking-[.04em] text-graytext uppercase">
                 {h}
               </th>
             ))}
@@ -1190,7 +1264,7 @@ function EvaluationsTable({ evaluations, properties, onChange }) {
               <td className="border-b border-rule p-[10px] text-right">
                 <button
                   onClick={() => remove(e.id)}
-                  className="rounded-lg border-[1.5px] border-[#E8D3CD] px-[11px] py-[6px] text-xs font-bold text-[#B34A2E]"
+                  className="rounded-lg border-[1.5px] border-[#E8D3CD] px-[11px] py-[6px] text-xs font-bold text-danger-text"
                 >
                   excluir
                 </button>
@@ -1207,7 +1281,7 @@ function ProposalsTable({ proposals, properties }) {
   const propertyById = Object.fromEntries(properties.map((p) => [p.id, p]));
 
   if (!proposals.length) {
-    return <div className="rounded-[14px] border border-rule bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma proposta ainda.</div>;
+    return <div className="rounded-card border border-slate-200/70 bg-white p-6 text-center text-[13.5px] text-muted">Nenhuma proposta ainda.</div>;
   }
 
   return (
@@ -1216,7 +1290,7 @@ function ProposalsTable({ proposals, properties }) {
         <thead>
           <tr>
             {["Quando", "Quem", "Imóvel", "Tabela", "Proposta", "Deságio", "Interesse"].map((h) => (
-              <th key={h} className="bg-charcoal p-[10px] text-left text-[11.5px] font-bold text-white">
+              <th key={h} className="bg-bg p-[10px] text-left text-[11px] font-semibold tracking-[.04em] text-graytext uppercase">
                 {h}
               </th>
             ))}
@@ -1233,7 +1307,7 @@ function ProposalsTable({ proposals, properties }) {
                 </td>
                 <td className="border-b border-rule p-[10px] font-bold text-charcoal">{x.proposer_name}</td>
                 <td className="border-b border-rule p-[10px]">
-                  <span className="font-serif font-semibold" style={{ color: property?.color || "#0284C7" }}>
+                  <span className="font-semibold" style={{ color: property?.color || "#0284C7" }}>
                     {property?.name}
                   </span>
                 </td>

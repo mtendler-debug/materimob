@@ -6,6 +6,9 @@ import { importarPortfolio, importarLancamento } from "../lib/importar";
 import { loadCatalogItems } from "../lib/catalogo";
 import { generateToken } from "../lib/token";
 import { CatalogBrowser } from "../components/CatalogBrowser";
+import Button from "../components/ui/Button";
+import Input, { classesCampo } from "../components/ui/Input";
+import Modal from "../components/ui/Modal";
 
 // Uma busca só sobre tudo que existe na plataforma — o corretor não
 // precisa entender a diferença entre "catálogo" e "empreendimento", ele
@@ -39,40 +42,50 @@ export default function Properties() {
     });
   }, [org]);
 
-  if (loadingOrg) return <div className="p-6 text-sm text-muted">Carregando…</div>;
+  if (loadingOrg) return <div className="p-6 text-body-sm text-muted">Carregando…</div>;
 
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Imóveis</h1>
-        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
-          Tudo que está publicado na plataforma — portfólio e lançamentos juntos. Ache o que
-          mostrar pro cliente e adicione direto num roteiro.
+    <div className="min-h-screen bg-bg px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-[1040px]">
+        <h1 className="text-[clamp(1.5rem,3vw,1.75rem)] leading-tight font-bold tracking-[-0.03em] text-charcoal">Imóveis</h1>
+        <p className="mt-1.5 max-w-[60ch] text-base text-graytext">
+          Tudo que está publicado na plataforma, portfólio e lançamentos juntos. Ache o que mostrar ao cliente e adicione
+          direto a um roteiro.
         </p>
 
         {picksResolvidos.length > 0 && (
-          <>
-            <h2 className="mt-6 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-              Seleção da {org.name}
-            </h2>
-            <div className="mb-6 space-y-3">
+          <section className="mt-8">
+            <h2 className="mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase">Seleção da {org.name}</h2>
+            <div className="grid gap-3 md:grid-cols-2">
               {picksResolvidos.map((it) => (
-                <div key={`pick-${it.kind}-${it.id}`} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${it.color || "#0284C7"}` }}>
-                  <p className="font-serif font-semibold text-charcoal">{it.name}</p>
-                  {it.orgName && <p className="text-xs text-graytext">{it.orgName}</p>}
+                <div key={`pick-${it.kind}-${it.id}`} className="grid gap-2 rounded-card border border-slate-200/70 bg-white p-4">
+                  <div className="flex items-center gap-3.5">
+                    <span
+                      className="h-16 w-16 flex-none rounded-xl"
+                      style={{ background: `linear-gradient(135deg, ${it.color || "#0284C7"}, ${it.color || "#0284C7"}cc)` }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-charcoal">{it.name}</p>
+                      {it.orgName && (
+                        <p className="text-caption text-graytext">
+                          {it.orgName} · {it.kind === "lancamento" ? "lançamento" : "pronto"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                   {it.note && (
-                    <p className="mt-2 rounded-[9px] bg-light p-2 text-xs text-graytext">
-                      <b className="text-charcoal">Nota do time:</b> {it.note}
+                    <p className="rounded-[10px] bg-bg px-2.5 py-2 text-caption text-graytext">
+                      <b className="text-slate-700">Nota do time:</b> {it.note}
                     </p>
                   )}
                   <RoteiroAction item={it} />
                 </div>
               ))}
             </div>
-          </>
+          </section>
         )}
 
-        <h2 className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Buscar</h2>
+        <h2 className="mt-8 mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase">Buscar</h2>
         <CatalogBrowser renderAction={(item) => <RoteiroAction item={item} />} />
       </div>
     </div>
@@ -82,12 +95,22 @@ export default function Properties() {
 function RoteiroAction({ item }) {
   const [show, setShow] = useState(false);
   return (
-    <div>
-      <button onClick={() => setShow((v) => !v)} className="text-xs font-bold text-graytext underline">
-        {show ? "Fechar" : "Adicionar ao roteiro"}
-      </button>
-      {show && <AddToRoteiro item={item} onDone={() => setShow(false)} />}
-    </div>
+    <>
+      <Button size="sm" onClick={() => setShow(true)}>
+        + Adicionar ao roteiro
+      </Button>
+      <Modal
+        open={show}
+        onClose={() => setShow(false)}
+        title="Adicionar ao roteiro"
+      >
+        <p className="-mt-1 mb-4 text-body-sm text-graytext">
+          {item.name}
+          {item.kind === "lancamento" ? " · só as unidades disponíveis entram" : ""}
+        </p>
+        <AddToRoteiro item={item} onDone={() => setShow(false)} />
+      </Modal>
+    </>
   );
 }
 
@@ -194,32 +217,30 @@ function AddToRoteiro({ item, onDone }) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-3 space-y-2 rounded-[11px] bg-bg p-3">
+    <form onSubmit={submit} className="space-y-3">
       {selections?.length > 0 && (
-        <div className="flex overflow-hidden rounded-[9px] border-[1.5px] border-rule">
-          <button
-            type="button"
-            onClick={() => setModo("existente")}
-            className={`flex-1 px-2 py-1.5 text-xs font-bold ${modo === "existente" ? "bg-charcoal text-white" : "text-graytext"}`}
-          >
-            Roteiro existente
-          </button>
-          <button
-            type="button"
-            onClick={() => setModo("novo")}
-            className={`flex-1 px-2 py-1.5 text-xs font-bold ${modo === "novo" ? "bg-charcoal text-white" : "text-graytext"}`}
-          >
-            Novo roteiro
-          </button>
+        <div className="grid grid-cols-2 gap-[3px] rounded-control bg-light p-[3px]">
+          {[
+            ["existente", "Roteiro existente"],
+            ["novo", "Novo roteiro"],
+          ].map(([v, rotulo]) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setModo(v)}
+              aria-pressed={modo === v}
+              className={`min-h-10 rounded-[9px] text-[13px] font-semibold transition-all duration-200 ${
+                modo === v ? "bg-white text-charcoal shadow-sm" : "text-graytext hover:text-charcoal"
+              }`}
+            >
+              {rotulo}
+            </button>
+          ))}
         </div>
       )}
 
       {modo === "existente" ? (
-        <select
-          value={selectionId}
-          onChange={(e) => setSelectionId(e.target.value)}
-          className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-        >
+        <select value={selectionId} onChange={(e) => setSelectionId(e.target.value)} aria-label="Roteiro" className={classesCampo}>
           {selections?.map((s) => (
             <option key={s.id} value={s.id}>
               {s.client_name} · {s.title}
@@ -227,31 +248,22 @@ function AddToRoteiro({ item, onDone }) {
           ))}
         </select>
       ) : (
-        <div className="flex flex-wrap gap-2">
-          <input
-            value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
-            placeholder="Nome do cliente"
-            className="min-w-[140px] flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-          <input
-            value={clientPhone}
-            onChange={(e) => setClientPhone(e.target.value)}
-            placeholder="Telefone (opcional)"
-            className="min-w-[140px] flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
+        <div className="space-y-3">
+          <Input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="Nome do cliente" aria-label="Nome do cliente" />
+          <Input value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="Telefone (opcional)" aria-label="Telefone" />
         </div>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-body-sm text-danger-text">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={busy}
-        className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-      >
-        {busy ? "Adicionando…" : "Adicionar"}
-      </button>
+      <div className="flex justify-end gap-2 pt-2">
+        <Button variant="secondary" onClick={onDone}>
+          Cancelar
+        </Button>
+        <Button type="submit" disabled={busy}>
+          {busy ? "Adicionando…" : "Adicionar"}
+        </Button>
+      </div>
     </form>
   );
 }
