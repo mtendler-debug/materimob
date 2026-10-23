@@ -6,6 +6,7 @@ import { generateToken } from "../lib/token";
 import { geocodeAddress } from "../lib/geocode";
 import { Map } from "../components/Map";
 import { useFeedback } from "../lib/feedback";
+import { useAuth } from "../lib/AuthContext";
 
 export default function Organization() {
   const { org, role, memberships, activeOrgId, setActiveOrgId, loading, reload } = useOrganization();
@@ -152,6 +153,7 @@ function TipoOption({ value, current, onSelect, children }) {
 }
 
 function OrgHeaderCard({ org, role, manage, onChange }) {
+  const { user } = useAuth();
   const { confirm, toast } = useFeedback();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(org.name);
@@ -168,7 +170,13 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
     )
       return;
     setLeaving(true);
-    const { error } = await supabase.from("organization_members").delete().eq("organization_id", org.id);
+    // Só a própria linha: sem o user_id, um gerente apagaria a equipe inteira
+    // (e o banco recusa tudo, porque o diretor não pode sair assim).
+    const { error } = await supabase
+      .from("organization_members")
+      .delete()
+      .eq("organization_id", org.id)
+      .eq("user_id", user.id);
     if (error) {
       setLeaving(false);
       toast("Não foi possível sair: " + error.message, "danger");
@@ -944,7 +952,7 @@ function OrganizationDetail({ org, role, onChange }) {
         </div>
       </div>
 
-      {manage && <Invites orgId={org.id} onChange={onChange} />}
+      {manage && <Invites orgId={org.id} role={role} onChange={onChange} />}
     </div>
   );
 }
@@ -1049,7 +1057,17 @@ function Kpi({ label, value, foot }) {
   );
 }
 
-function Invites({ orgId }) {
+// O banco recusa convite com papel acima do de quem convida
+// (migrations_trava_papeis_organizacao.sql); a lista já não oferece.
+const PAPEIS_CONVITE = [
+  ["corretor", "Corretor", 1],
+  ["coordenador", "Coordenador", 2],
+  ["gerente", "Gerente", 3],
+  ["diretor", "Diretor", 4],
+];
+const RANK_PAPEL = { corretor: 1, coordenador: 2, gerente: 3, diretor: 4 };
+
+function Invites({ orgId, role: meuPapel }) {
   const [invites, setInvites] = useState(null);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("corretor");
@@ -1117,10 +1135,11 @@ function Invites({ orgId }) {
               onChange={(e) => setRole(e.target.value)}
               className="mt-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
             >
-              <option value="corretor">Corretor</option>
-              <option value="coordenador">Coordenador</option>
-              <option value="gerente">Gerente</option>
-              <option value="diretor">Diretor</option>
+              {PAPEIS_CONVITE.filter(([, , rank]) => rank <= (RANK_PAPEL[meuPapel] ?? 0)).map(([valor, rotulo]) => (
+                <option key={valor} value={valor}>
+                  {rotulo}
+                </option>
+              ))}
             </select>
           </div>
           <button
