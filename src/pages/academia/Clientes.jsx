@@ -13,7 +13,7 @@ const FILTROS = [
 ];
 
 const campo =
-  "w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[9px] text-[13.5px] text-charcoal focus:border-gold focus:outline-none";
+  "w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[9px] text-[13.5px] text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
 
 // Meus clientes: registros que o corretor fez (e, para o gestor, os da imobiliária).
 // A leitura passa por pc_meus_registros, que não devolve anotações internas nem
@@ -51,7 +51,7 @@ export default function Clientes() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-      <h1 className="text-xl font-bold text-charcoal">Clientes registrados</h1>
+      <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Clientes registrados</h1>
       <p className="mt-1 text-sm text-graytext">
         {lista === null
           ? "Carregando…"
@@ -60,7 +60,7 @@ export default function Clientes() {
 
       <Link
         to="/app/academia/clientes/novo"
-        className="mt-3 block rounded-[10px] bg-charcoal px-4 py-[11px] text-center text-sm font-bold text-white"
+        className="mt-3 block min-h-11 rounded-control bg-brand px-4 py-[11px] text-center text-sm font-bold text-white"
       >
         Registrar cliente
       </Link>
@@ -76,8 +76,8 @@ export default function Clientes() {
               type="button"
               aria-pressed={escopo === k}
               onClick={() => setEscopo(k)}
-              className={`rounded-[9px] border-[1.5px] px-2 py-2 text-[13px] font-semibold ${
-                escopo === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-700"
+              className={`rounded-control border px-2 py-2 text-[13px] font-semibold ${
+                escopo === k ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-700"
               }`}
             >
               {rotulo}
@@ -102,7 +102,7 @@ export default function Clientes() {
             aria-pressed={filtro === k}
             onClick={() => setFiltro(k)}
             className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold ${
-              filtro === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"
+              filtro === k ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-600"
             }`}
           >
             {rotulo}
@@ -111,7 +111,7 @@ export default function Clientes() {
       </div>
 
       {lista && visiveis.length === 0 && (
-        <div className="mt-3 rounded-[12px] border border-rule bg-white px-3.5 py-4 text-center text-[13px] text-graytext">
+        <div className="mt-3 rounded-card border border-slate-200/70 bg-white px-3.5 py-4 text-center text-[13px] text-graytext">
           {base.length
             ? "Nenhum registro com esse filtro."
             : 'Você ainda não registrou nenhum cliente. Toque em "Registrar cliente" para começar.'}
@@ -125,7 +125,7 @@ export default function Clientes() {
           <Link
             key={r.id}
             to={`/app/academia/clientes/${r.id}`}
-            className="mt-2 block rounded-[12px] border border-rule bg-white px-3.5 py-3 hover:border-slate-300"
+            className="mt-2 block rounded-card border border-slate-200/70 bg-white px-3.5 py-3 hover:border-slate-300"
           >
             <div className="flex items-start justify-between gap-2">
               <b className="text-sm leading-tight text-charcoal">{r.cliente_nome}</b>

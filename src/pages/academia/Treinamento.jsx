@@ -30,7 +30,7 @@ export default function Treinamento() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-      <h1 className="text-xl font-bold text-charcoal">Treinamento</h1>
+      <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Treinamento</h1>
       <p className="mt-1 text-sm text-graytext">
         Trilhas do básico ao produto. O certificado sai quando você conclui as aulas e passa no quiz.
       </p>
@@ -49,8 +49,8 @@ export default function Treinamento() {
             <Link
               key={t.id}
               to={`/app/academia/treinamento/${t.id}`}
-              className={`block rounded-[12px] border bg-white px-3.5 py-3 ${
-                destaque ? "border-sky-700 ring-1 ring-sky-700" : "border-rule hover:border-slate-300"
+              className={`block rounded-card border bg-white px-3.5 py-3 ${
+                destaque ? "border-sky-700 ring-1 ring-sky-700" : "border-slate-200/70 hover:border-slate-300"
               }`}
             >
               {destaque && <div className="text-[11px] font-bold uppercase tracking-wide text-sky-800">Continue de onde parou</div>}
@@ -59,8 +59,8 @@ export default function Treinamento() {
               </div>
               <div className="mt-0.5 text-sm font-bold leading-tight text-charcoal">{tituloCurto(t.titulo)}</div>
               {t.descricao && <p className="mb-2 mt-1 text-[12.5px] text-graytext">{t.descricao}</p>}
-              <div className="h-1.5 overflow-hidden rounded-full bg-rule">
-                <div className="h-full bg-sky-700" style={{ width: `${total ? (100 * feitas) / total : 0}%` }} />
+              <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-full bg-brand" style={{ width: `${total ? (100 * feitas) / total : 0}%` }} />
               </div>
               <div className="mt-1.5 flex items-center justify-between gap-2 text-xs text-graytext">
                 <span>

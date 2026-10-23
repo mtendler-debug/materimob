@@ -17,9 +17,9 @@ export const ETAPAS = [
 export const ETAPA_LABELS = Object.fromEntries(ETAPAS);
 
 const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[9px] text-[13.5px] text-charcoal focus:border-gold focus:outline-none";
-const btnEscuro = "rounded-[8px] bg-charcoal px-3 py-1.5 text-[12.5px] font-bold text-white disabled:opacity-50";
-const btnLinha = "rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
+  "mt-1 w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[9px] text-[13.5px] text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
+const btnEscuro = "rounded-[10px] bg-brand px-3 py-1.5 text-[12.5px] font-bold text-white disabled:opacity-50";
+const btnLinha = "rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
 
 // Biblioteca de argumentos por etapa da venda e por projeto. Copiar também conta
 // o uso (pc_usar_argumento) e registra a atividade do corretor.
@@ -93,7 +93,7 @@ export default function Argumentos() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-      <h1 className="text-xl font-bold text-charcoal">Argumentos</h1>
+      <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Argumentos</h1>
       <p className="mt-1 text-sm text-graytext">Respostas e mensagens prontas por etapa da venda. Copie, ajuste e envie.</p>
 
       <input
@@ -113,7 +113,7 @@ export default function Argumentos() {
             aria-pressed={etapa === k}
             onClick={() => setEtapa(k)}
             className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold ${
-              etapa === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"
+              etapa === k ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-600"
             }`}
           >
             {rotulo}
@@ -139,7 +139,7 @@ export default function Argumentos() {
           Sugerir um argumento
         </button>
       ) : (
-        <form onSubmit={enviarSugestao} className="mt-3 rounded-[12px] border border-rule bg-white p-3">
+        <form onSubmit={enviarSugestao} className="mt-3 rounded-card border border-slate-200/70 bg-white p-3">
           <label className="block text-xs font-medium text-graytext">
             Etapa
             <select value={form.etapa} onChange={(e) => setForm({ ...form, etapa: e.target.value })} className={campo}>
@@ -170,7 +170,7 @@ export default function Argumentos() {
             />
           </label>
           {form.erro && (
-            <p role="alert" className="mt-2 text-[12.5px] text-rose-700">
+            <p role="alert" className="mt-2 text-[12.5px] text-danger-text">
               {form.erro}
             </p>
           )}
@@ -189,7 +189,7 @@ export default function Argumentos() {
         <>
           <h2 className="mb-1.5 mt-5 text-[10.5px] font-bold uppercase tracking-[.1em] text-graytext">Minhas sugestões</h2>
           {minhas.map((m) => (
-            <div key={m.id} className="mt-2 rounded-[12px] border border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px]">
+            <div key={m.id} className="mt-2 rounded-card border border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px]">
               <span className="rounded-full border border-amber-300 bg-amber-100 px-2 py-px text-[11.5px] font-semibold text-amber-800">
                 Aguardando revisão
               </span>
@@ -203,7 +203,7 @@ export default function Argumentos() {
         {lista === null ? "Carregando…" : `${visiveis.length} ${visiveis.length === 1 ? "argumento" : "argumentos"}`}
       </h2>
       {lista !== null && visiveis.length === 0 && (
-        <div className="rounded-[12px] border border-rule bg-white px-3.5 py-4 text-center text-[13px] text-graytext">
+        <div className="rounded-card border border-slate-200/70 bg-white px-3.5 py-4 text-center text-[13px] text-graytext">
           Nenhum argumento com esse filtro. Tente outra palavra ou etapa.
         </div>
       )}
@@ -211,14 +211,14 @@ export default function Argumentos() {
         const aberto = !!abertos[a.id];
         const projetoNome = nomeProjeto.get(a.empreendimento_id);
         return (
-          <div key={a.id} className="mt-2 rounded-[12px] border border-rule bg-white px-3.5 py-3">
+          <div key={a.id} className="mt-2 rounded-card border border-slate-200/70 bg-white px-3.5 py-3">
             <div className="mb-1 flex flex-wrap gap-1.5">
               <span className="rounded-full border border-purple-300 bg-purple-100 px-2 py-px text-[11.5px] font-semibold text-purple-800">
                 {ETAPA_LABELS[a.etapa] ?? a.etapa}
               </span>
               <span
                 className={`rounded-full border px-2 py-px text-[11.5px] font-semibold ${
-                  projetoNome ? "border-sky-300 bg-sky-100 text-sky-800" : "border-rule bg-slate-100 text-slate-600"
+                  projetoNome ? "border-sky-300 bg-sky-100 text-sky-800" : "border-slate-200/70 bg-slate-100 text-slate-600"
                 }`}
               >
                 {projetoNome ?? "Geral"}

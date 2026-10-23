@@ -109,8 +109,8 @@ export default function EnviarCliente({ kit, acesso }) {
             type="button"
             aria-pressed={o.opcao === opSel}
             onClick={() => setOpSel(o.opcao)}
-            className={`rounded-[12px] border-[1.5px] bg-white px-3 py-2 text-left ${
-              o.opcao === opSel ? "border-charcoal ring-1 ring-charcoal" : "border-rule"
+            className={`rounded-card border bg-white px-3 py-2 text-left ${
+              o.opcao === opSel ? "border-charcoal ring-1 ring-charcoal" : "border-slate-200/70"
             }`}
           >
             <b className="block text-[13px] text-charcoal">
@@ -131,7 +131,7 @@ export default function EnviarCliente({ kit, acesso }) {
           onChange={(e) => setNome(e.target.value)}
           placeholder="Ex.: Roberto"
           autoComplete="off"
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none"
+          className="mt-1 w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
       </div>
 
@@ -147,7 +147,7 @@ export default function EnviarCliente({ kit, acesso }) {
             setSujo(true);
           }}
           rows={12}
-          className="mt-1 w-full resize-y rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[10px] text-[13px] leading-snug text-charcoal focus:border-gold focus:outline-none"
+          className="mt-1 w-full resize-y rounded-control border border-slate-200/70 bg-white px-[10px] py-[10px] text-[13px] leading-snug text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
         <p className="mt-1 text-xs text-graytext">
           O link rastreado é criado no envio e entra no lugar de {"{link}"}.
@@ -160,7 +160,7 @@ export default function EnviarCliente({ kit, acesso }) {
                   setTexto(montar(op, nome));
                   setSujo(false);
                 }}
-                className="text-sky-700 underline"
+                className="font-semibold text-brand hover:underline"
               >
                 Restaurar texto
               </button>
@@ -170,13 +170,13 @@ export default function EnviarCliente({ kit, acesso }) {
       </div>
 
       {pendencias.length > 0 && (
-        <p className="mt-2 rounded-[10px] border border-amber-300 bg-amber-50 px-2.5 py-2 text-[12.5px] text-amber-800">
+        <p className="mt-2 rounded-control border border-amber-300 bg-amber-50 px-2.5 py-2 text-[12.5px] text-amber-800">
           <b>Falta preencher:</b> {pendencias.join(", ")}. O envio fica liberado quando não sobrar nenhum campo entre
           colchetes.
         </p>
       )}
       {erro && (
-        <p role="alert" className="mt-2 text-sm text-rose-700">
+        <p role="alert" className="mt-2 text-sm text-danger-text">
           {erro}
         </p>
       )}
@@ -186,7 +186,7 @@ export default function EnviarCliente({ kit, acesso }) {
           type="button"
           onClick={enviar}
           disabled={busy || pendencias.length > 0}
-          className="rounded-[10px] bg-charcoal px-3 py-2.5 text-[13.5px] font-bold text-white disabled:opacity-45"
+          className="min-h-11 rounded-control bg-brand px-3 py-2.5 text-[13.5px] font-bold text-white disabled:opacity-45"
         >
           Enviar pelo WhatsApp
         </button>
@@ -194,7 +194,7 @@ export default function EnviarCliente({ kit, acesso }) {
           type="button"
           onClick={copiar}
           disabled={busy}
-          className="rounded-[10px] border border-slate-300 bg-white px-3 py-2.5 text-[13.5px] font-bold text-slate-700 disabled:opacity-45"
+          className="rounded-control border border-slate-300 bg-white px-3 py-2.5 text-[13.5px] font-bold text-slate-700 disabled:opacity-45"
         >
           Copiar texto
         </button>
@@ -202,7 +202,7 @@ export default function EnviarCliente({ kit, acesso }) {
       <p className="mt-1 text-xs text-graytext">Copiar também cria o link rastreado.</p>
 
       {enviado && (
-        <div className="mt-3 rounded-[10px] border border-emerald-300 bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-900">
+        <div className="mt-3 rounded-control border border-emerald-300 bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-900">
           <b>Pronto.</b>
           <ul className="mt-1 list-disc pl-4">
             <li className="break-all">Link criado: {enviado}</li>
@@ -215,7 +215,7 @@ export default function EnviarCliente({ kit, acesso }) {
       {cards?.feed && (
         <>
           <h2 className="mt-5 text-[10.5px] font-bold uppercase tracking-[.1em] text-graytext">Card da opção {op.opcao}</h2>
-          <img src={cards.feed} alt={`Card ${op.titulo}`} className="mt-1.5 w-full rounded-[10px] border border-rule" />
+          <img src={cards.feed} alt={`Card ${op.titulo}`} className="mt-1.5 w-full rounded-control border border-slate-200/70" />
           <div className="mt-2 grid grid-cols-2 gap-2">
             <button type="button" onClick={() => baixarCard(cards.feed, "1:1")} className={btnLinha}>
               Baixar 1:1 (feed)
@@ -235,7 +235,7 @@ export default function EnviarCliente({ kit, acesso }) {
   );
 }
 
-const btnLinha = "rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
+const btnLinha = "rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
 
 function Depois({ kit, acesso, nome }) {
   const { toast } = useFeedback();
@@ -288,7 +288,7 @@ function Depois({ kit, acesso, nome }) {
           <table className="w-full text-[12.5px]">
             <tbody>
               {k.cadencia.map((c, i) => (
-                <tr key={i} className="border-b border-rule last:border-b-0">
+                <tr key={i} className="border-b border-slate-200/70 last:border-b-0">
                   <td className="whitespace-nowrap py-1.5 pr-2 align-top font-bold text-charcoal">{c[0]}</td>
                   <td className="py-1.5">
                     {c[1]}
@@ -316,7 +316,7 @@ function Depois({ kit, acesso, nome }) {
 
 export function Detalhe({ titulo, children }) {
   return (
-    <details className="rounded-[12px] border border-rule bg-white px-3.5 text-[13px]">
+    <details className="rounded-card border border-slate-200/70 bg-white px-3.5 text-[13px]">
       <summary className="cursor-pointer py-2.5 font-semibold text-charcoal">{titulo}</summary>
       <div className="pb-3 text-slate-600">{children}</div>
     </details>

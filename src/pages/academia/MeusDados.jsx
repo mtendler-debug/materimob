@@ -5,7 +5,7 @@ import { useAuth } from "../../lib/AuthContext";
 import { useAcessoCanal } from "../../lib/AcessoCanal";
 
 const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none";
+  "mt-1 w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
 
 // O parceiro corrige o próprio nome, WhatsApp e CRECI. Imobiliária e papel
 // continuam sendo decisão da coordenação, por isso aparecem só para leitura.
@@ -56,10 +56,10 @@ export default function MeusDados() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-5 pb-24 md:pb-10">
-      <Link to="/app/academia" className="text-sm text-graytext underline">
+      <Link to="/app/academia" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Voltar
       </Link>
-      <h1 className="mt-3 text-xl font-bold text-charcoal">Meus dados na Academia</h1>
+      <h1 className="mt-3 text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Meus dados na Academia</h1>
       <p className="mt-1 text-sm text-graytext">
         É com esses dados que a coordenação e a sua imobiliária falam com você.
       </p>
@@ -94,13 +94,13 @@ export default function MeusDados() {
             <input id="md-creci" value={f.creci} onChange={set("creci")} className={campo} />
           </div>
 
-          <p className="rounded-[10px] bg-slate-100 px-3 py-2 text-[12.5px] text-graytext">
+          <p className="rounded-control bg-slate-100 px-3 py-2 text-[12.5px] text-graytext">
             Imobiliária: <b>{acesso.parceira || "Autônomo"}</b>. Para trocar de imobiliária, fale com a coordenação de
             parcerias.
           </p>
 
           {erro && (
-            <p role="alert" className="text-sm text-rose-700">
+            <p role="alert" className="text-sm text-danger-text">
               {erro}
             </p>
           )}
@@ -112,7 +112,7 @@ export default function MeusDados() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="w-full min-h-11 rounded-control bg-brand px-4 py-[11px] text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {busy ? "Salvando…" : "Salvar"}
           </button>

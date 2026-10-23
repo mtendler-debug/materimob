@@ -7,8 +7,8 @@ import { rotuloTrilha, situacaoTrilha, tituloCurto } from "../../lib/treino";
 
 const TIPO_LABELS = { leitura: "Leitura", video: "Vídeo", material: "Material", roteiro: "Roteiro" };
 
-const btnEscuro = "w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white disabled:opacity-45";
-const btnLinha = "w-full rounded-[10px] border border-slate-300 bg-white px-4 py-[11px] text-sm font-bold text-slate-700";
+const btnEscuro = "w-full min-h-11 rounded-control bg-brand px-4 py-[11px] text-sm font-bold text-white disabled:opacity-45";
+const btnLinha = "w-full rounded-control border border-slate-300 bg-white px-4 py-[11px] text-sm font-bold text-slate-700";
 
 // Uma trilha: lista de aulas, leitura de cada aula, quiz, correção e certificado.
 // A correção do quiz e a emissão do certificado acontecem no servidor
@@ -56,7 +56,7 @@ export default function TrilhaDetalhe() {
     return (
       <div className="mx-auto max-w-md px-4 py-10 text-center">
         <p className="text-sm text-graytext">Esta trilha não está disponível.</p>
-        <Link to="/app/academia/treinamento" className="mt-3 inline-block text-sm text-sky-700 underline">
+        <Link to="/app/academia/treinamento" className="mt-3 inline-flex min-h-9 items-center text-body-sm font-semibold text-brand hover:underline">
           Ver todas as trilhas
         </Link>
       </div>
@@ -89,7 +89,7 @@ export default function TrilhaDetalhe() {
   }
 
   const voltar = (
-    <button onClick={() => setTela({ v: "trilha" })} className="mb-2 text-sm text-graytext underline">
+    <button onClick={() => setTela({ v: "trilha" })} className="mb-2 inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
       ← {titulo}
     </button>
   );
@@ -98,15 +98,15 @@ export default function TrilhaDetalhe() {
     <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
       {tela.v === "trilha" && (
         <>
-          <Link to="/app/academia/treinamento" className="text-sm text-graytext underline">
+          <Link to="/app/academia/treinamento" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
             ← Treinamento
           </Link>
-          <div className="mt-3 rounded-[12px] border border-rule bg-white px-3.5 py-3">
+          <div className="mt-3 rounded-card border border-slate-200/70 bg-white px-3.5 py-3">
             <div className="text-[11px] font-bold uppercase tracking-wide text-sky-700">{rotuloTrilha(trilha)}</div>
             <h1 className="mt-0.5 text-base font-bold leading-tight text-charcoal">{titulo}</h1>
             {trilha.descricao && <p className="mt-1 text-[12.5px] text-graytext">{trilha.descricao}</p>}
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-rule">
-              <div className="h-full bg-sky-700" style={{ width: `${aulas.length ? (100 * feitas.size) / aulas.length : 0}%` }} />
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
+              <div className="h-full bg-brand" style={{ width: `${aulas.length ? (100 * feitas.size) / aulas.length : 0}%` }} />
             </div>
             <div className="mt-1.5 flex items-center justify-between text-xs text-graytext">
               <span>
@@ -121,7 +121,7 @@ export default function TrilhaDetalhe() {
             <button
               key={a.id}
               onClick={() => setTela({ v: "aula", i })}
-              className="mt-2 flex w-full items-center gap-2.5 rounded-[12px] border border-rule bg-white px-3 py-2.5 text-left"
+              className="mt-2 flex w-full items-center gap-2.5 rounded-card border border-slate-200/70 bg-white px-3 py-2.5 text-left"
             >
               <span
                 className={`grid h-[22px] w-[22px] flex-none place-items-center rounded-full border-2 text-xs font-bold text-white ${
@@ -150,7 +150,7 @@ export default function TrilhaDetalhe() {
                   setTela({ v: "quiz" });
                 }}
                 aria-disabled={!todasFeitas}
-                className={`flex w-full items-center gap-2.5 rounded-[12px] border border-rule bg-white px-3 py-2.5 text-left ${todasFeitas ? "" : "opacity-55"}`}
+                className={`flex w-full items-center gap-2.5 rounded-card border border-slate-200/70 bg-white px-3 py-2.5 text-left ${todasFeitas ? "" : "opacity-55"}`}
               >
                 <span
                   className={`grid h-[22px] w-[22px] flex-none place-items-center rounded-full border-2 text-xs font-bold text-white ${
@@ -172,7 +172,7 @@ export default function TrilhaDetalhe() {
           )}
 
           {certificado && (
-            <button onClick={() => setTela({ v: "cert" })} className="mt-4 w-full rounded-[10px] bg-emerald-800 px-4 py-[11px] text-sm font-bold text-white">
+            <button onClick={() => setTela({ v: "cert" })} className="mt-4 w-full rounded-control bg-emerald-800 px-4 py-[11px] text-sm font-bold text-white">
               Ver meu certificado
             </button>
           )}
@@ -195,7 +195,7 @@ export default function TrilhaDetalhe() {
                 href={a.video_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mb-3 block rounded-[12px] bg-slate-900 px-4 py-6 text-center text-sm font-semibold text-white"
+                className="mb-3 block rounded-card bg-slate-900 px-4 py-6 text-center text-sm font-semibold text-white"
               >
                 Assistir ao vídeo da aula
               </a>
@@ -208,7 +208,7 @@ export default function TrilhaDetalhe() {
             )}
             <div className="mt-5 grid gap-2">
               {feita ? (
-                <div className="rounded-[10px] border border-emerald-300 bg-emerald-50 py-2 text-center text-sm font-semibold text-emerald-800">
+                <div className="rounded-control border border-emerald-300 bg-emerald-50 py-2 text-center text-sm font-semibold text-emerald-800">
                   Aula concluída
                 </div>
               ) : (
@@ -233,10 +233,10 @@ export default function TrilhaDetalhe() {
       {tela.v === "quiz" && (
         <>
           {voltar}
-          <h1 className="text-xl font-bold text-charcoal">Quiz da trilha</h1>
+          <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Quiz da trilha</h1>
           <p className="mt-1 text-sm text-graytext">Responda todas as perguntas. A correção vem depois de enviar.</p>
           {perguntas.map((q, qi) => (
-            <div key={q.id} className="mt-3 rounded-[12px] border border-rule bg-white px-3.5 py-3">
+            <div key={q.id} className="mt-3 rounded-card border border-slate-200/70 bg-white px-3.5 py-3">
               <p className="mb-1 text-[13.5px] font-semibold text-charcoal">
                 {qi + 1}. {q.enunciado}
               </p>
@@ -246,8 +246,8 @@ export default function TrilhaDetalhe() {
                   type="button"
                   aria-pressed={respostas[q.id] === oi}
                   onClick={() => setRespostas((r) => ({ ...r, [q.id]: oi }))}
-                  className={`mt-1.5 block w-full rounded-[10px] border-[1.5px] px-2.5 py-2 text-left text-[13px] text-slate-700 ${
-                    respostas[q.id] === oi ? "border-charcoal ring-1 ring-charcoal" : "border-rule"
+                  className={`mt-1.5 block w-full rounded-control border px-2.5 py-2 text-left text-[13px] text-slate-700 ${
+                    respostas[q.id] === oi ? "border-charcoal ring-1 ring-charcoal" : "border-slate-200/70"
                   }`}
                 >
                   {o}
@@ -278,7 +278,7 @@ export default function TrilhaDetalhe() {
               </div>
               <span
                 className={`rounded-full border px-2.5 py-px text-[11.5px] font-semibold ${
-                  resultado.aprovado ? "border-emerald-300 bg-emerald-100 text-emerald-800" : "border-rose-300 bg-rose-100 text-rose-800"
+                  resultado.aprovado ? "border-emerald-300 bg-emerald-100 text-emerald-800" : "border-rose-300 bg-rose-100 text-danger-text"
                 }`}
               >
                 {resultado.aprovado ? "Aprovado" : `Abaixo de ${trilha.nota_minima}%`}
@@ -287,7 +287,7 @@ export default function TrilhaDetalhe() {
             {perguntas.map((q, qi) => {
               const c = porId.get(q.id);
               return (
-                <div key={q.id} className="mt-3 rounded-[12px] border border-rule bg-white px-3.5 py-3">
+                <div key={q.id} className="mt-3 rounded-card border border-slate-200/70 bg-white px-3.5 py-3">
                   <p className="mb-1 text-[13.5px] font-semibold text-charcoal">
                     {qi + 1}. {q.enunciado}
                   </p>
@@ -297,8 +297,8 @@ export default function TrilhaDetalhe() {
                     return (
                       <div
                         key={oi}
-                        className={`mt-1.5 rounded-[10px] border-[1.5px] px-2.5 py-2 text-[13px] text-slate-700 ${
-                          certa ? "border-emerald-800 bg-emerald-50" : errada ? "border-rose-700 bg-rose-50" : "border-rule"
+                        className={`mt-1.5 rounded-control border px-2.5 py-2 text-[13px] text-slate-700 ${
+                          certa ? "border-emerald-800 bg-emerald-50" : errada ? "border-rose-700 bg-rose-50" : "border-slate-200/70"
                         }`}
                       >
                         {o}
@@ -306,13 +306,13 @@ export default function TrilhaDetalhe() {
                       </div>
                     );
                   })}
-                  {c?.explicacao && <p className="mt-2 border-t border-rule pt-2 text-[12.5px] text-slate-600">{c.explicacao}</p>}
+                  {c?.explicacao && <p className="mt-2 border-t border-slate-200/70 pt-2 text-[12.5px] text-slate-600">{c.explicacao}</p>}
                 </div>
               );
             })}
             <div className="mt-4 grid gap-2">
               {resultado.certificado ? (
-                <button onClick={() => setTela({ v: "cert" })} className="w-full rounded-[10px] bg-emerald-800 px-4 py-[11px] text-sm font-bold text-white">
+                <button onClick={() => setTela({ v: "cert" })} className="w-full rounded-control bg-emerald-800 px-4 py-[11px] text-sm font-bold text-white">
                   Ver meu certificado
                 </button>
               ) : (
@@ -339,11 +339,11 @@ export default function TrilhaDetalhe() {
       {tela.v === "cert" && certificado && (
         <>
           {voltar}
-          <h1 className="text-xl font-bold text-charcoal">Certificado</h1>
-          <div className="mt-3 rounded-[14px] border-2 border-charcoal bg-white p-1.5">
-            <div className="rounded-[10px] border border-slate-300 px-4 py-6 text-center">
+          <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Certificado</h1>
+          <div className="mt-3 rounded-card border-2 border-charcoal bg-white p-1.5">
+            <div className="rounded-control border border-slate-300 px-4 py-6 text-center">
               <div className="text-[10.5px] font-bold uppercase tracking-[.2em] text-sky-700">Materimob · Academia de Vendas</div>
-              <h2 className="mb-3.5 mt-2 text-xl font-bold text-charcoal">Certificado de conclusão</h2>
+              <h2 className="mb-3.5 mt-2 text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Certificado de conclusão</h2>
               <p className="my-1.5 text-[13px] text-slate-600">Certificamos que</p>
               <div className="text-[22px] font-bold text-charcoal">{acesso.nome}</div>
               <p className="my-1.5 text-[13px] text-slate-600">concluiu a trilha</p>

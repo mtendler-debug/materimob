@@ -20,7 +20,7 @@ export default function Projetos() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5 pb-24 md:pb-10">
-      <h1 className="text-xl font-bold text-charcoal">Projetos</h1>
+      <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Projetos</h1>
       <p className="mt-1 text-sm text-graytext">Escolha um empreendimento para ver como vender e enviar ao cliente.</p>
 
       {kits === null && <p className="mt-6 text-sm text-muted">Carregando…</p>}
@@ -31,7 +31,7 @@ export default function Projetos() {
           <Link
             key={k.codigo}
             to={`/app/academia/projetos/${k.codigo}`}
-            className="overflow-hidden rounded-[12px] border border-rule bg-white transition-colors hover:border-slate-300"
+            className="overflow-hidden rounded-card border border-slate-200/70 bg-white transition-colors hover:border-slate-300"
           >
             {k.capa_url ? (
               <img src={k.capa_url} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />

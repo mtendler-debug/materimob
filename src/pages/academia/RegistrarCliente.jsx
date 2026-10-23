@@ -13,7 +13,7 @@ const PERFIS = [
 ];
 
 const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-gold focus:outline-none";
+  "mt-1 w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[10px] text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
 
 const vazio = { nome: "", zap: "", cpf: "", cidade: "", uf: "", perfil: "", projeto: "", renda: "", imovel: "", obs: "" };
 
@@ -81,11 +81,11 @@ export default function RegistrarCliente() {
     const alerta = !conflito && resultado.alerta;
     return (
       <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-        <h1 className="text-xl font-bold text-charcoal">Cliente registrado</h1>
+        <h1 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Cliente registrado</h1>
         <div
-          className={`mt-3 rounded-[12px] border p-3.5 text-[13px] ${
+          className={`mt-3 rounded-card border p-3.5 text-[13px] ${
             conflito
-              ? "border-rose-300 bg-rose-50 text-rose-900"
+              ? "border-rose-300 bg-rose-50 text-danger-text"
               : alerta
                 ? "border-amber-300 bg-amber-50 text-amber-900"
                 : "border-emerald-300 bg-emerald-50 text-emerald-900"
@@ -108,7 +108,7 @@ export default function RegistrarCliente() {
         <div className="mt-4 grid gap-2">
           <button
             onClick={() => navigate(`/app/academia/clientes/${resultado.id}`)}
-            className="w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white"
+            className="w-full min-h-11 rounded-control bg-brand px-4 py-[11px] text-sm font-bold text-white"
           >
             Ver o registro
           </button>
@@ -117,7 +117,7 @@ export default function RegistrarCliente() {
               setF({ ...vazio });
               setResultado(null);
             }}
-            className="w-full rounded-[10px] border border-slate-300 bg-white px-4 py-[11px] text-sm font-bold text-slate-700"
+            className="w-full rounded-control border border-slate-300 bg-white px-4 py-[11px] text-sm font-bold text-slate-700"
           >
             Registrar outro cliente
           </button>
@@ -128,10 +128,10 @@ export default function RegistrarCliente() {
 
   return (
     <form onSubmit={enviar} noValidate className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-      <Link to="/app/academia/clientes" className="text-sm text-graytext underline">
+      <Link to="/app/academia/clientes" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Clientes registrados
       </Link>
-      <h1 className="mt-2 text-xl font-bold text-charcoal">Registrar cliente</h1>
+      <h1 className="mt-2 text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">Registrar cliente</h1>
       <p className="mt-1 text-sm text-graytext">Registre antes de atender. O registro vale por 90 dias.</p>
 
       <Campo id="rc-nome" rotulo="Nome do cliente">
@@ -183,7 +183,7 @@ export default function RegistrarCliente() {
 
       {restrito && (
         <>
-          <p className="mt-3 rounded-[10px] border border-amber-300 bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800">
+          <p className="mt-3 rounded-control border border-amber-300 bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800">
             Este projeto tem regra de renda (HIS-2 e HMP). Informe os dois campos abaixo para conferirmos a elegibilidade.
           </p>
           <Campo id="rc-renda" rotulo="Renda familiar mensal (R$)">
@@ -203,8 +203,8 @@ export default function RegistrarCliente() {
                   type="button"
                   aria-pressed={f.imovel === v}
                   onClick={() => setF((x) => ({ ...x, imovel: v }))}
-                  className={`rounded-[9px] border-[1.5px] px-2 py-2 text-[13px] font-semibold ${
-                    f.imovel === v ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-700"
+                  className={`rounded-control border px-2 py-2 text-[13px] font-semibold ${
+                    f.imovel === v ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-700"
                   }`}
                 >
                   {r}
@@ -239,14 +239,14 @@ export default function RegistrarCliente() {
       </label>
 
       {erro && (
-        <p role="alert" className="mt-3 text-sm text-rose-700">
+        <p role="alert" className="mt-3 text-sm text-danger-text">
           {erro}
         </p>
       )}
       <button
         type="submit"
         disabled={busy}
-        className="mt-4 w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white disabled:opacity-50"
+        className="mt-4 w-full min-h-11 rounded-control bg-brand px-4 py-[11px] text-sm font-bold text-white disabled:opacity-50"
       >
         {busy ? "Registrando…" : "Registrar cliente"}
       </button>

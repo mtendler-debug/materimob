@@ -46,7 +46,7 @@ export default function RegistroDetalhe() {
     return (
       <div className="mx-auto max-w-md px-4 py-10 text-center">
         <p className="text-sm text-graytext">Este registro não está disponível.</p>
-        <Link to="/app/academia/clientes" className="mt-3 inline-block text-sm text-sky-700 underline">
+        <Link to="/app/academia/clientes" className="mt-3 inline-flex min-h-9 items-center text-body-sm font-semibold text-brand hover:underline">
           Ver clientes registrados
         </Link>
       </div>
@@ -59,7 +59,7 @@ export default function RegistroDetalhe() {
   const ate = new Date(r.valido_ate).toLocaleDateString("pt-BR");
   const zap = linkWhatsapp(r.cliente_telefone);
   const linhas = [
-    ["WhatsApp", zap ? <a href={zap} target="_blank" rel="noopener noreferrer" className="text-sky-700 underline">{r.cliente_telefone}</a> : r.cliente_telefone],
+    ["WhatsApp", zap ? <a href={zap} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand hover:underline">{r.cliente_telefone}</a> : r.cliente_telefone],
     r.cliente_email && ["E-mail", r.cliente_email],
     mascaraCpf(r.cpf_final) && ["CPF", mascaraCpf(r.cpf_final)],
     ["Origem", [r.cidade_origem, r.uf_origem].filter(Boolean).join(" / ") || "Não informada"],
@@ -70,7 +70,7 @@ export default function RegistroDetalhe() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-5 pb-24 md:pb-10">
-      <Link to="/app/academia/clientes" className="text-sm text-graytext underline">
+      <Link to="/app/academia/clientes" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Clientes registrados
       </Link>
 
@@ -80,7 +80,7 @@ export default function RegistroDetalhe() {
       </div>
       <div className="mt-0.5 text-sm text-graytext">{r.projeto}</div>
 
-      <p className="mt-3 rounded-[10px] bg-slate-100 px-3 py-2.5 text-[13px] text-slate-700">
+      <p className="mt-3 rounded-control bg-slate-100 px-3 py-2.5 text-[13px] text-slate-700">
         {EXPLICACAO[s]}
         {vivo && (
           <b>
@@ -92,7 +92,7 @@ export default function RegistroDetalhe() {
       </p>
 
       {r.alerta && s !== "venda" && (
-        <p className="mt-3 rounded-[12px] border border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px] text-amber-900">
+        <p className="mt-3 rounded-card border border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px] text-amber-900">
           <b>Alerta de elegibilidade</b>
           <br />
           {r.alerta}
@@ -100,12 +100,12 @@ export default function RegistroDetalhe() {
       )}
 
       <h2 className="mb-2 mt-5 text-[10.5px] font-bold uppercase tracking-[.1em] text-graytext">Linha do tempo</h2>
-      <ul className="ml-1.5 border-l-2 border-rule">
+      <ul className="ml-1.5 border-l-2 border-slate-200/70">
         {eventos.map((e, i) => (
           <li key={i} className="relative pb-3 pl-4 text-[13px] text-slate-700">
             <span
               className={`absolute -left-[6px] top-1 h-2.5 w-2.5 rounded-full ${
-                e.tipo === "venda" ? "bg-emerald-800" : ["conflito", "expirado", "cancelado"].includes(e.tipo) ? "bg-rose-700" : "bg-sky-700"
+                e.tipo === "venda" ? "bg-emerald-800" : ["conflito", "expirado", "cancelado"].includes(e.tipo) ? "bg-rose-700" : "bg-brand"
               }`}
             />
             {e.descricao || TEXTO_EVENTO[e.tipo] || e.tipo}
@@ -115,7 +115,7 @@ export default function RegistroDetalhe() {
       </ul>
 
       <h2 className="mb-1.5 mt-4 text-[10.5px] font-bold uppercase tracking-[.1em] text-graytext">Dados do cliente</h2>
-      <dl className="divide-y divide-rule rounded-[12px] border border-rule bg-white px-3.5 text-[13px]">
+      <dl className="divide-y divide-slate-100 rounded-card border border-slate-200/70 bg-white px-3.5 text-[13px]">
         {linhas.map(([rotulo, valor]) => (
           <div key={rotulo} className="flex justify-between gap-3 py-2">
             <dt className="flex-none text-graytext">{rotulo}</dt>
@@ -140,7 +140,7 @@ export default function RegistroDetalhe() {
               },
             })
           }
-          className="mt-4 w-full rounded-[10px] bg-charcoal px-4 py-[11px] text-sm font-bold text-white"
+          className="mt-4 w-full min-h-11 rounded-control bg-brand px-4 py-[11px] text-sm font-bold text-white"
         >
           Registrar de novo
         </button>

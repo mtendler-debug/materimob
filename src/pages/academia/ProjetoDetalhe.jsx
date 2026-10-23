@@ -34,7 +34,7 @@ export default function ProjetoDetalhe() {
     return (
       <div className="mx-auto max-w-md px-4 py-10 text-center">
         <p className="text-sm text-graytext">Este projeto não está disponível.</p>
-        <Link to="/app/academia/projetos" className="mt-3 inline-block text-sm text-sky-700 underline">
+        <Link to="/app/academia/projetos" className="mt-3 inline-flex min-h-9 items-center text-body-sm font-semibold text-brand hover:underline">
           Ver todos os projetos
         </Link>
       </div>
@@ -45,11 +45,11 @@ export default function ProjetoDetalhe() {
 
   return (
     <div className="mx-auto max-w-2xl pb-24 md:pb-10">
-      <Link to="/app/academia/projetos" className="mx-4 mt-3 inline-block text-sm text-graytext underline">
+      <Link to="/app/academia/projetos" className="mx-4 mt-3 inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Projetos
       </Link>
 
-      <div className="relative mt-2 overflow-hidden md:mx-4 md:rounded-[14px]">
+      <div className="relative mt-2 overflow-hidden md:mx-4 md:rounded-card">
         {kit.capa_url && <img src={kit.capa_url} alt="" className="h-36 w-full object-cover sm:h-48" />}
         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-900/80 to-slate-900/5 px-4 py-3 text-white">
           <b className="text-lg leading-tight">{kit.nome}</b>
@@ -60,12 +60,12 @@ export default function ProjetoDetalhe() {
       </div>
 
       {avisoTexto && (
-        <p className="mx-4 mt-3 rounded-[12px] border-[1.5px] border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px] text-amber-900">
+        <p className="mx-4 mt-3 rounded-card border border-amber-300 bg-amber-50 px-3 py-2.5 text-[13px] text-amber-900">
           <b>Atenção:</b> {avisoTexto}
         </p>
       )}
 
-      <div role="tablist" aria-label="Seções do projeto" className="mt-3 flex gap-1 overflow-x-auto border-b border-rule px-3">
+      <div role="tablist" aria-label="Seções do projeto" className="mt-3 flex gap-1 overflow-x-auto border-b border-slate-200/70 px-3">
         {SECOES.map((s, i) => (
           <button
             key={s}
@@ -102,7 +102,7 @@ function Bloco({ titulo, children }) {
 
 function Cartao({ rotulo, children }) {
   return (
-    <div className="mt-2 rounded-[12px] border border-rule bg-white px-3.5 py-2.5 text-[13px] first:mt-0">
+    <div className="mt-2 rounded-card border border-slate-200/70 bg-white px-3.5 py-2.5 text-[13px] first:mt-0">
       {rotulo && <div className="mb-0.5 text-[11px] font-bold uppercase tracking-wide text-sky-800">{rotulo}</div>}
       {children}
     </div>
@@ -185,7 +185,7 @@ function ComoVender({ kit }) {
                   <button
                     type="button"
                     onClick={() => copiar(f.resposta)}
-                    className="mt-2 rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700"
+                    className="mt-2 rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700"
                   >
                     Copiar resposta
                   </button>
@@ -212,10 +212,10 @@ function ComoVender({ kit }) {
 function Tabela({ linhas }) {
   const [cab, ...corpo] = linhas;
   return (
-    <div className="mt-2 overflow-x-auto rounded-[12px] border border-rule bg-white">
+    <div className="mt-2 overflow-x-auto rounded-card border border-slate-200/70 bg-white">
       <table className="w-full min-w-[320px] text-[12.5px]">
         <thead>
-          <tr className="border-b border-rule bg-slate-50 text-left">
+          <tr className="border-b border-slate-200/70 bg-slate-50 text-left">
             {cab.map((c) => (
               <th key={c} className="px-3 py-2 font-bold text-charcoal">
                 {c}
@@ -225,7 +225,7 @@ function Tabela({ linhas }) {
         </thead>
         <tbody>
           {corpo.map((l, i) => (
-            <tr key={i} className="border-b border-rule last:border-b-0">
+            <tr key={i} className="border-b border-slate-200/70 last:border-b-0">
               {l.map((c, j) => (
                 <td key={j} className="px-3 py-1.5">
                   {c}
@@ -259,7 +259,7 @@ function FotosMateriais({ kit }) {
             {galeria.map((f) => (
               <figure key={f.url}>
                 <button type="button" onClick={() => setAmpliada(f)} className="block w-full" aria-label={`Ampliar: ${f.legenda}`}>
-                  <img src={f.url} alt={f.legenda} loading="lazy" className="aspect-[4/3] w-full rounded-[10px] object-cover" />
+                  <img src={f.url} alt={f.legenda} loading="lazy" className="aspect-[4/3] w-full rounded-control object-cover" />
                 </button>
                 <figcaption className="mt-0.5 text-[11.5px] text-graytext">{f.legenda}</figcaption>
               </figure>
@@ -271,7 +271,7 @@ function FotosMateriais({ kit }) {
       <Bloco titulo="Materiais">
         {kit.lamina_url && (
           <Cartao rotulo="Lâmina">
-            <img src={kit.lamina_url} alt="Lâmina do empreendimento" loading="lazy" className="mt-1 w-full rounded-[10px] border border-rule" />
+            <img src={kit.lamina_url} alt="Lâmina do empreendimento" loading="lazy" className="mt-1 w-full rounded-control border border-slate-200/70" />
             <button
               type="button"
               onClick={() => {
@@ -302,7 +302,7 @@ function FotosMateriais({ kit }) {
             {cards.map((o) => {
               const c = k.cards_img[o.tese];
               return (
-                <div key={o.opcao} className="flex items-center justify-between gap-2 border-t border-rule py-1.5 first:border-t-0">
+                <div key={o.opcao} className="flex items-center justify-between gap-2 border-t border-slate-200/70 py-1.5 first:border-t-0">
                   <span className="text-[12.5px]">{o.titulo}</span>
                   <span className="flex gap-1.5">
                     <button
@@ -360,13 +360,13 @@ function FotosMateriais({ kit }) {
           className="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-3 bg-black/85 p-4"
           onClick={() => setAmpliada(null)}
         >
-          <img src={ampliada.url} alt={ampliada.legenda} className="max-h-[75vh] max-w-full rounded-[10px] object-contain" />
+          <img src={ampliada.url} alt={ampliada.legenda} className="max-h-[75vh] max-w-full rounded-control object-contain" />
           <p className="text-sm text-white">{ampliada.legenda}</p>
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-            <button type="button" onClick={() => baixarFoto(ampliada)} className="rounded-[8px] bg-white px-4 py-2 text-sm font-bold text-charcoal">
+            <button type="button" onClick={() => baixarFoto(ampliada)} className="rounded-[10px] bg-white px-4 py-2 text-sm font-bold text-charcoal">
               Baixar
             </button>
-            <button type="button" onClick={() => setAmpliada(null)} className="rounded-[8px] border border-white/60 px-4 py-2 text-sm font-bold text-white">
+            <button type="button" onClick={() => setAmpliada(null)} className="rounded-[10px] border border-white/60 px-4 py-2 text-sm font-bold text-white">
               Fechar
             </button>
           </div>
@@ -376,7 +376,7 @@ function FotosMateriais({ kit }) {
   );
 }
 
-const btn = "mt-2 rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
+const btn = "mt-2 rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700";
 
 function LinkMaterial({ href, tipo, kit, children }) {
   return (
@@ -385,7 +385,7 @@ function LinkMaterial({ href, tipo, kit, children }) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => registrarAtividade(tipo, kit.empreendimento_id, kit.nome)}
-      className="mt-2 block rounded-[12px] border border-rule bg-white px-3.5 py-2.5 text-[13px] font-semibold text-sky-800 underline"
+      className="mt-2 block rounded-card border border-slate-200/70 bg-white px-3.5 py-2.5 text-[13px] font-semibold text-sky-800 underline"
     >
       {children}
     </a>
