@@ -12,22 +12,22 @@ import {
 
 function Kpi({ label, value, foot }) {
   return (
-    <div className="bg-white p-[15px]">
-      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
-      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+    <div className="bg-white p-4">
+      <div className="text-caption text-graytext">{label}</div>
+      <div className="mt-0.5 text-2xl leading-[1.2] font-bold tracking-[-0.035em] text-charcoal tabular-nums">{value}</div>
+      <div className="text-caption text-muted">{foot}</div>
     </div>
   );
 }
 
 function SectionTitle({ children }) {
-  return <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</p>;
+  return <h2 className="mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase">{children}</h2>;
 }
 
 export default function CrmDashboard() {
   const { leads, error } = useLeadsWithOpportunities();
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!leads) return <p className="text-sm text-muted">Carregando…</p>;
 
   const todasOportunidades = leads.flatMap((l) => l.av_opportunities ?? []);
@@ -53,7 +53,7 @@ export default function CrmDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
         <Kpi label="Leads" value={totalLeads} foot="no funil" />
         <Kpi label="Oportunidades" value={totalOportunidades} foot="geradas" />
         <Kpi label="Volume em aberto" value={brl(volumeAberto)} foot="oportunidades ativas" />
@@ -62,15 +62,15 @@ export default function CrmDashboard() {
 
       <div>
         <SectionTitle>Leads por etapa</SectionTitle>
-        <div className="space-y-[6px]">
+        <div className="space-y-2">
           {porEtapa.map((e) => (
-            <div key={e.stage} className="rounded-[10px] border border-rule bg-white px-3 py-2">
+            <div key={e.stage} className="rounded-2xl border border-slate-200/70 bg-white px-4 py-3">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-sm font-bold text-charcoal">{LEAD_STAGE_LABELS[e.stage]}</span>
-                <span className="text-xs text-graytext">{e.n}</span>
+                <span className="text-body-sm font-semibold text-charcoal">{LEAD_STAGE_LABELS[e.stage]}</span>
+                <span className="text-caption text-graytext tabular-nums">{e.n}</span>
               </div>
               <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-light">
-                <div className="h-full rounded-full bg-gold" style={{ width: `${(e.n / maxEtapa) * 100}%` }} />
+                <div className="h-full rounded-full bg-brand transition-all duration-300" style={{ width: `${(e.n / maxEtapa) * 100}%` }} />
               </div>
             </div>
           ))}
@@ -81,15 +81,15 @@ export default function CrmDashboard() {
         <SectionTitle>Oportunidades por tipo</SectionTitle>
         <div className="grid grid-cols-3 gap-3">
           {porTipo.map((t) => (
-            <div key={t.type} className="rounded-[14px] border border-rule bg-white p-[15px]">
+            <div key={t.type} className="rounded-card border border-slate-200/70 bg-white p-4">
               <span
-                className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                className="rounded-full px-2.5 py-0.5 text-caption font-semibold"
                 style={{ background: OPP_TYPE_COLORS[t.type].bg, color: OPP_TYPE_COLORS[t.type].color }}
               >
                 {OPP_TYPE_LABELS[t.type]}
               </span>
-              <div className="mt-2 text-xl font-bold text-charcoal">{t.n}</div>
-              <div className="text-[11.5px] text-graytext">{brl(t.valor)}</div>
+              <div className="mt-2 text-xl font-bold tracking-tight text-charcoal tabular-nums">{t.n}</div>
+              <div className="text-caption text-graytext">{brl(t.valor)}</div>
             </div>
           ))}
         </div>
@@ -103,10 +103,10 @@ export default function CrmDashboard() {
               <Link
                 key={l.id}
                 to={`/app/crm/leads/${l.id}`}
-                className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
+                className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-slate-200/70 bg-white px-4 py-2.5 text-body-sm transition-all duration-200 hover:border-slate-300 hover:shadow-soft"
               >
-                <span className="font-serif font-semibold text-charcoal">{l.av_clients?.name}</span>
-                <span className="text-graytext">
+                <span className="font-semibold text-charcoal">{l.av_clients?.name}</span>
+                <span className="text-graytext tabular-nums">
                   {l.av_opportunities.length} oportunidades ·{" "}
                   {brl(l.av_opportunities.reduce((s, o) => s + (o.value ?? 0), 0))}
                 </span>

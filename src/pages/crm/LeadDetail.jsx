@@ -18,7 +18,7 @@ import {
 import { useFeedback } from "../../lib/feedback";
 
 function SectionTitle({ children }) {
-  return <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</p>;
+  return <h2 className="mb-2.5 text-caption font-semibold tracking-[.08em] text-muted uppercase">{children}</h2>;
 }
 
 export default function LeadDetail() {
@@ -78,7 +78,7 @@ export default function LeadDetail() {
     navigate("/app/crm/leads");
   }
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!lead) return <p className="text-sm text-muted">Carregando…</p>;
 
   const oportunidadesAtivas = (lead.av_opportunities ?? []).filter((o) => OPP_STAGE_ATIVA(o.stage));
@@ -89,14 +89,14 @@ export default function LeadDetail() {
 
   return (
     <div className="space-y-6">
-      <Link to="/app/crm/leads" className="text-xs text-graytext underline">
+      <Link to="/app/crm/leads" className="inline-flex min-h-9 items-center rounded-[10px] px-2 text-body-sm font-semibold text-graytext transition-colors hover:bg-light hover:text-charcoal">
         ← Leads
       </Link>
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-4">
-          <div className="rounded-[14px] border border-rule bg-white p-4">
-            <p className="font-serif text-lg font-semibold text-charcoal">{lead.av_clients?.name}</p>
+          <div className="rounded-card border border-slate-200/70 bg-white p-4">
+            <p className="text-lg font-semibold text-charcoal">{lead.av_clients?.name}</p>
             <p className="text-sm text-graytext">
               {lead.av_clients?.phone || "sem telefone"} · {lead.av_clients?.email || "sem e-mail"}
             </p>
@@ -105,17 +105,17 @@ export default function LeadDetail() {
             </p>
 
             {oportunidadeCruzada && (
-              <div className="mt-3 rounded-[10px] bg-[#FFF3E0] px-3 py-2 text-[13px] font-bold text-[#B26A00]">
+              <div className="mt-3 rounded-xl bg-orange-100 px-3 py-2 text-[13px] font-semibold text-orange-800">
                 🔗 Oportunidade cruzada — este lead tem Compra e Venda ao mesmo tempo.
               </div>
             )}
 
             <div className="mt-3">
-              <label className="block text-[11.5px] font-bold text-graytext uppercase">Etapa</label>
+              <label className="mb-1.5 block text-caption font-medium text-graytext">Etapa</label>
               <select
                 value={stage}
                 onChange={(e) => setStage(e.target.value)}
-                className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
               >
                 {LEAD_STAGES.map((s) => (
                   <option key={s} value={s}>
@@ -125,11 +125,11 @@ export default function LeadDetail() {
               </select>
             </div>
             <div className="mt-3">
-              <label className="block text-[11.5px] font-bold text-graytext uppercase">Origem</label>
+              <label className="mb-1.5 block text-caption font-medium text-graytext">Origem</label>
               <select
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
-                className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
               >
                 <option value="">—</option>
                 {SOURCES.map((s) => (
@@ -140,23 +140,23 @@ export default function LeadDetail() {
               </select>
             </div>
             <div className="mt-3">
-              <label className="block text-[11.5px] font-bold text-graytext uppercase">Notas</label>
+              <label className="mb-1.5 block text-caption font-medium text-graytext">Notas</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
               />
             </div>
             <div className="mt-3 flex items-center gap-3">
               <button
                 onClick={salvar}
                 disabled={saving}
-                className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+                className="rounded-control min-h-11 bg-brand px-5 text-body-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
               >
                 {saving ? "Salvando…" : "Salvar"}
               </button>
-              <button onClick={removerLead} className="text-sm font-bold text-[#B34A2E] underline">
+              <button onClick={removerLead} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
                 excluir lead
               </button>
             </div>
@@ -170,7 +170,7 @@ export default function LeadDetail() {
                   <Link
                     key={s.id}
                     to={`/app/selections/${s.id}`}
-                    className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
+                    className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white px-3 py-2 text-sm hover:border-slate-300"
                   >
                     <span className="text-charcoal">{s.title}</span>
                     <span className="text-graytext">{new Date(s.created_at).toLocaleDateString("pt-BR")}</span>
@@ -233,7 +233,7 @@ function PropertyPicker({ portfolioPropertyId, launchId, propertyText, onChange 
 
   return (
     <div>
-      <select value={selectedValue} onChange={handleSelect} className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm">
+      <select value={selectedValue} onChange={handleSelect} className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none">
         <option value="">Digitar manualmente…</option>
         {lancamentos.length > 0 && (
           <optgroup label="Lançamentos">
@@ -261,7 +261,7 @@ function PropertyPicker({ portfolioPropertyId, launchId, propertyText, onChange 
           value={propertyText}
           onChange={(e) => onChange({ portfolio_property_id: null, launch_id: null, property: e.target.value })}
           placeholder="Descrição do imóvel (ex.: casa do cliente)"
-          className="mt-2 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-2 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
       )}
     </div>
@@ -306,15 +306,15 @@ function OpportunityRow({ opportunity, onChange }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-3">
+    <div className="rounded-card border border-slate-200/70 bg-white p-3">
       <div className="flex items-center justify-between gap-2">
         <span
-          className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+          className="rounded-full px-2.5 py-0.5 text-caption font-semibold"
           style={{ background: OPP_TYPE_COLORS[opportunity.type].bg, color: OPP_TYPE_COLORS[opportunity.type].color }}
         >
           {OPP_TYPE_LABELS[opportunity.type]}
         </span>
-        <span className="text-xs font-bold text-graytext">{OPP_STAGE_LABELS[opportunity.stage]}</span>
+        <span className="text-caption font-semibold text-graytext">{OPP_STAGE_LABELS[opportunity.stage]}</span>
       </div>
 
       {editing ? (
@@ -334,12 +334,12 @@ function OpportunityRow({ opportunity, onChange }) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Valor estimado"
-            className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
           />
           <select
             value={stage}
             onChange={(e) => setStage(e.target.value)}
-            className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
           >
             {OPP_STAGES.map((s) => (
               <option key={s} value={s}>
@@ -352,17 +352,17 @@ function OpportunityRow({ opportunity, onChange }) {
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
             placeholder="Notas"
-            className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
           />
           <div className="flex items-center gap-2">
             <button
               onClick={salvar}
               disabled={saving}
-              className="rounded bg-charcoal px-3 py-1.5 text-xs font-bold text-white disabled:opacity-50"
+              className="min-h-9 rounded-[10px] bg-brand px-3.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-brand-hover disabled:opacity-50"
             >
               {saving ? "Salvando…" : "salvar"}
             </button>
-            <button onClick={() => setEditing(false)} className="text-xs font-bold text-graytext underline">
+            <button onClick={() => setEditing(false)} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
               cancelar
             </button>
           </div>
@@ -377,10 +377,10 @@ function OpportunityRow({ opportunity, onChange }) {
           <p className="text-graytext">{brl(opportunity.value)}</p>
           {opportunity.notes && <p className="mt-1 text-xs text-graytext">{opportunity.notes}</p>}
           <div className="mt-2 flex items-center gap-2">
-            <button onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
+            <button onClick={() => setEditing(true)} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
               editar
             </button>
-            <button onClick={remover} className="text-xs font-bold text-[#B34A2E] underline">
+            <button onClick={remover} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
               excluir
             </button>
           </div>
@@ -421,15 +421,15 @@ function NewOpportunityForm({ leadId, onCreated }) {
 
   if (!show) {
     return (
-      <button onClick={() => setShow(true)} className="mt-3 text-sm font-bold text-graytext underline">
+      <button onClick={() => setShow(true)} className="mt-3 min-h-10 rounded-[10px] px-3 text-body-sm font-semibold text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
         + Nova oportunidade
       </button>
     );
   }
 
   return (
-    <form onSubmit={submit} className="mt-3 space-y-2 rounded-[14px] border border-rule bg-white p-3">
-      <select value={type} onChange={(e) => setType(e.target.value)} className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm">
+    <form onSubmit={submit} className="mt-3 space-y-2 rounded-card border border-slate-200/70 bg-white p-3">
+      <select value={type} onChange={(e) => setType(e.target.value)} className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none">
         {OPP_TYPES.map((t) => (
           <option key={t} value={t}>
             {OPP_TYPE_LABELS[t]}
@@ -451,17 +451,17 @@ function NewOpportunityForm({ leadId, onCreated }) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Valor estimado"
-        className="w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+        className="w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
       />
       <div className="flex items-center gap-2">
         <button
           type="submit"
           disabled={saving}
-          className="rounded bg-charcoal px-3 py-1.5 text-xs font-bold text-white disabled:opacity-50"
+          className="min-h-9 rounded-[10px] bg-brand px-3.5 text-xs font-semibold text-white transition-all duration-200 hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Criando…" : "criar"}
         </button>
-        <button type="button" onClick={() => setShow(false)} className="text-xs font-bold text-graytext underline">
+        <button type="button" onClick={() => setShow(false)} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
           cancelar
         </button>
       </div>

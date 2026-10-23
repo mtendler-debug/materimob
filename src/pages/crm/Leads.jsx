@@ -12,6 +12,9 @@ import {
   OPP_TYPE_COLORS,
 } from "../../lib/crm";
 import { useFeedback } from "../../lib/feedback";
+import Button from "../../components/ui/Button";
+import Input, { classesCampo } from "../../components/ui/Input";
+import Modal from "../../components/ui/Modal";
 
 // Best-effort: leva o lead também pro Leadlinks (CRM de WhatsApp em
 // paralelo que o Marcos já usa). Só vale para o lead do próprio Marcos: a
@@ -45,7 +48,7 @@ export default function Leads() {
     toast("Lead removido.");
   }
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!leads) return <p className="text-sm text-muted">Carregando…</p>;
 
   const filtrados = leads.filter((l) => {
@@ -56,49 +59,47 @@ export default function Leads() {
     return buscaOk && etapaOk;
   });
 
+  const th = "bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase";
+  const td = "border-t border-slate-100 px-3.5 py-3";
+
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end gap-2">
-        <div className="min-w-[200px] flex-1">
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Buscar</label>
+      <div className="flex flex-wrap items-center gap-2.5">
+        <label className="flex min-h-[46px] min-w-[200px] flex-1 items-center gap-2 rounded-control border border-slate-200 bg-white px-3.5 text-muted transition-all duration-200 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] flex-none" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M20 20l-4-4" />
+          </svg>
           <input
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Nome ou telefone"
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            placeholder="Buscar por nome ou telefone"
+            aria-label="Buscar lead"
+            className="w-full min-w-0 bg-transparent text-body-sm text-charcoal outline-none placeholder:text-muted"
           />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Etapa</label>
-          <select
-            value={filtroEtapa}
-            onChange={(e) => setFiltroEtapa(e.target.value)}
-            className="mt-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          >
-            <option value="">Todas</option>
-            {LEAD_STAGES.map((s) => (
-              <option key={s} value={s}>
-                {LEAD_STAGE_LABELS[s]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+        </label>
+        <select
+          value={filtroEtapa}
+          onChange={(e) => setFiltroEtapa(e.target.value)}
+          aria-label="Filtrar por etapa"
+          className="min-h-[46px] rounded-control border border-slate-200 bg-white px-3.5 text-body-sm text-slate-700"
         >
-          {showForm ? "cancelar" : "+ Novo lead"}
-        </button>
+          <option value="">Todas as etapas</option>
+          {LEAD_STAGES.map((s) => (
+            <option key={s} value={s}>
+              {LEAD_STAGE_LABELS[s]}
+            </option>
+          ))}
+        </select>
+        <Button onClick={() => setShowForm(true)}>+ Novo lead</Button>
       </div>
 
-      {showForm && <NewLeadForm onCreated={() => { setShowForm(false); reload(); }} />}
-
-      <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
-        <table className="w-full min-w-[720px] border-collapse text-sm">
+      <div className="overflow-x-auto rounded-card border border-slate-200/70 bg-white">
+        <table className="w-full min-w-[720px] border-collapse text-[13px]">
           <thead>
             <tr>
               {["Nome", "Contato", "Origem", "Etapa", "Oportunidades", ""].map((h) => (
-                <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                <th key={h} className={th}>
                   {h}
                 </th>
               ))}
@@ -106,25 +107,25 @@ export default function Leads() {
           </thead>
           <tbody>
             {filtrados.map((l) => (
-              <tr key={l.id}>
-                <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">
+              <tr key={l.id} className="transition-colors duration-200 hover:bg-[#fafcfe]">
+                <td className={`${td} font-semibold text-charcoal`}>
                   <Link to={`/app/crm/leads/${l.id}`} className="hover:underline">
                     {l.av_clients?.name}
                   </Link>
                 </td>
-                <td className="border-b border-rule p-[10px] text-graytext">{l.av_clients?.phone || "—"}</td>
-                <td className="border-b border-rule p-[10px] text-graytext">{SOURCE_LABELS[l.source] || "—"}</td>
-                <td className="border-b border-rule p-[10px]">
-                  <span className="rounded-full bg-light px-[9px] py-[3px] text-[10.5px] font-bold text-graytext">
+                <td className={`${td} text-graytext`}>{l.av_clients?.phone || "—"}</td>
+                <td className={`${td} text-graytext`}>{SOURCE_LABELS[l.source] || "—"}</td>
+                <td className={td}>
+                  <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">
                     {LEAD_STAGE_LABELS[l.stage]}
                   </span>
                 </td>
-                <td className="border-b border-rule p-[10px]">
+                <td className={td}>
                   <div className="flex flex-wrap gap-1">
                     {(l.av_opportunities ?? []).map((o) => (
                       <span
                         key={o.id}
-                        className="rounded-full px-[7px] py-[1px] text-[9.5px] font-bold"
+                        className="rounded-full px-2 py-px text-[11.5px] font-semibold"
                         style={{ background: OPP_TYPE_COLORS[o.type].bg, color: OPP_TYPE_COLORS[o.type].color }}
                       >
                         {OPP_TYPE_LABELS[o.type]}
@@ -132,31 +133,42 @@ export default function Leads() {
                     ))}
                   </div>
                 </td>
-                <td className="border-b border-rule p-[10px] text-right">
-                  <Link to={`/app/crm/leads/${l.id}`} className="text-xs font-bold text-graytext underline">
-                    editar
+                <td className={`${td} whitespace-nowrap text-right`}>
+                  <Link to={`/app/crm/leads/${l.id}`} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
+                    Editar
                   </Link>
-                  <button onClick={() => removerLead(l.id)} className="ml-3 text-xs font-bold text-[#B34A2E] underline">
-                    excluir
+                  <button onClick={() => removerLead(l.id)} className="min-h-9 rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
+                    Excluir
                   </button>
                 </td>
               </tr>
             ))}
             {filtrados.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-[10px] text-center text-muted">
-                  Nenhum lead encontrado.
+                <td colSpan={6} className="px-4 py-12 text-center text-graytext">
+                  <b className="mb-1 block text-body text-charcoal">{leads.length === 0 ? "Nenhum lead ainda" : "Nenhum lead encontrado"}</b>
+                  <span className="text-body-sm">{leads.length === 0 ? "Crie o primeiro ou leve um cliente do Avaliador para o CRM." : "Mude a busca ou a etapa."}</span>
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      <Modal open={showForm} onClose={() => setShowForm(false)} title="Novo lead">
+        <NewLeadForm
+          onCancel={() => setShowForm(false)}
+          onCreated={() => {
+            setShowForm(false);
+            reload();
+          }}
+        />
+      </Modal>
     </div>
   );
 }
 
-function NewLeadForm({ onCreated }) {
+function NewLeadForm({ onCreated, onCancel }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -196,57 +208,30 @@ function NewLeadForm({ onCreated }) {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 rounded-[14px] border border-rule bg-white p-4">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Telefone</label>
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">E-mail</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Origem</label>
-          <select
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
-          >
-            <option value="">—</option>
-            {SOURCES.map((s) => (
-              <option key={s} value={s}>
-                {SOURCE_LABELS[s]}
-              </option>
-            ))}
-          </select>
-        </div>
+    <form onSubmit={submit} className="space-y-3.5">
+      <Input label="Nome" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+      <Input label="Telefone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      <Input label="E-mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <div>
+        <label className="mb-1.5 block text-caption font-medium text-graytext">Origem</label>
+        <select value={source} onChange={(e) => setSource(e.target.value)} className={classesCampo}>
+          <option value="">—</option>
+          {SOURCES.map((s) => (
+            <option key={s} value={s}>
+              {SOURCE_LABELS[s]}
+            </option>
+          ))}
+        </select>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={saving}
-        className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
-      >
-        {saving ? "Criando…" : "Criar lead"}
-      </button>
+      {error && <p className="text-body-sm text-danger-text">{error}</p>}
+      <div className="flex justify-end gap-2 pt-2">
+        <Button variant="secondary" onClick={onCancel}>
+          Cancelar
+        </Button>
+        <Button type="submit" disabled={saving}>
+          {saving ? "Criando…" : "Criar lead"}
+        </Button>
+      </div>
     </form>
   );
 }
