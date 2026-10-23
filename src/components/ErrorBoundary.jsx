@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { useLocation } from "react-router-dom";
+import { WHATSAPP_EXIBIDO } from "../lib/contato";
 
 // Sem isto, qualquer erro de renderização deixa a tela inteira em branco — e
 // quem chega por um link de WhatsApp ou anúncio não tem nem como voltar. Fica
@@ -29,7 +30,7 @@ class Boundary extends Component {
         <p className="text-[10.5px] font-bold uppercase tracking-[.2em] text-gold">MaterImob</p>
         <h1 className="mt-2 text-lg font-bold text-charcoal">Algo deu errado nesta tela</h1>
         <p className="mt-2 max-w-xs text-sm text-graytext">
-          Recarregue a página para tentar de novo. Se continuar, escreva para contato@materimob.com.br.
+          Recarregue a página para tentar de novo. Se continuar, chame no WhatsApp {WHATSAPP_EXIBIDO}.
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           <button

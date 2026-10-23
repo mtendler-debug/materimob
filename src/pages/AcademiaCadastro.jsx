@@ -99,7 +99,11 @@ export default function AcademiaCadastro() {
     const { data, error: authError } = await supabase.auth.signUp({
       email: email.trim(),
       password: senha,
-      options: { data: { full_name: nome.trim(), account_type: "corretor", academia: pedido } },
+      options: {
+        data: { full_name: nome.trim(), account_type: "corretor", academia: pedido },
+        // Mesmo motivo do Login: o link de confirmação volta para este domínio.
+        emailRedirectTo: `${window.location.origin}/`,
+      },
     });
     setBusy(false);
     if (authError) return setError(traduzErro(authError.message));

@@ -52,7 +52,12 @@ export default function Login() {
         : supabase.auth.signUp({
             email,
             password,
-            options: { data: { full_name: nome.trim(), account_type: "corretor" } },
+            // Sem isto o link de confirmação volta para o "Site URL" do Supabase,
+            // que pode ser outro domínio (ex. o *.netlify.app) — e a sessão fica lá.
+            options: {
+              data: { full_name: nome.trim(), account_type: "corretor" },
+              emailRedirectTo: `${window.location.origin}/`,
+            },
           });
 
     const { data, error: authError } = await action;
