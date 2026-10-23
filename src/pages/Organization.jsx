@@ -20,35 +20,37 @@ export default function Organization() {
     if (newOrgId) setActiveOrgId(newOrgId);
   }
 
+  const trocador = (
+    <div className="space-y-2">
+      {memberships.length > 1 && <OrgSwitcher memberships={memberships} activeOrgId={activeOrgId} onSwitch={setActiveOrgId} />}
+      {!showNew && (
+        <button
+          onClick={() => setShowNew(true)}
+          className="min-h-10 w-full rounded-[10px] px-3 text-left text-body-sm font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal"
+        >
+          + Criar outra organização
+        </button>
+      )}
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Organização</h1>
-
-        {memberships.length > 1 && (
-          <OrgSwitcher memberships={memberships} activeOrgId={activeOrgId} onSwitch={setActiveOrgId} />
-        )}
-
-        {!org ? (
+    <div className="min-h-screen bg-bg">
+      {!org ? (
+        <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
+          <h1 className="text-[clamp(1.5rem,3vw,1.75rem)] leading-tight font-bold tracking-[-0.03em] text-charcoal">Organização</h1>
+          {memberships.length > 1 && <OrgSwitcher memberships={memberships} activeOrgId={activeOrgId} onSwitch={setActiveOrgId} />}
           <CreateOrganization onCreated={handleCreated} />
-        ) : (
-          <>
-            <OrganizationDetail org={org} role={role} onChange={reload} />
-            {showNew ? (
-              <div className="mt-6">
-                <CreateOrganization onCreated={handleCreated} />
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowNew(true)}
-                className="mt-6 text-sm text-graytext underline"
-              >
-                + Criar outra organização
-              </button>
-            )}
-          </>
-        )}
-      </div>
+        </div>
+      ) : (
+        <OrganizationDetail
+          org={org}
+          role={role}
+          onChange={reload}
+          trocador={trocador}
+          novaOrg={showNew ? <CreateOrganization onCreated={handleCreated} /> : null}
+        />
+      )}
     </div>
   );
 }
@@ -56,11 +58,11 @@ export default function Organization() {
 function OrgSwitcher({ memberships, activeOrgId, onSwitch }) {
   return (
     <div className="mt-3 flex items-center gap-2">
-      <label className="text-[11.5px] font-bold uppercase tracking-[.06em] text-graytext">Ver como</label>
+      <label className="mb-1 block text-[11px] font-semibold tracking-[.06em] text-muted uppercase">Ver como</label>
       <select
         value={activeOrgId ?? ""}
         onChange={(e) => onSwitch(e.target.value)}
-        className="rounded-[9px] border-[1.5px] border-rule bg-white px-3 py-1.5 text-sm"
+        className="min-h-10 rounded-[10px] border border-slate-200 bg-white px-3 text-body-sm"
       >
         {memberships.map((m) => (
           <option key={m.organizations.id} value={m.organizations.id}>
@@ -97,14 +99,14 @@ function CreateOrganization({ onCreated }) {
   }
 
   return (
-    <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
+    <div className="mt-4 rounded-card border border-slate-200/70 bg-white p-4">
       <p className="text-sm text-graytext">
         Você ainda não faz parte de uma organização. Crie uma se for licenciar o sistema para o time —
         você vira o diretor e pode convidar o resto da equipe.
       </p>
       <form onSubmit={handleSubmit} className="mt-3 space-y-3">
         <div>
-          <label className="block text-[11.5px] font-bold text-graytext uppercase">Tipo</label>
+          <label className="mb-1.5 block text-caption font-medium text-graytext">Tipo</label>
           <div className="mt-1 flex gap-2">
             <TipoOption value="imobiliaria" current={tipo} onSelect={setTipo}>
               Imobiliária
@@ -121,18 +123,18 @@ function CreateOrganization({ onCreated }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome da imobiliária/incorporadora"
-            className="flex-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="flex-1 min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
           />
           <button
             type="submit"
             disabled={saving}
-            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-control min-h-11 bg-brand px-5 text-body-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {saving ? "Criando…" : "Criar organização"}
           </button>
         </div>
       </form>
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
     </div>
   );
 }
@@ -205,29 +207,29 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
 
   if (editing) {
     return (
-      <div className="rounded-[14px] border border-rule bg-white p-4">
-        <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome</label>
+      <div className="rounded-card border border-slate-200/70 bg-white p-4">
+        <label className="mb-1.5 block text-caption font-medium text-graytext">Nome</label>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
-        <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
+        <label className="mt-3 mb-1.5 block text-caption font-medium text-graytext">Endereço</label>
         <input
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="Usado só pra aparecer no mapa do ecossistema"
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
         <div className="mt-3 flex items-center gap-3">
           <button
             onClick={salvar}
             disabled={saving}
-            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-control min-h-11 bg-brand px-5 text-body-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {saving ? "Salvando…" : "Salvar"}
           </button>
-          <button onClick={() => setEditing(false)} className="text-sm text-graytext underline">
+          <button onClick={() => setEditing(false)} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
             cancelar
           </button>
         </div>
@@ -236,25 +238,25 @@ function OrgHeaderCard({ org, role, manage, onChange }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
-      <p className="font-serif text-lg font-semibold text-charcoal">{org.name}</p>
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
+      <p className="text-lg font-semibold text-charcoal">{org.name}</p>
       <p className="text-sm text-graytext">
         {org.tipo === "incorporadora" ? "Incorporadora" : "Imobiliária"} · Você é {ROLE_LABELS[role]}.
         {org.address ? ` · ${org.address}` : ""}
       </p>
       <div className="mt-2 flex items-center gap-3">
-        <Link to={`/app/organizacoes/${org.id}`} className="text-xs text-graytext underline">
+        <Link to={`/app/organizacoes/${org.id}`} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
           Ver como aparece para o ecossistema →
         </Link>
         {manage && (
-          <button onClick={() => setEditing(true)} className="text-xs font-bold text-graytext underline">
+          <button onClick={() => setEditing(true)} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
             editar
           </button>
         )}
         <button
           onClick={sair}
           disabled={leaving}
-          className="text-xs font-bold text-graytext underline disabled:opacity-50"
+          className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal disabled:opacity-50"
         >
           {leaving ? "saindo…" : "sair da organização"}
         </button>
@@ -311,8 +313,8 @@ function MarcaCard({ org, manage, onChange }) {
 
   if (!editing) {
     return (
-      <div className="rounded-[14px] border border-rule bg-white p-4">
-        <p className="font-serif text-lg font-semibold text-charcoal">Marca e domínio</p>
+      <div className="rounded-card border border-slate-200/70 bg-white p-4">
+        <p className="text-lg font-semibold text-charcoal">Marca e domínio</p>
         {temMarca ? (
           <p className="text-sm text-graytext">
             {org.nome_exibicao || org.name}
@@ -324,7 +326,7 @@ function MarcaCard({ org, manage, onChange }) {
             cara da organização.
           </p>
         )}
-        <button onClick={() => setEditing(true)} className="mt-2 text-xs font-bold text-graytext underline">
+        <button onClick={() => setEditing(true)} className="mt-2 inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
           {temMarca ? "editar marca" : "configurar marca"}
         </button>
       </div>
@@ -334,9 +336,9 @@ function MarcaCard({ org, manage, onChange }) {
   const previewUrl = slug.trim() ? `materimob.com.br/${slug.trim()}` : null;
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
-      <p className="font-serif text-lg font-semibold text-charcoal">Marca e domínio</p>
-      <p className="mt-1 text-xs text-graytext">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
+      <p className="text-lg font-semibold text-charcoal">Marca e domínio</p>
+      <p className="mt-1 text-caption text-graytext">
         Aparece pro seu time quando estiver atuando dentro desta organização — no menu, no login e
         em materimob.com.br/{slug.trim() || "seu-endereço"}.
       </p>
@@ -344,94 +346,94 @@ function MarcaCard({ org, manage, onChange }) {
       <div className="mt-4 grid gap-4 sm:grid-cols-[1.3fr_1fr]">
         <div className="space-y-3">
           <div>
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome de exibição</label>
+            <label className="mb-1.5 block text-caption font-medium text-graytext">Nome de exibição</label>
             <input
               value={nomeExibicao}
               onChange={(e) => setNomeExibicao(e.target.value)}
               placeholder={org.name}
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Logo (URL da imagem)</label>
+            <label className="mb-1.5 block text-caption font-medium text-graytext">Logo (URL da imagem)</label>
             <input
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://…"
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
             />
           </div>
           <div className="flex gap-4">
             <div>
-              <label className="block text-[11.5px] font-bold text-graytext uppercase">Cor primária</label>
+              <label className="mb-1.5 block text-caption font-medium text-graytext">Cor primária</label>
               <div className="mt-1 flex items-center gap-2">
                 <input
                   type="color"
                   value={corPrimaria}
                   onChange={(e) => setCorPrimaria(e.target.value)}
-                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-rule"
+                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-slate-200"
                 />
                 <input
                   value={corPrimaria}
                   onChange={(e) => setCorPrimaria(e.target.value)}
-                  className="w-24 rounded-[9px] border-[1.5px] border-rule px-2 py-2 text-xs"
+                  className="w-24 rounded-[9px] border border-slate-200 px-2 py-2 text-xs"
                 />
               </div>
             </div>
             <div>
-              <label className="block text-[11.5px] font-bold text-graytext uppercase">Cor secundária</label>
+              <label className="mb-1.5 block text-caption font-medium text-graytext">Cor secundária</label>
               <div className="mt-1 flex items-center gap-2">
                 <input
                   type="color"
                   value={corSecundaria}
                   onChange={(e) => setCorSecundaria(e.target.value)}
-                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-rule"
+                  className="h-9 w-9 cursor-pointer rounded-[8px] border border-slate-200"
                 />
                 <input
                   value={corSecundaria}
                   onChange={(e) => setCorSecundaria(e.target.value)}
-                  className="w-24 rounded-[9px] border-[1.5px] border-rule px-2 py-2 text-xs"
+                  className="w-24 rounded-[9px] border border-slate-200 px-2 py-2 text-xs"
                 />
               </div>
             </div>
           </div>
           <div>
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
+            <label className="mb-1.5 block text-caption font-medium text-graytext">Endereço</label>
             <div className="mt-1 flex items-stretch">
-              <span className="flex items-center rounded-l-[9px] border-[1.5px] border-r-0 border-rule bg-light px-2 text-xs text-graytext">
+              <span className="flex items-center rounded-l-[9px] border-[1.5px] border-r-0 border-rule bg-light px-2 text-caption text-graytext">
                 materimob.com.br/
               </span>
               <input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
                 placeholder="chaincorp"
-                className="w-full rounded-r-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="w-full rounded-r-[9px] border border-slate-200 px-3 py-2 text-sm"
               />
             </div>
-            {previewUrl && <p className="mt-1 text-xs text-graytext">→ {previewUrl}</p>}
+            {previewUrl && <p className="mt-1 text-caption text-graytext">→ {previewUrl}</p>}
           </div>
 
-          {error && <p className="text-sm text-[#B34A2E]">{error}</p>}
+          {error && <p className="text-sm text-danger-text">{error}</p>}
 
           <div className="flex items-center gap-3 pt-1">
             <button
               onClick={salvar}
               disabled={saving}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-control min-h-11 bg-brand px-5 text-body-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {saving ? "Salvando…" : "Salvar"}
             </button>
-            <button onClick={() => setEditing(false)} className="text-sm text-graytext underline">
+            <button onClick={() => setEditing(false)} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
               cancelar
             </button>
           </div>
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[.06em] text-graytext">
+          <p className="mb-1.5 text-caption font-semibold tracking-[.06em] text-muted uppercase">
             Pré-visualização
           </p>
-          <div className="flex h-[150px] overflow-hidden rounded-[12px] border border-rule">
+          <div className="flex h-[150px] overflow-hidden rounded-xl border border-slate-200/70">
             <div className="flex w-2/5 flex-col gap-2 p-3" style={{ background: corSecundaria }}>
               {logoUrl ? (
                 <img src={logoUrl} alt="" className="max-h-5" />
@@ -447,7 +449,7 @@ function MarcaCard({ org, manage, onChange }) {
               <span className="h-[6px] w-3/4 rounded-full bg-white/15" />
             </div>
             <div className="flex-1 space-y-2 bg-[#f7f5f2] p-3">
-              <p className="font-serif text-[13px] font-semibold" style={{ color: corSecundaria }}>
+              <p className="text-[13px] font-semibold" style={{ color: corSecundaria }}>
                 {nomeExibicao || org.name}
               </p>
               <span className="block h-[5px] w-3/4 rounded-full bg-black/10" />
@@ -460,13 +462,14 @@ function MarcaCard({ org, manage, onChange }) {
   );
 }
 
-function OrganizationDetail({ org, role, onChange }) {
+function OrganizationDetail({ org, role, onChange, trocador, novaOrg }) {
   const [roster, setRoster] = useState(null);
   const [properties, setProperties] = useState(null);
   const [launches, setLaunches] = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [teamDashboard, setTeamDashboard] = useState(null);
   const manage = canManage(role);
+  const [ativa, setAtiva] = useState(manage ? "painel" : "imoveis");
   const incorporadora = org.tipo === "incorporadora";
 
   async function loadRoster() {
@@ -514,19 +517,95 @@ function OrganizationDetail({ org, role, onChange }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [org.id]);
 
-  return (
-    <div className="mt-4 space-y-6">
-      <OrgHeaderCard org={org} role={role} manage={manage} onChange={onChange} />
-      <MarcaCard org={org} manage={manage} onChange={onChange} />
+  // Item ativo do índice acompanha a rolagem da página.
+  useEffect(() => {
+    function onScroll() {
+      const secoes = [...document.querySelectorAll("[data-secao]")];
+      let atual = secoes[0];
+      for (const el of secoes) if (el.getBoundingClientRect().top <= 110) atual = el;
+      if (atual) setAtiva(atual.dataset.secao);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [manage, roster, properties, launches]);
 
+  const indice = [
+    ...(manage ? [["painel", "Painéis"]] : []),
+    ["imoveis", incorporadora ? "Lançamentos e portfólio" : "Portfólio"],
+    ["equipe", manage ? "Equipe e convites" : "Equipe"],
+    ["marca", manage ? "Marca e dados" : "Dados"],
+  ];
+  const cor = org.cor_primaria || "#0284C7";
+
+  return (
+    <div className="md:grid md:grid-cols-[290px_minmax(0,1fr)]">
+      <aside className="flex flex-col gap-[18px] border-b border-slate-200/70 bg-white px-4 py-6 md:sticky md:top-[60px] md:h-[calc(100vh-60px)] md:overflow-y-auto md:border-r md:border-b-0 md:px-5 md:py-7">
+        {org.logo_url ? (
+          <img src={org.logo_url} alt="" className="h-16 w-16 rounded-[20px] object-cover" />
+        ) : (
+          <span className="grid h-16 w-16 place-items-center rounded-[20px] text-2xl font-bold text-white" style={{ background: cor }}>
+            {(org.nome_exibicao || org.name || "?")[0].toUpperCase()}
+          </span>
+        )}
+        <div>
+          <h1 className="text-title leading-tight font-bold tracking-tight text-charcoal">{org.nome_exibicao || org.name}</h1>
+          <span className="mt-2 inline-block rounded-full bg-brand-soft px-2.5 py-0.5 text-caption font-semibold text-sky-800">
+            {incorporadora ? "Incorporadora" : "Imobiliária"}
+          </span>
+        </div>
+        <dl className="grid grid-cols-2 gap-3 md:grid-cols-1">
+          <div>
+            <dt className="text-[11px] font-semibold tracking-[.06em] text-muted uppercase">Seu papel</dt>
+            <dd className="mt-0.5 font-medium text-slate-700">{ROLE_LABELS[role]}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-semibold tracking-[.06em] text-muted uppercase">Pessoas</dt>
+            <dd className="mt-0.5 font-medium text-slate-700">{roster ? `${roster.length} na equipe` : "…"}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-semibold tracking-[.06em] text-muted uppercase">{incorporadora ? "Lançamentos" : "Portfólio"}</dt>
+            <dd className="mt-0.5 font-medium text-slate-700">
+              {incorporadora ? (launches ? `${launches.length} publicado(s)` : "…") : properties ? `${properties.length} imóvel(is)` : "…"}
+            </dd>
+          </div>
+        </dl>
+        <nav className="-mx-1 flex gap-1.5 overflow-x-auto px-1 md:mx-0 md:grid md:gap-0.5 md:overflow-visible md:px-0" aria-label="Seções">
+          {indice.map(([id, rotulo]) => (
+            <a
+              key={id}
+              href={`#s-${id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              aria-current={ativa === id}
+              className={`flex min-h-10 flex-none items-center rounded-[10px] border px-3 text-body-sm whitespace-nowrap transition-all duration-200 md:border-transparent ${
+                ativa === id
+                  ? "border-brand-soft bg-brand-soft font-semibold text-sky-800"
+                  : "border-slate-200 font-medium text-slate-600 hover:bg-light md:border-transparent"
+              }`}
+            >
+              {rotulo}
+            </a>
+          ))}
+        </nav>
+        <div className="md:mt-auto">{trocador}</div>
+      </aside>
+
+      <div className="min-w-0 max-w-[900px] space-y-10 px-4 py-7 pb-24 md:px-8">
+        {novaOrg}
+
+        {manage && (
+          <section id="s-painel" data-secao="painel" className="scroll-mt-20 space-y-6">
       {incorporadora && manage && dashboard && (
         <div>
           <SectionTitle>Painel agregado — todos os lançamentos</SectionTitle>
-          <p className="text-xs text-graytext">
+          <p className="text-caption text-graytext">
             Números somados de todos os lançamentos desta organização — sem nome de cliente nem
             identidade de corretor.
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
             <Kpi label="Lançamentos" value={dashboard.total_lancamentos} foot={`${dashboard.total_unidades} unidade(s)`} />
             <Kpi label="Roteiros" value={dashboard.total_roteiros} foot={`${dashboard.total_corretores} corretor(es)`} />
             <Kpi label="Avaliações" value={dashboard.total_avaliacoes} foot={dashboard.nota_media != null ? `nota média ${String(dashboard.nota_media).replace(".", ",")}` : "recebidas"} />
@@ -536,23 +615,23 @@ function OrganizationDetail({ org, role, onChange }) {
           </div>
 
           {dashboard.unidades_por_status && Object.keys(dashboard.unidades_por_status).length > 0 && (
-            <div className="mt-4 rounded-[14px] border border-rule bg-white p-4">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Funil de unidades</p>
+            <div className="mt-4 rounded-card border border-slate-200/70 bg-white p-4">
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">Funil de unidades</p>
               <FunnelBar counts={dashboard.unidades_por_status} />
             </div>
           )}
 
           {dashboard.por_lancamento?.length > 0 && (
             <div className="mt-6">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Comparação entre lançamentos
               </p>
-              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+              <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
                 <table className="w-full min-w-[760px] border-collapse text-sm">
                   <thead>
                     <tr>
                       {["Lançamento", "Status", "Unidades", "Roteiros", "Avaliações", "Nota média", "Propostas", "Ticket médio"].map((h) => (
-                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                        <th key={h} className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">
                           {h}
                         </th>
                       ))}
@@ -561,10 +640,10 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {dashboard.por_lancamento.map((l) => (
                       <tr key={l.id}>
-                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{l.name}</td>
-                        <td className="border-b border-rule p-[10px]">
+                        <td className="border-t border-slate-100 p-[10px] font-semibold text-charcoal">{l.name}</td>
+                        <td className="border-t border-slate-100 p-[10px]">
                           <span
-                            className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                            className="rounded-full px-2.5 py-0.5 text-caption font-semibold"
                             style={
                               l.status === "ativo"
                                 ? { background: "#E3F0E4", color: "#2E7D32" }
@@ -574,21 +653,21 @@ function OrganizationDetail({ org, role, onChange }) {
                             {LAUNCH_STATUS_LABELS[l.status] || l.status}
                           </span>
                         </td>
-                        <td className="min-w-[140px] border-b border-rule p-[10px]">
+                        <td className="min-w-[140px] border-t border-slate-100 p-[10px]">
                           <FunnelBar
                             compact
                             counts={{ disponivel: l.disponiveis, reservada: l.reservadas, vendida: l.vendidas }}
                           />
                         </td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{l.total_roteiros}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{l.total_avaliacoes}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{l.total_roteiros}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{l.total_avaliacoes}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                           {l.nota_media != null ? String(l.nota_media).replace(".", ",") : "—"}
                         </td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                           {l.total_propostas} ({l.propostas_interesse} c/ interesse)
                         </td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                           {l.ticket_medio_vendas != null ? brl(l.ticket_medio_vendas) : "—"}
                         </td>
                       </tr>
@@ -601,11 +680,11 @@ function OrganizationDetail({ org, role, onChange }) {
 
           {(dashboard.por_parceiro?.length > 0 || dashboard.top_corretores?.length > 0) && (
             <div className="mt-6">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">Ecossistema</p>
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">Ecossistema</p>
 
               {(dashboard.por_parceiro?.some((p) => p.latitude != null) ||
                 dashboard.top_corretores?.some((c) => c.latitude != null)) && (
-                <div className="mb-4 overflow-hidden rounded-[14px] border border-rule">
+                <div className="mb-4 overflow-hidden rounded-card border border-slate-200/70">
                   <Map
                     pins={[
                       ...(dashboard.por_parceiro ?? [])
@@ -621,12 +700,12 @@ function OrganizationDetail({ org, role, onChange }) {
               )}
 
               {dashboard.por_parceiro?.length > 0 && (
-                <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+                <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
                   <table className="w-full min-w-[560px] border-collapse text-sm">
                     <thead>
                       <tr>
                         {["Imobiliária parceira", "Corretores", "Roteiros", "Propostas", "Interesse", "Vendidas", "Ticket médio"].map((h) => (
-                          <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                          <th key={h} className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">
                             {h}
                           </th>
                         ))}
@@ -635,13 +714,13 @@ function OrganizationDetail({ org, role, onChange }) {
                     <tbody>
                       {dashboard.por_parceiro.map((p) => (
                         <tr key={p.organization_id}>
-                          <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{p.name}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_roteiros}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.propostas_interesse}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_vendidas}</td>
-                          <td className="border-b border-rule p-[10px] text-center text-graytext">
+                          <td className="border-t border-slate-100 p-[10px] font-semibold text-charcoal">{p.name}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_corretores}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_roteiros}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_propostas}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.propostas_interesse}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_vendidas}</td>
+                          <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                             {p.ticket_medio_vendas != null ? brl(p.ticket_medio_vendas) : "—"}
                           </td>
                         </tr>
@@ -653,7 +732,7 @@ function OrganizationDetail({ org, role, onChange }) {
 
               {dashboard.top_corretores?.length > 0 && (
                 <div className={dashboard.por_parceiro?.length > 0 ? "mt-4" : ""}>
-                  <p className="mb-2 text-xs text-graytext">Corretores que mais geram roteiros com seus lançamentos</p>
+                  <p className="mb-2 text-caption text-graytext">Corretores que mais geram roteiros com seus lançamentos</p>
                   <div className="space-y-[6px]">
                     {dashboard.top_corretores.map((c) => (
                       <LeaderboardBar
@@ -678,10 +757,10 @@ function OrganizationDetail({ org, role, onChange }) {
       {manage && teamDashboard && (
         <div>
           <SectionTitle>Painel da equipe</SectionTitle>
-          <p className="text-xs text-graytext">
+          <p className="text-caption text-graytext">
             Números somados de todos os corretores desta organização.
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200/70 sm:grid-cols-4">
             <Kpi label="Roteiros" value={teamDashboard.total_roteiros} foot={`${teamDashboard.total_membros} corretor(es)`} />
             <Kpi label="Clientes" value={teamDashboard.total_clientes} foot="atendidos" />
             <Kpi
@@ -693,20 +772,20 @@ function OrganizationDetail({ org, role, onChange }) {
             <Kpi label="Vendas" value={teamDashboard.total_vendas} foot={teamDashboard.ticket_medio_vendas != null ? `ticket médio ${brl(teamDashboard.ticket_medio_vendas)}` : "confirmadas"} />
             <Kpi label="Previsão" value={brl(teamDashboard.previsao_vendas)} foot="em propostas com intenção de compra" />
           </div>
-          <p className="mt-3 text-xs text-graytext">
+          <p className="mt-3 text-caption text-graytext">
             {teamDashboard.ativos_30d} corretor(es) ativo(s) nos últimos 30 dias ·{" "}
             {teamDashboard.total_imoveis_portfolio} imóvel(is) no portfólio da organização
           </p>
 
-          <p className="mt-5 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+          <p className="mt-5 mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
             Ranking da equipe
           </p>
-          <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+          <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
             <table className="w-full min-w-[560px] border-collapse text-sm">
               <thead>
                 <tr>
                   {["Nome", "Papel", "Roteiros", "Avaliações", "Nota média", "Propostas", "Vendas", ""].map((h) => (
-                    <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                    <th key={h} className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">
                       {h}
                     </th>
                   ))}
@@ -717,31 +796,31 @@ function OrganizationDetail({ org, role, onChange }) {
                   const maxRoteiros = Math.max(...teamDashboard.por_corretor.map((x) => x.total_roteiros), 1);
                   return (
                     <tr key={c.user_id}>
-                      <td className="border-b border-rule p-[10px] text-charcoal">{c.full_name || c.email}</td>
-                      <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[c.role]}</td>
-                      <td className="min-w-[90px] border-b border-rule p-[10px]">
+                      <td className="border-t border-slate-100 p-[10px] text-charcoal">{c.full_name || c.email}</td>
+                      <td className="border-t border-slate-100 p-[10px] text-graytext">{ROLE_LABELS[c.role]}</td>
+                      <td className="min-w-[90px] border-t border-slate-100 p-[10px]">
                         <div className="mx-auto w-16 text-center text-graytext">{c.total_roteiros}</div>
                         <div className="mx-auto mt-1 h-1 w-16 overflow-hidden rounded-full bg-light">
                           <div
-                            className="h-full rounded-full bg-gold"
+                            className="h-full rounded-full bg-brand"
                             style={{ width: `${c.total_roteiros > 0 ? Math.max((c.total_roteiros / maxRoteiros) * 100, 6) : 0}%` }}
                           />
                         </div>
                       </td>
-                      <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_avaliacoes}</td>
-                      <td className="border-b border-rule p-[10px] text-center text-graytext">
+                      <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{c.total_avaliacoes}</td>
+                      <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                         {c.nota_media != null ? String(c.nota_media).replace(".", ",") : "—"}
                       </td>
-                      <td className="border-b border-rule p-[10px] text-center text-graytext">{c.total_propostas}</td>
-                      <td className="border-b border-rule p-[10px] text-center text-graytext">
+                      <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{c.total_propostas}</td>
+                      <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                         {c.total_vendas}
                         {c.ticket_medio_vendas != null && (
                           <span className="block text-[10px] text-muted">{brl(c.ticket_medio_vendas)}</span>
                         )}
                       </td>
-                      <td className="border-b border-rule p-[10px] text-center">
+                      <td className="border-t border-slate-100 p-[10px] text-center">
                         {c.ativo_30d && (
-                          <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
+                          <span className="rounded-full px-2.5 py-0.5 text-caption font-semibold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
                             ativo
                           </span>
                         )}
@@ -754,8 +833,8 @@ function OrganizationDetail({ org, role, onChange }) {
           </div>
 
           {teamDashboard.atividade_periodo?.length > 0 && (
-            <div className="mt-6 rounded-[14px] border border-rule bg-white p-4">
-              <p className="mb-3 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+            <div className="mt-6 rounded-card border border-slate-200/70 bg-white p-4">
+              <p className="mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Atividade da equipe — roteiros por semana
               </p>
               <ActivityBars data={teamDashboard.atividade_periodo} />
@@ -764,19 +843,19 @@ function OrganizationDetail({ org, role, onChange }) {
 
           {teamDashboard.portfolio_performance?.length > 0 && (
             <div className="mt-6">
-              <p className="mb-1 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+              <p className="mb-1 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Desempenho do portfólio
               </p>
-              <p className="mb-2 text-xs text-graytext">
+              <p className="mb-2 text-caption text-graytext">
                 Quantas vezes qualquer corretor da plataforma usou cada imóvel — contagem a partir de
                 agora, roteiros importados antes desta métrica não entram.
               </p>
-              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+              <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
                 <table className="w-full min-w-[640px] border-collapse text-sm">
                   <thead>
                     <tr>
                       {["Imóvel", "Usos", "Corretores", "Avaliações", "Nota média", "Propostas"].map((h) => (
-                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                        <th key={h} className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">
                           {h}
                         </th>
                       ))}
@@ -785,21 +864,21 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {teamDashboard.portfolio_performance.map((p) => (
                       <tr key={p.id}>
-                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{p.name}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_usos}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_corretores}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_avaliacoes}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        <td className="border-t border-slate-100 p-[10px] font-semibold text-charcoal">{p.name}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_usos}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_corretores}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_avaliacoes}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                           {p.nota_media != null ? String(p.nota_media).replace(".", ",") : "—"}
                         </td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{p.total_propostas}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{p.total_propostas}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               {teamDashboard.portfolio_performance.some((p) => p.latitude != null) && (
-                <div className="mt-3 overflow-hidden rounded-[14px] border border-rule">
+                <div className="mt-3 overflow-hidden rounded-card border border-slate-200/70">
                   <Map
                     pins={teamDashboard.portfolio_performance
                       .filter((p) => p.latitude != null && p.longitude != null)
@@ -813,10 +892,10 @@ function OrganizationDetail({ org, role, onChange }) {
 
           {teamDashboard.launches_em_roteiro?.some((l) => l.latitude != null) && (
             <div className="mt-6">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Mapa de projetos
               </p>
-              <div className="overflow-hidden rounded-[14px] border border-rule">
+              <div className="overflow-hidden rounded-card border border-slate-200/70">
                 <Map
                   pins={teamDashboard.launches_em_roteiro
                     .filter((l) => l.latitude != null && l.longitude != null)
@@ -829,10 +908,10 @@ function OrganizationDetail({ org, role, onChange }) {
 
           {teamDashboard.imoveis_em_roteiro?.some((im) => im.latitude != null) && (
             <div className="mt-6">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Mapa de imóveis em roteiro
               </p>
-              <div className="overflow-hidden rounded-[14px] border border-rule">
+              <div className="overflow-hidden rounded-card border border-slate-200/70">
                 <Map
                   pins={teamDashboard.imoveis_em_roteiro
                     .filter((im) => im.latitude != null && im.longitude != null)
@@ -845,15 +924,15 @@ function OrganizationDetail({ org, role, onChange }) {
 
           {teamDashboard.por_incorporadora?.length > 0 && (
             <div className="mt-6">
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
+              <p className="mb-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
                 Vendas por incorporadora
               </p>
-              <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+              <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
                 <table className="w-full min-w-[520px] border-collapse text-sm">
                   <thead>
                     <tr>
                       {["Incorporadora", "Roteiros", "Vendas", "Ticket médio"].map((h) => (
-                        <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+                        <th key={h} className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">
                           {h}
                         </th>
                       ))}
@@ -862,10 +941,10 @@ function OrganizationDetail({ org, role, onChange }) {
                   <tbody>
                     {teamDashboard.por_incorporadora.map((i) => (
                       <tr key={i.organization_id}>
-                        <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{i.name}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_roteiros}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">{i.total_vendas}</td>
-                        <td className="border-b border-rule p-[10px] text-center text-graytext">
+                        <td className="border-t border-slate-100 p-[10px] font-semibold text-charcoal">{i.name}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{i.total_roteiros}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">{i.total_vendas}</td>
+                        <td className="border-t border-slate-100 p-[10px] text-center text-graytext">
                           {i.ticket_medio_vendas != null ? brl(i.ticket_medio_vendas) : "—"}
                         </td>
                       </tr>
@@ -878,11 +957,15 @@ function OrganizationDetail({ org, role, onChange }) {
         </div>
       )}
 
+          </section>
+        )}
+
+        <section id="s-imoveis" data-secao="imoveis" className="scroll-mt-20 space-y-6">
       {incorporadora && (
         <div>
           <SectionTitle>Lançamentos</SectionTitle>
           {launches?.some((l) => l.latitude != null && l.longitude != null) && (
-            <div className="mb-3 overflow-hidden rounded-[14px] border border-rule">
+            <div className="mb-3 overflow-hidden rounded-card border border-slate-200/70">
               <Map
                 pins={launches
                   .filter((l) => l.latitude != null && l.longitude != null)
@@ -900,15 +983,15 @@ function OrganizationDetail({ org, role, onChange }) {
                 <Link
                   key={l.id}
                   to={`/app/lancamentos/${l.id}`}
-                  className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm hover:border-gold"
+                  className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white px-3 py-2 text-sm hover:border-slate-300"
                 >
-                  <span className="font-serif font-semibold text-charcoal">{l.name}</span>
+                  <span className="font-semibold text-charcoal">{l.name}</span>
                   <span className="text-graytext">{disponiveis}/{total} disponível(is)</span>
                 </Link>
               );
             })}
           </div>
-          <Link to="/app/lancamentos" className="mt-2 inline-block text-xs text-graytext underline">
+          <Link to="/app/lancamentos" className="mt-2 inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
             Gerenciar lançamentos →
           </Link>
         </div>
@@ -919,32 +1002,35 @@ function OrganizationDetail({ org, role, onChange }) {
         <div className="space-y-2">
           {properties?.length === 0 && <p className="text-sm text-muted">Nenhum imóvel no portfólio ainda.</p>}
           {properties?.map((p) => (
-            <div key={p.id} className="flex items-center justify-between rounded-[11px] border border-rule bg-white px-3 py-2 text-sm">
-              <span className="font-serif font-semibold text-charcoal">{p.name}</span>
+            <div key={p.id} className="flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white px-3 py-2 text-sm">
+              <span className="font-semibold text-charcoal">{p.name}</span>
               <span className="text-graytext">{p.av_portfolio_units?.length ?? 0} unidade(s)</span>
             </div>
           ))}
         </div>
-        <Link to="/app/portfolio" className="mt-2 inline-block text-xs text-graytext underline">
+        <Link to="/app/portfolio" className="mt-2 inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
           Gerenciar portfólio →
         </Link>
       </div>
 
+        </section>
+
+        <section id="s-equipe" data-secao="equipe" className="scroll-mt-20 space-y-6">
       <div>
         <SectionTitle>Equipe</SectionTitle>
-        <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+        <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
-                <th className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">Nome</th>
-                <th className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">Papel</th>
+                <th className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">Nome</th>
+                <th className="bg-bg px-3.5 py-2.5 text-left text-caption font-semibold tracking-[.04em] text-muted uppercase">Papel</th>
               </tr>
             </thead>
             <tbody>
               {roster?.map((m) => (
                 <tr key={m.user_id}>
-                  <td className="border-b border-rule p-[10px] text-charcoal">{m.full_name || m.email}</td>
-                  <td className="border-b border-rule p-[10px] text-graytext">{ROLE_LABELS[m.role]}</td>
+                  <td className="border-t border-slate-100 p-[10px] text-charcoal">{m.full_name || m.email}</td>
+                  <td className="border-t border-slate-100 p-[10px] text-graytext">{ROLE_LABELS[m.role]}</td>
                 </tr>
               ))}
             </tbody>
@@ -953,22 +1039,21 @@ function OrganizationDetail({ org, role, onChange }) {
       </div>
 
       {manage && <Invites orgId={org.id} role={role} onChange={onChange} />}
+        </section>
+
+        <section id="s-marca" data-secao="marca" className="scroll-mt-20 space-y-6">
+      <OrgHeaderCard org={org} role={role} manage={manage} onChange={onChange} />
+      <MarcaCard org={org} manage={manage} onChange={onChange} />
+
+        </section>
+      </div>
     </div>
   );
 }
 
-const STATUS_LABELS = { disponivel: "Disponível", reservada: "Reservada", vendida: "Vendida" };
-const UNIT_STATUS_COLORS = {
-  disponivel: { bg: "#D1FAE5", color: "#065F46" },
-  reservada: { bg: "#FEF3C7", color: "#92400E" },
-  vendida: { bg: "#FFE4E6", color: "#9F1239" },
-};
-const LAUNCH_STATUS_LABELS = { ativo: "Ativo", encerrado: "Encerrado" };
-const UNIT_STATUS_ORDER = ["disponivel", "reservada", "vendida"];
-
 function FunnelBar({ counts, compact }) {
   const total = UNIT_STATUS_ORDER.reduce((sum, k) => sum + (counts[k] || 0), 0);
-  if (!total) return compact ? <span className="text-xs text-graytext">—</span> : null;
+  if (!total) return compact ? <span className="text-caption text-graytext">—</span> : null;
   return (
     <div>
       <div className={`flex overflow-hidden rounded-full ${compact ? "h-2" : "h-3"}`}>
@@ -986,7 +1071,7 @@ function FunnelBar({ counts, compact }) {
               counts[k] > 0 && (
                 <span
                   key={k}
-                  className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
+                  className="rounded-full px-2.5 py-0.5 text-caption font-semibold"
                   style={{ background: UNIT_STATUS_COLORS[k].bg, color: UNIT_STATUS_COLORS[k].color }}
                 >
                   {counts[k]} {STATUS_LABELS[k].toLowerCase()}
@@ -1010,10 +1095,10 @@ function ActivityBars({ data }) {
     <div className="flex items-end gap-2">
       {data.map((d) => (
         <div key={d.semana} className="flex flex-1 flex-col items-center gap-1">
-          <span className="text-[10px] font-bold text-charcoal">{d.total_roteiros}</span>
+          <span className="text-xs font-semibold text-slate-700">{d.total_roteiros}</span>
           <div className="flex h-20 w-full items-end">
             <div
-              className="w-full rounded-t-[4px] bg-gold"
+              className="w-full rounded-t-[4px] bg-brand"
               style={{ height: `${d.total_roteiros > 0 ? Math.max((d.total_roteiros / max) * 100, 6) : 2}%` }}
             />
           </div>
@@ -1027,18 +1112,18 @@ function ActivityBars({ data }) {
 function LeaderboardBar({ label, sublabel, value, max, foot }) {
   const pct = max > 0 ? Math.max((value / max) * 100, 4) : 0;
   return (
-    <div className="rounded-[10px] border border-rule bg-white px-3 py-2">
+    <div className="rounded-2xl border border-slate-200/70 bg-white px-4 py-3">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-serif font-semibold text-charcoal">{label}</span>
-        <span className="shrink-0 text-xs text-graytext">{sublabel}</span>
+        <span className="font-semibold text-charcoal">{label}</span>
+        <span className="shrink-0 text-caption text-graytext">{sublabel}</span>
       </div>
       <div className="mt-1.5 flex items-center gap-2">
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-light">
-          <div className="h-full rounded-full bg-gold" style={{ width: `${pct}%` }} />
+          <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
         </div>
-        <span className="w-6 shrink-0 text-right text-xs font-bold text-graytext">{value}</span>
+        <span className="w-6 shrink-0 text-right text-caption font-semibold text-graytext">{value}</span>
       </div>
-      <div className="mt-1 text-[11px] text-graytext">{foot}</div>
+      <div className="mt-1 text-caption text-graytext">{foot}</div>
     </div>
   );
 }
@@ -1050,9 +1135,9 @@ function brl(n) {
 function Kpi({ label, value, foot }) {
   return (
     <div className="bg-white p-[15px]">
-      <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
-      <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
+      <div className="text-[11px] font-semibold uppercase tracking-[.06em] text-muted">{label}</div>
+      <div className="mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
+      <div className="mt-0.5 text-caption text-graytext">{foot}</div>
     </div>
   );
 }
@@ -1116,24 +1201,24 @@ function Invites({ orgId, role: meuPapel }) {
   return (
     <div>
       <SectionTitle>Convites</SectionTitle>
-      <div className="rounded-[14px] border border-rule bg-white p-4">
+      <div className="rounded-card border border-slate-200/70 bg-white p-4">
         <form onSubmit={sendInvite} className="flex flex-wrap items-end gap-2">
           <div className="min-w-[200px] flex-1">
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">E-mail</label>
+            <label className="mb-1.5 block text-caption font-medium text-graytext">E-mail</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="pessoa@exemplo.com"
-              className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-[11.5px] font-bold text-graytext uppercase">Papel</label>
+            <label className="mb-1.5 block text-caption font-medium text-graytext">Papel</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="mt-1 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+              className="mt-1 min-h-11 rounded-control border border-slate-200 bg-white px-3.5 py-2.5 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
             >
               {PAPEIS_CONVITE.filter(([, , rank]) => rank <= (RANK_PAPEL[meuPapel] ?? 0)).map(([valor, rotulo]) => (
                 <option key={valor} value={valor}>
@@ -1145,12 +1230,12 @@ function Invites({ orgId, role: meuPapel }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-control min-h-11 bg-brand px-5 text-body-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {saving ? "Gerando…" : "Gerar convite"}
           </button>
         </form>
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
 
         <div className="mt-4 space-y-2">
           {invites?.length === 0 && <p className="text-sm text-muted">Nenhum convite ainda.</p>}
@@ -1168,12 +1253,12 @@ function InviteRow({ invite, onRemove }) {
   const url = `${window.location.origin}/convite/${invite.token}`;
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-[9px] bg-bg p-2 text-sm">
+    <div className="flex flex-wrap items-center gap-2 rounded-xl bg-bg p-2.5 text-sm">
       <span className="flex-1 text-charcoal">
         {invite.email} <span className="text-graytext">· {ROLE_LABELS[invite.role]}</span>
       </span>
       {invite.accepted_at ? (
-        <span className="text-xs font-bold text-[#2E7D32]">aceito</span>
+        <span className="text-caption font-semibold text-success-text">aceito</span>
       ) : (
         <>
           <button
@@ -1182,11 +1267,11 @@ function InviteRow({ invite, onRemove }) {
               setCopied(true);
               setTimeout(() => setCopied(false), 1500);
             }}
-            className="rounded-[9px] bg-charcoal px-2 py-1 text-xs font-bold text-white hover:opacity-90"
+            className="min-h-9 rounded-[10px] bg-brand px-3 text-xs font-semibold text-white transition-all duration-200 hover:bg-brand-hover"
           >
             {copied ? "Copiado!" : "Copiar link"}
           </button>
-          <button onClick={onRemove} className="text-xs font-bold text-[#B34A2E]">
+          <button onClick={onRemove} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-caption font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
             cancelar
           </button>
         </>
@@ -1196,5 +1281,5 @@ function InviteRow({ invite, onRemove }) {
 }
 
 function SectionTitle({ children }) {
-  return <h2 className="mt-6 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">{children}</h2>;
+  return <h2 className="mt-6 mb-3 text-caption font-semibold tracking-[.08em] text-muted uppercase first:mt-0">{children}</h2>;
 }
