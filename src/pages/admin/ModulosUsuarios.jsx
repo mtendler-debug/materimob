@@ -63,7 +63,7 @@ export default function ModulosUsuarios() {
     return (usuarios ?? []).filter((u) => !q || `${u.nome ?? ""} ${u.email}`.toLowerCase().includes(q));
   }, [usuarios, busca]);
 
-  if (erro) return <p className="text-sm text-red-600">{erro}</p>;
+  if (erro) return <p className="text-sm text-danger-text">{erro}</p>;
   if (!padrao || !usuarios) return <p className="text-sm text-muted">Carregando…</p>;
 
   const ligado = (m) => !!padrao[PADRAO[m]];
@@ -77,11 +77,11 @@ export default function ModulosUsuarios() {
       </p>
 
       <section>
-        <h2 className="font-serif text-[16px] font-semibold text-charcoal">Padrão da plataforma</h2>
+        <h2 className="text-[16px] font-semibold text-charcoal">Padrão da plataforma</h2>
         <p className="mt-1 text-xs text-graytext">Vale para todo mundo que estiver em “Padrão”, inclusive contas novas.</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {MODULOS.map((m) => (
-            <div key={m.id} className="rounded-[14px] border border-rule bg-white p-4">
+            <div key={m.id} className="rounded-card border border-slate-200/70 bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-bold text-charcoal">{m.nome}</h3>
                 <Chave
@@ -100,7 +100,7 @@ export default function ModulosUsuarios() {
               </p>
             </div>
           ))}
-          <div className="rounded-[14px] border border-rule bg-white p-4">
+          <div className="rounded-card border border-slate-200/70 bg-white p-4">
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-charcoal">Parcerias</h3>
               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">Só o dono</span>
@@ -114,20 +114,20 @@ export default function ModulosUsuarios() {
 
       <section>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-serif text-[16px] font-semibold text-charcoal">Usuários</h2>
+          <h2 className="text-[16px] font-semibold text-charcoal">Usuários</h2>
           <input
             type="search"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Buscar por nome ou e-mail"
             aria-label="Buscar usuário"
-            className="w-full max-w-xs rounded-[10px] border border-rule bg-white px-3 py-2 text-sm text-charcoal focus:border-gold focus:outline-none"
+            className="w-full max-w-xs rounded-control border border-slate-200/70 bg-white px-3 py-2 text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
           />
         </div>
         <div className="mt-3 space-y-3">
           {filtrados.length === 0 && <p className="text-sm text-muted">Ninguém encontrado.</p>}
           {filtrados.map((u) => (
-            <article key={u.user_id} className="rounded-[14px] border border-rule bg-white p-4">
+            <article key={u.user_id} className="rounded-card border border-slate-200/70 bg-white p-4">
               <header className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <div className="min-w-0">
                   <b className="text-[15px] text-charcoal">{u.nome || u.email}</b>
@@ -179,12 +179,12 @@ function ModuloTresPosicoes({ nome, override, padraoLigado, textoPadrao, ocupado
         ? "Exceção: ligado para esta pessoa"
         : "Exceção: desligado para esta pessoa";
   return (
-    <div className="rounded-[12px] border border-rule p-3">
+    <div className="rounded-card border border-slate-200/70 p-3">
       <div className="flex items-center justify-between gap-2">
         <b className="text-[13.5px] text-charcoal">{nome}</b>
         <Etiqueta tom={ligado ? "ok" : "off"}>{ligado ? "Ligado" : "Desligado"}</Etiqueta>
       </div>
-      <div role="group" aria-label={`${nome} para ${usuario.nome || usuario.email}`} className="mt-2 grid grid-cols-3 gap-0.5 rounded-[9px] bg-slate-100 p-[3px]">
+      <div role="group" aria-label={`${nome} para ${usuario.nome || usuario.email}`} className="mt-2 grid grid-cols-3 gap-0.5 rounded-control bg-slate-100 p-[3px]">
         {[
           ["Padrão", null],
           ["Sim", true],
@@ -198,7 +198,7 @@ function ModuloTresPosicoes({ nome, override, padraoLigado, textoPadrao, ocupado
             onClick={() => override !== valor && onChange(valor)}
             className={`rounded-[7px] px-1 py-1.5 text-[12.5px] font-semibold disabled:opacity-50 ${
               override === valor
-                ? `bg-white shadow-sm ${valor === true ? "text-emerald-700" : valor === false ? "text-rose-700" : "text-charcoal"}`
+                ? `bg-white shadow-sm ${valor === true ? "text-emerald-700" : valor === false ? "text-danger-text" : "text-charcoal"}`
                 : "text-graytext"
             }`}
           >
@@ -216,7 +216,7 @@ function ModuloAcademia({ usuario, ocupado, onChange }) {
   // O dono do canal gerencia a Academia, não pede acesso a ela.
   if (usuario.e_admin && !status) {
     return (
-      <div className="rounded-[12px] border border-rule p-3">
+      <div className="rounded-card border border-slate-200/70 p-3">
         <div className="flex items-center justify-between gap-2">
           <b className="text-[13.5px] text-charcoal">Academia de Vendas</b>
           <Etiqueta tom="ok">Gestão</Etiqueta>
@@ -229,13 +229,13 @@ function ModuloAcademia({ usuario, ocupado, onChange }) {
   }
   const rotulo = { liberado: "Liberado", pendente: "Pedido pendente", bloqueado: "Bloqueado", recusado: "Recusado" }[status] ?? "Sem pedido";
   return (
-    <div className="rounded-[12px] border border-rule p-3">
+    <div className="rounded-card border border-slate-200/70 p-3">
       <div className="flex items-center justify-between gap-2">
         <b className="text-[13.5px] text-charcoal">Academia de Vendas</b>
         <Etiqueta tom={status === "liberado" ? "ok" : status === "bloqueado" || status === "recusado" ? "off" : undefined}>{rotulo}</Etiqueta>
       </div>
       {status ? (
-        <div role="group" aria-label={`Academia para ${usuario.nome || usuario.email}`} className="mt-2 grid grid-cols-2 gap-0.5 rounded-[9px] bg-slate-100 p-[3px]">
+        <div role="group" aria-label={`Academia para ${usuario.nome || usuario.email}`} className="mt-2 grid grid-cols-2 gap-0.5 rounded-control bg-slate-100 p-[3px]">
           {[
             ["Liberar", true, "liberado"],
             ["Bloquear", false, "bloqueado"],
@@ -247,7 +247,7 @@ function ModuloAcademia({ usuario, ocupado, onChange }) {
               aria-pressed={status === alvo}
               onClick={() => status !== alvo && onChange(valor)}
               className={`rounded-[7px] px-1 py-1.5 text-[12.5px] font-semibold disabled:opacity-50 ${
-                status === alvo ? `bg-white shadow-sm ${valor ? "text-emerald-700" : "text-rose-700"}` : "text-graytext"
+                status === alvo ? `bg-white shadow-sm ${valor ? "text-emerald-700" : "text-danger-text"}` : "text-graytext"
               }`}
             >
               {r}
@@ -289,7 +289,7 @@ function Etiqueta({ tom, children }) {
     tom === "ok"
       ? "bg-emerald-100 text-emerald-800"
       : tom === "off"
-        ? "bg-rose-100 text-rose-800"
+        ? "bg-rose-100 text-danger-text"
         : "bg-slate-100 text-slate-600";
   return <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-bold ${cls}`}>{children}</span>;
 }

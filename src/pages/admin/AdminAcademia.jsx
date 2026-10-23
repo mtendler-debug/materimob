@@ -39,13 +39,13 @@ function Sub({ to, end, badge, children }) {
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12.5px] font-semibold ${
-          isActive ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"
+        `flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-semibold transition-all duration-200 ${
+          isActive ? "border-charcoal bg-charcoal text-white" : "border-slate-200 bg-white text-graytext hover:border-slate-300 hover:text-charcoal"
         }`
       }
     >
       {children}
-      {badge > 0 && <span className="rounded-full bg-amber-100 px-[7px] text-[11px] font-bold text-amber-800">{badge}</span>}
+      {badge > 0 && <span className="rounded-full bg-warning-bg px-[7px] text-[11px] font-semibold text-warning-text">{badge}</span>}
     </NavLink>
   );
 }

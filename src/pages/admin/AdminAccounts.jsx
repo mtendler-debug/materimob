@@ -69,16 +69,16 @@ export default function AdminAccounts() {
     load();
   }
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!accounts) return <p className="text-sm text-muted">Carregando…</p>;
 
   return (
-    <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+    <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
       <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>
             {["E-mail", "Nome", "Tipo", "Organizações", "Roteiros", "Admin", ""].map((h) => (
-              <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+              <th key={h} className="bg-bg p-[10px] text-left text-[11px] font-bold text-muted">
                 {h}
               </th>
             ))}
@@ -87,19 +87,19 @@ export default function AdminAccounts() {
         <tbody>
           {accounts.map((a) => (
             <tr key={a.id}>
-              <td className="border-b border-rule p-[10px] text-charcoal">{a.email}</td>
-              <td className="border-b border-rule p-[10px] text-graytext">{a.full_name || "—"}</td>
-              <td className="border-b border-rule p-[10px] text-graytext">{TIPO_LABELS[a.account_type] || a.account_type}</td>
-              <td className="border-b border-rule p-[10px] text-graytext">{a.organizacoes || "—"}</td>
-              <td className="border-b border-rule p-[10px] text-center text-graytext">{a.roteiros}</td>
-              <td className="border-b border-rule p-[10px] text-center">
+              <td className="border-b border-slate-200/70 p-[10px] text-charcoal">{a.email}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-graytext">{a.full_name || "—"}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-graytext">{TIPO_LABELS[a.account_type] || a.account_type}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-graytext">{a.organizacoes || "—"}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-center text-graytext">{a.roteiros}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-center">
                 {a.e_admin && (
                   <span className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold" style={{ background: "#E3F0E4", color: "#2E7D32" }}>
                     admin
                   </span>
                 )}
               </td>
-              <td className="border-b border-rule p-[10px] text-right">
+              <td className="border-b border-slate-200/70 p-[10px] text-right">
                 <button
                   disabled={busyId === a.id}
                   onClick={() => toggleAdmin(a)}
@@ -110,7 +110,7 @@ export default function AdminAccounts() {
                 <button
                   disabled={busyId === a.id}
                   onClick={() => deleteAccount(a)}
-                  className="ml-3 text-xs font-bold text-[#B34A2E] underline disabled:opacity-50"
+                  className="ml-3 text-xs font-bold text-danger-text underline disabled:opacity-50"
                 >
                   excluir
                 </button>

@@ -289,11 +289,11 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
   }
 
   return (
-    <div className="mt-4 rounded-[14px] border border-rule bg-white p-5">
+    <div className="mt-4 rounded-card border border-slate-200/70 bg-white p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-serif text-[16px] font-semibold text-charcoal">Importar planilha de prospecção</h2>
+        <h2 className="text-[16px] font-semibold text-charcoal">Importar planilha de prospecção</h2>
         {etapa !== "importando" && (
-          <button onClick={onCancel} className="text-xs font-bold text-graytext underline">
+          <button onClick={onCancel} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal">
             cancelar
           </button>
         )}
@@ -311,7 +311,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
             onChange={lerArquivo}
             className="mt-3 block text-sm"
           />
-          {erroArquivo && <p className="mt-2 text-sm text-[#B34A2E]">{erroArquivo}</p>}
+          {erroArquivo && <p className="mt-2 text-sm text-danger-text">{erroArquivo}</p>}
         </div>
       )}
 
@@ -322,7 +322,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
             {semNome > 0 && `, ${semNome} sem nome (serão ignoradas)`}.
           </p>
 
-          <div className="mt-3 overflow-x-auto rounded-[10px] border border-rule">
+          <div className="mt-3 overflow-x-auto rounded-control border border-slate-200/70">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-light text-left text-[11px] font-bold uppercase tracking-[.04em] text-graytext">
@@ -332,13 +332,13 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
               </thead>
               <tbody>
                 {colunas.map((c, i) => (
-                  <tr key={i} className="border-t border-rule">
+                  <tr key={i} className="border-t border-slate-200/70">
                     <td className="p-2 text-charcoal">{c || <span className="text-muted">(sem título)</span>}</td>
                     <td className="p-2">
                       <select
                         value={mapeamento[i] ?? "ignorar"}
                         onChange={(e) => aoMudarMapeamento(i, e.target.value)}
-                        className="rounded-[7px] border border-rule bg-white px-2 py-1 text-sm"
+                        className="rounded-[7px] border border-slate-200/70 bg-white px-2 py-1 text-sm"
                       >
                         {CAMPOS_DESTINO.map((cd) => (
                           <option key={cd.valor} value={cd.valor}>
@@ -362,7 +362,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
               return (
                 <label
                   key={i}
-                  className="flex flex-wrap items-center gap-2 rounded-[10px] border border-rule p-2.5 text-sm"
+                  className="flex flex-wrap items-center gap-2 rounded-control border border-slate-200/70 p-2.5 text-sm"
                 >
                   <input
                     type="checkbox"
@@ -390,7 +390,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
           <button
             onClick={importar}
             disabled={selecionadosAtual.size === 0}
-            className="mt-4 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="mt-4 rounded-control bg-brand px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             Importar {selecionadosAtual.size} parceira(s)
           </button>
@@ -409,7 +409,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
             {resultado.falhas.length > 0 && `, ${resultado.falhas.length} com erro`}.
           </p>
           {resultado.falhas.length > 0 && (
-            <ul className="mt-2 space-y-1 text-sm text-[#B34A2E]">
+            <ul className="mt-2 space-y-1 text-sm text-danger-text">
               {resultado.falhas.map((f, i) => (
                 <li key={i}>
                   {f.nome}: {f.erro}
@@ -419,7 +419,7 @@ export default function ImportarParceiras({ userId, parceirasExistentes, onImpor
           )}
           <button
             onClick={onImported}
-            className="mt-4 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90"
+            className="mt-4 rounded-control bg-brand px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover"
           >
             Concluir
           </button>

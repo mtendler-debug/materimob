@@ -114,7 +114,7 @@ export default function ProjetoEditor() {
 
   return (
     <div className="mt-3 max-w-3xl">
-      <Link to="/admin/academia/conteudo/projetos" className="text-sm text-graytext underline">
+      <Link to="/admin/academia/conteudo/projetos" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Projetos
       </Link>
       <h2 className="mt-1 text-lg font-bold text-charcoal">{kit.nome}</h2>
@@ -176,7 +176,7 @@ export default function ProjetoEditor() {
 
       <Cartao titulo={`Perguntas do cliente (${f.faq.length})`}>
         {f.faq.map((q, i) => (
-          <div key={i} className="mt-2.5 rounded-[10px] border border-rule p-2.5">
+          <div key={i} className="mt-2.5 rounded-control border border-slate-200/70 p-2.5">
             <Campo id={`q-${i}`} rotulo={`Pergunta ${i + 1}`}>
               <input id={`q-${i}`} value={q.pergunta} onChange={(e) => setF((x) => ({ ...x, faq: x.faq.map((z, j) => (j === i ? { ...z, pergunta: e.target.value } : z)) }))} className={campoCls} />
             </Campo>
@@ -197,7 +197,7 @@ export default function ProjetoEditor() {
         <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {f.galeria.map((g, i) => (
             <figure key={g.url} className="relative">
-              <img src={g.url} alt={g.legenda} className="aspect-[4/3] w-full rounded-[8px] border border-rule object-cover" />
+              <img src={g.url} alt={g.legenda} className="aspect-[4/3] w-full rounded-[10px] border border-slate-200/70 object-cover" />
               <button type="button" onClick={() => removerFoto(i)} className="absolute right-1 top-1 rounded-[6px] bg-slate-900/75 px-1.5 py-0.5 text-[11px] text-white">
                 Remover
               </button>
@@ -206,7 +206,7 @@ export default function ProjetoEditor() {
                 value={g.legenda ?? ""}
                 onChange={(e) => setF((x) => ({ ...x, galeria: x.galeria.map((z, j) => (j === i ? { ...z, legenda: e.target.value } : z)) }))}
                 placeholder="Legenda"
-                className="mt-1 w-full rounded-[7px] border border-rule px-2 py-1 text-[12px]"
+                className="mt-1 w-full rounded-[7px] border border-slate-200/70 px-2 py-1 text-[12px]"
               />
             </figure>
           ))}
@@ -228,7 +228,7 @@ export default function ProjetoEditor() {
         <button type="button" onClick={salvar} disabled={busy} className={btnVerde}>
           {busy ? "Salvando…" : "Salvar projeto"}
         </button>
-        <button type="button" onClick={() => navigate("/admin/academia/conteudo/projetos")} className={btnEscuro.replace("bg-charcoal text-white", "border border-slate-300 bg-white text-slate-700")}>
+        <button type="button" onClick={() => navigate("/admin/academia/conteudo/projetos")} className={btnEscuro.replace("bg-brand text-white", "border border-slate-300 bg-white text-slate-700")}>
           Cancelar
         </button>
       </div>

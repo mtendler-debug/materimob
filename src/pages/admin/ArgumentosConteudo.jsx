@@ -73,13 +73,13 @@ export default function ArgumentosConteudo() {
               type="button"
               aria-pressed={situacao === k}
               onClick={() => setSituacao(k)}
-              className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold ${situacao === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"}`}
+              className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold ${situacao === k ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-600"}`}
             >
               {r} ({contagem[k]})
             </button>
           ))}
         </div>
-        <select value={etapa} onChange={(e) => setEtapa(e.target.value)} aria-label="Etapa" className="rounded-[9px] border-[1.5px] border-rule bg-white px-2.5 py-1.5 text-[13px]">
+        <select value={etapa} onChange={(e) => setEtapa(e.target.value)} aria-label="Etapa" className="rounded-control border border-slate-200/70 bg-white px-2.5 py-1.5 text-[13px]">
           <option value="todas">Todas as etapas</option>
           {ETAPAS.map(([k, r]) => (
             <option key={k} value={k}>
@@ -87,16 +87,16 @@ export default function ArgumentosConteudo() {
             </option>
           ))}
         </select>
-        <input type="search" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar" className="rounded-[9px] border-[1.5px] border-rule bg-white px-2.5 py-1.5 text-[13px]" />
+        <input type="search" value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar" className="rounded-control border border-slate-200/70 bg-white px-2.5 py-1.5 text-[13px]" />
         <button type="button" onClick={() => setEd({ etapa: "objecao", titulo: "", texto: "", empreendimento_id: "", status: "publicada" })} className={`${btnEscuro} py-1.5 text-[12.5px]`}>
           Novo argumento
         </button>
       </div>
 
-      <div className="mt-3 overflow-x-auto rounded-[12px] border border-rule bg-white">
+      <div className="mt-3 overflow-x-auto rounded-card border border-slate-200/70 bg-white">
         <table className="w-full min-w-[640px] text-[13px]">
           <thead>
-            <tr className="border-b border-rule text-left text-[11px] font-bold uppercase tracking-wide text-graytext">
+            <tr className="border-b border-slate-200/70 text-left text-[11px] font-bold uppercase tracking-wide text-graytext">
               <th className="px-2.5 py-2">Título</th>
               <th className="px-2.5 py-2">Etapa</th>
               <th className="px-2.5 py-2">Projeto</th>
@@ -142,7 +142,7 @@ export default function ArgumentosConteudo() {
             <button type="button" onClick={() => setEd(null)} className={`${btnLinha} float-right`}>
               Fechar
             </button>
-            <h3 className="text-xl font-bold text-charcoal">{ed.id ? "Editar argumento" : "Novo argumento"}</h3>
+            <h3 className="text-[26px] leading-[1.15] font-bold tracking-[-0.035em] text-charcoal">{ed.id ? "Editar argumento" : "Novo argumento"}</h3>
             <Campo id="x-et" rotulo="Etapa">
               <select id="x-et" value={ed.etapa} onChange={(e) => setEd({ ...ed, etapa: e.target.value })} className={campoCls}>
                 {ETAPAS.map(([k, r]) => (
@@ -181,7 +181,7 @@ export default function ArgumentosConteudo() {
               <button type="button" onClick={salvar} disabled={busy} className={btnVerde}>
                 {busy ? "Salvando…" : "Salvar"}
               </button>
-              <button type="button" onClick={() => setEd(null)} className="rounded-[10px] border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700">
+              <button type="button" onClick={() => setEd(null)} className="rounded-control border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700">
                 Cancelar
               </button>
             </div>

@@ -6,7 +6,7 @@ import { haQuanto } from "../../lib/academiaUtil";
 import { ETAPA_LABELS } from "../academia/Argumentos";
 
 const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[9px] text-sm text-charcoal focus:border-gold focus:outline-none";
+  "mt-1 w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[9px] text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
 
 // Caixa de entrada dos argumentos sugeridos pelos corretores. Publicar coloca o
 // argumento na biblioteca de todos; arquivar descarta. O dono é o único que
@@ -52,12 +52,12 @@ export default function SugestoesArgumentos() {
 
   return (
     <div className="mx-auto mt-4 max-w-4xl">
-      <div className="overflow-hidden rounded-[12px] border border-rule bg-white">
+      <div className="overflow-hidden rounded-card border border-slate-200/70 bg-white">
         {lista.length === 0 && <p className="px-4 py-7 text-center text-sm text-graytext">Nenhuma sugestão esperando. Tudo em dia.</p>}
         {lista.map((a) => {
           const ed = editando?.id === a.id;
           return (
-            <div key={a.id} className="grid gap-1.5 border-b border-rule px-3.5 py-3 last:border-b-0">
+            <div key={a.id} className="grid gap-1.5 border-b border-slate-200/70 px-3.5 py-3 last:border-b-0">
               <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] text-graytext">
                 <b className="text-charcoal">{a.sugerido_por_nome ?? "Corretor"}</b>
                 <span>· {a.imobiliaria} · {haQuanto(a.created_at)} ·</span>
@@ -72,7 +72,7 @@ export default function SugestoesArgumentos() {
                   <div className="whitespace-pre-wrap text-[13px] text-slate-600">{a.texto}</div>
                 </>
               ) : (
-                <div className="rounded-[10px] border border-rule bg-bg p-2.5">
+                <div className="rounded-control border border-slate-200/70 bg-bg p-2.5">
                   <label className="block text-xs font-medium text-graytext">
                     Título
                     <input value={editando.titulo} onChange={(e) => setEditando({ ...editando, titulo: e.target.value })} className={campo} />
@@ -127,10 +127,10 @@ function Botao({ tom, children, ...props }) {
     tom === "ok"
       ? "bg-emerald-800 text-white"
       : tom === "ruim"
-        ? "border border-rose-300 bg-white text-rose-800"
+        ? "border border-rose-300 bg-white text-danger-text"
         : "border border-slate-300 bg-white text-slate-700";
   return (
-    <button {...props} className={`rounded-[8px] px-3 py-1.5 text-[12.5px] font-bold disabled:opacity-50 ${cls}`}>
+    <button {...props} className={`rounded-[10px] px-3 py-1.5 text-[12.5px] font-bold disabled:opacity-50 ${cls}`}>
       {children}
     </button>
   );

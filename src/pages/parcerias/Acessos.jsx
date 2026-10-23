@@ -112,12 +112,12 @@ export default function Acessos() {
         <Numero valor={ativas.length} rotulo="Imobiliárias ativas na Academia" />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-rule bg-white p-3">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-card border border-slate-200/70 bg-white p-3">
         <div>
           <div className="text-xs text-graytext">Link de cadastro para divulgar aos parceiros</div>
           <div className="break-all text-[13.5px] font-semibold text-charcoal">{url}</div>
         </div>
-        <button onClick={copiar} className="rounded-[7px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white">
+        <button onClick={copiar} className="rounded-[7px] bg-brand px-3 py-1.5 text-xs font-bold text-white">
           Copiar link
         </button>
       </div>
@@ -132,7 +132,7 @@ export default function Acessos() {
               setEditando(null);
             }}
             className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold ${
-              filtro === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"
+              filtro === k ? "border-charcoal bg-brand text-white" : "border-slate-200/70 bg-white text-slate-600"
             }`}
           >
             {rotulo} ({contagem[k]})
@@ -140,7 +140,7 @@ export default function Acessos() {
         ))}
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-[12px] border border-rule bg-white">
+      <div className="mt-3 overflow-hidden rounded-card border border-slate-200/70 bg-white">
         {visiveis.length === 0 && <p className="px-4 py-7 text-center text-sm text-graytext">{VAZIO[filtro]}</p>}
         {visiveis.map((p) => (
           <Linha
@@ -176,12 +176,12 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
     : [...ativas, { id: p.parceira_id, nome_fantasia: parceira?.nome_fantasia ?? "Imobiliária atual" }];
 
   return (
-    <div className="grid grid-cols-1 items-center gap-2 border-b border-rule px-3.5 py-3 last:border-b-0 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1.3fr)_auto_auto] sm:gap-3.5">
+    <div className="grid grid-cols-1 items-center gap-2 border-b border-slate-200/70 px-3.5 py-3 last:border-b-0 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1.3fr)_auto_auto] sm:gap-3.5">
       <div className="min-w-0">
         <div className="text-sm font-semibold text-charcoal">{p.nome}</div>
         <div className="text-[12.5px] text-graytext">
           {zap ? (
-            <a href={zap} target="_blank" rel="noreferrer" className="text-sky-700 underline">
+            <a href={zap} target="_blank" rel="noreferrer" className="font-semibold text-brand hover:underline">
               {p.whatsapp}
             </a>
           ) : (
@@ -206,7 +206,7 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
       <div>
         <span
           className={`rounded-full border px-2.5 py-0.5 text-[11.5px] font-semibold ${
-            p.papel === "gestor" ? "border-purple-300 bg-purple-100 text-purple-800" : "border-rule bg-slate-100 text-slate-600"
+            p.papel === "gestor" ? "border-purple-300 bg-purple-100 text-purple-800" : "border-slate-200/70 bg-slate-100 text-slate-600"
           }`}
         >
           {p.papel === "gestor" ? "Gestor" : "Corretor"}
@@ -235,7 +235,7 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
       </div>
 
       {novo && p.status === "pendente" && (
-        <p className="rounded-[8px] border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-[12.5px] text-amber-800 sm:col-span-full">
+        <p className="rounded-[10px] border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-[12.5px] text-amber-800 sm:col-span-full">
           Esta imobiliária não estava na lista. Ela entrou em Parcerias como não validada, e liberar a pessoa não muda
           isso.{" "}
           <Link to={`/app/parcerias/parceiras/${p.parceira_id}`} className="underline">
@@ -245,13 +245,13 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
       )}
 
       {editando && (
-        <div className="flex flex-wrap items-end gap-2 rounded-[10px] border border-rule bg-bg p-2.5 sm:col-span-full">
+        <div className="flex flex-wrap items-end gap-2 rounded-control border border-slate-200/70 bg-bg p-2.5 sm:col-span-full">
           <label className="min-w-[150px] flex-1 text-xs font-medium text-graytext">
             Papel
             <select
               value={papel}
               onChange={(e) => setPapel(e.target.value)}
-              className="mt-1 w-full rounded-[8px] border border-rule bg-white px-2 py-2 text-sm text-charcoal"
+              className="mt-1 w-full rounded-[10px] border border-slate-200/70 bg-white px-2 py-2 text-sm text-charcoal"
             >
               <option value="corretor">Corretor</option>
               <option value="gestor">Gestor</option>
@@ -262,7 +262,7 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
             <select
               value={imob}
               onChange={(e) => setImob(e.target.value)}
-              className="mt-1 w-full rounded-[8px] border border-rule bg-white px-2 py-2 text-sm text-charcoal"
+              className="mt-1 w-full rounded-[10px] border border-slate-200/70 bg-white px-2 py-2 text-sm text-charcoal"
             >
               {opcoes.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -286,7 +286,7 @@ function Linha({ p, busy, ativas, editando, onEditar, onDecidir, onSalvar }) {
 
 function Numero({ valor, rotulo }) {
   return (
-    <div className="rounded-[12px] border border-rule bg-white px-3 py-2.5">
+    <div className="rounded-card border border-slate-200/70 bg-white px-3 py-2.5">
       <b className="block text-[22px] leading-tight text-charcoal tabular-nums">{valor}</b>
       <span className="text-xs text-graytext">{rotulo}</span>
     </div>
@@ -298,10 +298,10 @@ function Botao({ tom, children, ...props }) {
     tom === "ok"
       ? "bg-emerald-800 text-white"
       : tom === "ruim"
-        ? "border border-rose-300 bg-white text-rose-800"
+        ? "border border-rose-300 bg-white text-danger-text"
         : "border border-slate-300 bg-white text-slate-700";
   return (
-    <button {...props} className={`rounded-[8px] px-3 py-1.5 text-[12.5px] font-bold disabled:opacity-50 ${cls}`}>
+    <button {...props} className={`rounded-[10px] px-3 py-1.5 text-[12.5px] font-bold disabled:opacity-50 ${cls}`}>
       {children}
     </button>
   );

@@ -178,7 +178,7 @@ export default function TrilhaEditor() {
 
   return (
     <div className="mt-3 max-w-3xl">
-      <Link to="/admin/academia/conteudo/trilhas" className="text-sm text-graytext underline">
+      <Link to="/admin/academia/conteudo/trilhas" className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
         ← Trilhas
       </Link>
       <h2 className="mt-1 text-lg font-bold text-charcoal">{nova ? "Nova trilha" : t.titulo}</h2>
@@ -284,7 +284,7 @@ export default function TrilhaEditor() {
                 value={o}
                 onChange={(e) => setPerg(i, "opcoes", p.opcoes.map((x, k) => (k === j ? e.target.value : x)))}
                 aria-label={`Texto da opção ${j + 1}`}
-                className="w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[7px] text-sm text-charcoal focus:border-gold focus:outline-none"
+                className="w-full rounded-control border border-slate-200/70 bg-white px-[10px] py-[7px] text-sm text-charcoal focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
               />
             </div>
           ))}
@@ -301,7 +301,7 @@ export default function TrilhaEditor() {
         <button type="button" onClick={salvar} disabled={busy} className={btnVerde}>
           {busy ? "Salvando…" : "Salvar trilha"}
         </button>
-        <button type="button" onClick={() => navigate("/admin/academia/conteudo/trilhas")} className="rounded-[10px] border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700">
+        <button type="button" onClick={() => navigate("/admin/academia/conteudo/trilhas")} className="rounded-control border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700">
           Cancelar
         </button>
       </div>

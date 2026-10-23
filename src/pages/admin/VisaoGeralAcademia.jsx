@@ -23,7 +23,7 @@ export default function VisaoGeralAcademia() {
     );
   }, []);
 
-  if (erro) return <p className="mt-4 text-sm text-rose-700">{erro}</p>;
+  if (erro) return <p className="mt-4 text-sm text-danger-text">{erro}</p>;
   if (!p) return <p className="mt-4 text-sm text-muted">Carregando…</p>;
 
   const esperando = (pendentes > 0 ? 1 : 0) + (sugestoes > 0 ? 1 : 0);
@@ -41,7 +41,7 @@ export default function VisaoGeralAcademia() {
         <Kpi v={p.vendas} r="Vendas" s="registros que viraram venda" />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border-[1.5px] border-amber-300 bg-amber-50 px-4 py-3">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-card border border-amber-300 bg-amber-50 px-4 py-3">
         <div className="text-sm text-charcoal">
           {esperando === 0 ? (
             <b>Nada esperando você.</b>
@@ -109,7 +109,7 @@ export default function VisaoGeralAcademia() {
                       <span className="text-xs text-muted">último acesso: {ultimoAcessoTexto(c.ultimo_acesso)}</span>
                     </span>
                     {zap && (
-                      <a href={zap} target="_blank" rel="noopener noreferrer" className="rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700">
+                      <a href={zap} target="_blank" rel="noopener noreferrer" className="rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700">
                         WhatsApp
                       </a>
                     )}
@@ -126,7 +126,7 @@ export default function VisaoGeralAcademia() {
 
 function Kpi({ v, r, s }) {
   return (
-    <div className="rounded-[12px] border border-rule bg-white px-3.5 py-3">
+    <div className="rounded-card border border-slate-200/70 bg-white px-3.5 py-3">
       <b className="block text-2xl leading-tight text-charcoal tabular-nums">{v}</b>
       <span className="text-[12.5px] text-graytext">{r}</span>
       <small className="mt-0.5 block text-[11.5px] text-muted">{s}</small>
@@ -136,8 +136,8 @@ function Kpi({ v, r, s }) {
 
 function Caixa({ titulo, children }) {
   return (
-    <div className="overflow-hidden rounded-[12px] border border-rule bg-white">
-      <h4 className="border-b border-rule px-3.5 py-2.5 text-xs font-bold uppercase tracking-[.08em] text-graytext">{titulo}</h4>
+    <div className="overflow-hidden rounded-card border border-slate-200/70 bg-white">
+      <h4 className="border-b border-slate-200/70 px-3.5 py-2.5 text-xs font-bold uppercase tracking-[.08em] text-graytext">{titulo}</h4>
       {children}
     </div>
   );
@@ -147,7 +147,7 @@ function Atalho({ to, escuro, children }) {
   return (
     <Link
       to={to}
-      className={`rounded-[8px] px-3 py-1.5 text-xs font-bold ${escuro ? "bg-charcoal text-white" : "border border-slate-300 bg-white text-slate-700"}`}
+      className={`rounded-[10px] px-3 py-1.5 text-xs font-bold ${escuro ? "bg-brand text-white" : "border border-slate-300 bg-white text-slate-700"}`}
     >
       {children}
     </Link>

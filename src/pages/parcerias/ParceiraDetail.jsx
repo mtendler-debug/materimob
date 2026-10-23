@@ -34,7 +34,7 @@ export default function ParceiraDetail() {
       </Link>
 
       {!parceira.validado && (
-        <div className="mt-3 rounded-[12px] border-[1.5px] border-gold bg-light p-3 text-sm text-charcoal">
+        <div className="mt-3 rounded-card border border-brand bg-light p-3 text-sm text-charcoal">
           Esta parceira chegou por autocadastro e ainda não foi validada. Confira os dados, complete o
           segmento e defina a prioridade antes de validar.
           <button
@@ -42,7 +42,7 @@ export default function ParceiraDetail() {
               await supabase.from("pc_parceiras").update({ validado: true }).eq("id", parceira.id);
               load();
             }}
-            className="ml-2 rounded-[8px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white hover:opacity-90"
+            className="ml-2 rounded-[10px] bg-brand px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-hover"
           >
             Validar cadastro
           </button>
@@ -50,7 +50,7 @@ export default function ParceiraDetail() {
       )}
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-serif text-[21px] font-semibold text-charcoal">{parceira.nome_fantasia}</h2>
+        <h2 className="text-[21px] font-semibold text-charcoal">{parceira.nome_fantasia}</h2>
         <div className="flex items-center gap-2">
           <PrioridadeChip prioridade={parceira.prioridade} />
           <StatusParceiraChip status={parceira.status_funil} />
@@ -60,13 +60,13 @@ export default function ParceiraDetail() {
       <MudarStatus parceira={parceira} onChange={load} />
       <AcademiaToggle parceira={parceira} onChange={load} />
 
-      <div className="mt-4 flex gap-1 overflow-x-auto border-b border-rule">
+      <div className="mt-4 flex gap-1 overflow-x-auto border-b border-slate-200/70">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`shrink-0 border-b-2 px-3 pb-2 text-sm font-bold ${
-              tab === t ? "border-gold text-charcoal" : "border-transparent text-graytext hover:text-charcoal"
+              tab === t ? "border-brand text-charcoal" : "border-transparent text-graytext hover:text-charcoal"
             }`}
           >
             {t}
@@ -108,7 +108,7 @@ function AcademiaToggle({ parceira, onChange }) {
   }
 
   return (
-    <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-[12px] border border-rule bg-white p-3 text-sm text-charcoal">
+    <label className="mt-3 flex cursor-pointer items-start gap-2 rounded-card border border-slate-200/70 bg-white p-3 text-sm text-charcoal">
       <input
         type="checkbox"
         checked={!!parceira.ativa_na_academia}
@@ -169,12 +169,12 @@ function MudarStatus({ parceira, onChange }) {
   }
 
   return (
-    <div className="mt-2 rounded-[12px] border border-rule bg-white p-4">
+    <div className="mt-2 rounded-card border border-slate-200/70 bg-white p-4">
       <label className="mb-[6px] block text-[13px] font-semibold text-charcoal">Novo status</label>
       <select
         value={novoStatus}
         onChange={(e) => setNovoStatus(e.target.value)}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       >
         {Object.entries(STATUS_FUNIL_LABELS).map(([k, label]) => (
           <option key={k} value={k}>
@@ -189,14 +189,14 @@ function MudarStatus({ parceira, onChange }) {
         value={nota}
         onChange={(e) => setNota(e.target.value)}
         rows={2}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
-      {error && <p className="mt-2 text-xs text-[#B34A2E]">{error}</p>}
+      {error && <p className="mt-2 text-xs text-danger-text">{error}</p>}
       <div className="mt-3 flex gap-2">
         <button
           onClick={confirmar}
           disabled={busy}
-          className="rounded-[9px] bg-charcoal px-4 py-2 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-control bg-brand px-4 py-2 text-xs font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {busy ? "Salvando…" : "Confirmar"}
         </button>
@@ -283,7 +283,7 @@ function DadosTab({ parceira, onChange }) {
   }
 
   return (
-    <form onSubmit={salvar} className="rounded-[14px] border border-rule bg-white p-5">
+    <form onSubmit={salvar} className="rounded-card border border-slate-200/70 bg-white p-5">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Nome fantasia" value={form.nome_fantasia ?? ""} onChange={set("nome_fantasia")} required />
         <Field label="Razão social" value={form.razao_social ?? ""} onChange={set("razao_social")} />
@@ -294,7 +294,7 @@ function DadosTab({ parceira, onChange }) {
           <select
             value={form.tipo_pessoa ?? "PJ"}
             onChange={(e) => set("tipo_pessoa")(e.target.value)}
-            className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+            className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
           >
             <option value="PJ">PJ (imobiliária)</option>
             <option value="PF">PF (corretor autônomo)</option>
@@ -315,10 +315,10 @@ function DadosTab({ parceira, onChange }) {
         onChange={(e) => set("segmento_foco")(e.target.value)}
         rows={2}
         placeholder="Ex.: Alto padrão, lançamentos, popular/MCMV, locação, rural…"
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
 
-      <div className="mt-4 rounded-[12px] bg-light p-3">
+      <div className="mt-4 rounded-card bg-light p-3">
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[.1em] text-graytext">
           Prioridade para o portfólio ativo
         </p>
@@ -332,7 +332,7 @@ function DadosTab({ parceira, onChange }) {
           <select
             value={form.prioridade ?? ""}
             onChange={(e) => set("prioridade")(e.target.value)}
-            className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+            className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
           >
             <option value="">Ainda não avaliada</option>
             {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
@@ -354,19 +354,19 @@ function DadosTab({ parceira, onChange }) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-control bg-brand px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Salvando…" : "Salvar"}
         </button>
-        {saved && <span className="text-xs font-bold text-[#2E7D32]">Salvo ✓</span>}
+        {saved && <span className="text-xs font-bold text-success-text">Salvo ✓</span>}
       </div>
 
-      <div className="mt-6 border-t border-rule pt-4">
+      <div className="mt-6 border-t border-slate-200/70 pt-4">
         <button
           type="button"
           onClick={excluir}
           disabled={excluindo}
-          className="text-xs font-bold text-rose-800 underline disabled:opacity-50"
+          className="text-xs font-bold text-danger-text underline disabled:opacity-50"
         >
           {excluindo ? "excluindo…" : "excluir parceira"}
         </button>
@@ -412,7 +412,7 @@ function InteressesTab({ parceira }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-5">
+    <div className="rounded-card border border-slate-200/70 bg-white p-5">
       <p className="mb-3 text-sm text-graytext">
         Empreendimento(s) de maior interesse desta parceira — liga com o portfólio ativo, não é texto livre.
       </p>
@@ -420,7 +420,7 @@ function InteressesTab({ parceira }) {
       {empreendimentos?.length === 0 && <p className="text-sm text-muted">Nenhum empreendimento ativo cadastrado.</p>}
       <div className="space-y-2">
         {empreendimentos?.map((e) => (
-          <label key={e.id} className="flex items-center gap-2 rounded-[10px] border border-rule p-3 text-sm">
+          <label key={e.id} className="flex items-center gap-2 rounded-control border border-slate-200/70 p-3 text-sm">
             <input
               type="checkbox"
               checked={interesses.includes(e.id)}
@@ -469,18 +469,18 @@ function ObservacoesTab({ parceiraId }) {
 
   return (
     <div>
-      <form onSubmit={adicionar} className="rounded-[14px] border border-rule bg-white p-4">
+      <form onSubmit={adicionar} className="rounded-card border border-slate-200/70 bg-white p-4">
         <textarea
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           rows={2}
           placeholder="Ligação, mensagem, reunião…"
-          className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+          className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
         />
         <button
           type="submit"
           disabled={saving}
-          className="mt-2 rounded-[9px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="mt-2 rounded-control bg-brand px-3 py-1.5 text-xs font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Salvando…" : "Adicionar"}
         </button>
@@ -523,19 +523,19 @@ function ObservacaoItem({ observacao: o, onChange }) {
 
   if (editando) {
     return (
-      <div className="rounded-[12px] border border-gold bg-white p-3">
+      <div className="rounded-card border border-brand bg-white p-3">
         <textarea
           autoFocus
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           rows={2}
-          className="w-full rounded-[9px] border border-rule bg-white p-2 text-sm"
+          className="w-full rounded-control border border-slate-200/70 bg-white p-2 text-sm"
         />
         <div className="mt-2 flex gap-2">
           <button
             onClick={salvar}
             disabled={busy}
-            className="rounded-[8px] bg-charcoal px-3 py-1 text-xs font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-[10px] bg-brand px-3 py-1 text-xs font-bold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {busy ? "Salvando…" : "Salvar"}
           </button>
@@ -544,7 +544,7 @@ function ObservacaoItem({ observacao: o, onChange }) {
               setTexto(o.texto);
               setEditando(false);
             }}
-            className="text-xs font-bold text-graytext underline"
+            className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal"
           >
             cancelar
           </button>
@@ -554,7 +554,7 @@ function ObservacaoItem({ observacao: o, onChange }) {
   }
 
   return (
-    <div className="rounded-[12px] border border-rule bg-white p-3">
+    <div className="rounded-card border border-slate-200/70 bg-white p-3">
       <p className="text-sm text-charcoal">{o.texto}</p>
       <div className="mt-1 flex items-center justify-between">
         <p className="text-[11px] text-muted">
@@ -564,7 +564,7 @@ function ObservacaoItem({ observacao: o, onChange }) {
           <button onClick={() => setEditando(true)} className="text-[11px] font-bold text-graytext underline">
             editar
           </button>
-          <button onClick={excluir} disabled={busy} className="text-[11px] font-bold text-[#B34A2E] underline">
+          <button onClick={excluir} disabled={busy} className="text-[11px] font-bold text-danger-text underline">
             excluir
           </button>
         </div>
@@ -629,13 +629,13 @@ function CorretoresTab({ parceiraId }) {
     <div>
       <button
         onClick={() => setShowNew((v) => !v)}
-        className="rounded-[10px] border-[1.5px] border-rule bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+        className="rounded-control border border-slate-200/70 bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-brand"
       >
         {showNew ? "Cancelar" : "+ Adicionar corretor"}
       </button>
 
       {showNew && (
-        <form onSubmit={adicionar} className="mt-3 grid grid-cols-1 gap-2 rounded-[12px] border border-rule bg-white p-4 sm:grid-cols-2">
+        <form onSubmit={adicionar} className="mt-3 grid grid-cols-1 gap-2 rounded-card border border-slate-200/70 bg-white p-4 sm:grid-cols-2">
           <Field label="Nome" value={nome} onChange={setNome} required />
           <Field label="CRECI" value={creci} onChange={setCreci} />
           <Field label="Telefone" value={telefone} onChange={setTelefone} />
@@ -644,7 +644,7 @@ function CorretoresTab({ parceiraId }) {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {saving ? "Salvando…" : "Adicionar"}
             </button>
@@ -656,7 +656,7 @@ function CorretoresTab({ parceiraId }) {
         {corretores === null && <p className="text-sm text-muted">Carregando…</p>}
         {corretores?.length === 0 && <p className="text-sm text-muted">Nenhum corretor cadastrado ainda.</p>}
         {corretores?.map((c) => (
-          <div key={c.id} className="flex items-center justify-between rounded-[12px] border border-rule bg-white p-3">
+          <div key={c.id} className="flex items-center justify-between rounded-card border border-slate-200/70 bg-white p-3">
             <div>
               <p className="text-sm font-bold text-charcoal">{c.nome}</p>
               <p className="text-xs text-graytext">
@@ -669,7 +669,7 @@ function CorretoresTab({ parceiraId }) {
                   inativo
                 </span>
               )}
-              <button onClick={() => alternarAtivo(c)} className="text-xs font-bold text-[#B34A2E] underline">
+              <button onClick={() => alternarAtivo(c)} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
                 {c.ativo ? "desativar" : "reativar"}
               </button>
             </div>
@@ -702,7 +702,7 @@ function RegistrosTab({ parceira, onChange }) {
     <div>
       <button
         onClick={() => setShowNew((v) => !v)}
-        className="rounded-[10px] border-[1.5px] border-rule bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+        className="rounded-control border border-slate-200/70 bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-brand"
       >
         {showNew ? "Cancelar" : "+ Registrar cliente"}
       </button>
@@ -738,7 +738,7 @@ function RegistrosTab({ parceira, onChange }) {
           <Link
             key={r.id}
             to="/app/parcerias/registros"
-            className="flex items-center justify-between rounded-[12px] border border-rule bg-white p-3 hover:border-gold"
+            className="flex items-center justify-between rounded-card border border-slate-200/70 bg-white p-3 hover:border-brand"
           >
             <div>
               <p className="text-sm font-bold text-charcoal">{r.cliente_nome}</p>
@@ -787,36 +787,36 @@ function LinkTab({ parceira, onChange }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-5">
+    <div className="rounded-card border border-slate-200/70 bg-white p-5">
       <p className="text-[11px] font-bold uppercase tracking-[.1em] text-graytext">Link de registro público</p>
       <p className="mt-2 break-all text-sm text-charcoal">{url}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={copiar}
-          className="rounded-[9px] bg-charcoal px-3 py-2 text-xs font-bold text-white hover:opacity-90"
+          className="rounded-control bg-brand px-3 py-2 text-xs font-bold text-white hover:bg-brand-hover"
         >
           {copiado ? "Copiado!" : "Copiar"}
         </button>
         <button
           onClick={enviarWhatsapp}
-          className="rounded-[9px] border-[1.5px] border-rule bg-white px-3 py-2 text-xs font-bold text-charcoal hover:border-gold"
+          className="rounded-control border border-slate-200/70 bg-white px-3 py-2 text-xs font-bold text-charcoal hover:border-brand"
         >
           Enviar por WhatsApp
         </button>
         <button
           onClick={renovar}
-          className="rounded-[9px] border-[1.5px] border-rule bg-white px-3 py-2 text-xs font-bold text-[#B34A2E] hover:border-[#B34A2E]"
+          className="rounded-control border border-slate-200/70 bg-white px-3 py-2 text-xs font-bold text-danger-text hover:border-[#B34A2E]"
         >
           Renovar link
         </button>
       </div>
       {parceira.status_funil !== "parceria_firmada" && (
-        <p className="mt-3 text-xs font-bold text-[#B34A2E]">
+        <p className="mt-3 text-xs font-bold text-danger-text">
           O link só funciona quando o status desta parceira estiver em "Parceria firmada".
         </p>
       )}
       {!parceira.token_ativo && (
-        <p className="mt-3 text-xs font-bold text-[#B34A2E]">
+        <p className="mt-3 text-xs font-bold text-danger-text">
           Este link está desativado — a parceira não consegue registrar clientes por ele agora.
         </p>
       )}
@@ -835,7 +835,7 @@ function Field({ label, value, onChange, placeholder, required, maxLength, type 
         placeholder={placeholder}
         required={required}
         maxLength={maxLength}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
     </div>
   );

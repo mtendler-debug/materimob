@@ -283,7 +283,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
       <button
         type="button"
         onClick={() => setShow(true)}
-        className="rounded-[9px] border-[1.5px] border-rule px-3 py-1.5 text-sm font-bold text-charcoal hover:border-gold"
+        className="rounded-control border border-slate-200/70 px-3 py-1.5 text-sm font-bold text-charcoal hover:border-brand"
       >
         Importar do book
       </button>
@@ -291,18 +291,18 @@ export function BookImporter({ kind, ownerFields, onImported }) {
   }
 
   return (
-    <div className="mt-2 rounded-[14px] border border-rule bg-white p-5">
+    <div className="mt-2 rounded-card border border-slate-200/70 bg-white p-5">
       <StepIndicator step={step} />
 
       {step === "pick" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 1 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Envie o book</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 1 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Envie o book</h3>
           <p className="mt-1 max-w-[56ch] text-sm text-graytext">
             PDF ou fotos das páginas — nome, endereço, resumo, condições de pagamento e as unidades da tabela, se
             estiverem no texto.
           </p>
-          <label className="mt-4 flex cursor-pointer flex-col items-center gap-1 rounded-[12px] border-[1.5px] border-dashed border-rule px-6 py-8 text-center hover:border-gold hover:bg-[#fbfaf8]">
+          <label className="mt-4 flex cursor-pointer flex-col items-center gap-1 rounded-card border border-dashed border-slate-200/70 px-6 py-8 text-center hover:border-brand hover:bg-[#fbfaf8]">
             <span className="text-sm font-bold text-charcoal">
               {busy ? "Enviando…" : "Escolher arquivo ou arrastar aqui"}
             </span>
@@ -317,7 +317,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
               className="hidden"
             />
           </label>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
           <button type="button" onClick={cancelar} className="mt-3 text-xs font-bold text-graytext underline">
             cancelar
           </button>
@@ -326,10 +326,10 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "extracting" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 1 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Lendo o material</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 1 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Lendo o material</h3>
           <div className="mt-4 flex items-center gap-3">
-            <span className="h-4 w-4 flex-none animate-spin rounded-full border-2 border-rule border-t-gold" />
+            <span className="h-4 w-4 flex-none animate-spin rounded-full border-2 border-slate-200/70 border-t-gold" />
             <p className="text-sm text-graytext">Extraindo dados do book…</p>
           </div>
         </>
@@ -337,29 +337,29 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "review" && draft && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 1 de 4 · rascunho extraído</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Revise antes de criar</h3>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 1 de 4 · rascunho extraído</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Revise antes de criar</h3>
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
 
           <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Nome</label>
           <input
             value={draft.name}
             onChange={(e) => updateDraft("name", e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
           />
 
           <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Endereço</label>
           <input
             value={draft.address}
             onChange={(e) => updateDraft("address", e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
           />
 
           <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Resumo</label>
           <input
             value={draft.summary}
             onChange={(e) => updateDraft("summary", e.target.value)}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
           />
 
           <label className="mt-3 block text-[11.5px] font-bold text-graytext uppercase">Condições de pagamento</label>
@@ -367,7 +367,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
             value={draft.payment_terms}
             onChange={(e) => updateDraft("payment_terms", e.target.value)}
             rows={2}
-            className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
           />
 
           <div className="mt-3 flex flex-wrap gap-4">
@@ -377,7 +377,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
                 type="number"
                 value={draft.condo_value}
                 onChange={(e) => updateDraft("condo_value", e.target.value)}
-                className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="mt-1 w-40 rounded-control border border-slate-200/70 px-3 py-2 text-sm"
               />
             </div>
             <div>
@@ -386,7 +386,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
                 type="number"
                 value={draft.iptu_value}
                 onChange={(e) => updateDraft("iptu_value", e.target.value)}
-                className="mt-1 w-40 rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+                className="mt-1 w-40 rounded-control border border-slate-200/70 px-3 py-2 text-sm"
               />
             </div>
           </div>
@@ -400,7 +400,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
                     value={u.name}
                     onChange={(e) => updateUnit(i, "name", e.target.value)}
                     placeholder="403 · Sereine · 216 m²"
-                    className="w-full rounded border border-rule px-2 py-1 text-sm"
+                    className="w-full rounded border border-slate-200/70 px-2 py-1 text-sm"
                   />
                 </div>
                 <input
@@ -408,9 +408,9 @@ export function BookImporter({ kind, ownerFields, onImported }) {
                   value={u.table_value}
                   onChange={(e) => updateUnit(i, "table_value", e.target.value)}
                   placeholder="Valor de tabela"
-                  className="w-32 rounded border border-rule px-2 py-1 text-sm"
+                  className="w-32 rounded border border-slate-200/70 px-2 py-1 text-sm"
                 />
-                <button type="button" onClick={() => removeUnit(i)} className="text-xs font-bold text-[#B34A2E]">
+                <button type="button" onClick={() => removeUnit(i)} className="text-xs font-bold text-danger-text">
                   ×
                 </button>
               </div>
@@ -420,16 +420,16 @@ export function BookImporter({ kind, ownerFields, onImported }) {
             + unidade
           </button>
 
-          <div className="mt-4 flex items-center gap-3 border-t border-rule pt-3">
+          <div className="mt-4 flex items-center gap-3 border-t border-slate-200/70 pt-3">
             <button
               type="button"
               onClick={confirmarBook}
               disabled={busy}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {busy ? "Salvando…" : "Confirmar e criar imóvel"}
             </button>
-            <button type="button" onClick={cancelar} className="text-sm text-graytext underline">
+            <button type="button" onClick={cancelar} className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
               cancelar
             </button>
           </div>
@@ -438,10 +438,10 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "ask-media" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">
             Etapa 2 de 4 · {draft?.name} criado ✓
           </p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Você tem plantas ou fotos?</h3>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Você tem plantas ou fotos?</h3>
           <p className="mt-1 text-sm text-graytext">
             Anexe agora ou pule — dá pra adicionar depois direto no cadastro do imóvel.
           </p>
@@ -458,23 +458,23 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "media" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 2 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Plantas e fotos</h3>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 2 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Plantas e fotos</h3>
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
           <div className="mt-4 flex flex-wrap gap-6">
             <ImageUploader label="Planta do imóvel" value={floorPlanUrl} onChange={setFloorPlanUrl} multiple={false} />
             <ImageUploader label="Fotos" value={photoUrls} onChange={setPhotoUrls} multiple={true} />
           </div>
-          <div className="mt-4 flex items-center gap-3 border-t border-rule pt-3">
+          <div className="mt-4 flex items-center gap-3 border-t border-slate-200/70 pt-3">
             <button
               type="button"
               onClick={handleMediaContinue}
               disabled={busy}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {busy ? "Salvando…" : "Continuar"}
             </button>
-            <button type="button" onClick={() => setStep("ask-table")} className="text-sm text-graytext underline">
+            <button type="button" onClick={() => setStep("ask-table")} className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
               pular
             </button>
           </div>
@@ -483,13 +483,13 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "ask-table" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 3 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Tem uma tabela de preços separada?</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 3 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Tem uma tabela de preços separada?</h3>
           <p className="mt-1 max-w-[56ch] text-sm text-graytext">
             Uma tabela costuma vir mais atualizada que o texto do book — os valores dela substituem os que já estão
             nas unidades.
           </p>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
           <div className="mt-4 flex flex-wrap gap-3">
             <ChoiceButton
               title="Sim, tenho tabela"
@@ -507,12 +507,12 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "pick-table" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 3 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Envie a tabela de preços</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 3 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Envie a tabela de preços</h3>
           <p className="mt-1 text-sm text-graytext">
             A IA lê a tabela e sugere o cruzamento com as unidades já cadastradas.
           </p>
-          <label className="mt-4 flex cursor-pointer flex-col items-center gap-1 rounded-[12px] border-[1.5px] border-dashed border-rule px-6 py-8 text-center hover:border-gold hover:bg-[#fbfaf8]">
+          <label className="mt-4 flex cursor-pointer flex-col items-center gap-1 rounded-card border border-dashed border-slate-200/70 px-6 py-8 text-center hover:border-brand hover:bg-[#fbfaf8]">
             <span className="text-sm font-bold text-charcoal">
               {busy ? "Enviando…" : "Escolher arquivo ou arrastar aqui"}
             </span>
@@ -527,16 +527,16 @@ export function BookImporter({ kind, ownerFields, onImported }) {
               className="hidden"
             />
           </label>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
         </>
       )}
 
       {step === "extracting-table" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 3 de 4</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Lendo a tabela</h3>
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 3 de 4</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Lendo a tabela</h3>
           <div className="mt-4 flex items-center gap-3">
-            <span className="h-4 w-4 flex-none animate-spin rounded-full border-2 border-rule border-t-gold" />
+            <span className="h-4 w-4 flex-none animate-spin rounded-full border-2 border-slate-200/70 border-t-gold" />
             <p className="text-sm text-graytext">Extraindo valores…</p>
           </div>
         </>
@@ -544,16 +544,16 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "reconcile" && (
         <>
-          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-gold">Etapa 3 de 4 · tabela lida</p>
-          <h3 className="mt-1 font-serif text-lg font-semibold text-charcoal">Confira o cruzamento</h3>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-          <div className="mt-3 flex items-start gap-2 rounded-[10px] bg-light px-3.5 py-2.5 text-xs text-graytext">
+          <p className="text-[11px] font-bold uppercase tracking-[.08em] text-brand">Etapa 3 de 4 · tabela lida</p>
+          <h3 className="mt-1 text-lg font-semibold text-charcoal">Confira o cruzamento</h3>
+          {error && <p className="mt-2 text-sm text-danger-text">{error}</p>}
+          <div className="mt-3 flex items-start gap-2 rounded-control bg-light px-3.5 py-2.5 text-xs text-graytext">
             <span>ⓘ</span>
             <span>
               O valor da tabela substitui o valor atual da unidade. Ajuste o destino de cada linha antes de aplicar.
             </span>
           </div>
-          <div className="mt-3 divide-y divide-rule">
+          <div className="mt-3 divide-y divide-slate-100">
             {tableDraftUnits.map((row, i) => (
               <div key={i} className="grid grid-cols-[1.3fr_auto_1.4fr] items-center gap-3 py-3">
                 <div>
@@ -566,7 +566,7 @@ export function BookImporter({ kind, ownerFields, onImported }) {
                 <select
                   value={row.target}
                   onChange={(e) => updateTableTarget(i, e.target.value)}
-                  className="w-full rounded-[8px] border-[1.5px] border-rule px-2.5 py-2 text-sm"
+                  className="w-full rounded-[10px] border border-slate-200/70 px-2.5 py-2 text-sm"
                 >
                   {existingUnits.map((u) => (
                     <option key={u.id} value={u.id}>
@@ -581,16 +581,16 @@ export function BookImporter({ kind, ownerFields, onImported }) {
               <p className="py-3 text-sm text-muted">Nenhuma unidade encontrada na tabela.</p>
             )}
           </div>
-          <div className="mt-4 flex items-center gap-3 border-t border-rule pt-3">
+          <div className="mt-4 flex items-center gap-3 border-t border-slate-200/70 pt-3">
             <button
               type="button"
               onClick={aplicarTabela}
               disabled={busy}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+              className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {busy ? "Aplicando…" : "Aplicar tabela"}
             </button>
-            <button type="button" onClick={() => setStep("done")} className="text-sm text-graytext underline">
+            <button type="button" onClick={() => setStep("done")} className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
               pular
             </button>
           </div>
@@ -599,10 +599,10 @@ export function BookImporter({ kind, ownerFields, onImported }) {
 
       {step === "done" && (
         <div className="py-2 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E3F0E4] text-2xl text-[#2E7D32]">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E3F0E4] text-2xl text-success-text">
             ✓
           </div>
-          <h3 className="mt-4 font-serif text-lg font-semibold text-charcoal">{draft?.name} importado</h3>
+          <h3 className="mt-4 text-lg font-semibold text-charcoal">{draft?.name} importado</h3>
           <p className="mx-auto mt-1 max-w-[46ch] text-sm text-graytext">
             Já está disponível, pronto pra entrar num roteiro.
           </p>
@@ -615,14 +615,14 @@ export function BookImporter({ kind, ownerFields, onImported }) {
             <button
               type="button"
               onClick={cancelar}
-              className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+              className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover"
             >
               Concluir
             </button>
             <button
               type="button"
               onClick={reset}
-              className="rounded-[10px] border-[1.5px] border-rule px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+              className="rounded-control border border-slate-200/70 px-4 py-2 text-sm font-bold text-charcoal hover:border-brand"
             >
               Importar outro
             </button>
@@ -646,15 +646,15 @@ function StepIndicator({ step }) {
     <div className="mb-5 flex items-center">
       {STEP_LABELS.map((s, i) => (
         <div key={s.n} className="flex items-center">
-          {i > 0 && <div className={`mx-2.5 h-px w-9 ${s.n <= current ? "bg-charcoal" : "bg-rule"}`} />}
+          {i > 0 && <div className={`mx-2.5 h-px w-9 ${s.n <= current ? "bg-brand" : "bg-slate-200"}`} />}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-6 w-6 flex-none items-center justify-center rounded-full border-[1.5px] text-[11.5px] font-bold ${
+              className={`flex h-6 w-6 flex-none items-center justify-center rounded-full border text-[11.5px] font-bold ${
                 s.n < current
-                  ? "border-charcoal bg-charcoal text-white"
+                  ? "border-charcoal bg-brand text-white"
                   : s.n === current
-                    ? "border-gold bg-gold text-white"
-                    : "border-rule bg-white text-muted"
+                    ? "border-brand bg-brand text-white"
+                    : "border-slate-200/70 bg-white text-muted"
               }`}
             >
               {s.n}
@@ -672,7 +672,7 @@ function ChoiceButton({ title, subtitle, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="flex-1 rounded-[12px] border-[1.5px] border-rule bg-white px-4 py-4 text-left hover:border-gold hover:bg-[#fbfaf8]"
+      className="flex-1 rounded-card border border-slate-200/70 bg-white px-4 py-4 text-left hover:border-brand hover:bg-[#fbfaf8]"
     >
       <p className="text-sm font-bold text-charcoal">{title}</p>
       <p className="mt-0.5 text-xs text-graytext">{subtitle}</p>
@@ -683,7 +683,7 @@ function ChoiceButton({ title, subtitle, onClick }) {
 function Stat({ n, label }) {
   return (
     <div className="text-center">
-      <p className="font-serif text-xl font-semibold text-charcoal">{n}</p>
+      <p className="text-xl font-semibold text-charcoal">{n}</p>
       <p className="text-[11px] uppercase tracking-[.06em] text-graytext">{label}</p>
     </div>
   );

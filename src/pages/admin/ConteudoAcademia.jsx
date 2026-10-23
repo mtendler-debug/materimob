@@ -17,7 +17,7 @@ export default function ConteudoAcademia() {
             to={`/admin/academia/conteudo/${to}`}
             className={({ isActive }) =>
               `rounded-full border px-3 py-1 text-[12.5px] font-semibold ${
-                isActive ? "border-slate-700 bg-slate-700 text-white" : "border-rule bg-white text-slate-600"
+                isActive ? "border-slate-700 bg-slate-700 text-white" : "border-slate-200/70 bg-white text-slate-600"
               }`
             }
           >

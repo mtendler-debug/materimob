@@ -138,7 +138,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
   }
 
   return (
-    <form onSubmit={enviar} className="rounded-[14px] border border-rule bg-white p-5">
+    <form onSubmit={enviar} className="rounded-card border border-slate-200/70 bg-white p-5">
       <SectionLabel>Corretor responsável</SectionLabel>
       {corretores === null ? (
         <p className="text-sm text-muted">Carregando…</p>
@@ -147,7 +147,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
           <select
             value={corretorId}
             onChange={(e) => setCorretorId(e.target.value)}
-            className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+            className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
           >
             <option value="">Sou eu, novo corretor</option>
             {corretores.map((c) => (
@@ -179,7 +179,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
           <select
             value={perfil}
             onChange={(e) => setPerfil(e.target.value)}
-            className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+            className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
           >
             <option value="">Selecione</option>
             {Object.entries(PERFIL_LABELS).map(([k, label]) => (
@@ -198,7 +198,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
           setEmpreendimentoId(e.target.value);
           setUnidadesSelecionadas([]);
         }}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       >
         <option value="">Selecione o empreendimento</option>
         {empreendimentos?.map((e) => (
@@ -216,7 +216,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
           {unidadesDisponiveis.map((u) => (
             <label
               key={u.id}
-              className="flex items-center justify-between gap-2 rounded-[10px] border border-rule bg-white p-3 text-sm"
+              className="flex items-center justify-between gap-2 rounded-control border border-slate-200/70 bg-white p-3 text-sm"
             >
               <span className="flex items-center gap-2">
                 <input
@@ -239,7 +239,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
       )}
 
       {temRestricao && (
-        <div className="mt-3 rounded-[11px] bg-light p-3 text-[13px] text-graytext">
+        <div className="mt-3 rounded-control bg-light p-3 text-[13px] text-graytext">
           <p className="mb-2 font-bold text-charcoal">
             Uma das unidades escolhidas tem restrição de renda ou de titularidade. Confirme com o cliente:
           </p>
@@ -258,7 +258,7 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
               <select
                 value={possuiImovel}
                 onChange={(e) => setPossuiImovel(e.target.value)}
-                className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+                className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
               >
                 <option value="">Selecione</option>
                 <option value="nao">Não</option>
@@ -274,14 +274,14 @@ export function RegistroForm({ parceira, token, corretores: corretoresProp, empr
         value={observacoes}
         onChange={(e) => setObservacoes(e.target.value)}
         rows={3}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
 
-      {error && <p className="mt-3 text-sm text-[#B34A2E]">{error}</p>}
+      {error && <p className="mt-3 text-sm text-danger-text">{error}</p>}
       <button
         type="submit"
         disabled={busy}
-        className="mt-4 w-full rounded-[11px] bg-charcoal px-[18px] py-[13px] text-[15px] font-bold text-white disabled:opacity-45"
+        className="mt-4 w-full rounded-control bg-brand px-[18px] py-[13px] text-[15px] font-bold text-white disabled:opacity-45"
       >
         {busy ? "Enviando…" : "Registrar cliente"}
       </button>
@@ -306,15 +306,15 @@ function Confirmacao({ resultado, onNovo }) {
   };
   const m = msgs[resultado.status] ?? msgs.ok;
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-5 text-center">
-      <div className="mx-auto my-4 flex h-[56px] w-[56px] items-center justify-center rounded-full bg-light text-[24px] text-gold">
+    <div className="rounded-card border border-slate-200/70 bg-white p-5 text-center">
+      <div className="mx-auto my-4 flex h-[56px] w-[56px] items-center justify-center rounded-full bg-light text-[24px] text-brand">
         ✓
       </div>
-      <h3 className="font-serif text-[18px] font-semibold text-charcoal">{m.titulo}</h3>
+      <h3 className="text-[18px] font-semibold text-charcoal">{m.titulo}</h3>
       <p className="mx-auto mt-2 max-w-xs text-sm text-graytext">{m.texto}</p>
       <button
         onClick={onNovo}
-        className="mt-5 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90"
+        className="mt-5 rounded-control bg-brand px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover"
       >
         Registrar outro cliente
       </button>
@@ -341,7 +341,7 @@ function Field({ label, value, onChange, placeholder, required, maxLength, type 
         placeholder={placeholder}
         required={required}
         maxLength={maxLength}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
     </div>
   );

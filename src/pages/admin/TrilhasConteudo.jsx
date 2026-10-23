@@ -35,7 +35,7 @@ export default function TrilhasConteudo() {
 
   return (
     <div className="mt-3">
-      <div className="overflow-hidden rounded-[12px] border border-rule bg-white">
+      <div className="overflow-hidden rounded-card border border-slate-200/70 bg-white">
         {trilhas.length === 0 && <p className="px-4 py-6 text-center text-sm text-graytext">Nenhuma trilha ainda.</p>}
         {trilhas.map((t) => (
           <div key={t.id} className="flex items-center justify-between gap-3 border-b border-slate-100 px-3.5 py-3 last:border-b-0">
@@ -47,7 +47,7 @@ export default function TrilhasConteudo() {
             </div>
             <div className="flex flex-none items-center gap-3">
               <Interruptor marcado={t.publicada} onChange={(v) => publicar(t, v)} rotulo={`Publicar ${t.titulo}`} />
-              <Link to={`/admin/academia/conteudo/trilhas/${t.id}`} className="rounded-[8px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700">
+              <Link to={`/admin/academia/conteudo/trilhas/${t.id}`} className="rounded-[10px] border border-slate-300 bg-white px-3 py-1.5 text-[12.5px] font-bold text-slate-700">
                 Editar
               </Link>
             </div>

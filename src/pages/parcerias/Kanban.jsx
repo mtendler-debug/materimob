@@ -111,7 +111,7 @@ export default function Kanban() {
   return (
     <div>
       {invalidadas.length > 0 && (
-        <div className="mt-4 rounded-[12px] border-[1.5px] border-gold bg-light p-3 text-sm text-charcoal">
+        <div className="mt-4 rounded-card border border-brand bg-light p-3 text-sm text-charcoal">
           <b>{invalidadas.length}</b> parceira(s) aguardam validação e não aparecem aqui —{" "}
           <Link to="/app/parcerias/parceiras" className="underline">
             ver na lista
@@ -125,12 +125,12 @@ export default function Kanban() {
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar por nome, cidade, praça ou segmento"
-          className="min-w-[220px] flex-1 rounded-[9px] border border-rule bg-white px-3 py-2 text-sm"
+          className="min-w-[220px] flex-1 rounded-control border border-slate-200/70 bg-white px-3 py-2 text-sm"
         />
         <select
           value={filtroPrioridade}
           onChange={(e) => setFiltroPrioridade(e.target.value)}
-          className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
+          className="rounded-[10px] border border-slate-200/70 bg-white px-2 py-2 text-sm"
         >
           <option value="todas">Todas as prioridades</option>
           {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
@@ -139,7 +139,7 @@ export default function Kanban() {
             </option>
           ))}
         </select>
-        <label className="flex items-center gap-[6px] rounded-[8px] border border-rule bg-white px-3 py-2 text-sm text-graytext">
+        <label className="flex items-center gap-[6px] rounded-[10px] border border-slate-200/70 bg-white px-3 py-2 text-sm text-graytext">
           <input
             type="checkbox"
             checked={ordenarPorPrioridade}
@@ -198,8 +198,8 @@ function Coluna({ status, parceiras, onNota, onExcluir }) {
   return (
     <div
       ref={setNodeRef}
-      className={`flex w-[264px] shrink-0 flex-col overflow-hidden rounded-[16px] border transition-colors ${
-        isOver ? "border-gold" : "border-rule"
+      className={`flex w-[264px] shrink-0 flex-col overflow-hidden rounded-card border transition-colors ${
+        isOver ? "border-brand" : "border-slate-200/70"
       }`}
       style={{ background: isOver ? `${cor}14` : "#FBFAF8" }}
     >
@@ -220,7 +220,7 @@ function Coluna({ status, parceiras, onNota, onExcluir }) {
           <Cartao key={p.id} parceira={p} onNota={onNota} onExcluir={onExcluir} />
         ))}
         {parceiras.length === 0 && (
-          <div className="rounded-[10px] border border-dashed border-rule py-6 text-center text-[11px] text-muted">
+          <div className="rounded-control border border-dashed border-slate-200/70 py-6 text-center text-[11px] text-muted">
             arraste aqui
           </div>
         )}
@@ -256,10 +256,10 @@ function Cartao({ parceira: p, overlay, onNota, onExcluir }) {
       {...attributes}
       onClick={() => !overlay && !isDragging && navigate(`/app/parcerias/parceiras/${p.id}`)}
       style={{ borderLeftColor: accent }}
-      className={`group relative select-none rounded-[12px] border border-l-[3px] bg-white p-3 transition-all ${
+      className={`group relative select-none rounded-card border border-l-[3px] bg-white p-3 transition-all ${
         overlay
-          ? "rotate-[1.5deg] border-gold"
-          : `cursor-pointer border-rule active:cursor-grabbing ${isDragging ? "opacity-30" : "hover:border-gold"}`
+          ? "rotate-[1.5deg] border-brand"
+          : `cursor-pointer border-slate-200/70 active:cursor-grabbing ${isDragging ? "opacity-30" : "hover:border-brand"}`
       }`}
     >
       {!overlay && (
@@ -271,12 +271,12 @@ function Cartao({ parceira: p, overlay, onNota, onExcluir }) {
           }}
           aria-label={`Excluir ${p.nome_fantasia}`}
           title="Excluir parceira"
-          className="absolute top-2 right-2 rounded-full px-[6px] py-[1px] text-[11px] font-bold text-rose-800 opacity-0 transition-opacity hover:bg-rose-100 group-hover:opacity-100"
+          className="absolute top-2 right-2 rounded-full px-[6px] py-[1px] text-[11px] font-bold text-danger-text opacity-0 transition-opacity hover:bg-rose-100 group-hover:opacity-100"
         >
           ×
         </button>
       )}
-      <p className="font-serif text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline pr-4">
+      <p className="text-[14.5px] font-semibold leading-tight text-charcoal group-hover:underline pr-4">
         {p.nome_fantasia}
       </p>
       <p className="mt-[3px] text-[11.5px] text-graytext">
@@ -292,7 +292,7 @@ function Cartao({ parceira: p, overlay, onNota, onExcluir }) {
         {dias !== null && (
           <span
             className={`rounded-full px-[8px] py-[2px] text-[10px] font-bold ${
-              dias > 14 ? "bg-[#F1E4E0] text-[#B34A2E]" : "bg-light text-graytext"
+              dias > 14 ? "bg-[#F1E4E0] text-danger-text" : "bg-light text-graytext"
             }`}
           >
             {dias === 0 ? "contato hoje" : `${dias}d sem contato`}
@@ -325,7 +325,7 @@ function Cartao({ parceira: p, overlay, onNota, onExcluir }) {
             rel="noreferrer"
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
-            className="shrink-0 rounded-full bg-[#E3F0E4] px-[8px] py-[2px] text-[10px] font-bold text-[#2E7D32] hover:opacity-80"
+            className="shrink-0 rounded-full bg-[#E3F0E4] px-[8px] py-[2px] text-[10px] font-bold text-success-text hover:opacity-80"
           >
             WhatsApp
           </a>
@@ -365,13 +365,13 @@ function ModalMudarStatus({ parceira, novoStatus, onCancel, onDone }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4 backdrop-blur-sm" onClick={onCancel}>
       <div
-        className="w-full max-w-sm rounded-[16px] border border-rule bg-white p-5"
+        className="w-full max-w-sm rounded-card border border-slate-200/70 bg-white p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-[11px] font-bold uppercase tracking-[.09em] text-graytext">{parceira.nome_fantasia}</p>
-        <h3 className="font-serif mt-1 text-[17px] font-semibold text-charcoal">
+        <h3 className="mt-1 text-[17px] font-semibold text-charcoal">
           Mover para "{STATUS_FUNIL_LABELS[novoStatus]}"
         </h3>
         <label className="mt-3 mb-[6px] block text-[13px] font-semibold text-charcoal">
@@ -382,18 +382,18 @@ function ModalMudarStatus({ parceira, novoStatus, onCancel, onDone }) {
           value={nota}
           onChange={(e) => setNota(e.target.value)}
           rows={3}
-          className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+          className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
         />
-        {error && <p className="mt-2 text-xs text-[#B34A2E]">{error}</p>}
+        {error && <p className="mt-2 text-xs text-danger-text">{error}</p>}
         <div className="mt-4 flex gap-2">
           <button
             onClick={confirmar}
             disabled={busy}
-            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {busy ? "Salvando…" : "Confirmar"}
           </button>
-          <button onClick={onCancel} className="rounded-[10px] px-4 py-2 text-sm font-bold text-graytext underline">
+          <button onClick={onCancel} className="rounded-control px-4 py-2 text-sm font-bold text-graytext underline">
             cancelar
           </button>
         </div>
@@ -425,13 +425,13 @@ function ModalNovaObservacao({ parceira, onCancel, onDone }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 p-4 backdrop-blur-sm" onClick={onCancel}>
       <div
-        className="w-full max-w-sm rounded-[16px] border border-rule bg-white p-5"
+        className="w-full max-w-sm rounded-card border border-slate-200/70 bg-white p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-[11px] font-bold uppercase tracking-[.09em] text-graytext">{parceira.nome_fantasia}</p>
-        <h3 className="font-serif mt-1 text-[17px] font-semibold text-charcoal">Nova observação</h3>
+        <h3 className="mt-1 text-[17px] font-semibold text-charcoal">Nova observação</h3>
         <label className="mt-3 mb-[6px] block text-[13px] font-semibold text-charcoal">
           Texto livre — não altera o status
         </label>
@@ -440,18 +440,18 @@ function ModalNovaObservacao({ parceira, onCancel, onDone }) {
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           rows={3}
-          className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+          className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
         />
-        {error && <p className="mt-2 text-xs text-[#B34A2E]">{error}</p>}
+        {error && <p className="mt-2 text-xs text-danger-text">{error}</p>}
         <div className="mt-4 flex gap-2">
           <button
             onClick={confirmar}
             disabled={busy}
-            className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
           >
             {busy ? "Salvando…" : "Confirmar"}
           </button>
-          <button onClick={onCancel} className="rounded-[10px] px-4 py-2 text-sm font-bold text-graytext underline">
+          <button onClick={onCancel} className="rounded-control px-4 py-2 text-sm font-bold text-graytext underline">
             cancelar
           </button>
         </div>

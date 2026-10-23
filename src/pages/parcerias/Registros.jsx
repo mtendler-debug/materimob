@@ -57,13 +57,13 @@ export default function Registros() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="mt-4 flex flex-wrap gap-1 border-b border-rule">
+      <div className="mt-4 flex flex-wrap gap-1 border-b border-slate-200/70">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`shrink-0 border-b-2 px-3 pb-2 text-sm font-bold ${
-              tab === t.key ? "border-gold text-charcoal" : "border-transparent text-graytext hover:text-charcoal"
+              tab === t.key ? "border-brand text-charcoal" : "border-transparent text-graytext hover:text-charcoal"
             }`}
           >
             {t.label}
@@ -167,10 +167,10 @@ function RegistroCard({ registro: r, todos, onChange }) {
   const conflitante = r.status === "conflito" ? todos.find((x) => x.id === r.conflito_com_registro_id) : null;
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
+    <div className="rounded-card border border-slate-200/70 bg-white p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-serif font-semibold text-charcoal">
+          <p className="font-semibold text-charcoal">
             {r.cliente_nome} {r.cliente_cpf_final && <span className="text-xs text-graytext">CPF ***{r.cliente_cpf_final}</span>}
           </p>
           <p className="text-xs text-graytext">{r.cliente_telefone}</p>
@@ -195,7 +195,7 @@ function RegistroCard({ registro: r, todos, onChange }) {
       </p>
 
       {r.elegibilidade_alerta && (
-        <p className="mt-2 rounded-[9px] bg-light p-2 text-xs text-[#B26A00]">⚠ {r.elegibilidade_alerta}</p>
+        <p className="mt-2 rounded-control bg-light p-2 text-xs text-[#B26A00]">⚠ {r.elegibilidade_alerta}</p>
       )}
 
       <p className="mt-2 text-xs text-graytext">
@@ -203,12 +203,12 @@ function RegistroCard({ registro: r, todos, onChange }) {
         {r.protocolo_incorporadora ? (
           <span>protocolo na incorporadora: {r.protocolo_incorporadora}</span>
         ) : (
-          <b className="text-[#B34A2E]">não registrado na incorporadora</b>
+          <b className="text-danger-text">não registrado na incorporadora</b>
         )}
       </p>
 
       {conflitante && (
-        <div className="mt-2 rounded-[9px] border border-rule bg-light p-3 text-xs">
+        <div className="mt-2 rounded-control border border-slate-200/70 bg-light p-3 text-xs">
           <p className="font-bold text-charcoal">Conflita com um registro já vigente:</p>
           <p className="text-graytext">
             {conflitante.cliente_nome} · {conflitante.pc_parceiras?.nome_fantasia} ·{" "}
@@ -218,14 +218,14 @@ function RegistroCard({ registro: r, todos, onChange }) {
             <button
               onClick={() => resolverConflito(r.id)}
               disabled={busy}
-              className="rounded-[8px] bg-charcoal px-3 py-1.5 text-[11px] font-bold text-white"
+              className="rounded-[10px] bg-brand px-3 py-1.5 text-[11px] font-bold text-white"
             >
               Este prevalece
             </button>
             <button
               onClick={() => resolverConflito(conflitante.id)}
               disabled={busy}
-              className="rounded-[8px] border-[1.5px] border-rule px-3 py-1.5 text-[11px] font-bold text-charcoal"
+              className="rounded-[10px] border border-slate-200/70 px-3 py-1.5 text-[11px] font-bold text-charcoal"
             >
               O outro prevalece
             </button>
@@ -244,7 +244,7 @@ function RegistroCard({ registro: r, todos, onChange }) {
         {r.status === "visita" && <ActionButton onClick={() => avancar("proposta")} disabled={busy} label="Avançar p/ proposta" />}
         {r.status === "proposta" && <ActionButton onClick={() => avancar("venda")} disabled={busy} label="Avançar p/ venda" />}
         {!["cancelado", "venda", "expirado"].includes(r.status) && (
-          <button onClick={cancelar} disabled={busy} className="text-xs font-bold text-[#B34A2E] underline">
+          <button onClick={cancelar} disabled={busy} className="inline-flex min-h-9 items-center rounded-[10px] px-2.5 text-xs font-medium text-graytext transition-all duration-200 hover:bg-danger-bg hover:text-danger-text">
             cancelar
           </button>
         )}
@@ -258,7 +258,7 @@ function ActionButton({ onClick, disabled, label }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="rounded-[8px] border-[1.5px] border-rule bg-white px-3 py-1.5 text-[11.5px] font-bold text-charcoal hover:border-gold disabled:opacity-50"
+      className="rounded-[10px] border border-slate-200/70 bg-white px-3 py-1.5 text-[11.5px] font-bold text-charcoal hover:border-brand disabled:opacity-50"
     >
       {label}
     </button>

@@ -24,7 +24,7 @@ function ActivityBars({ data }) {
           <span className="text-[10px] font-bold text-charcoal">{d.total_roteiros}</span>
           <div className="flex h-20 w-full items-end">
             <div
-              className="w-full rounded-t-[4px] bg-gold"
+              className="w-full rounded-t-[4px] bg-brand"
               style={{ height: `${d.total_roteiros > 0 ? Math.max((d.total_roteiros / max) * 100, 6) : 2}%` }}
             />
           </div>
@@ -69,20 +69,20 @@ export default function AdminOverview() {
     load();
   }
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!data) return <p className="text-sm text-muted">Carregando…</p>;
 
   return (
     <div>
       {pendentes > 0 && (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border-[1.5px] border-amber-300 bg-amber-50 px-4 py-3">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-card border border-amber-300 bg-amber-50 px-4 py-3">
           <div>
             <b className="text-sm text-charcoal">
               {pendentes} {pendentes === 1 ? "pedido de acesso" : "pedidos de acesso"} à Academia de Vendas aguardando liberação
             </b>
             <p className="text-[12.5px] text-graytext">Corretores de imobiliárias parceiras pediram para entrar.</p>
           </div>
-          <Link to="/admin/academia/acessos" className="rounded-[8px] bg-charcoal px-3 py-1.5 text-xs font-bold text-white">
+          <Link to="/admin/academia/acessos" className="rounded-[10px] bg-brand px-3 py-1.5 text-xs font-bold text-white">
             Ver pedidos
           </Link>
         </div>
@@ -92,13 +92,13 @@ export default function AdminOverview() {
         <button
           onClick={recalcularCoordenadas}
           disabled={backfilling}
-          className="rounded-[10px] border-[1.5px] border-rule px-3 py-1.5 text-xs font-bold text-charcoal hover:border-gold disabled:opacity-50"
+          className="rounded-control border border-slate-200/70 px-3 py-1.5 text-xs font-bold text-charcoal hover:border-brand disabled:opacity-50"
         >
           {backfilling ? "Processando…" : "Recalcular coordenadas"}
         </button>
         {backfillMsg && !backfilling && <span className="text-xs text-graytext">{backfillMsg}</span>}
       </div>
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-slate-200/70 bg-slate-200 sm:grid-cols-4">
         <Kpi label="Contas" value={data.contas} foot={`${data.contas_30d} nos últimos 30 dias`} />
         <Kpi label="Organizações" value={data.organizacoes} foot={`${data.organizacoes_ativas} ativas`} />
         <Kpi label="Lançamentos" value={data.lancamentos} foot={`${data.unidades} unidade(s)`} />
@@ -129,7 +129,7 @@ export default function AdminOverview() {
       {data.atividade_periodo?.length > 0 && (
         <>
           <SectionTitle>Atividade da plataforma — por semana</SectionTitle>
-          <div className="rounded-[14px] border border-rule bg-white p-4">
+          <div className="rounded-card border border-slate-200/70 bg-white p-4">
             <ActivityBars data={data.atividade_periodo} />
           </div>
         </>
@@ -146,7 +146,7 @@ export default function AdminOverview() {
               <span className="inline-block h-[9px] w-[9px] rounded-full align-middle" style={{ background: "#4A6FA5" }} /> portfólio
             </span>
           </p>
-          <div className="overflow-hidden rounded-[14px] border border-rule">
+          <div className="overflow-hidden rounded-card border border-slate-200/70">
             <Map
               pins={data.mapa.map((m) => ({
                 lat: m.latitude,
@@ -171,7 +171,7 @@ function Kpi({ label, value, foot }) {
   return (
     <div className="bg-white p-[15px]">
       <div className="text-[9.5px] font-bold uppercase tracking-[.1em] text-muted">{label}</div>
-      <div className="font-serif mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
+      <div className="mt-[5px] text-2xl leading-[1.15] font-semibold">{value}</div>
       <div className="mt-[3px] text-[11.5px] text-graytext">{foot}</div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useFeedback } from "../../lib/feedback";
 import { haQuanto, linkWhatsapp } from "../../lib/academiaUtil";
 import { descreverAtividade, estaParado, PAPEL_LABELS, ultimoAcessoTexto } from "../../lib/atividades";
 import { semAcento } from "../../lib/treino";
+import Button from "../../components/ui/Button";
 
 const FILTROS = [
   ["ativos", "Ativos"],
@@ -13,7 +14,17 @@ const FILTROS = [
 ];
 
 const campo =
-  "mt-1 w-full rounded-[9px] border-[1.5px] border-rule bg-white px-[10px] py-[8px] text-sm text-charcoal focus:border-gold focus:outline-none";
+  "mt-1 w-full min-h-11 rounded-control border border-slate-200 bg-white px-3 text-body-sm text-charcoal transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none";
+
+function iniciais(nome) {
+  return (nome || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+}
 
 // Corretores liberados e bloqueados, com o que cada um fez. Pedidos pendentes e
 // recusados ficam na aba Acessos.
@@ -23,7 +34,7 @@ export default function CorretoresAcademia() {
   const [filtro, setFiltro] = useState("ativos");
   const [imob, setImob] = useState("todas");
   const [busca, setBusca] = useState("");
-  const [porImob, setPorImob] = useState(false);
+  const [abertos, setAbertos] = useState({});
   const [ficha, setFicha] = useState(null);
 
   async function load() {
@@ -53,16 +64,20 @@ export default function CorretoresAcademia() {
   });
   const imobiliarias = [...new Set(lista.map((c) => c.parceira ?? "Autônomo"))].sort();
 
+  // Agrupado por imobiliária: cada grupo mostra o total da equipe e abre para a lista de corretores.
   const grupos = {};
   visiveis.forEach((c) => {
-    const g = (grupos[c.parceira ?? "Autônomo"] ??= { n: 0, envios: 0, clientes_abriram: 0, certificados: 0, registros: 0, vendas: 0 });
-    g.n++;
-    ["envios", "clientes_abriram", "certificados", "registros", "vendas"].forEach((k) => (g[k] += Number(c[k])));
+    const nome = c.parceira ?? "Autônomo";
+    const g = (grupos[nome] ??= { itens: [], envios: 0, clientes_abriram: 0, certificados: 0, vendas: 0 });
+    g.itens.push(c);
+    ["envios", "clientes_abriram", "certificados", "vendas"].forEach((k) => (g[k] += Number(c[k])));
   });
+  const entradas = Object.entries(grupos);
+  const abertoPadrao = entradas.length === 1;
 
   return (
     <div className="mt-4">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2.5">
         <div className="flex flex-wrap gap-1.5" role="group" aria-label="Situação">
           {FILTROS.map(([k, rotulo]) => (
             <button
@@ -70,15 +85,15 @@ export default function CorretoresAcademia() {
               type="button"
               aria-pressed={filtro === k}
               onClick={() => setFiltro(k)}
-              className={`rounded-full border px-3 py-1 text-[12.5px] font-semibold ${
-                filtro === k ? "border-charcoal bg-charcoal text-white" : "border-rule bg-white text-slate-600"
+              className={`min-h-9 rounded-full border px-3.5 text-[13px] font-semibold transition-all duration-200 ${
+                filtro === k ? "border-charcoal bg-charcoal text-white" : "border-slate-200 bg-white text-graytext hover:border-slate-300 hover:text-charcoal"
               }`}
             >
               {rotulo} ({contagem[k]})
             </button>
           ))}
         </div>
-        <select value={imob} onChange={(e) => setImob(e.target.value)} aria-label="Imobiliária" className="rounded-[9px] border-[1.5px] border-rule bg-white px-2.5 py-1.5 text-[13px]">
+        <select value={imob} onChange={(e) => setImob(e.target.value)} aria-label="Imobiliária" className="min-h-10 rounded-control border border-slate-200 bg-white px-3 text-[13.5px]">
           <option value="todas">Todas as imobiliárias</option>
           {imobiliarias.map((i) => (
             <option key={i}>{i}</option>
@@ -89,103 +104,80 @@ export default function CorretoresAcademia() {
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar por nome"
-          className="rounded-[9px] border-[1.5px] border-rule bg-white px-2.5 py-1.5 text-[13px]"
+          aria-label="Buscar por nome"
+          className="min-h-10 rounded-control border border-slate-200 bg-white px-3 text-[13.5px] transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
         />
-        <label className="flex items-center gap-1.5 text-[13px] text-slate-700">
-          <input type="checkbox" checked={porImob} onChange={(e) => setPorImob(e.target.checked)} /> Por imobiliária
-        </label>
       </div>
 
-      <div className="mt-3 overflow-x-auto rounded-[12px] border border-rule bg-white">
-        {porImob ? (
-          <table className="w-full min-w-[560px] text-[13px] tabular-nums">
-            <thead>
-              <Cabecalho cols={["Imobiliária", "Corretores", "Kits enviados", "Abriram", "Certificados", "Registros", "Vendas"]} numericas={[1, 2, 3, 4, 5, 6]} />
-            </thead>
-            <tbody>
-              {Object.keys(grupos).length === 0 && <Vazio colunas={7} />}
-              {Object.entries(grupos).map(([nome, g]) => (
-                <tr key={nome} className="border-b border-slate-100 last:border-b-0">
-                  <td className="px-2.5 py-2 font-semibold text-charcoal">{nome}</td>
-                  {[g.n, g.envios, g.clientes_abriram, g.certificados, g.registros, g.vendas].map((v, i) => (
-                    <td key={i} className="px-2.5 py-2 text-right">
-                      {v}
-                    </td>
-                  ))}
-                </tr>
+      {entradas.length === 0 && (
+        <div className="py-12 text-center text-graytext">
+          <b className="mb-1 block text-body text-charcoal">Nada nesta lista</b>
+          <p className="text-body-sm">Mude o filtro ou a busca.</p>
+        </div>
+      )}
+
+      {entradas.map(([nome, g]) => {
+        const aberto = abertos[nome] ?? abertoPadrao;
+        return (
+          <section key={nome} className="mt-3 overflow-hidden rounded-[20px] border border-slate-200/70 bg-white">
+            <button
+              type="button"
+              onClick={() => setAbertos((a) => ({ ...a, [nome]: !aberto }))}
+              aria-expanded={aberto}
+              className="grid min-h-[68px] w-full grid-cols-[minmax(0,1fr)_20px] items-center gap-3 px-[18px] py-3.5 text-left md:grid-cols-[minmax(0,1fr)_repeat(4,64px)_20px]"
+            >
+              <span>
+                <b className="block text-[15px] tracking-tight text-charcoal">{nome}</b>
+                <small className="text-body-sm text-graytext">{g.itens.length} corretor(es)</small>
+              </span>
+              {[
+                [g.envios, "envios"],
+                [g.clientes_abriram, "abriram"],
+                [g.certificados, "cert."],
+                [g.vendas, "vendas"],
+              ].map(([v, r]) => (
+                <span key={r} className="hidden text-center md:block">
+                  <b className="block text-[17px] text-charcoal tabular-nums">{v}</b>
+                  <small className="text-[11px] text-graytext">{r}</small>
+                </span>
               ))}
-            </tbody>
-          </table>
-        ) : (
-          <table className="w-full min-w-[760px] text-[13px] tabular-nums">
-            <thead>
-              <Cabecalho
-                cols={["Corretor", "Papel", "Último acesso", "Materiais", "Envios", "Abriram", "Aulas", "Cert.", "Registros", "Vendas"]}
-                numericas={[3, 4, 5, 6, 7, 8, 9]}
-              />
-            </thead>
-            <tbody>
-              {visiveis.length === 0 && <Vazio colunas={10} />}
-              {visiveis.map((c) => {
-                const parado = c.status === "liberado" && estaParado(c.ultimo_acesso);
-                return (
-                  <tr key={c.user_id} onClick={() => setFicha(c)} className="cursor-pointer border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
-                    <td className="px-2.5 py-2">
-                      <div className="font-semibold text-charcoal">
-                        {c.nome}
-                        {c.status === "bloqueado" && (
-                          <span className="ml-1.5 rounded-full border border-rose-300 bg-rose-100 px-2 py-px text-[11px] font-semibold text-rose-800">Bloqueado</span>
-                        )}
-                      </div>
-                      <div className="text-xs text-graytext">{c.parceira ?? "Autônomo"}</div>
-                    </td>
-                    <td className="px-2.5 py-2">
-                      <span
-                        className={`rounded-full border px-2 py-px text-[11.5px] font-semibold ${
-                          c.papel === "gestor" ? "border-purple-300 bg-purple-100 text-purple-800" : "border-rule bg-slate-100 text-slate-600"
-                        }`}
-                      >
-                        {PAPEL_LABELS[c.papel]}
+              <svg viewBox="0 0 24 24" className={`h-5 w-5 text-muted transition-transform duration-200 ${aberto ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            {aberto && (
+              <div className="border-t border-slate-100 px-[18px] pb-2.5">
+                {g.itens.map((c) => {
+                  const parado = c.status === "liberado" && estaParado(c.ultimo_acesso);
+                  return (
+                    <button
+                      key={c.user_id}
+                      type="button"
+                      onClick={() => setFicha(c)}
+                      className="flex min-h-[60px] w-full items-center gap-3 border-t border-slate-100 py-2.5 text-left first:border-0"
+                    >
+                      <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full bg-brand-soft text-xs font-semibold text-sky-800">{iniciais(c.nome)}</span>
+                      <span className="min-w-0 flex-1">
+                        <b className="block text-body-sm font-semibold text-charcoal">
+                          {c.nome}
+                          {c.status === "bloqueado" && (
+                            <span className="ml-1.5 rounded-full bg-danger-bg px-2 py-px text-caption font-semibold text-danger-text">Bloqueado</span>
+                          )}
+                        </b>
+                        <small className="text-caption text-graytext">{PAPEL_LABELS[c.papel]}</small>
                       </span>
-                    </td>
-                    <td className={`px-2.5 py-2 ${parado ? "font-semibold text-amber-700" : ""}`}>{ultimoAcessoTexto(c.ultimo_acesso)}</td>
-                    {[c.materiais, c.envios, c.clientes_abriram, c.aulas, c.certificados, c.registros, c.vendas].map((v, i) => (
-                      <td key={i} className="px-2.5 py-2 text-right">
-                        {v}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
+                      <span className={`text-caption ${parado ? "font-semibold text-amber-700" : "text-graytext"}`}>{ultimoAcessoTexto(c.ultimo_acesso)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        );
+      })}
 
       {ficha && <Ficha c={ficha} ativas={ativas} onFechar={() => setFicha(null)} onMudou={async () => { await load(); setFicha(null); }} />}
     </div>
-  );
-}
-
-function Cabecalho({ cols, numericas }) {
-  return (
-    <tr className="border-b border-rule">
-      {cols.map((c, i) => (
-        <th key={c} className={`whitespace-nowrap px-2.5 py-2 text-[11px] font-bold uppercase tracking-wide text-graytext ${numericas.includes(i) ? "text-right" : "text-left"}`}>
-          {c}
-        </th>
-      ))}
-    </tr>
-  );
-}
-
-function Vazio({ colunas }) {
-  return (
-    <tr>
-      <td colSpan={colunas} className="px-3 py-6 text-center text-sm text-graytext">
-        Nada nesta lista.
-      </td>
-    </tr>
   );
 }
 
@@ -226,7 +218,7 @@ function Ficha({ c, ativas, onFechar, onMudou }) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[55] bg-slate-900/35" onClick={onFechar} />
+      <div className="fixed inset-0 z-[55] bg-slate-900/30 backdrop-blur-sm" onClick={onFechar} />
       <aside role="dialog" aria-label={`Ficha de ${c.nome}`} className="fixed bottom-0 right-0 top-0 z-[60] w-full max-w-[440px] overflow-y-auto border-l border-slate-300 bg-white p-5 shadow-xl">
         <button onClick={onFechar} className="float-right rounded-[8px] border border-slate-300 px-3 py-1 text-xs font-bold text-slate-700">
           Fechar
@@ -235,18 +227,18 @@ function Ficha({ c, ativas, onFechar, onMudou }) {
         <div className="mb-3 mt-1.5 flex gap-1.5">
           <span
             className={`rounded-full border px-2 py-px text-[11.5px] font-semibold ${
-              c.status === "bloqueado" ? "border-rose-300 bg-rose-100 text-rose-800" : "border-emerald-300 bg-emerald-100 text-emerald-800"
+              c.status === "bloqueado" ? "border-danger-border bg-danger-bg text-danger-text" : "border-success-border bg-success-bg text-success-text"
             }`}
           >
             {c.status === "bloqueado" ? "Bloqueado" : "Liberado"}
           </span>
-          <span className="rounded-full border border-rule bg-slate-100 px-2 py-px text-[11.5px] font-semibold text-slate-600">{PAPEL_LABELS[c.papel]}</span>
+          <span className="rounded-full border border-slate-200/70 bg-slate-100 px-2 py-px text-[11.5px] font-semibold text-slate-600">{PAPEL_LABELS[c.papel]}</span>
         </div>
 
-        <dl className="divide-y divide-rule rounded-[12px] border border-rule px-3.5 text-[13px]">
+        <dl className="divide-y divide-rule rounded-card border border-slate-200/70 px-3.5 text-[13px]">
           {[
             ["Imobiliária", c.parceira ?? "Autônomo"],
-            ["WhatsApp", zap ? <a href={zap} target="_blank" rel="noopener noreferrer" className="text-sky-700 underline">{c.whatsapp}</a> : "não informado"],
+            ["WhatsApp", zap ? <a href={zap} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand hover:underline">{c.whatsapp}</a> : "não informado"],
             ["E-mail", c.email ?? "não informado"],
             ["CRECI", c.creci ?? "não informado"],
             ["Último acesso", ultimoAcessoTexto(c.ultimo_acesso)],
@@ -282,14 +274,14 @@ function Ficha({ c, ativas, onFechar, onMudou }) {
           </label>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <button onClick={salvar} disabled={busy} className="rounded-[8px] bg-emerald-800 px-3 py-1.5 text-[12.5px] font-bold text-white disabled:opacity-50">
+          <button onClick={salvar} disabled={busy} className="rounded-[8px] bg-brand px-3 py-1.5 text-[12.5px] font-bold text-white disabled:opacity-50">
             Salvar papel e imobiliária
           </button>
           <button
             onClick={bloquear}
             disabled={busy}
             className={`rounded-[8px] px-3 py-1.5 text-[12.5px] font-bold disabled:opacity-50 ${
-              c.status === "liberado" ? "border border-rose-300 bg-white text-rose-800" : "bg-charcoal text-white"
+              c.status === "liberado" ? "border border-danger-border bg-white text-danger-text" : "bg-brand text-white"
             }`}
           >
             {c.status === "liberado" ? "Bloquear acesso" : "Liberar de novo"}
@@ -299,10 +291,10 @@ function Ficha({ c, ativas, onFechar, onMudou }) {
         <h4 className="mb-2 mt-5 text-[10.5px] font-bold uppercase tracking-[.1em] text-graytext">Linha do tempo</h4>
         {eventos === null && <p className="text-sm text-muted">Carregando…</p>}
         {eventos?.length === 0 && <p className="text-sm text-graytext">Ainda sem atividade.</p>}
-        <ul className="ml-1.5 border-l-2 border-rule">
+        <ul className="ml-1.5 border-l-2 border-slate-200/70">
           {eventos?.map((e) => (
             <li key={e.id} className="relative pb-3 pl-4 text-[13px] text-slate-700">
-              <span className="absolute -left-[6px] top-1 h-2.5 w-2.5 rounded-full bg-sky-700" />
+              <span className="absolute -left-[6px] top-1 h-2.5 w-2.5 rounded-full bg-brand" />
               {descreverAtividade(e)}
               <small className="block text-[11.5px] text-muted">{haQuanto(e.criado_em)}</small>
             </li>

@@ -100,7 +100,7 @@ export default function Parceiras() {
       <RecursosChaincorp userId={user.id} />
 
       {pendentesValidacao.length > 0 && (
-        <div className="mt-4 rounded-[12px] border-[1.5px] border-gold bg-light p-3 text-sm text-charcoal">
+        <div className="mt-4 rounded-card border border-brand bg-light p-3 text-sm text-charcoal">
           <b>{pendentesValidacao.length}</b> parceira(s) chegaram por autocadastro e aguardam sua validação:{" "}
           {pendentesValidacao.map((p, i) => (
             <span key={p.id}>
@@ -119,12 +119,12 @@ export default function Parceiras() {
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
           placeholder="Buscar por nome, cidade ou praça"
-          className="min-w-[220px] flex-1 rounded-[9px] border border-rule bg-white px-3 py-2 text-sm"
+          className="min-w-[220px] flex-1 rounded-control border border-slate-200/70 bg-white px-3 py-2 text-sm"
         />
         <select
           value={filtroStatus}
           onChange={(e) => setFiltroStatus(e.target.value)}
-          className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
+          className="rounded-[10px] border border-slate-200/70 bg-white px-2 py-2 text-sm"
         >
           <option value="todos">Todos os status</option>
           {Object.entries(STATUS_FUNIL_LABELS).map(([k, label]) => (
@@ -136,7 +136,7 @@ export default function Parceiras() {
         <select
           value={filtroPrioridade}
           onChange={(e) => setFiltroPrioridade(e.target.value)}
-          className="rounded-[8px] border border-rule bg-white px-2 py-2 text-sm"
+          className="rounded-[10px] border border-slate-200/70 bg-white px-2 py-2 text-sm"
         >
           <option value="todas">Todas as prioridades</option>
           {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
@@ -150,7 +150,7 @@ export default function Parceiras() {
             setShowImport(false);
             setShowNew((v) => !v);
           }}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+          className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover"
         >
           {showNew ? "Cancelar" : "+ Nova parceira"}
         </button>
@@ -159,7 +159,7 @@ export default function Parceiras() {
             setShowNew(false);
             setShowImport((v) => !v);
           }}
-          className="rounded-[10px] border border-rule bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+          className="rounded-control border border-slate-200/70 bg-white px-4 py-2 text-sm font-bold text-charcoal hover:border-brand"
         >
           {showImport ? "Cancelar" : "Importar planilha"}
         </button>
@@ -199,10 +199,10 @@ export default function Parceiras() {
           <Link
             key={p.id}
             to={`/app/parcerias/parceiras/${p.id}`}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-rule bg-white p-4 hover:border-gold"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-card border border-slate-200/70 bg-white p-4 hover:border-brand"
           >
             <div>
-              <p className="font-serif font-semibold text-charcoal">{p.nome_fantasia}</p>
+              <p className="font-semibold text-charcoal">{p.nome_fantasia}</p>
               <p className="text-xs text-graytext">
                 {[p.cidade, p.uf].filter(Boolean).join("/")}
                 {p.praca ? ` · ${p.praca}` : ""}
@@ -235,7 +235,7 @@ function RecursosChaincorp({ userId }) {
   if (!notas) return null;
 
   return (
-    <div className="mt-3 rounded-[12px] border border-rule bg-white p-3">
+    <div className="mt-3 rounded-card border border-slate-200/70 bg-white p-3">
       <button
         onClick={() => setAberto((v) => !v)}
         className="text-xs font-bold text-charcoal underline"
@@ -260,10 +260,10 @@ function LinkAutocadastro() {
   }
 
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[12px] border border-rule bg-white p-3 text-xs text-graytext">
+    <div className="mt-4 flex flex-wrap items-center gap-2 rounded-card border border-slate-200/70 bg-white p-3 text-xs text-graytext">
       <span className="font-bold text-charcoal">Link de autocadastro (mande pra quem você quer que se cadastre sozinho):</span>
       <span className="break-all">{url}</span>
-      <button onClick={copiar} className="rounded-[7px] bg-charcoal px-3 py-1.5 font-bold text-white">
+      <button onClick={copiar} className="rounded-[7px] bg-brand px-3 py-1.5 font-bold text-white">
         {copiado ? "Copiado!" : "Copiar"}
       </button>
     </div>
@@ -309,8 +309,8 @@ function NovaParceira({ userId, onCreated }) {
   }
 
   return (
-    <form onSubmit={salvar} className="mt-4 rounded-[14px] border border-rule bg-white p-5">
-      <h2 className="font-serif mb-4 text-[16px] font-semibold text-charcoal">Nova parceira</h2>
+    <form onSubmit={salvar} className="mt-4 rounded-card border border-slate-200/70 bg-white p-5">
+      <h2 className="mb-4 text-[16px] font-semibold text-charcoal">Nova parceira</h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Nome fantasia" value={nome} onChange={setNome} required />
         <Field label="Praça" value={praca} onChange={setPraca} placeholder="Ex.: Interior SP Norte" />
@@ -323,7 +323,7 @@ function NovaParceira({ userId, onCreated }) {
           <select
             value={prioridade}
             onChange={(e) => setPrioridade(e.target.value)}
-            className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+            className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
           >
             <option value="">Ainda não avaliada</option>
             {Object.entries(PRIORIDADE_LABELS).map(([k, label]) => (
@@ -340,13 +340,13 @@ function NovaParceira({ userId, onCreated }) {
         onChange={(e) => setSegmento(e.target.value)}
         rows={2}
         placeholder="Ex.: Alto padrão, lançamentos, popular/MCMV, locação, rural…"
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
-      {error && <p className="mt-3 text-sm text-[#B34A2E]">{error}</p>}
+      {error && <p className="mt-3 text-sm text-danger-text">{error}</p>}
       <button
         type="submit"
         disabled={saving}
-        className="mt-4 rounded-[10px] bg-charcoal px-4 py-2.5 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+        className="mt-4 rounded-control bg-brand px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
       >
         {saving ? "Salvando…" : "Criar parceira"}
       </button>
@@ -364,7 +364,7 @@ function Field({ label, value, onChange, placeholder, required, maxLength }) {
         placeholder={placeholder}
         required={required}
         maxLength={maxLength}
-        className="w-full rounded-[9px] border border-rule bg-white p-3 text-sm"
+        className="w-full rounded-control border border-slate-200/70 bg-white p-3 text-sm"
       />
     </div>
   );

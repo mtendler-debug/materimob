@@ -56,7 +56,7 @@ export default function AdminOrganizations() {
     load();
   }
 
-  if (error) return <p className="text-sm text-red-600">{error}</p>;
+  if (error) return <p className="text-sm text-danger-text">{error}</p>;
   if (!orgs) return <p className="text-sm text-muted">Carregando…</p>;
 
   return (
@@ -66,18 +66,18 @@ export default function AdminOrganizations() {
       ) : (
         <button
           onClick={() => setShowForm(true)}
-          className="mb-4 rounded-[10px] border-[1.5px] border-rule px-4 py-2 text-sm font-bold text-charcoal hover:border-gold"
+          className="mb-4 rounded-control border border-slate-200/70 px-4 py-2 text-sm font-bold text-charcoal hover:border-brand"
         >
           + Nova organização
         </button>
       )}
 
-      <div className="overflow-hidden overflow-x-auto rounded-[14px] border border-rule">
+      <div className="overflow-hidden overflow-x-auto rounded-card border border-slate-200/70">
         <table className="w-full min-w-[760px] border-collapse text-sm">
         <thead>
           <tr>
             {["Organização", "Tipo", "Status", "CRM", "Membros", "Lançamentos", "Unidades", "Imóveis", ""].map((h) => (
-              <th key={h} className="bg-charcoal p-[10px] text-left text-[11px] font-bold text-white">
+              <th key={h} className="bg-bg p-[10px] text-left text-[11px] font-bold text-muted">
                 {h}
               </th>
             ))}
@@ -86,9 +86,9 @@ export default function AdminOrganizations() {
         <tbody>
           {orgs.map((o) => (
             <tr key={o.id}>
-              <td className="border-b border-rule p-[10px] font-serif font-semibold text-charcoal">{o.name}</td>
-              <td className="border-b border-rule p-[10px] text-graytext">{TIPO_LABELS[o.tipo] || o.tipo}</td>
-              <td className="border-b border-rule p-[10px]">
+              <td className="border-b border-slate-200/70 p-[10px] font-semibold text-charcoal">{o.name}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-graytext">{TIPO_LABELS[o.tipo] || o.tipo}</td>
+              <td className="border-b border-slate-200/70 p-[10px]">
                 <span
                   className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
                   style={{ background: STATUS_COLORS[o.status]?.bg, color: STATUS_COLORS[o.status]?.color }}
@@ -96,7 +96,7 @@ export default function AdminOrganizations() {
                   {STATUS_LABELS[o.status] || o.status}
                 </span>
               </td>
-              <td className="border-b border-rule p-[10px]">
+              <td className="border-b border-slate-200/70 p-[10px]">
                 <span
                   className="rounded-full px-[9px] py-[3px] text-[10.5px] font-bold"
                   style={o.crm_included ? { background: "#D1FAE5", color: "#065F46" } : { background: "#F1F5F9", color: "#475569" }}
@@ -104,11 +104,11 @@ export default function AdminOrganizations() {
                   {o.crm_included ? "incluído" : "não incluído"}
                 </span>
               </td>
-              <td className="border-b border-rule p-[10px] text-center text-graytext">{o.membros}</td>
-              <td className="border-b border-rule p-[10px] text-center text-graytext">{o.lancamentos}</td>
-              <td className="border-b border-rule p-[10px] text-center text-graytext">{o.unidades}</td>
-              <td className="border-b border-rule p-[10px] text-center text-graytext">{o.imoveis}</td>
-              <td className="border-b border-rule p-[10px] text-right whitespace-nowrap">
+              <td className="border-b border-slate-200/70 p-[10px] text-center text-graytext">{o.membros}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-center text-graytext">{o.lancamentos}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-center text-graytext">{o.unidades}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-center text-graytext">{o.imoveis}</td>
+              <td className="border-b border-slate-200/70 p-[10px] text-right whitespace-nowrap">
                 <button
                   disabled={busyId === o.id}
                   onClick={() => toggleCrm(o)}
@@ -167,13 +167,13 @@ function NewOrgManagerForm({ onCancel, onCreated }) {
   }
 
   return (
-    <form onSubmit={submit} className="mb-4 space-y-3 rounded-[14px] border border-rule bg-white p-4">
+    <form onSubmit={submit} className="mb-4 space-y-3 rounded-card border border-slate-200/70 bg-white p-4">
       <div>
         <label className="block text-[11.5px] font-bold text-graytext uppercase">Nome da organização</label>
         <input
           value={orgName}
           onChange={(e) => setOrgName(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
         />
       </div>
       <div>
@@ -181,7 +181,7 @@ function NewOrgManagerForm({ onCancel, onCreated }) {
         <select
           value={orgTipo}
           onChange={(e) => setOrgTipo(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
         >
           <option value="imobiliaria">Imobiliária</option>
           <option value="incorporadora">Incorporadora</option>
@@ -192,7 +192,7 @@ function NewOrgManagerForm({ onCancel, onCreated }) {
         <input
           value={managerName}
           onChange={(e) => setManagerName(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
         />
       </div>
       <div>
@@ -201,23 +201,23 @@ function NewOrgManagerForm({ onCancel, onCreated }) {
           type="email"
           value={managerEmail}
           onChange={(e) => setManagerEmail(e.target.value)}
-          className="mt-1 w-full rounded-[9px] border-[1.5px] border-rule px-3 py-2 text-sm"
+          className="mt-1 w-full rounded-control border border-slate-200/70 px-3 py-2 text-sm"
         />
         <p className="mt-1 text-xs text-graytext">
           A pessoa recebe um e-mail de convite pra definir a própria senha e já entra como diretor(a)
           desta organização.
         </p>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger-text">{error}</p>}
       <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="rounded-[10px] bg-charcoal px-4 py-2 text-sm font-bold text-white hover:opacity-90 disabled:opacity-50"
+          className="rounded-control bg-brand px-4 py-2 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-50"
         >
           {saving ? "Criando…" : "Criar organização e convidar gestor"}
         </button>
-        <button type="button" onClick={onCancel} className="text-sm text-graytext underline">
+        <button type="button" onClick={onCancel} className="inline-flex min-h-9 items-center text-body-sm font-semibold text-graytext transition-colors hover:text-charcoal">
           cancelar
         </button>
       </div>
