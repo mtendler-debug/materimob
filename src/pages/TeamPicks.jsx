@@ -5,6 +5,7 @@ import { loadCatalogItems } from "../lib/catalogo";
 import { CatalogBrowser } from "../components/CatalogBrowser";
 import { useFeedback } from "../lib/feedback";
 import Button from "../components/ui/Button";
+import Modal from "../components/ui/Modal";
 
 // A curadoria de verdade da imobiliária: escolhe, de qualquer origem da
 // plataforma, o que o time dela deve estar oferecendo. Mecanismo puro —
@@ -15,6 +16,8 @@ export default function TeamPicks() {
   const { org, loading: loadingOrg } = useOrganization();
   const [picks, setPicks] = useState(null);
   const [items, setItems] = useState(null);
+  const [catalogoAberto, setCatalogoAberto] = useState(false);
+  const [notaEmEdicao, setNotaEmEdicao] = useState(null);
 
   async function loadPicks() {
     const { data } = await supabase
@@ -64,82 +67,117 @@ export default function TeamPicks() {
     toast("Removido da seleção do time.");
   }
 
-  async function editarNota(pick) {
-    const nova = window.prompt("Nota para o time (opcional)", pick.note || "");
-    if (nova == null) return;
-    await supabase.from("av_team_picks").update({ note: nova.trim() || null }).eq("id", pick.id);
+  async function salvarNota(pick, texto) {
+    setNotaEmEdicao(null);
+    const nova = texto.trim() || null;
+    if (nova === (pick.note || null)) return;
+    await supabase.from("av_team_picks").update({ note: nova }).eq("id", pick.id);
     loadPicks();
   }
 
   async function adicionar(item) {
-    const note = window.prompt("Nota para o time (opcional)", "");
-    if (note === null) return;
     const proximaPosicao = (picks ?? []).reduce((max, p) => Math.max(max, p.position), -1) + 1;
-    await supabase.from("av_team_picks").insert({
-      organization_id: org.id,
-      portfolio_property_id: item.kind === "portfolio" ? item.id : null,
-      launch_id: item.kind === "lancamento" ? item.id : null,
-      note: note.trim() || null,
-      position: proximaPosicao,
-    });
-    loadPicks();
+    const { data } = await supabase
+      .from("av_team_picks")
+      .insert({
+        organization_id: org.id,
+        portfolio_property_id: item.kind === "portfolio" ? item.id : null,
+        launch_id: item.kind === "lancamento" ? item.id : null,
+        note: null,
+        position: proximaPosicao,
+      })
+      .select("id")
+      .single();
+    await loadPicks();
+    setCatalogoAberto(false);
+    // A nota vem logo depois, no próprio item, em vez de numa janela do navegador.
+    if (data?.id) setNotaEmEdicao(data.id);
+    toast("Adicionado à seleção do time.");
   }
 
-  return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Seleção do time</h1>
-        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
-          O que você escolher aqui aparece em destaque para todo o time da {org.name} em Imóveis —
-          de qualquer origem da plataforma, com a nota que você quiser escrever.
-        </p>
+  const iconeBtn =
+    "grid h-9 w-9 place-items-center rounded-[10px] text-graytext transition-all duration-200 hover:bg-light hover:text-charcoal disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent";
 
-        <h2 className="mt-6 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-          Selecionados ({picksResolvidos.length})
-        </h2>
-        {picksResolvidos.length === 0 && <p className="text-sm text-muted">Nenhum item selecionado ainda.</p>}
-        <div className="space-y-2">
-          {picksResolvidos.map(({ pick, item }, i) => (
-            <div key={pick.id} className="rounded-[14px] border border-rule bg-white p-4" style={{ borderLeft: `5px solid ${item.color || "#0284C7"}` }}>
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-serif font-semibold text-charcoal">{item.name}</p>
-                  {item.orgName && (
-                    <p className="text-xs text-graytext">
-                      {item.orgName} {item.kind === "lancamento" ? "· lançamento" : "· pronto"}
-                    </p>
-                  )}
-                  {pick.note && <p className="mt-1 text-sm text-graytext">{pick.note}</p>}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => mover(i, -1)} disabled={i === 0} className="text-xs font-bold text-graytext underline disabled:opacity-30">
-                    ↑
-                  </button>
-                  <button
-                    onClick={() => mover(i, 1)}
-                    disabled={i === picksResolvidos.length - 1}
-                    className="text-xs font-bold text-graytext underline disabled:opacity-30"
-                  >
-                    ↓
-                  </button>
-                </div>
-              </div>
-              <div className="mt-2 flex flex-wrap gap-3">
-                <button onClick={() => editarNota(pick)} className="text-xs font-bold text-graytext underline">
-                  editar nota
-                </button>
-                <button onClick={() => remover(pick.id)} className="text-xs font-bold text-[#B34A2E] underline">
-                  remover
-                </button>
-              </div>
-            </div>
-          ))}
+  return (
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto max-w-[780px] px-4 py-8 pb-24 md:px-7">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-[clamp(1.5rem,3vw,1.75rem)] leading-tight font-bold tracking-[-0.03em] text-charcoal">Seleção do time</h1>
+            <p className="mt-1.5 max-w-[60ch] text-base text-graytext">
+              O que você escolher aqui aparece em destaque para todo o time da {org.name} em Imóveis, de qualquer origem da
+              plataforma, com a nota que você quiser escrever.
+            </p>
+          </div>
+          <Button onClick={() => setCatalogoAberto(true)}>+ Adicionar imóvel</Button>
         </div>
 
-        <h2 className="mt-8 mb-2 text-[11px] font-bold uppercase tracking-[.14em] text-graytext">
-          Buscar e adicionar
+        <h2 className="mt-8 mb-2.5 text-caption font-semibold tracking-[.08em] text-muted uppercase">
+          Selecionados ({picksResolvidos.length})
         </h2>
+        {picks !== null && picksResolvidos.length === 0 && (
+          <div className="rounded-card border border-dashed border-slate-300 px-4 py-12 text-center text-graytext">
+            <b className="mb-1 block text-body text-charcoal">Nenhum item selecionado ainda</b>
+            <p className="text-body-sm">Escolha imóveis do catálogo para o time oferecer.</p>
+          </div>
+        )}
+        <div className="space-y-2.5">
+          {picksResolvidos.map(({ pick, item }, i) => {
+            const cor = item.color || "#0284C7";
+            return (
+              <div key={pick.id} className="grid grid-cols-[30px_minmax(0,1fr)] items-start gap-3.5 rounded-[20px] border border-slate-200/70 bg-white p-3.5 transition-shadow duration-200 hover:shadow-soft sm:grid-cols-[34px_52px_minmax(0,1fr)_auto]">
+                <span className="mt-2 grid h-[30px] w-[30px] place-items-center rounded-full bg-light text-body-sm font-bold text-graytext sm:h-[34px] sm:w-[34px]">{i + 1}</span>
+                <span className="mt-0.5 hidden h-[52px] w-[52px] rounded-[14px] sm:block" style={{ background: `linear-gradient(135deg, ${cor}, ${cor}bb)` }} />
+                <div className="grid min-w-0 gap-2">
+                  <div>
+                    <b className="block text-[15px] tracking-tight text-charcoal">{item.name}</b>
+                    {item.orgName && (
+                      <small className="text-body-sm text-graytext">
+                        {item.orgName} · {item.kind === "lancamento" ? "lançamento" : "pronto"}
+                      </small>
+                    )}
+                  </div>
+                  {notaEmEdicao === pick.id ? (
+                    <input
+                      autoFocus
+                      defaultValue={pick.note || ""}
+                      placeholder="Nota para o time (opcional)"
+                      aria-label="Nota para o time"
+                      onBlur={(e) => salvarNota(pick, e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
+                      className="min-h-11 w-full rounded-control border border-slate-200 bg-white px-3 text-body-sm transition-all duration-200 focus:border-brand focus:ring-4 focus:ring-brand/10 focus:outline-none"
+                    />
+                  ) : (
+                    <button
+                      onClick={() => setNotaEmEdicao(pick.id)}
+                      className={`min-h-10 w-full rounded-[10px] px-2.5 py-2 text-left text-body-sm ${
+                        pick.note ? "bg-bg text-slate-700" : "border border-dashed border-slate-200 text-muted"
+                      }`}
+                    >
+                      {pick.note || "Adicionar nota para o time"}
+                    </button>
+                  )}
+                </div>
+                <div className="col-span-full flex justify-end gap-0.5 sm:col-span-1 sm:col-start-4 sm:row-start-1">
+                  <button onClick={() => mover(i, -1)} disabled={i === 0} aria-label="Subir" className={iconeBtn}>
+                    ↑
+                  </button>
+                  <button onClick={() => mover(i, 1)} disabled={i === picksResolvidos.length - 1} aria-label="Descer" className={iconeBtn}>
+                    ↓
+                  </button>
+                  <button onClick={() => remover(pick.id)} aria-label="Remover" className={`${iconeBtn} hover:!bg-danger-bg hover:!text-danger-text`}>
+                    ✕
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <Modal open={catalogoAberto} onClose={() => setCatalogoAberto(false)} title="Adicionar à seleção" className="sm:max-w-2xl">
         <CatalogBrowser
+          gridClass="grid gap-3.5"
           renderAction={(item) => {
             const key = `${item.kind}-${item.id}`;
             if (pickedKeys.has(key)) {
@@ -152,7 +190,7 @@ export default function TeamPicks() {
             );
           }}
         />
-      </div>
+      </Modal>
     </div>
   );
 }

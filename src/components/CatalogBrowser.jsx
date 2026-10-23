@@ -11,7 +11,7 @@ function minValue(item) {
 // usado por /app/imoveis (adicionar a um roteiro) e /app/time (curadoria da
 // imobiliária). `renderAction` decide o que aparece em cada card; a busca e
 // os filtros são os mesmos nos dois lugares.
-export function CatalogBrowser({ renderAction }) {
+export function CatalogBrowser({ renderAction, gridClass = "grid gap-4 sm:grid-cols-2 lg:grid-cols-3" }) {
   const [items, setItems] = useState(null);
   const [texto, setTexto] = useState("");
   const [valorMax, setValorMax] = useState("");
@@ -128,7 +128,7 @@ export function CatalogBrowser({ renderAction }) {
           </p>
         </div>
       )}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={gridClass}>
         {filtrados?.map((it) => (
           <CatalogCard key={`${it.kind}-${it.id}`} item={it} action={renderAction?.(it)} />
         ))}
