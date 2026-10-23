@@ -3,11 +3,39 @@ import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { addClientToCrm } from "../lib/crm";
 import { useFeedback } from "../lib/feedback";
+import Button from "../components/ui/Button";
+
+const DIA = 86400000;
+
+function diasDesde(iso) {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / DIA);
+}
+
+function dataCurta(iso) {
+  return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "");
+}
+
+function iniciais(nome) {
+  return (nome || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0])
+    .join("")
+    .toUpperCase();
+}
+
+const PERIODOS = [
+  ["Esta semana", (d) => d < 7],
+  ["Este mês", (d) => d >= 7 && d < 31],
+  ["Mais antigos", (d) => d >= 31],
+];
 
 export default function Selections() {
   const [selections, setSelections] = useState(null);
   const [error, setError] = useState("");
   const [filtro, setFiltro] = useState("ativos"); // ativos|desativados|todos
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     load();
@@ -32,50 +60,98 @@ export default function Selections() {
     );
   }
 
+  const q = busca.trim().toLowerCase();
   const visiveis = (selections ?? []).filter((s) => {
     const desativado = s.archived || s.clienteDesativado;
-    if (filtro === "todos") return true;
-    if (filtro === "desativados") return desativado;
-    return !desativado;
+    if (filtro === "desativados" && !desativado) return false;
+    if (filtro === "ativos" && desativado) return false;
+    return !q || `${s.title} ${s.client_name ?? ""}`.toLowerCase().includes(q);
   });
 
   return (
-    <div className="min-h-screen bg-bg p-6">
-      <div className="mx-auto max-w-2xl">
-        <h1 className="font-serif text-[27px] font-semibold text-charcoal">Meus roteiros</h1>
-        <p className="mt-2 max-w-[62ch] text-sm leading-relaxed text-graytext">
-          Visão solta de todos os roteiros, sem agrupar por cliente — pra criar um atendimento
-          novo, use{" "}
-          <Link to="/app" className="underline">
+    <div className="min-h-screen bg-bg">
+      <div className="mx-auto max-w-[820px] px-4 py-8 pb-24 md:px-7">
+        <h1 className="text-[clamp(1.5rem,3vw,1.75rem)] leading-tight font-bold tracking-[-0.03em] text-charcoal">Meus roteiros</h1>
+        <p className="mt-1.5 max-w-[60ch] text-base text-graytext">
+          Todos os roteiros, sem agrupar por cliente. Para criar um atendimento novo, use{" "}
+          <Link to="/app" className="underline underline-offset-2">
             Meus clientes
           </Link>
           .
         </p>
 
-        {error && <p className="mt-2 text-sm text-[#B34A2E]">{error}</p>}
+        {error && <p className="mt-3 text-body-sm text-danger-text">{error}</p>}
 
         {selections !== null && selections.length > 0 && (
-          <div className="mt-5 flex items-center gap-2">
-            <label className="text-[11.5px] font-bold uppercase tracking-[.06em] text-graytext">Mostrar</label>
-            <select
-              value={filtro}
-              onChange={(e) => setFiltro(e.target.value)}
-              className="rounded-[8px] border border-rule bg-white px-2 py-1 text-sm"
-            >
-              <option value="ativos">Roteiros ativos</option>
-              <option value="desativados">Roteiros desativados</option>
-              <option value="todos">Todos os roteiros</option>
-            </select>
+          <div className="mt-6 grid gap-3">
+            <label className="flex min-h-[46px] items-center gap-2 rounded-control border border-slate-200 bg-white px-3.5 text-muted transition-all duration-200 focus-within:border-brand focus-within:ring-4 focus-within:ring-brand/10">
+              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px] flex-none" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="M20 20l-4-4" />
+              </svg>
+              <input
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                placeholder="Buscar roteiro ou cliente"
+                aria-label="Buscar roteiro ou cliente"
+                className="w-full min-w-0 bg-transparent text-body-sm text-charcoal outline-none placeholder:text-muted"
+              />
+            </label>
+            <div className="inline-flex max-w-full gap-0.5 self-start overflow-x-auto rounded-control bg-light p-[3px]">
+              {[
+                ["ativos", "Ativos"],
+                ["desativados", "Desativados"],
+                ["todos", "Todos"],
+              ].map(([v, rotulo]) => (
+                <button
+                  key={v}
+                  onClick={() => setFiltro(v)}
+                  aria-pressed={filtro === v}
+                  className={`min-h-9 rounded-[9px] px-3.5 text-[13px] font-semibold whitespace-nowrap transition-all duration-200 ${
+                    filtro === v ? "bg-white text-charcoal shadow-sm" : "text-graytext hover:text-charcoal"
+                  }`}
+                >
+                  {rotulo}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
-        <div className="mt-4 space-y-2">
-          {selections === null && <p className="text-sm text-muted">Carregando…</p>}
-          {selections?.length === 0 && <p className="text-sm text-muted">Nenhum roteiro ainda. Crie um atendimento para começar.</p>}
-          {visiveis.map((s) => (
-            <SelectionRow key={s.id} selection={s} onChange={load} />
-          ))}
-        </div>
+        {selections === null && <p className="mt-8 text-body-sm text-muted">Carregando…</p>}
+        {selections?.length === 0 && (
+          <div className="py-16 text-center text-graytext">
+            <b className="mb-1.5 block text-body text-charcoal">Nenhum roteiro ainda</b>
+            <p className="text-body-sm">Crie um atendimento em Meus clientes para começar.</p>
+            <Button to="/app" className="mt-5">
+              Ir para Meus clientes
+            </Button>
+          </div>
+        )}
+        {selections?.length > 0 && visiveis.length === 0 && (
+          <div className="py-16 text-center text-graytext">
+            <b className="mb-1.5 block text-body text-charcoal">Nenhum roteiro encontrado</b>
+            <p className="text-body-sm">Mude o filtro ou a busca.</p>
+          </div>
+        )}
+
+        {PERIODOS.map(([titulo, dentro]) => {
+          const grupo = visiveis.filter((s) => dentro(diasDesde(s.created_at)));
+          if (!grupo.length) return null;
+          return (
+            <section key={titulo} className="mt-7">
+              <h2 className="mb-2.5 flex items-baseline gap-2 text-caption font-semibold tracking-[.08em] text-muted uppercase">
+                {titulo}
+                <span className="font-medium tracking-normal normal-case text-graytext">{grupo.length}</span>
+              </h2>
+              <div className="space-y-2">
+                {grupo.map((s) => (
+                  <SelectionRow key={s.id} selection={s} onChange={load} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   );
@@ -100,34 +176,36 @@ function SelectionRow({ selection: s, onChange }) {
   }
 
   return (
-    <div className="rounded-[14px] border border-rule bg-white p-4">
-      <Link to={`/app/selections/${s.id}`} className="block hover:underline">
-        <p className="font-serif font-semibold text-charcoal">{s.title}</p>
-        <p className="text-sm text-graytext">{s.client_name}</p>
+    <div className="flex flex-wrap items-center gap-3.5 rounded-[18px] border border-slate-200/70 bg-white p-3.5 transition-all duration-200 ease-out hover:shadow-soft">
+      <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-brand-soft text-caption font-semibold text-sky-800">
+        {iniciais(s.client_name)}
+      </span>
+      <Link to={`/app/selections/${s.id}`} className="min-w-0 flex-1">
+        <b className="block truncate text-[15px] tracking-tight text-charcoal">{s.title}</b>
+        <small className="text-body-sm text-graytext">
+          {s.client_name} · {dataCurta(s.created_at)}
+        </small>
+        {(s.archived || s.clienteDesativado || crmMsg) && (
+          <span className="mt-1 flex flex-wrap items-center gap-1.5">
+            {s.archived && <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">roteiro desativado</span>}
+            {s.clienteDesativado && <span className="rounded-full bg-light px-2.5 py-0.5 text-caption font-semibold text-graytext">cliente desativado</span>}
+            {crmMsg && <span className="text-caption text-graytext">{crmMsg}</span>}
+          </span>
+        )}
       </Link>
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        {s.archived && (
-          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-            roteiro desativado
-          </span>
-        )}
-        {s.clienteDesativado && (
-          <span className="rounded-full bg-light px-[10px] py-1 text-[10.5px] font-bold text-graytext">
-            cliente desativado
-          </span>
-        )}
-        <button onClick={alternarArquivado} className="text-xs font-bold text-[#B34A2E] underline">
-          {s.archived ? "reativar roteiro" : "desativar roteiro"}
-        </button>
-        <button
+      <div className="flex flex-wrap justify-end gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={adicionarAoCRM}
           disabled={!s.client_id}
           title={s.client_id ? "" : "Roteiro sem cliente vinculado"}
-          className="text-xs font-bold text-graytext underline disabled:opacity-40 disabled:no-underline"
         >
-          adicionar ao CRM
-        </button>
-        {crmMsg && <span className="text-xs text-graytext">{crmMsg}</span>}
+          Adicionar ao CRM
+        </Button>
+        <Button variant="ghost" size="sm" onClick={alternarArquivado}>
+          {s.archived ? "Reativar" : "Desativar"}
+        </Button>
       </div>
     </div>
   );
